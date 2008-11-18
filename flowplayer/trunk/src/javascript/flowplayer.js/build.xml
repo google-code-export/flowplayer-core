@@ -1,0 +1,39 @@
+
+<!-- projet name is used as a base name for distribution files -->
+<project name="flowplayer" default="min">
+
+	<property name="flashembed-version" value="0.31"/>
+
+	<!-- required property -->
+	<property name="BUILDER_HOME" value="../../../../../builder"/>
+	
+	<!-- import javascript-tasks (min, pack, lint, gzip, dist) -->
+	<import file="${BUILDER_HOME}/javascript-tasks.xml"/>
+ 
+	
+	<!-- include flashembed into flow.player.js -->
+	<target name="concat">
+		<concat destfile="flowplayer.js">
+			<fileset dir="${basedir}" includes="flowplayer-src.js"/>
+			
+			<fileset dir="/opt/flowplayer/releases/flashembed"
+				includes="flashembed-${flashembed-version}.js"/> 
+		</concat>
+	</target>
+	
+	<target name="min" depends="concat">
+		<antcall target="javascript-tasks.xml.min"/>
+	</target>
+
+	<target name="pack" depends="concat">
+		<antcall target="javascript-tasks.xml.pack"/>
+	</target>
+	
+   <target name="lint">		
+		<java jar="${rhino}" fork="true">
+			<arg value="${BUILDER_HOME}/lib/jslint.js" />
+			<arg value="flowplayer-src.js" />
+		</java>		  		  
+	</target>	
+	
+</project>
