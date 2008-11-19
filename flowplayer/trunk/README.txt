@@ -5,6 +5,7 @@ RC4
 - setting play: null in configuration will disable the play button overlay
 - setting opacity for "play" also sets it for the buffering animation
 - Fixed firing of cuepoints too early. Cuepoint firing is now based on stream time and does not rely on timers
+- added onXMPData event listener
 
 RC3
 ---
