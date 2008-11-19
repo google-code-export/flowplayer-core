@@ -140,6 +140,10 @@ package org.flowplayer.controller {
 			
 			clip.dispatch(ClipEventType.METADATA);
 		}
+		
+		public function onXMPData(infoObject:Object):void {
+		} 
+
 
 		public function onLastSecond(infoObject:Object):void {
 			log.debug("onLastSecond", infoObject);
