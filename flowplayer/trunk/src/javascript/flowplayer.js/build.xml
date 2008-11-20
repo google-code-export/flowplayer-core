@@ -5,7 +5,7 @@
 	<property name="flashembed-version" value="0.34"/>
 
 	<!-- required property -->
-	<property name="BUILDER_HOME" value="../../../../../builder"/>
+	<property name="BUILDER_HOME" value="../../../../builder"/>
 	
 	<!-- import javascript-tasks (min, pack, lint, gzip, dist) -->
 	<import file="${BUILDER_HOME}/javascript-tasks.xml"/>
