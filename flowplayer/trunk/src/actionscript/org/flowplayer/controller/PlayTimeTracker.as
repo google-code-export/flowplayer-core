@@ -52,6 +52,7 @@ package org.flowplayer.controller {
 		}
 
 		public function set time(value:Number):void {
+			log.debug("setting time to " + value);
 			_storedTime = value;
 			_startTime = getTimer();
 		}
@@ -81,16 +82,24 @@ package org.flowplayer.controller {
 				}
 				return;
 			}
-			if (timePassed >= _clip.duration) {
+			if (completelyPlayed(_clip)) {
 				stop();
 				dispatchEvent(new TimerEvent(TimerEvent.TIMER_COMPLETE));
 			}
+			
 			if (! _onLastSecondDispatched && timePassed >= _clip.duration - 1) {
 				_clip.dispatch(ClipEventType.LAST_SECOND);
 				_onLastSecondDispatched = true;
 			}
 		}
 		
+		private function completelyPlayed(clip:Clip):Boolean {
+			if (clip.durationFromMetadata > clip.duration) {
+				return time >= clip.duration;
+			}
+			return clip.duration - time < 0.2;
+		}
+
 		private function checkAndFireCuepoints():void {
 			var streamTime:Number = _controller.time;
 			var timeRounded:Number = Math.floor(streamTime);

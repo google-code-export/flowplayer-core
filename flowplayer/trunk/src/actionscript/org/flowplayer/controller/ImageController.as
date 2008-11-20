@@ -43,6 +43,10 @@ package org.flowplayer.controller {
 			super(volumeController, playlist);
 			_loader = new ClipImageLoader(null, onLoadComplete);
 		}
+
+		override protected function get allowRandomSeek():Boolean {
+			return true;
+		}
 		
 		override protected function doLoad(event:ClipEvent, clip:Clip, pauseAfterStart:Boolean = false):void {
 //			_durationlessClipPaused = false;
@@ -65,7 +69,7 @@ package org.flowplayer.controller {
 		
 		override protected function doSeekTo(event:ClipEvent, seconds:Number):void {
 			if (event) {
-				dispatchPlayEvent(event);
+				dispatchPlayEvent(new ClipEvent(ClipEventType.SEEK, seconds));
 			}
 		}
 		

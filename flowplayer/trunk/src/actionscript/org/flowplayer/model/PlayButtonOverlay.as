@@ -28,6 +28,7 @@ package org.flowplayer.model {
 		private var _fadeSpeed:int;
 		private var _rotateSpeed:int;
 		private var _url:String;		private var _label:String;
+		private var _replayLabel:String;
 		public function PlayButtonOverlay() {
 			super(null, "play", false);
 			// these are used initially before screen is arranged
@@ -39,8 +40,9 @@ package org.flowplayer.model {
 			visible = false;
 			_rotateSpeed = 50;
 			_fadeSpeed = 500;
+			_replayLabel = "Watch again";
 		}
-		
+
 		
 		public function get url():String {
 			return _url;
@@ -73,6 +75,14 @@ package org.flowplayer.model {
 		
 		public function set label(label:String):void {
 			_label = label;
+		}
+		
+		public function get replayLabel():String {
+			return _replayLabel;
+		}
+		
+		public function set replayLabel(replayLabel:String):void {
+			_replayLabel = replayLabel;
 		}
 	}
 }

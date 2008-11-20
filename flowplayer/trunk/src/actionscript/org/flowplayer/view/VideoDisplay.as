@@ -62,11 +62,15 @@ package org.flowplayer.view {
 			if (video)
 				removeChild(video);
 			video = clip.getContent() as Video;
+			if (video == null) {
+				return;
+			}
 			video.width = this.width;
 			video.height = this.height;
 			addChild(video);
 			swapChildren(_overlay, video);
+		}				public function hasContent():Boolean {
+			return video != null;
 		}
-		
 	}
 }

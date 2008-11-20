@@ -197,11 +197,11 @@ package org.flowplayer.controller {
 		}
 				
 		protected function onClipDone(event:ClipEvent):void {
-			log.debug("onClipDone() playList has more clips? " + playList.hasNext());
 			if (playList.hasNext()) {
 				playListController.next(true, true);
 			} else {
-				playListController.rewind();
+				stop(false, true);
+				changeState(waitingState);
 			}
 		}
 		

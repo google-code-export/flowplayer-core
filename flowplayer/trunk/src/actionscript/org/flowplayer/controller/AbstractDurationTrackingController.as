@@ -86,8 +86,7 @@ package org.flowplayer.controller {
 
 		public function get time():Number {
 			if (!durationTracker) return 0;
-			var time:Number = durationTracker.time;
-			return Math.min(time, clip.duration);
+			return durationTracker.time;
 		}
 
 		protected function get bufferStart():Number {

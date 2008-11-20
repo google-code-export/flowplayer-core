@@ -173,7 +173,7 @@ package org.flowplayer.view {
 				setDisplayVisible(_prevClip, false);
 				setDisplayVisible(clipNow, true);
 			} else {
-				if (_prevClip && _prevClip == clipNow) {
+				if (_prevClip && _prevClip == clipNow && MediaDisplay(_displays[clipNow]).hasContent()) {
 					return;
 				}
 				setDisplayVisible(clipNow, true);
@@ -213,7 +213,7 @@ package org.flowplayer.view {
 
 		private function addListeners(eventSupport:ClipEventSupport):void {
 			eventSupport.onPlaylistReplace(onPlaylistChanged);
-//			eventSupport.onBufferFull(showImageDisplay);
+			eventSupport.onBufferFull(showImageDisplay);
 			eventSupport.onBegin(showDisplayIfNotBufferingOnSplash);
 			eventSupport.onStart(showDisplayIfNotBufferingOnSplash);
 		}
