@@ -1,5 +1,5 @@
 /**
- * flowplayer.js [3.0.0-rc4]. The Flowplayer API.
+ * flowplayer.js [3.0.0-rc5]. The Flowplayer API.
  * 
  * This file is part of Flowplayer, http://flowplayer.org
  *
@@ -159,7 +159,7 @@
 		extend(this, json, true);	
 		
 		// event handling 
-		each(("Start*,MetaData,Pause*,Resume*,Seek*,Stop*,Finish,LastSecond,Update,BufferFull,BufferEmpty,BufferStop").split(","),
+		each(("Begin*,Start,Pause*,Resume*,Seek*,Stop*,Finish,LastSecond,Update,BufferFull,BufferEmpty,BufferStop").split(","),
 			function() {
 			
 			var evt = "on" + this;
@@ -224,7 +224,7 @@
 				if (player.isLoaded()) {
 					player._api().fp_updateClip(json, index);	
 				}
-				var conf = player._config(); 
+				var conf = player.getConfig(); 
 				var clip = (index == -1) ? conf.clip : conf.playlist[index];
 				extend(clip, json, true);
 			},
@@ -252,7 +252,7 @@
 					}
 				}  
 	
-				if (evt == 'onMetaData' || evt == 'onUpdate') {
+				if (evt == 'onStart' || evt == 'onUpdate') {
 					
 					extend(target, arg1);					
 					
@@ -634,7 +634,7 @@ function Player(wrapper, params, conf) {
 		},
 		
 		getVersion: function() {
-			var js = "flowplayer.js 3.0.0-rc4";
+			var js = "flowplayer.js 3.0.0-rc5";
 			if (api) {
 				var ver = api.fp_getVersion();
 				ver.push(js);
@@ -650,8 +650,8 @@ function Player(wrapper, params, conf) {
 			return api;				
 		},
 		
-		_config: function() {
-			return conf;	
+		_dump: function() {
+			console.log(listeners);
 		}
 		
 	}); 
