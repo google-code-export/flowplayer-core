@@ -131,7 +131,8 @@ package org.flowplayer.view {
 				addScreenToPanel();
 
 				if (!validateLicenseKey()) {
-					return;
+					createLogoForCanvas();
+					resizeCanvasLogo();
 				}
 				
 				log.debug("creating logo");
@@ -169,8 +170,13 @@ package org.flowplayer.view {
 			} catch (e:Error) {
 				handleError(e);
 			}
+		}				private function resizeCanvasLogo():void {
+			_canvasLogo.alpha = 1;
+			_canvasLogo.width = 150;
+			_canvasLogo.scaleY = _canvasLogo.scaleX;
+			arrangeCanvasLogo();
 		}
-		
+
 		private function useExternalInterfade():Boolean {
 			log.debug("useExternalInteface: " + (_config.playerId != null));
 			return _config.playerId != null;
@@ -218,9 +224,7 @@ package org.flowplayer.view {
 			try {
 				return LicenseKey.validate(useExternalInterfade() ? null: root.loaderInfo.url, _flowplayer.version, _config.licenseKey);
 			} catch (e:Error) {
-				_panel.removeView(_screen);
-				removeChild(_panel);
-				throw e;
+				log.warn("License key not accepted, will show flowplayer logo");
 			}
 			return false;
 		}
@@ -483,6 +487,7 @@ package org.flowplayer.view {
 		}
 		
 		private function createLogoForCanvas():void {
+			if (_canvasLogo) return;
 			_canvasLogo = new CanvasLogo();
 			_canvasLogo.width = 85;
 			_canvasLogo.scaleY = _canvasLogo.scaleX;
