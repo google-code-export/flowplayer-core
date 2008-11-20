@@ -159,7 +159,7 @@
 		extend(this, json, true);	
 		
 		// event handling 
-		each(("Begin*,Start,Pause*,Resume*,Seek*,Stop*,Finish,LastSecond,Update,BufferFull,BufferEmpty,BufferStop").split(","),
+		each(("Begin*,Start,Pause*,Resume*,Seek*,Stop*,Finish*,LastSecond,Update,BufferFull,BufferEmpty,BufferStop").split(","),
 			function() {
 			
 			var evt = "on" + this;
@@ -759,7 +759,9 @@ function Player(wrapper, params, conf) {
 			activeIndex = arg0;
 			var clip = playlist[arg0];			
 			
-			ret = clip._fireEvent(evt, arg1, arg2);
+			if (clip) {
+				ret = clip._fireEvent(evt, arg1, arg2);	
+			} 
 			
 			if (!clip || ret !== false) {
 				
