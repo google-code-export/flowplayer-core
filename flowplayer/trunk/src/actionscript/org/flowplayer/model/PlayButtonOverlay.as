@@ -40,7 +40,7 @@ package org.flowplayer.model {
 			visible = false;
 			_rotateSpeed = 50;
 			_fadeSpeed = 500;
-			_replayLabel = "Watch again";
+			_replayLabel = "Play again";
 		}
 
 		
