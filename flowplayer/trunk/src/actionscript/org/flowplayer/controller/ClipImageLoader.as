@@ -38,5 +38,9 @@ package org.flowplayer.controller {
 		override protected function handleError(message:String, e:Error = null):void {
 			_clip.dispatch(ClipEventType.ERROR, message);
 		}
+		
+		override public function getContent(url:String = null):Object {
+			return super.getContent(url || _clip.completeUrl);
+		}
 	}
 }

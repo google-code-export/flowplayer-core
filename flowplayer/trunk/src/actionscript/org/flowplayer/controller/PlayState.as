@@ -87,9 +87,9 @@ package org.flowplayer.controller {
 			log.debug(" is active: " + active);
 			_active = active;
 			if (active) {
-				playList.onFinish(onClipDone);
+				playList.onBeforeFinish(onClipDone);
 			} else {
-				playList.unbind(onClipDone);
+				playList.unbind(onClipDone, ClipEventType.FINISH, true);
 			}
 			setEventListeners(playList, active);			
 		}
@@ -197,11 +197,24 @@ package org.flowplayer.controller {
 		}
 				
 		protected function onClipDone(event:ClipEvent):void {
+			log.info(this + " onClipDone");
+			var defaultAction:Boolean = ! event.isDefaultPrevented();
+			Clip(event.target).dispatchEvent(event);
 			if (playList.hasNext()) {
-				playListController.next(true, true);
+				if (defaultAction) {
+					log.debug("onClipDone, moving to next clip");
+					playListController.next(true, true);
+				} else {
+					stop(false, true);
+					changeState(waitingState);
+				}
 			} else {
-				stop(false, true);
-				changeState(waitingState);
+				if (defaultAction) {
+					stop(false, true);
+					changeState(waitingState);
+				} else {
+					playListController.rewind();
+				}
 			}
 		}
 		

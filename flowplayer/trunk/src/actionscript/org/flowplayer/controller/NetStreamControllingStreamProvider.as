@@ -58,6 +58,7 @@ package org.flowplayer.controller {
 		private var _silentSeek:Boolean;
 		private var _paused:Boolean;
 		private var _stopping:Boolean;
+		private var _started:Boolean;
 
 		/* ---- implementation of StreamProvider: ---- */
 
@@ -71,7 +72,9 @@ package org.flowplayer.controller {
 			_pauseAfterStart = pauseAfterStart;
 			clip.onStart(onStart);
 			if (_startedClip == clip && _connection) {
-				log.debug("playing previous clip again, reusing existing connection");
+				log.debug("playing previous clip again, reusing existing connection and resuming");
+				_started = false;
+				netStream.resume();
 				start(null, _startedClip, _pauseAfterStart);
 			} else {
 				log.debug("will create a new connection");
@@ -150,6 +153,10 @@ package org.flowplayer.controller {
 		public function get time():Number {
 			if (! _netStream) return 0;
 			if (! currentClipStarted()) return 0;
+			if (! _started) {
+				log.debug("get time, not started yet, returning zero");
+				return 0;
+			}
 			return getCurrentPlayheadTime(netStream);
 		}
 		
@@ -446,6 +453,13 @@ package org.flowplayer.controller {
 		protected function get netConnection():NetConnection {
 			return _connection;
 		}
+		
+		/**
+		 * Have we already received a NetStream.Play.Start from the NetStream
+		 */
+		protected function get started():Boolean {
+			return _started;
+		}
 
 		/* ---- Private methods ----- */
 		/* -------------------------- */
@@ -479,6 +493,7 @@ package org.flowplayer.controller {
 				dispatchPlayEvent(ClipEventType.CONNECT);
 			}
 			else if (event.info.code == "NetStream.Play.Start") {
+				_started = true;
 				if (! _paused && canDispatchBegin()) {
 					log.debug("dispatching onBegin");
 					clip.dispatchEvent(new ClipEvent(ClipEventType.BEGIN));
@@ -492,8 +507,11 @@ package org.flowplayer.controller {
 					startSeekTargetWait();
 				}
 				silentSeek = false;
-			}
-			else if (event.info.code == "NetStream.Play.StreamNotFound" || 
+
+			} else if (event.info.code == "NetStream.Seek.InvalidTime") {
+				dispatchPlayEvent(ClipEventType.SEEK, time);
+
+			} else if (event.info.code == "NetStream.Play.StreamNotFound" || 
 				event.info.code == "NetConnection.Connect.Rejected" || 
 				event.info.code == "NetConnection.Connect.Failed") {
 				

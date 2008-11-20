@@ -74,13 +74,13 @@ package org.flowplayer.controller {
 		}
 		
 		private function onLoadComplete(event:Event):void {
-			log.info("image loaded");
+			log.info("image loaded " + clip + ", content " + _loader.getContent());
 			clip.setContent(ResourceLoader(event.target).getContent() as DisplayObject);
 			clip.originalHeight = _loader.getContent().height;
 			clip.originalWidth = _loader.getContent().width;
 			clip.dispatch(ClipEventType.BUFFER_FULL);
 			if (clip.duration == 0) {
-				clip.dispatch(ClipEventType.FINISH);
+				clip.dispatchBeforeEvent(new ClipEvent(ClipEventType.FINISH));
 			}
 		}
 	}

@@ -38,10 +38,6 @@ package org.flowplayer.model {
 			setListener(ClipEventType.CONNECT, listener, clipFilter, false, addToFront);
 		}
 
-		public function onBeforeStart(listener:Function, clipFilter:Function = null, addToFront:Boolean = false):void {
-			setListener(ClipEventType.START, listener, clipFilter, true, addToFront);
-		}
-
 		/**
 		 * Adds a listener for the start event.
 		 * 
@@ -51,6 +47,10 @@ package org.flowplayer.model {
 		 */
 		public function onStart(listener:Function, clipFilter:Function = null, addToFront:Boolean = false):void {
 			setListener(ClipEventType.START, listener, clipFilter, false, addToFront);
+		}
+
+		public function onBeforeBegin(listener:Function, clipFilter:Function = null, addToFront:Boolean = false):void {
+			setListener(ClipEventType.BEGIN, listener, clipFilter, true, addToFront);
 		}
 
 		public function onBegin(listener:Function, clipFilter:Function = null, addToFront:Boolean = false):void {
@@ -83,6 +83,10 @@ package org.flowplayer.model {
 
 		public function onFinish(listener:Function, clipFilter:Function = null, addToFront:Boolean = false):void {
 			setListener(ClipEventType.FINISH, listener, clipFilter, false, addToFront);
+		}
+		
+		public function onBeforeFinish(listener:Function, clipFilter:Function = null, addToFront:Boolean = false):void {
+			setListener(ClipEventType.FINISH, listener, clipFilter, true, addToFront);
 		}
 
 		public function onCuepoint(listener:Function, clipFilter:Function = null, addToFront:Boolean = false):void {

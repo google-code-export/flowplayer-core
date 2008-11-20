@@ -46,11 +46,12 @@ package org.flowplayer.model {
 		private static var _allValues:Dictionary;
 		private static var _cancellable:Dictionary = new Dictionary();
 		{
-			_cancellable[START.name] = START;
+			_cancellable[BEGIN.name] = BEGIN;
 			_cancellable[SEEK.name] = SEEK;
 			_cancellable[PAUSE.name] = PAUSE;
 			_cancellable[RESUME.name] = RESUME;
 			_cancellable[STOP.name] = STOP;
+			_cancellable[FINISH.name] = FINISH;
 		}
 	
 		override public function get isCancellable():Boolean {
