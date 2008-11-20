@@ -47,7 +47,7 @@ package org.flowplayer.controller {
 		}
 
 		public final function onEvent(event:ClipEventType, params:Array = null):void {
-			if (event == ClipEventType.START) {
+			if (event == ClipEventType.BEGIN) {
 				load(new ClipEvent(event), clip, params ? params[0] : false);
 			} else {
 				if (event == ClipEventType.PAUSE) {
@@ -112,7 +112,7 @@ package org.flowplayer.controller {
 			onDurationReached();
 			if (clip.duration > 0) {
 				log.debug("dispatching FINISH from durationTracking");
-				clip.dispatch(ClipEventType.FINISH);
+				clip.dispatchBeforeEvent(new ClipEvent(ClipEventType.FINISH));
 			}
 		}
 		

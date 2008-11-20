@@ -65,6 +65,7 @@ package org.flowplayer.controller {
 		 */
 		public function load(url:String = null):void {
 			_urls = new Array();
+			_loaders = new Array();
 			if (url) {
 				addBinaryResourceUrl(url);
 			}
@@ -100,7 +101,7 @@ package org.flowplayer.controller {
 			return loader;
 		}
 		
-		public final function getContent(url:String = null):Object {
+		public function getContent(url:String = null):Object {
 			try {
 				var loader:Object = _loaders[url ? url : _urls[0]];
 				return loader is URLLoader ? URLLoader(loader).data : Loader(loader).content;

@@ -18,6 +18,7 @@
  */
 
 package org.flowplayer.controller {
+	import org.flowplayer.model.ClipType;	
 	import org.flowplayer.view.PlayerEventDispatcher;	
 	
 	import flash.utils.Dictionary;
@@ -75,12 +76,22 @@ package org.flowplayer.controller {
 		flow_internal function rewind():Clip {
 			log.info("rewind()");
 			setPlayState(PlayState.waitingState);
-			_playList.toIndex(0);
+			_playList.toIndex(firstNonSplashClip());
 			_state.play();
 			return _playList.current;
-		}
-
-		flow_internal function play(clip:Clip = null, clipIndex:Number = -1):Clip {
+		}				private function firstNonSplashClip():Number {
+			var clips:Array = _playList.clips;
+			for (var i:Number = 0; i < clips.length; i++) {
+				var clip:Clip = clips[i];
+				if (clip.type == ClipType.IMAGE && clip.duration > 0) {
+					return i;
+				}
+				if (clip.type == ClipType.VIDEO) {
+					return i;
+				}
+			}
+			return 0;		}
+		flow_internal function play(clip:Clip = null, clipIndex:Number = -1):Clip {
 			log.debug("play() " + clip + ", " + clipIndex);
 			if (clip || clipIndex >= 0) {
 				return playClip(clip, clipIndex);

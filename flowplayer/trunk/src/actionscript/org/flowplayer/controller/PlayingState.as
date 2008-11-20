@@ -42,7 +42,7 @@ package org.flowplayer.controller {
 			stop();
 			playList.current.played = true;
 			bufferingState.nextStateAfterBufferFull = playingState;
-			if (onEvent(ClipEventType.START, getMediaController(), [false])) {
+			if (onEvent(ClipEventType.BEGIN, getMediaController(), [false])) {
 				changeState(bufferingState);
 			}
 		}

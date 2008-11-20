@@ -58,12 +58,12 @@ package org.flowplayer.controller {
 		}
 
 		public function get time():Number {
+			if (! _timer) return 0;
+			if (! _timer.running) return _storedTime;
 			if (_clip.type == ClipType.VIDEO) {
 				return _controller.time;
 			}
 			
-			if (! _timer) return 0;
-			if (! _timer.running) return _storedTime;
 			var timeNow:Number = getTimer();
 			var _timePassed:Number = _storedTime + (timeNow - _startTime)/1000;
 			return _timePassed;
@@ -84,6 +84,7 @@ package org.flowplayer.controller {
 			}
 			if (completelyPlayed(_clip)) {
 				stop();
+				log.info("completely played, dispatching complete");
 				dispatchEvent(new TimerEvent(TimerEvent.TIMER_COMPLETE));
 			}
 			
