@@ -46,12 +46,12 @@ package org.flowplayer.controller {
 			super(volumeController, playlist);
 			_controllerFactory = controllerFactory;
 			_config = config;
-			playlist.onStart(onStart, function(clip:Clip):Boolean { return clip.type == ClipType.VIDEO; }, true);
+			playlist.onBegin(onBegin, function(clip:Clip):Boolean { return clip.type == ClipType.VIDEO; }, true);
 		}
 		
-		private function onStart(event:ClipEvent):void {
+		private function onBegin(event:ClipEvent):void {
 			var clip:Clip = event.target as Clip;
-			log.debug("onStart, initializing content for clip " + clip);
+			log.debug("onBegin, initializing content for clip " + clip);
 			var video:DisplayObject = clip.getContent();
 			if (video) {
 				getProvider(clip).attachStream(video);
@@ -120,8 +120,8 @@ package org.flowplayer.controller {
 		public function onMetaData(infoObject:Object):void {
 			log.info("onMetaData:");
 			if (getProvider(clip).stopping) return;
-			if (clip.metaData) { 
-				clip.dispatch(ClipEventType.METADATA);
+			if (clip.metaData) {
+				clip.dispatch(ClipEventType.START);
 				return;
 			}
 
@@ -138,7 +138,7 @@ package org.flowplayer.controller {
 				clip.addCuepoints(_config.createCuepoints(metaData.cuePoints, "embedded"));
 			}
 			
-			clip.dispatch(ClipEventType.METADATA);
+			clip.dispatch(ClipEventType.START);
 		}
 		
 		public function onXMPData(infoObject:Object):void {

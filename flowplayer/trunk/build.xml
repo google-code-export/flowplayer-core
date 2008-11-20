@@ -4,9 +4,9 @@
 	<property name="version-1" value="3" />
 	<property name="version-2" value="0" />
 	<property name="version-3" value="0" />	
-	<property name="version-status" value="rc3" />
-	<property name="controls-version-info" value="3.0.0-beta6" />
-	<property name="flowplayer-js-version-info" value="3.0.0-rc3" />
+	<property name="version-status" value="rc4" />
+	<property name="controls-version-info" value="3.0.0-beta7" />
+	<property name="flowplayer-js-version-info" value="3.0.0-rc4" />
 	<property name ="source-dist-root-folder" value="flowplayer" />
 	
 	<property name="version-status-quoted" value="&quot;${version-status}&quot;" />

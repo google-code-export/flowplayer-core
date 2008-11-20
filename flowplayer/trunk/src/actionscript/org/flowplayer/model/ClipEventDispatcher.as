@@ -52,9 +52,9 @@ package org.flowplayer.model {
 		public function onStart(listener:Function, clipFilter:Function = null, addToFront:Boolean = false):void {
 			setListener(ClipEventType.START, listener, clipFilter, false, addToFront);
 		}
-		
-		public function onMetaData(listener:Function, clipFilter:Function = null, addToFront:Boolean = false):void {
-			setListener(ClipEventType.METADATA, listener, clipFilter, false, addToFront);
+
+		public function onBegin(listener:Function, clipFilter:Function = null, addToFront:Boolean = false):void {
+			setListener(ClipEventType.BEGIN, listener, clipFilter, false, addToFront);
 		}
 
 		public function onBeforePause(listener:Function, clipFilter:Function = null, addToFront:Boolean = false):void {

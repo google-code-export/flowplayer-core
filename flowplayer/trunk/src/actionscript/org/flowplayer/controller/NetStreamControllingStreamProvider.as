@@ -69,7 +69,7 @@ package org.flowplayer.controller {
 			_stopping = false;
 			Assert.notNull(clip, "load(clip): clip cannot be null");
 			_pauseAfterStart = pauseAfterStart;
-			clip.onMetaData(onMetaData);
+			clip.onStart(onStart);
 			if (_startedClip == clip && _connection) {
 				log.debug("playing previous clip again, reusing existing connection");
 				start(null, _startedClip, _pauseAfterStart);
@@ -360,9 +360,19 @@ package org.flowplayer.controller {
 		 * if this method returns <code>true</code>.
 		 * 
 		 * @return <code>true</code> if the start event can be dispatched
-		 * @see ClipEventType#START
+		 * @see ClipEventType#BEGIN
 		 */
-		protected function canDispatchStart():Boolean {
+		protected function canDispatchBegin():Boolean {
+			return true;
+		}
+		
+		/**
+		 * Can we disppatch the onStreamNotFound ERROR event now? 
+		 * @return <code>true</code> if the start event can be dispatched
+		 * 
+		 * @see ClipEventType#ERROR
+		 */
+		protected function canDispatchStreamNotFound():Boolean {
 			return true;
 		}
 		
@@ -469,9 +479,9 @@ package org.flowplayer.controller {
 				dispatchPlayEvent(ClipEventType.CONNECT);
 			}
 			else if (event.info.code == "NetStream.Play.Start") {
-				if (! _paused && canDispatchStart()) {
-					log.debug("dispatching start");
-					clip.dispatchEvent(new ClipEvent(ClipEventType.START));
+				if (! _paused && canDispatchBegin()) {
+					log.debug("dispatching onBegin");
+					clip.dispatchEvent(new ClipEvent(ClipEventType.BEGIN));
 				}
 			}
 			else if (event.info.code == "NetStream.Play.Stop") {
@@ -486,15 +496,16 @@ package org.flowplayer.controller {
 			else if (event.info.code == "NetStream.Play.StreamNotFound" || 
 				event.info.code == "NetConnection.Connect.Rejected" || 
 				event.info.code == "NetConnection.Connect.Failed") {
-					
-				//dispatchPlayEvent(ClipEventType.ERROR, "streamNotFound");
+				
+				if (canDispatchStreamNotFound()) {
+					dispatchPlayEvent(ClipEventType.ERROR, "streamNotFound");
+				}
 			}
 			
 			onNetStatus(event);
-			
 		}
-		
-		private function onMetaData(event:ClipEvent):void {
+
+		private function onStart(event:ClipEvent):void {
 			// some files require that we seek to the first frame only after receiving metadata
 			// otherwise we will never receive the metadata
 			if (_pauseAfterStart) {

@@ -72,7 +72,7 @@ package org.flowplayer.view {
 		}
 		
 		public override function toString():String {
-			return "[Tween] of property '" + _tweenProperty + "', start " + _startValue + ", target " + _targetValue;
+			return "[Animation] of property '" + _tweenProperty + "', start " + _startValue + ", target " + _targetValue;
 		}				protected function get target():DisplayObject {
 			return _target;		}
 		

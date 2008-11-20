@@ -6,6 +6,10 @@ RC4
 - setting opacity for "play" also sets it for the buffering animation
 - Fixed firing of cuepoints too early. Cuepoint firing is now based on stream time and does not rely on timers
 - added onXMPData event listener
+- Should not stop playback too early before the clip is really completed
+- The START event is now delayed so that the metadata is available when the event is fired, METADATA event was removed,
+  new event BEGIN that is dispatched when the playback has been successfully started. Metadata is not normally
+  available when BEGIN is fired. 
 
 RC3
 ---

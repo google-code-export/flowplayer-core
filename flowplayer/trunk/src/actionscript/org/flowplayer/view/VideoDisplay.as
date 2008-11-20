@@ -18,25 +18,17 @@
  */
 
 package org.flowplayer.view {
-	import flash.display.Sprite;
-	import flash.media.Video;
-	
-	import org.flowplayer.model.Clip;
-	import org.flowplayer.model.ClipEvent;
-	import org.flowplayer.model.ClipEventSupport;
-	import org.flowplayer.model.ClipType;
-	import org.flowplayer.model.Playlist;	
-
-	/**
+	import org.flowplayer.model.Clip;	import org.flowplayer.view.MediaDisplay;		import flash.display.Sprite;	import flash.media.Video;	
+	/**
 	 * @author api
 	 */
-	internal class VideoDisplay extends AbstractSprite {
+	internal class VideoDisplay extends AbstractSprite implements MediaDisplay {
 
 		private var video:Video;
 		private var _overlay:Sprite;
+		private var _clip:Clip;
 
 		public function VideoDisplay(clip:Clip) {
-			addOrRemoveListeners(clip, clip.getPlaylist());
 			createOverlay();
 		}
 		
@@ -54,23 +46,22 @@ package org.flowplayer.view {
 			_overlay.height = height;
 		}
 
-		private function addOrRemoveListeners(clip:Clip, eventSupport:ClipEventSupport, add:Boolean = true):void {
-			if (add) {
-				eventSupport.onPlaylistReplace(onPlaylistCahnged);
-				clip.onStart(onLoaded);
+		override public function set alpha(value:Number):void {
+			super.alpha = value;
+			if (video) {
+				video.alpha = value;
+				log.debug("display of + " + _clip + " new alpha " + video.alpha);
 			} else {
-				eventSupport.unbind(onLoaded);
+				log.debug("set alpha() no video available");
 			}
 		}
 
-		private function onPlaylistCahnged(event:ClipEvent):void {
-			addOrRemoveListeners(null, ClipEventSupport(event.info), false);
-		}
-
-		private function onLoaded(event:ClipEvent):void {
+		public function init(clip:Clip):void {
+			_clip = clip;
+			log.info("init " + _clip);
 			if (video)
 				removeChild(video);
-			video = Clip(event.target).getContent() as Video;
+			video = clip.getContent() as Video;
 			video.width = this.width;
 			video.height = this.height;
 			addChild(video);

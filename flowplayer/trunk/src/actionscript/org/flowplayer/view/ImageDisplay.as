@@ -18,27 +18,26 @@
  */
 
 package org.flowplayer.view {
-	import flash.display.DisplayObject;
-	
 	import org.flowplayer.model.Clip;
-	import org.flowplayer.model.ClipEvent;	
+	import org.flowplayer.view.MediaDisplay;
+	
+	import flash.display.DisplayObject;	
 
 	/**
 	 * @author api
 	 */
-	internal class ImageDisplay extends AbstractSprite {
+	internal class ImageDisplay extends AbstractSprite implements MediaDisplay {
 
 		private var image:DisplayObject;
 		
 		public function ImageDisplay(clip:Clip) {
-			clip.onBufferFull(onImageLoaded);
 		}
 
-		private function onImageLoaded(event:ClipEvent):void {
+		public function init(clip:Clip):void {
 			log.debug("received image to display");
 			if (image)
 				removeChild(image);
-			image = Clip(event.target).getContent();
+			image = clip.getContent();
 			addChild(image);
 		}
 	}

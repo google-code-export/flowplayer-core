@@ -28,6 +28,7 @@ package org.flowplayer.view {
 	import org.flowplayer.model.Playlist;
 	import org.flowplayer.util.Arrange;
 	import org.flowplayer.util.Log;
+	import org.flowplayer.view.MediaDisplay;
 	
 	import flash.display.DisplayObject;
 	import flash.geom.Rectangle;
@@ -61,7 +62,9 @@ package org.flowplayer.view {
 			var clips:Array = playList.clips;
 			for (var i:Number = 0; i < clips.length; i++) {
 				var clip:Clip = clips[i];
-				createDisplay(clip);
+				if (! clip.isNullClip) {
+					createDisplay(clip);
+				}
 			}
 		}
 
@@ -152,7 +155,7 @@ package org.flowplayer.view {
 			var display:DisplayObject = _displayFactory.createMediaDisplay(clip);
 			display.width = this.width;
 			display.height = this.height;
-			display.visible = false;
+//			display.visible = false;
 			addChild(display);
 			_displays[clip] = display;
 		}
@@ -163,18 +166,17 @@ package org.flowplayer.view {
 		private function showDisplay(event:ClipEvent):void {
 			log.info("showDisplay()");
 			var clipNow:Clip = event.target as Clip;
-//			if (clipNow.originalWidth <= 0) {
-//				log.debug("no dimensions metadata yet, will not display");
-//				return; 
-//			}
+			if (clipNow.isNullClip) return;
+
 			if (_prevClip && _prevClip != clipNow) {
 				log.debug("hiding previous display");
 				setDisplayVisible(_prevClip, false);
 				setDisplayVisible(clipNow, true);
 			} else {
-				if (! _prevClip) {
-					setDisplayVisible(clipNow, true);
+				if (_prevClip && _prevClip == clipNow) {
+					return;
 				}
+				setDisplayVisible(clipNow, true);
 			}
 			_prevClip = clipNow;
 			log.info("showDisplay done");
@@ -183,19 +185,19 @@ package org.flowplayer.view {
 		private function setDisplayVisible(clipNow:Clip, visible:Boolean):void {
 			var disp:DisplayObject = _displays[clipNow];
 			log.debug("display " + disp + ", will be made " + (visible ? "visible" : "hidden"));
-			disp.visible = true;
 			if (visible) {
+				MediaDisplay(disp).init(clipNow);
+				disp.visible = true;
 				disp.alpha = 0;
+				log.debug("starting fadeIn");
 				_animatioEngine.animateProperty(disp, "alpha", 1, clipNow.fadeInSpeed);
-//				new FadeInTween(disp, clipNow.fadeInSpeed).start();
 				Arrange.center(disp, width, height);
 			} else if (disp.visible) {
-				_animatioEngine.animateProperty(disp, "alpha", 0, clipNow.fadeOutSpeed);
-//				new FadeOutTween(disp, clipNow.fadeOutSpeed).start();
+				_animatioEngine.animateProperty(disp, "alpha", 0, clipNow.fadeOutSpeed, function():void { disp.visible = false; });
 				return;
 			}
 		}
-		
+
 		private function onPlaylistChanged(event:ClipEvent):void {
 			log.info("onPlaylistChanged()");
 			_prevClip = null;
@@ -211,15 +213,15 @@ package org.flowplayer.view {
 
 		private function addListeners(eventSupport:ClipEventSupport):void {
 			eventSupport.onPlaylistReplace(onPlaylistChanged);
-			
-			eventSupport.onBufferFull(showImageDisplay);
-
+//			eventSupport.onBufferFull(showImageDisplay);
+			eventSupport.onBegin(showDisplayIfNotBufferingOnSplash);
 			eventSupport.onStart(showDisplayIfNotBufferingOnSplash);
-			eventSupport.onMetaData(showDisplayIfNotBufferingOnSplash);
 		}
 
 		private function showDisplayIfNotBufferingOnSplash(event:ClipEvent):void {
 			var clip:Clip = event.target as Clip;
+			if (clip.isNullClip) return;
+			
 			log.debug("previous clip " + _prevClip + " clip " + clip);
 			if (! clip.autoPlay && clip.autoBuffering && _prevClip && _prevClip.type == ClipType.IMAGE) {
 				log.debug("autoBuffering next clip on a splash image, will not show next display");

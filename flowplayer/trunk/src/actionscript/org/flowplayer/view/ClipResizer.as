@@ -90,7 +90,6 @@ package org.flowplayer.view {
 		private function addListeners(eventSupport:ClipEventSupport):void {
 			eventSupport.onStart(onResize);
 			eventSupport.onBufferFull(onResize);
-			eventSupport.onMetaData(onResize);
 			eventSupport.onPlaylistReplace(onPlaylistReplace);
 		} 
 		

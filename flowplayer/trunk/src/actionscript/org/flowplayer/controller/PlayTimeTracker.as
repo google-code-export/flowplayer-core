@@ -1,4 +1,5 @@
 package org.flowplayer.controller {
+	import org.flowplayer.model.ClipType;	
 	import org.flowplayer.model.ClipEventType;	
 	import org.flowplayer.model.Cuepoint;	
 	import org.flowplayer.util.Log;	
@@ -56,6 +57,10 @@ package org.flowplayer.controller {
 		}
 
 		public function get time():Number {
+			if (_clip.type == ClipType.VIDEO) {
+				return _controller.time;
+			}
+			
 			if (! _timer) return 0;
 			if (! _timer.running) return _storedTime;
 			var timeNow:Number = getTimer();
