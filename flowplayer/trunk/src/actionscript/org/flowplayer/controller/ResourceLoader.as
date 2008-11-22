@@ -104,8 +104,7 @@ package org.flowplayer.controller {
 		public function getContent(url:String = null):Object {
 			try {
 				var loader:Object = _loaders[url ? url : _urls[0]];
-				return loader is URLLoader ? URLLoader(loader).data : Loader(loader).content;
-//				return _loaders[url ? url : _urls[0]].content;
+				return loader is URLLoader ? URLLoader(loader).data : loader;
 			} catch (e:SecurityError) {
 				handleError("cannot access file (try loosening Flash security settings): " + e.message);
 			}

@@ -17,6 +17,8 @@
  *    along with Flowplayer.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.flowplayer.view {
+	import flash.system.Security;	
+	
 	import org.flowplayer.config.Config;
 	import org.flowplayer.config.ConfigLoader;
 	import org.flowplayer.config.ExternalInterfaceHelper;
@@ -57,7 +59,7 @@ package org.flowplayer.view {
 	import flash.ui.Keyboard;
 	import flash.utils.Dictionary;			
 	use namespace flow_internal;
-	public class Launcher extends StyleableSprite implements ErrorHandler {
+	import flash.utils.flash_proxy;			public class Launcher extends StyleableSprite implements ErrorHandler {
 		private var _panel:Panel;
 		private var _screen:Screen;
 		private var _config:Config;
@@ -92,6 +94,8 @@ package org.flowplayer.view {
 
 				log = new Log(this);
 				EventDispatcher.playerId = _config.playerId;
+				
+				log.debug("security sandbox type: " + Security.sandboxType);
 				
 				log.info(VersionInfo.versionInfo());
 				log.debug("creating Panel");
