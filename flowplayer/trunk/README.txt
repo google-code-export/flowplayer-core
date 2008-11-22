@@ -1,5 +1,11 @@
 Version history:
 
+3.0
+---
+- Removed security errors that happened when loading images from foreign domains (domains other than the domain of the core SWF).
+  Using a backgroundImage on canvas, in the content plugin, and for the controls is also possible to be loaded
+  from a foreign domain - BUT backgroundRepeat cannot be used for foreign images.
+
 RC4
 ---
 - Now shows a "Play again" button at the end of the video/playlist
