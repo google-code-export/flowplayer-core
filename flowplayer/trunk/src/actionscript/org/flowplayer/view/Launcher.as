@@ -244,6 +244,7 @@ package org.flowplayer.view {
 			error.multiline = true;
 			error.wordWrap = true;
 			error.text = message;
+			error.selectable = true;
 			error.width = stage.stageWidth - 40;
 			Arrange.center(error, stage.stageWidth, stage.stageHeight);
 			addChild(error);

@@ -2,6 +2,8 @@ Version history:
 
 RC4
 ---
+- Now shows a "Play again" button at the end of the video/playlist
+- Commercial version shows a Flowplayer logo if invalidKey was supplied, but the otherwise the player works
 - setting play: null in configuration will disable the play button overlay
 - setting opacity for "play" also sets it for the buffering animation
 - Fixed firing of cuepoints too early. Cuepoint firing is now based on stream time and does not rely on timers
