@@ -17,8 +17,6 @@
  *    along with Flowplayer.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.flowplayer.view {
-	import flash.system.Security;	
-	
 	import org.flowplayer.config.Config;
 	import org.flowplayer.config.ConfigLoader;
 	import org.flowplayer.config.ExternalInterfaceHelper;
@@ -41,6 +39,7 @@ package org.flowplayer.view {
 	import org.flowplayer.util.Arrange;
 	import org.flowplayer.util.Log;
 	import org.flowplayer.util.TextUtil;
+	import org.flowplayer.util.URLUtil;
 	import org.flowplayer.view.Panel;
 	import org.flowplayer.view.PlayButtonOverlayView;
 	import org.flowplayer.view.Screen;
@@ -54,12 +53,15 @@ package org.flowplayer.view {
 	import flash.events.MouseEvent;
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
+	import flash.system.Security;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.ui.Keyboard;
-	import flash.utils.Dictionary;			
+	import flash.utils.Dictionary;		
+	
 	use namespace flow_internal;
-	import flash.utils.flash_proxy;			public class Launcher extends StyleableSprite implements ErrorHandler {
+
+	public class Launcher extends StyleableSprite implements ErrorHandler {
 		private var _panel:Panel;
 		private var _screen:Screen;
 		private var _config:Config;
@@ -80,6 +82,8 @@ package org.flowplayer.view {
 
 		private function initPhase1(event:Event):void {
 			try {
+				Security.allowDomain(URLUtil.pageUrl);
+				
 				createFlashVarsConfig();
 				Log.configure(_config.getLogConfiguration());
 

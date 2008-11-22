@@ -18,7 +18,7 @@
  */
 
 package org.flowplayer.view {
-	import org.flowplayer.util.URLUtil;	
+	import flash.system.Security;			import org.flowplayer.util.URLUtil;	
 	import org.flowplayer.model.FontProvider;	
 	import org.flowplayer.controller.StreamProvider;		import org.flowplayer.model.DisplayPluginModel;	
 	
@@ -133,6 +133,8 @@ package org.flowplayer.view {
 		private function loaded(event:Event):void {
 			var info:LoaderInfo = event.target as LoaderInfo;
 			log.debug("loaded class name " + getQualifiedClassName(info.content));
+			
+//			Security.allowDomain(info.url);
 			
 			var instanceUsed:Boolean = false;
 			_pluginModels.forEach(function(model:Loadable, index:int, array:Array):void {
