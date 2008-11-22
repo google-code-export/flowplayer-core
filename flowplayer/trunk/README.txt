@@ -5,6 +5,7 @@ Version history:
 - Removed security errors that happened when loading images from foreign domains (domains other than the domain of the core SWF).
   Using a backgroundImage on canvas, in the content plugin, and for the controls is also possible to be loaded
   from a foreign domain - BUT backgroundRepeat cannot be used for foreign images.
+- Now allows the embedding HTML to script the player even if the player is loaded from another domain.
 
 RC4
 ---
