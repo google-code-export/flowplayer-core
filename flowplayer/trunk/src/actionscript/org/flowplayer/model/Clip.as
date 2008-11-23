@@ -56,7 +56,8 @@ package org.flowplayer.model {
 		private var _provider:String;
 		private var _customProperties:Object;
 		private var _fadeInSpeed:int;
-		private var _fadeOutSpeed:int;		
+		private var _fadeOutSpeed:int;
+		private var _live:Boolean;		
 
 		public function Clip() {
 			_cuepoints = new Array();
@@ -223,6 +224,7 @@ package org.flowplayer.model {
 		
 		public function set duration(value:Number):void {
 			this._duration = value;
+			log.info("clip duration set to " + value);
 			if (duration >= 0) {
 				setNegativeCuepointTimes(value);
 			}
@@ -488,6 +490,15 @@ package org.flowplayer.model {
 		
 		public function set fadeOutSpeed(fadeOutSpeed:int):void {
 			_fadeOutSpeed = fadeOutSpeed;
+		}
+		
+		[Value]		
+		public function get live():Boolean {
+			return _live;
+		}
+		
+		public function set live(live:Boolean):void {
+			_live = live;
 		}
 	}
 }
