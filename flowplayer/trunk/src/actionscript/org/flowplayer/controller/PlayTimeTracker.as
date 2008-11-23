@@ -72,6 +72,8 @@ package org.flowplayer.controller {
 		private function checkProgress(event:TimerEvent):void {
 			if (!_timer) return;
 			checkAndFireCuepoints();
+			
+			if (_clip.live) return;
 			var timePassed:Number = time;
 			if (! _clip.duration) {
 				// The clip does not have a duration, wait a few seconds before stopping the _timer.

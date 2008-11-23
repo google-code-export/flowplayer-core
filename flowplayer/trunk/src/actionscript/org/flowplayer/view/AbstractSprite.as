@@ -29,13 +29,18 @@ package org.flowplayer.view {
 	public class AbstractSprite extends Sprite {
 
 		protected var log:Log = new Log(this);
-		private var _width:Number = 0;
-		private var _height:Number = 0;
+		
+		/**
+		 * The managed width value.
+		 */
+		protected var _width:Number = 0;
+		
+		/**
+		 * The managed height value.
+		 */
+		protected var _height:Number = 0;
 		
 		public function setSize(width:Number, height:Number):void {
-//			if (_width == width && _height == height) {
-//				return;
-//			}
 			_width = width;
 			_height = height;
 			onResize();

@@ -6,6 +6,7 @@ Version history:
   Using a backgroundImage on canvas, in the content plugin, and for the controls is also possible to be loaded
   from a foreign domain - BUT backgroundRepeat cannot be used for foreign images.
 - Now allows the embedding HTML to script the player even if the player is loaded from another domain.
+- Added a 'live' property to Clips, used for live streams.
 
 RC4
 ---
