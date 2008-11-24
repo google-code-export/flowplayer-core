@@ -61,7 +61,7 @@ package org.flowplayer.controller {
 		private var _stateCode:State;
 		private var _active:Boolean;
 
-		internal static function initStates(playList:Playlist, playListController:PlayListController, providers:Dictionary, playerEventDispatcher:PlayerEventDispatcher, config:Config):void {
+		internal static function initStates(playList:Playlist, playListController:PlayListController, providers:Dictionary, playerEventDispatcher:PlayerEventDispatcher, config:Config, loader:ResourceLoader):void {
 			waitingState = new WaitingState(State.WAITING, playList, playListController, providers);
 			endedState = new EndedState(State.ENDED, playList, playListController, providers);
 			playingState = new PlayingState(State.PLAYING, playList, playListController, providers);
@@ -69,7 +69,7 @@ package org.flowplayer.controller {
 			bufferingState = new BufferingState(State.BUFFERING, playList, playListController,  providers);
 			playListController.setPlayState(waitingState);
 			if (!_controllerFactory)
-				_controllerFactory = new MediaControllerFactory(providers, playerEventDispatcher, config);
+				_controllerFactory = new MediaControllerFactory(providers, playerEventDispatcher, config, loader);
 		}
 		
 		internal static function addProvider(provider:ProviderModel):void {

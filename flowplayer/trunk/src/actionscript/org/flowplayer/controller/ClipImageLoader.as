@@ -18,29 +18,48 @@
  */
 
 package org.flowplayer.controller {
-	import org.flowplayer.model.Clip;	import org.flowplayer.model.ClipEventType;	import org.flowplayer.view.ErrorHandler;	
-	/**
+	import org.flowplayer.model.Clip;	
+	/**
 	 * @author api
 	 */
-	internal class ClipImageLoader extends ResourceLoader {
+	internal class ClipImageLoader implements ResourceLoader {
 
 		private var _clip:Clip;
+		private var _loader:ResourceLoader;
 
-		public function ClipImageLoader(errorHandler:ErrorHandler = null, loadListener:Function = null) {
-			super(errorHandler, loadListener);
-		}
-		
-		public function loadClip(clip:Clip):void {
+		public function ClipImageLoader(loader:ResourceLoader, clip:Clip) {
+			_loader = loader;
 			_clip = clip;
-			super.load(clip.completeUrl);
-		}
-
-		override protected function handleError(message:String, e:Error = null):void {
-			_clip.dispatch(ClipEventType.ERROR, message);
 		}
 		
-		override public function getContent(url:String = null):Object {
-			return super.getContent(url || _clip.completeUrl);
+		public function addTextResourceUrl(url:String):void {
+			_loader.addTextResourceUrl(url);
+		}
+		
+		public function addBinaryResourceUrl(url:String):void {
+			_loader.addBinaryResourceUrl(url);
+		}
+		
+		public function load(url:String = null, completeListener:Function = null):void {
+			_loader.load(url, completeListener);
+		}
+
+		public function set completeListener(listener:Function):void {
+			_loader.completeListener = listener;
+		}
+		
+		public function loadClip(clip:Clip, onLoadComplete:Function):void {
+			_clip = clip;
+			var imageLoader:ClipImageLoader = this;
+			load(clip.completeUrl, function(loader:ResourceLoader):void { onLoadComplete(imageLoader); });
+		}
+		
+		public function getContent(url:String = null):Object {
+			return _loader.getContent(_clip.completeUrl);
+		}
+		
+		public function clear():void {
+			_loader.clear();
 		}
 	}
 }

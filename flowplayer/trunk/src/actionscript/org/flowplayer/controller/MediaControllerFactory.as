@@ -43,15 +43,17 @@ package org.flowplayer.controller {
 		private var _streamProviders:Dictionary;
 		private var _playerEventDispatcher:PlayerEventDispatcher;
 		private var _config:Config;
+		private var _loader:ResourceLoader;
 
 		use namespace flow_internal;
 		
-		public function MediaControllerFactory(providers:Dictionary, playerEventDispatcher:PlayerEventDispatcher, config:Config) {
+		public function MediaControllerFactory(providers:Dictionary, playerEventDispatcher:PlayerEventDispatcher, config:Config, loader:ResourceLoader) {
 			_streamProviders = providers;
 			_instance = this;
 			_playerEventDispatcher = playerEventDispatcher;
 			_volumeController = new VolumeController(_playerEventDispatcher);
 			_config = config;
+			_loader = loader;
 		}
 
 		flow_internal function getMediaController(clip:Clip, playlist:Playlist):MediaController {
@@ -79,7 +81,7 @@ package org.flowplayer.controller {
 		
 		private function getImageController(playlist:Playlist):MediaController {
 			if (!_imageController)
-				_imageController = new ImageController(getVolumeController(), playlist);
+				_imageController = new ImageController(_loader, getVolumeController(), playlist);
 			return _imageController;
 		}
 		

@@ -7,6 +7,7 @@ Version history:
   from a foreign domain - BUT backgroundRepeat cannot be used for foreign images.
 - Now allows the embedding HTML to script the player even if the player is loaded from another domain.
 - Added a 'live' property to Clips, used for live streams.
+- A player embedded to a foreign domain now loads images, css files and other resources from the domain where the palyer SWF was loaded from. This is to generate shorter embed-codes.
 
 RC4
 ---

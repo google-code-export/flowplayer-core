@@ -19,6 +19,8 @@
 
 
 package org.flowplayer.view {
+	import org.flowplayer.controller.ResourceLoaderImpl;	
+	import org.flowplayer.controller.ResourceLoader;	
 	import org.flowplayer.util.URLUtil;	
 	import org.flowplayer.util.LogConfiguration;	
 	import org.flowplayer.util.TextUtil;	
@@ -63,6 +65,7 @@ package org.flowplayer.view {
 		private var _errorHandler:ErrorHandler;
 		private var _fullscreenManager:FullscreenManager;
 		private var _pluginLoader:PluginLoader;
+		private var _playerSWFBaseURL:String;
 
 		public function FlowplayerBase(
 			stage:Stage, 
@@ -73,7 +76,8 @@ package org.flowplayer.view {
 			errorHandler:ErrorHandler, 
 			config:Config, 
 			fullscreenManager:FullscreenManager,
-			pluginLoader:PluginLoader) {
+			pluginLoader:PluginLoader,
+			playerSWFBaseURL:String) {
 
 			// dummy references to get stuff included in the lib
 			Assert.notNull(1);
@@ -99,6 +103,7 @@ package org.flowplayer.view {
 			_fullscreenManager = fullscreenManager;
 			fullscreenManager.playerEventDispatcher = this;
 			_pluginLoader = pluginLoader;
+			_playerSWFBaseURL = playerSWFBaseURL;
 			_instance = this;
 		}
 		
@@ -487,6 +492,20 @@ package org.flowplayer.view {
 			config.level = level;
 			config.filter = filter;
 			Log.configure(config);
+		}
+		
+		/**
+		 * Flowplayer configuration.
+		 */
+		public function get config():Config {
+			return _config;
+		}
+
+		/**
+		 * Resource loader.
+		 */		
+		public function createLoader():ResourceLoader {
+			return new ResourceLoaderImpl(_config.playerId ? null : _playerSWFBaseURL, this);
 		}
 
 		private function resetPlugin(pluginName:String, speed:Number = 500):void {
