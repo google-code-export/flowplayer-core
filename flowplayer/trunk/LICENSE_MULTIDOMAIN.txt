@@ -34,10 +34,10 @@ License Grant
 =============
 Licensor hereby grants the Licensee to:
 
-Integrate and use the Software in ten (10) Internet domains that have been registered 
+Integrate and use the Software in one hundred (100) Internet domains that have been registered 
 with Licensor. Licensor provides a license key that is tied to the domain name.
 
-Make an Adaptation and integrate it in ten (10) Internet domains that has been registered 
+Make an Adaptation and integrate it in one hundred (100) Internet domains that has been registered 
 with Licensor. The Adaptation must not remove the License Key logic from the
 Software so that the Adaptation only functions if a valid license key has
 been configured for it.
