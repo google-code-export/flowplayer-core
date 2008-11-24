@@ -18,7 +18,9 @@
  */
 
 package org.flowplayer.view {
-	import org.flowplayer.controller.ResourceLoader;
+	import org.flowplayer.controller.ResourceLoader;	
+	import org.flowplayer.util.URLUtil;	
+	import org.flowplayer.controller.ResourceLoaderImpl;
 	import org.flowplayer.model.DisplayProperties;
 	import org.flowplayer.model.Logo;
 	import org.flowplayer.model.PlayerEvent;
@@ -44,9 +46,7 @@ package org.flowplayer.view {
 		private var _player:Flowplayer;
 		private var _image:DisplayObject;
 		private var _panel:Panel;
-		private var _originalProps:DisplayProperties;
-
-		public function LogoView(panel:Panel, model:Logo, player:Flowplayer) {
+		private var _originalProps:DisplayProperties;		public function LogoView(panel:Panel, model:Logo, player:Flowplayer) {
 			_panel = panel;
 			this.model = model;
 			_originalProps = _model.clone() as DisplayProperties;
@@ -64,6 +64,7 @@ package org.flowplayer.view {
 //				logoTimer.addEventListener(TimerEvent.TIMER, onLogoTimer);
 //				logoTimer.start();
 			}
+			
 		}
 		
 		CONFIG::freeVersion
@@ -102,13 +103,15 @@ package org.flowplayer.view {
 		CONFIG::commercialVersion
 		private function loadLogoImage():void {
 			if (_model.url) {
-				new ResourceLoader(_player, onImageLoaded).load(_model.url);
+				log.debug("loading image from " + _model.url);
+				_player.createLoader().load(_model.url, onImageLoaded);
 			}
 		}
 
 		CONFIG::commercialVersion
-		private function onImageLoaded(event:Event):void {
-			createLogoImage(ResourceLoader(event.target).getContent() as DisplayObject);
+		private function onImageLoaded(loader:ResourceLoader):void {
+			log.debug("image loaded " + loader.getContent());
+			createLogoImage(loader.getContent() as DisplayObject);
 		}
 		
 		private function createLogoImage(image:DisplayObject):void {
@@ -150,9 +153,9 @@ package org.flowplayer.view {
 		private function show():void {
 			this.alpha = 1;
 			this.visible = true;
+			_model.zIndex = 100;
 			if (! this.parent) {
 				log.debug("showing " + _model.dimensions);
-				_model.zIndex = 100;
 				_panel.addView(this, null, _model);
 				if (_model.displayTime > 0) {
 					var timer:Timer = new Timer(_model.displayTime * 1000, 1);
@@ -162,16 +165,6 @@ package org.flowplayer.view {
 			} else {
 				update();
 			}
-		}
-		
-		private function get videoAreaBounds():Rectangle {
-			var screen:Screen = DisplayProperties(_player.pluginRegistry.getPlugin("screen")).getDisplayObject() as Screen;
-			var disp:Rectangle = screen.getDisplayBounds();
-			log.debug("disp x " + disp.x);
-			log.debug("disp y " + disp.x);
-			log.debug("disp width " + disp.width);
-			log.debug("disp height " + disp.height);
-			return new Rectangle(screen.x + disp.x, screen.y + disp.y, disp.width, disp.height);
 		}
 
 		private function update():void {
@@ -199,8 +192,8 @@ package org.flowplayer.view {
 			// in the free version we ignore the supplied logo configuration
 			_model = new Logo();
 			_model.fullscreenOnly = model.fullscreenOnly;
-			_model.height = "6.5%";
-			_model.width = "6.5%";
+			_model.height = "10%";
+			_model.width = "10%";
 			_model.top = "15";
 			_model.right = "1";
 			log.debug("initial model dimensions " + _model.dimensions);

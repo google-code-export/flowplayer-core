@@ -46,16 +46,18 @@ package org.flowplayer.controller {
 		private var _state:PlayState;
 		private var _streamProviders:Dictionary;
 		private var _config:Config;
+		private var _loader:ResourceLoader;
 
-		public function PlayListController(playList:Playlist, streamProviders:Dictionary, config:Config) {
+		public function PlayListController(playList:Playlist, streamProviders:Dictionary, config:Config, loader:ResourceLoader) {
 			log = new Log(this);
 			setPlaylist(playList);
 			_streamProviders = streamProviders;
 			_config = config;
+			_loader = loader;
 		}
 
 		flow_internal function set playerEventDispatcher(playerEventDispatcher:PlayerEventDispatcher):void {
-			PlayState.initStates(_playList, this, _streamProviders, playerEventDispatcher, _config);
+			PlayState.initStates(_playList, this, _streamProviders, playerEventDispatcher, _config, _loader);
 		}
 
 		flow_internal function setPlaylist(playList:Playlist):void {

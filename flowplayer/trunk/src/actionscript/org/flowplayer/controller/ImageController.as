@@ -39,9 +39,9 @@ package org.flowplayer.controller {
 		private var _loader:ClipImageLoader;
 //		private var _durationlessClipPaused:Boolean;
 
-		public function ImageController(volumeController:VolumeController, playlist:Playlist) {
+		public function ImageController(loader:ResourceLoader, volumeController:VolumeController, playlist:Playlist) {
 			super(volumeController, playlist);
-			_loader = new ClipImageLoader(null, onLoadComplete);
+			_loader = new ClipImageLoader(loader, null);
 		}
 
 		override protected function get allowRandomSeek():Boolean {
@@ -51,7 +51,7 @@ package org.flowplayer.controller {
 		override protected function doLoad(event:ClipEvent, clip:Clip, pauseAfterStart:Boolean = false):void {
 //			_durationlessClipPaused = false;
 			log.info("Starting to load " + clip);
-			_loader.loadClip(clip);
+			_loader.loadClip(clip, onLoadComplete);
 			dispatchPlayEvent(event);
 		}
 		
@@ -73,11 +73,11 @@ package org.flowplayer.controller {
 			}
 		}
 		
-		private function onLoadComplete(event:Event):void {
-			log.info("image loaded " + clip + ", content " + _loader.getContent());
-			clip.setContent(ResourceLoader(event.target).getContent() as DisplayObject);
-			clip.originalHeight = _loader.getContent().height;
-			clip.originalWidth = _loader.getContent().width;
+		private function onLoadComplete(loader:ClipImageLoader):void {
+			clip.setContent(loader.getContent() as DisplayObject);
+			clip.originalHeight = loader.getContent().height;
+			clip.originalWidth = loader.getContent().width;
+			log.info("image loaded " + clip + ", content " + loader.getContent() + ", width " + clip.originalWidth + ", height " + clip.originalHeight);
 			clip.dispatch(ClipEventType.BUFFER_FULL);
 			if (clip.duration == 0) {
 				clip.dispatchBeforeEvent(new ClipEvent(ClipEventType.FINISH));

@@ -18,6 +18,7 @@
  */
 
 package org.flowplayer.view {
+	import org.flowplayer.controller.ResourceLoader;	
 	import org.flowplayer.config.Config;
 	import org.flowplayer.config.ExternalInterfaceHelper;
 	import org.flowplayer.controller.PlayListController;
@@ -64,9 +65,10 @@ package org.flowplayer.view {
 			errorHandler:ErrorHandler, 
 			config:Config, 
 			fullscreenManager:FullscreenManager,
-			pluginLoader:PluginLoader) {
+			pluginLoader:PluginLoader,
+			playerSWFBaseURl:String) {
 				
-			super(stage, control, pluginRegistry, panel, animationEngine, errorHandler, config, fullscreenManager, pluginLoader);
+			super(stage, control, pluginRegistry, panel, animationEngine, errorHandler, config, fullscreenManager, pluginLoader, playerSWFBaseURl);
 			_canvas = canvas;
 		}
 

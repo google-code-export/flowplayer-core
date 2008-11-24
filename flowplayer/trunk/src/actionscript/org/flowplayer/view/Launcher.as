@@ -23,6 +23,8 @@ package org.flowplayer.view {
 	import org.flowplayer.config.VersionInfo;
 	import org.flowplayer.controller.NetStreamControllingStreamProvider;
 	import org.flowplayer.controller.PlayListController;
+	import org.flowplayer.controller.ResourceLoader;
+	import org.flowplayer.controller.ResourceLoaderImpl;
 	import org.flowplayer.flow_internal;
 	import org.flowplayer.model.Callable;
 	import org.flowplayer.model.Clip;
@@ -57,7 +59,7 @@ package org.flowplayer.view {
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.ui.Keyboard;
-	import flash.utils.Dictionary;		
+	import flash.utils.Dictionary;	
 	
 	use namespace flow_internal;
 
@@ -72,9 +74,8 @@ package org.flowplayer.view {
 		private var _controlsModel:DisplayPluginModel;		private var _providers:Dictionary = new Dictionary();
 		private var _fullscreenManager:FullscreenManager;
 		private var _canvasLogo:Sprite;
-		[Frame(factoryClass="org.flowplayer.view.Preloader")]
 		private var _pluginLoader:PluginLoader;
-
+		[Frame(factoryClass="org.flowplayer.view.Preloader")]
 		public function Launcher() {
 			super("#canvas", this);
 			addEventListener(Event.ADDED_TO_STAGE, initPhase1);
@@ -82,10 +83,15 @@ package org.flowplayer.view {
 
 		private function initPhase1(event:Event):void {
 			try {
-				Security.allowDomain(URLUtil.pageUrl);
 				
 				createFlashVarsConfig();
 				Log.configure(_config.getLogConfiguration());
+
+				if (_config.playerId) {
+					Security.allowDomain(URLUtil.pageUrl);
+				}
+
+				loader = createNewLoader(); 
 
 				rootStyle = _config.canvasStyle;
 				stage.addEventListener(Event.RESIZE, onStageResize);
@@ -169,16 +175,24 @@ package org.flowplayer.view {
 					_flowplayer.dispatchEvent(PlayerEvent.load());
 				} 
 	
+				if (! _playButtonOverlay) {
+					initPhase3();
+				}
+				
+			} catch (e:Error) {
+				handleError(e);
+			}
+		}
+		
+		private function initPhase3(event:Event = null):void {
 				log.debug("starting configured streams");
 				startStreams();
 
 				stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 				addViewClickLiteners();
-				
-			} catch (e:Error) {
-				handleError(e);
-			}
-		}				private function resizeCanvasLogo():void {
+		}
+
+		private function resizeCanvasLogo():void {
 			_canvasLogo.alpha = 1;
 			_canvasLogo.width = 150;
 			_canvasLogo.scaleY = _canvasLogo.scaleX;
@@ -203,7 +217,7 @@ package org.flowplayer.view {
 
 		private function loadPluginsIfConfigured():void {
 			var plugins:Array = _config.getLoadables();
-			_pluginLoader = new PluginLoader(playerBaseUrl(), _pluginRegistry, this, useExternalInterfade());
+			_pluginLoader = new PluginLoader(URLUtil.playerBaseUrl(loaderInfo), _pluginRegistry, this, useExternalInterfade());
 			_pluginLoader.addEventListener(Event.COMPLETE, initPhase2);
 			if (plugins.length == 0) {
 				log.debug("configuration has no plugins");
@@ -212,14 +226,6 @@ package org.flowplayer.view {
 				log.debug("loading plugins and providers");
 				loadPluginsAndProviders(plugins);
 			}
-		}
-		
-		private function playerBaseUrl():String {
-			var url:String = loaderInfo.url;
-			var firstSwf:Number = url.indexOf(".swf");
-			url = url.substring(0, firstSwf);
-			var lastSlashBeforeSwf:Number = url.lastIndexOf("/");
-			return url.substring(0, lastSlashBeforeSwf);
 		}
 		
 		private function playerSwfName():String {
@@ -346,7 +352,7 @@ package org.flowplayer.view {
 
 		private function createFlowplayer(playListController:PlayListController):void {
 			_flowplayer = new Flowplayer(stage, playListController, _pluginRegistry, _panel, 
-				_animationEngine, this, this, _config, _fullscreenManager, _pluginLoader);
+				_animationEngine, this, this, _config, _fullscreenManager, _pluginLoader, URLUtil.playerBaseUrl(loaderInfo));
 			playListController.playerEventDispatcher = _flowplayer;
 		}
 
@@ -366,7 +372,7 @@ package org.flowplayer.view {
 				_providers = new Dictionary();
 			}
 			_providers["http"] = new NetStreamControllingStreamProvider();
-			return new PlayListController(_config.getPlaylist(), _providers, _config);
+			return new PlayListController(_config.getPlaylist(), _providers, _config, createNewLoader());
 		}
 		
 		private function createScreen():void {
@@ -386,6 +392,7 @@ package org.flowplayer.view {
 			}
 			log.debug("playlist has clips? " + hasClip);
 			var overlay:PlayButtonOverlayView = new PlayButtonOverlayView(! playButtonOverlayWidthDefined(), _playButtonOverlay, _config.getPlaylist(), true);
+			overlay.addEventListener(Event.COMPLETE, initPhase3);
 			initView(overlay, _playButtonOverlay, null, false);
 		}
 		
@@ -507,6 +514,10 @@ package org.flowplayer.view {
 			log.debug("adding logo to display list");
 			addChild(_canvasLogo);
 			onStageResize();
+		}
+		
+		private function createNewLoader():ResourceLoader {
+			return new ResourceLoaderImpl(_config.playerId ? null : URLUtil.playerBaseUrl(loaderInfo), this);
 		}
 	}
 }

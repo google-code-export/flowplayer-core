@@ -18,8 +18,9 @@
  */
 
 package org.flowplayer.util {
-	import flash.external.ExternalInterface;	
-	
+	import flash.display.LoaderInfo;	
+	import flash.external.ExternalInterface;		
+
 	/**
 	 * @author anssi
 	 */
@@ -56,6 +57,14 @@ package org.flowplayer.util {
 				endPos = href.lastIndexOf("/");
 			}
 			return href.substring(0, endPos);
+		}
+		
+		public static function playerBaseUrl(loaderInfo:LoaderInfo):String {
+			var url:String = loaderInfo.url;
+			var firstSwf:Number = url.indexOf(".swf");
+			url = url.substring(0, firstSwf);
+			var lastSlashBeforeSwf:Number = url.lastIndexOf("/");
+			return url.substring(0, lastSlashBeforeSwf);
 		}
 	}
 }
