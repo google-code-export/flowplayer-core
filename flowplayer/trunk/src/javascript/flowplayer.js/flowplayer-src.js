@@ -1,13 +1,22 @@
-/**
- * flowplayer.js [3.0.0-rc5]. The Flowplayer API.
+/** 
+ * flowplayer.js [3.0.0]. The Flowplayer API
  * 
- * This file is part of Flowplayer, http://flowplayer.org
- *
- * Author: Tero Piirainen, <support@flowplayer.org>
- * Copyright (c) 2008 Flowplayer Ltd
- *
- * Released under the MIT License:
- * http://www.opensource.org/licenses/mit-license.php
+ * Copyright 2008 Flowplayer Oy
+ * 
+ * This file is part of Flowplayer.
+ * 
+ * Flowplayer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Flowplayer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Flowplayer.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Version: @VERSION - $Date
  */
@@ -577,8 +586,8 @@ function Player(wrapper, params, conf) {
 			return self.getPlugin("controls");
 		}, 
 
-		getConfig: function() { 
-			return clone(conf);
+		getConfig: function(copy) { 
+			return copy ? clone(conf) : conf;
 		},
 		
 		getFlashParams: function() { 
@@ -800,7 +809,7 @@ function Player(wrapper, params, conf) {
 			return null;	
 		}		
 		
-		wrapperHeight = parseInt(wrapper.style.height) || wrapper.clientHeight;
+		wrapperHeight = parseInt(wrapper.style.height, 10) || wrapper.clientHeight;
 		
 		// register this player into global array of instances
 		players.push(self);  
