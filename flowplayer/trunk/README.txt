@@ -1,7 +1,7 @@
 Version history:
 
-3.0
----
+3.0.0
+-----
 - Removed security errors that happened when loading images from foreign domains (domains other than the domain of the core SWF).
   Using a backgroundImage on canvas, in the content plugin, and for the controls is also possible to be loaded
   from a foreign domain - BUT backgroundRepeat cannot be used for foreign images.
@@ -15,6 +15,7 @@ Version history:
     * "_parent" specifies the parent of the current frame.
     * "_top" specifies the top-level frame in the current window.
 - Added linkUrl and linkWindow properties to clips. The linked page is opened when the video are is clicked and the corresponding clip has a linkUrl specified.
+- Made the play button overlay and the "Play again" button slightly bigger.
 
 RC4
 ---
