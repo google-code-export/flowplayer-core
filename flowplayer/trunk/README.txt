@@ -8,6 +8,13 @@ Version history:
 - Now allows the embedding HTML to script the player even if the player is loaded from another domain.
 - Added a 'live' property to Clips, used for live streams.
 - A player embedded to a foreign domain now loads images, css files and other resources from the domain where the palyer SWF was loaded from. This is to generate shorter embed-codes.
+- Added linkUrl and linkWindow properties to the logo, in commercial version you can set these to point to a linked page. The linked page gets opened
+  when the logo is clicked.  Possible values for linkWindow:
+    * "_self" specifies the current frame in the current window.
+    * "_blank" specifies a new window.
+    * "_parent" specifies the parent of the current frame.
+    * "_top" specifies the top-level frame in the current window.
+- Added linkUrl and linkWindow properties to clips. The linked page is opened when the video are is clicked and the corresponding clip has a linkUrl specified.
 
 RC4
 ---

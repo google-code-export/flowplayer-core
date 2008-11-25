@@ -133,9 +133,11 @@ package org.flowplayer.view {
 		private function setEventListeners():void {
 			_panel.stage.addEventListener(FullScreenEvent.FULL_SCREEN, onFullscreen);
 			
-			addEventListener(MouseEvent.CLICK, 
-				function(event:MouseEvent):void { navigateToURL(new URLRequest("http://flowplayer.org"), "_self"); });
-			buttonMode = true;
+			if (_model.linkUrl) {
+				addEventListener(MouseEvent.CLICK, 
+					function(event:MouseEvent):void { navigateToURL(new URLRequest(_model.linkUrl), _model.linkWindow); });
+				buttonMode = true;
+			}
 		}
 
 		private function onFullscreen(event:FullScreenEvent):void {
@@ -196,6 +198,7 @@ package org.flowplayer.view {
 			_model.width = "10%";
 			_model.top = "15";
 			_model.right = "1";
+			_model.linkUrl = "http://flowplayer.org";
 			log.debug("initial model dimensions " + _model.dimensions);
 		}
 		
