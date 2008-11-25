@@ -483,7 +483,13 @@ package org.flowplayer.view {
 		private function onViewClicked(event:MouseEvent):void {
 			log.debug("onViewClicked, target " + event.target + ", current target " + event.currentTarget);
 			if (event.currentTarget != _screen) return;
-			_flowplayer.toggle();
+			var clip:Clip = _flowplayer.playlist.current; 
+			if (clip.linkUrl) {
+				_flowplayer.pause();
+				navigateToURL(new URLRequest(clip.linkUrl), clip.linkWindow);
+			} else {
+				_flowplayer.toggle();
+			}
 		}
 
 		private function onKeyDown(event:KeyboardEvent):void {

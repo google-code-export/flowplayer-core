@@ -30,10 +30,13 @@ package org.flowplayer.model {
 		private var _fadeSpeed:Number;
 		private var _displayTime:int = 0;
 		private var _scaleMaximum:Number = 2;
+		private var _linkUrl:String;
+		private var _linkWindow:String;
 		
 		public function Logo() {
 			top = "20";
 			right = "20";
+			_linkWindow = "_self";
 		}
 		
 		public function get url():String {
@@ -77,6 +80,16 @@ package org.flowplayer.model {
 
 		public function set scaleMaximum(scaleMaximum:Number):void {
 			_scaleMaximum = scaleMaximum;
+		}				public function get linkUrl():String {
+			return _linkUrl;		}				public function set linkUrl(linkUrl:String):void {
+			_linkUrl = linkUrl;		}
+		
+		public function get linkWindow():String {
+			return _linkWindow;
+		}
+		
+		public function set linkWindow(linkWindow:String):void {
+			_linkWindow = linkWindow;
 		}
 	}
 }

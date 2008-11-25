@@ -58,6 +58,8 @@ package org.flowplayer.model {
 		private var _fadeInSpeed:int;
 		private var _fadeOutSpeed:int;
 		private var _live:Boolean;		
+		private var _linkUrl:String;
+		private var _linkWindow:String;
 
 		public function Clip() {
 			_cuepoints = new Array();
@@ -70,6 +72,7 @@ package org.flowplayer.model {
 			_smoothing = true;
 			_fadeInSpeed = 1000;
 			_fadeOutSpeed = 1000;
+			_linkWindow = "_self";
 		}
 
 		public static function create(url:String, baseUrl:String = null):Clip {
@@ -476,6 +479,7 @@ package org.flowplayer.model {
 			_customProperties[property] = value;
 		}
 		
+		[Value]				
 		public function get fadeInSpeed():int {
 			return _fadeInSpeed;
 		}
@@ -484,6 +488,7 @@ package org.flowplayer.model {
 			_fadeInSpeed = fadeInSpeed;
 		}
 		
+		[Value]		
 		public function get fadeOutSpeed():int {
 			return _fadeOutSpeed;
 		}
@@ -499,6 +504,24 @@ package org.flowplayer.model {
 		
 		public function set live(live:Boolean):void {
 			_live = live;
+		}
+		
+		[Value]		
+		public function get linkUrl():String {
+			return _linkUrl;
+		}
+		
+		public function set linkUrl(linkUrl:String):void {
+			_linkUrl = linkUrl;
+		}
+		
+		[Value]		
+		public function get linkWindow():String {
+			return _linkWindow;
+		}
+		
+		public function set linkWindow(linkWindow:String):void {
+			_linkWindow = linkWindow;
 		}
 	}
 }
