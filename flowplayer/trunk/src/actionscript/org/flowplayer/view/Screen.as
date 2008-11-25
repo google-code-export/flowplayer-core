@@ -155,7 +155,7 @@ package org.flowplayer.view {
 			var display:DisplayObject = _displayFactory.createMediaDisplay(clip);
 			display.width = this.width;
 			display.height = this.height;
-//			display.visible = false;
+			display.visible = false;
 			addChild(display);
 			_displays[clip] = display;
 		}
@@ -214,7 +214,10 @@ package org.flowplayer.view {
 		private function addListeners(eventSupport:ClipEventSupport):void {
 			eventSupport.onPlaylistReplace(onPlaylistChanged);
 			eventSupport.onBufferFull(showImageDisplay);
-			eventSupport.onBegin(showDisplayIfNotBufferingOnSplash);
+			
+// if this is enabled, the video will show first as a small rectangle 
+//			eventSupport.onBegin(showDisplayIfNotBufferingOnSplash);
+
 			eventSupport.onStart(showDisplayIfNotBufferingOnSplash);
 		}
 
