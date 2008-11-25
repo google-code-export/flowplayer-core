@@ -28,7 +28,7 @@ package org.flowplayer.controller {
 	import org.flowplayer.model.ClipEventType;
 	import org.flowplayer.model.Playlist;
 	import org.flowplayer.util.Log;
-	
+
 	import flash.display.DisplayObject;		
 
 	/**
@@ -46,9 +46,9 @@ package org.flowplayer.controller {
 			super(volumeController, playlist);
 			_controllerFactory = controllerFactory;
 			_config = config;
-			playlist.onBegin(onBegin, function(clip:Clip):Boolean { return clip.type == ClipType.VIDEO; }, true);
+			playlist.onBegin(onBegin, function(clip:Clip):Boolean { 				return clip.type == ClipType.VIDEO; 			}, true);
 		}
-		
+
 		private function onBegin(event:ClipEvent):void {
 			var clip:Clip = event.target as Clip;
 			log.debug("onBegin, initializing content for clip " + clip);
@@ -58,7 +58,7 @@ package org.flowplayer.controller {
 			} else {
 				video = getProvider(clip).getVideo(clip);
 				getProvider(clip).attachStream(video);
-				if (! video) throw new Error("No video object available for clip " + clip);
+				if (!video) throw new Error("No video object available for clip " + clip);
 				clip.setContent(video);
 			}
 		}
@@ -70,11 +70,11 @@ package org.flowplayer.controller {
 		protected override function doPause(event:ClipEvent):void {
 			getProvider().pause(event);
 		}
-		
+
 		protected override function doResume(event:ClipEvent):void {
 			getProvider().resume(event);
 		}
-		
+
 		protected override function doStop(event:ClipEvent, closeStream:Boolean):void {
 			getProvider().stop(event, closeStream);
 		}
@@ -82,7 +82,7 @@ package org.flowplayer.controller {
 		protected override function doStopBuffering():void {
 			getProvider().stopBuffering();
 		}
-		
+
 		protected override function doSeekTo(event:ClipEvent, seconds:Number):void {
 			durationTracker.time = seconds;
 			getProvider().seek(event, seconds);
@@ -107,10 +107,10 @@ package org.flowplayer.controller {
 		protected override function get allowRandomSeek():Boolean {
 			return getProvider().allowRandomSeek;
 		}
-				
+
 		public function onCuePoint(infoObject:Object):void {
 		}
-				
+
 		override protected function onDurationReached():void {
 			// pause silently
 			log.debug("pausing silently");
@@ -140,10 +140,21 @@ package org.flowplayer.controller {
 			
 			clip.dispatch(ClipEventType.START);
 		}
-		
+
 		public function onXMPData(infoObject:Object):void {
 		} 
 
+		public function onBWDone():void { 
+		}
+
+		public function onCaption(cps:String,spk:Number):void { 
+		}
+
+		public function onCaptionInfo(obj:Object):void { 
+		}
+
+		public function onFCSubscribe(obj:Object):void { 
+		}		
 
 		public function onLastSecond(infoObject:Object):void {
 			log.debug("onLastSecond", infoObject);
@@ -152,9 +163,17 @@ package org.flowplayer.controller {
 		public function onPlayStatus(infoObject:Object):void {
 			log.debug("onPlayStatus", infoObject);
 		}
-		
+
+		public function onImageData(obj:Object):void { 
+		}
+		public function RtmpSampleAccess(obj:Object):void { 
+		}
+
+		public function onTextData(obj:Object):void { 
+		}
+
 		public function getProvider(clipParam:Clip = null):StreamProvider {
-			if (! (clipParam || clip)) return null;
+			if (!(clipParam || clip)) return null;
 			var provider:StreamProvider = _controllerFactory.getProvider(clipParam || clip);
 			provider.netStreamClient = this;
 			provider.playlist = playlist;
