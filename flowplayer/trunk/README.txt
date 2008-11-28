@@ -1,5 +1,9 @@
 Version history:
 
+3.0.1
+-----
+- Fixed negative cuepoints from common clip. Now these are properly propagated to the clips in playlist.
+
 3.0.0
 -----
 - Removed security errors that happened when loading images from foreign domains (domains other than the domain of the core SWF).
