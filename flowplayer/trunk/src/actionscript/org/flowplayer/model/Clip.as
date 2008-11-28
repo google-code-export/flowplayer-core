@@ -228,8 +228,20 @@ package org.flowplayer.model {
 		public function set duration(value:Number):void {
 			this._duration = value;
 			log.info("clip duration set to " + value);
-			if (duration >= 0) {
-				setNegativeCuepointTimes(value);
+			if (! isCommon) {
+				if (duration >= 0) {
+					setNegativeCuepointTimes(value);
+				}
+				addCommonClipNegativeCuepoints();
+			}
+		}
+		
+		private function addCommonClipNegativeCuepoints():void {
+			if (commonClip) {
+				log.debug("adding negative cuepoints from commponClip");
+				addCuepoints(commonClip.cuepointsInNegative);
+			} else {
+				log.debug("there is no commonClip");
 			}
 		}
 
@@ -260,6 +272,7 @@ package org.flowplayer.model {
 			this._metaData = metaData;
 			if (! (_duration >= 0) && metaData && metaData.duration) {
 				setNegativeCuepointTimes(metaData.duration);
+				addCommonClipNegativeCuepoints();
 			}
 		}
 		
@@ -418,6 +431,7 @@ package org.flowplayer.model {
 			_provider = provider;
 		}
 		
+		[Value]
 		public function get cuepoints():Array {
 			return _cuepoints;
 		}
@@ -522,6 +536,7 @@ package org.flowplayer.model {
 		
 		public function set linkWindow(linkWindow:String):void {
 			_linkWindow = linkWindow;
-		}
+		}				protected function get cuepointsInNegative():Array {
+			return _cuepointsInNegative;		}
 	}
 }
