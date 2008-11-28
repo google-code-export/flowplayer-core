@@ -3,6 +3,7 @@ Version history:
 3.0.1
 -----
 - Fixed negative cuepoints from common clip. Now these are properly propagated to the clips in playlist.
+- buffering animation is now the same size as the play button overlay
 
 3.0.0
 -----
