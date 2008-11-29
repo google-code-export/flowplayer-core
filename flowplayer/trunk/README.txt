@@ -4,6 +4,10 @@ Version history:
 -----
 - Fixed negative cuepoints from common clip. Now these are properly propagated to the clips in playlist.
 - buffering animation is now the same size as the play button overlay
+- commercial version now supports license keys that allows the use of subdomains
+- error messages are now automatically hidden after a 4 second delay. They are also hidden when a new clips
+  starts playing (when onBeforeBegin is fired)
+- added possibility to disable the buffering animation like so: buffering: false
 
 3.0.0
 -----

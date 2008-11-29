@@ -90,7 +90,9 @@ package org.flowplayer.config {
 		}
 
 		public function getPlayButtonOverlay():PlayButtonOverlay {
-			return viewObjectBuilder.getDisplayProperties(getObject("play"), "play", PlayButtonOverlay) as PlayButtonOverlay;
+			var play:PlayButtonOverlay = viewObjectBuilder.getDisplayProperties(getObject("play"), "play", PlayButtonOverlay) as PlayButtonOverlay;
+			play.buffering = useBufferingAnimation;
+			return play;
 		}
 		
 		public function getLogo():Logo {
@@ -138,6 +140,11 @@ package org.flowplayer.config {
 		public function get showErrors():Boolean {
 			if (! config.hasOwnProperty("showErrors")) return true;
 			return config["showErrors"];  
+		}
+		
+		private function get useBufferingAnimation():Boolean {
+			if (! config.hasOwnProperty("buffering")) return true;
+			return config["buffering"];
 		}
 	}
 }
