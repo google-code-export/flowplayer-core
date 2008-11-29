@@ -17,6 +17,8 @@
  *    along with Flowplayer.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.flowplayer.view {
+	import flash.events.TimerEvent;	
+	
 	import org.flowplayer.config.Config;
 	import org.flowplayer.config.ConfigLoader;
 	import org.flowplayer.config.ExternalInterfaceHelper;
@@ -59,7 +61,8 @@ package org.flowplayer.view {
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.ui.Keyboard;
-	import flash.utils.Dictionary;	
+	import flash.utils.Dictionary;
+	import flash.utils.Timer;	
 	
 	use namespace flow_internal;
 
@@ -75,7 +78,10 @@ package org.flowplayer.view {
 		private var _fullscreenManager:FullscreenManager;
 		private var _canvasLogo:Sprite;
 		private var _pluginLoader:PluginLoader;
-		[Frame(factoryClass="org.flowplayer.view.Preloader")]
+		private var _error:TextField;
+
+		[Frame(factoryClass="org.flowplayer.view.Preloader")]
+
 		public function Launcher() {
 			super("#canvas", this);
 			addEventListener(Event.ADDED_TO_STAGE, initPhase1);
@@ -90,6 +96,8 @@ package org.flowplayer.view {
 				if (_config.playerId) {
 					Security.allowDomain(URLUtil.pageUrl);
 				}
+				
+				_config.getPlaylist().onBeforeBegin(function(event:ClipEvent):void { hideErrorMessage(); });
 
 				loader = createNewLoader(); 
 
@@ -250,18 +258,34 @@ package org.flowplayer.view {
 		public function showError(message:String):void {
 			if (! _panel) return;
 			if (! _config.showErrors) return;
-			var error:TextField = TextUtil.createTextField(false);
-			error.background = true;
-			error.backgroundColor = 0;
-			error.textColor = 0xffffff;
-			error.autoSize = TextFieldAutoSize.CENTER;
-			error.multiline = true;
-			error.wordWrap = true;
-			error.text = message;
-			error.selectable = true;
-			error.width = stage.stageWidth - 40;
-			Arrange.center(error, stage.stageWidth, stage.stageHeight);
-			addChild(error);
+			_error = TextUtil.createTextField(false);
+			_error.background = true;
+			_error.backgroundColor = 0;
+			_error.textColor = 0xffffff;
+			_error.autoSize = TextFieldAutoSize.CENTER;
+			_error.multiline = true;
+			_error.wordWrap = true;
+			_error.text = message;
+			_error.selectable = true;
+			_error.width = stage.stageWidth - 40;
+			Arrange.center(_error, stage.stageWidth, stage.stageHeight);
+			addChild(_error);
+			
+			createErrorMessageHideTimer();
+		}				private function createErrorMessageHideTimer():void {
+			var errorHideTimer:Timer = new Timer(4000, 1);
+			errorHideTimer.addEventListener(TimerEvent.TIMER_COMPLETE, hideErrorMessage);
+			errorHideTimer.start();
+		}
+
+		private function hideErrorMessage(event:TimerEvent = null):void {
+			if (_error && _error.parent == this) {
+				if (_animationEngine) {
+					_animationEngine.fadeOut(_error, 1000, function():void { removeChild(_error); })
+				} else {
+					removeChild(_error);
+				}
+			}
 		}
 
 		public function handleError(e:Error, message:String = null):void {
