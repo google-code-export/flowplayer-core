@@ -101,9 +101,9 @@ package org.flowplayer.config {
 		}
 		
 		private function getVersionFromSwfName(swfName:String):String {
-			if (_playerSwfName.indexOf(swfName + "-") != 0) return null;
+			if (_playerSwfName.indexOf(swfName) != 0) return null;
 			if (_playerSwfName.indexOf(".swf") < (swfName + "-").length) return null;
-			return _playerSwfName.substring((swfName + "-").length, _playerSwfName.indexOf(".swf"));
+			return _playerSwfName.substring(_playerSwfName.indexOf("-") + 1, _playerSwfName.indexOf(".swf"));
 		}
 
 		public function getDisplayProperties(conf:Object, name:String, DisplayPropertiesClass:Class = null):DisplayProperties {
