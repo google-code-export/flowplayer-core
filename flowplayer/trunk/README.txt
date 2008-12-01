@@ -8,6 +8,7 @@ Version history:
 - error messages are now automatically hidden after a 4 second delay. They are also hidden when a new clips
   starts playing (when onBeforeBegin is fired)
 - added possibility to disable the buffering animation like so: buffering: false
+- pressing the play button overlay does not open a linkUrl associated with a clip
 
 3.0.0
 -----

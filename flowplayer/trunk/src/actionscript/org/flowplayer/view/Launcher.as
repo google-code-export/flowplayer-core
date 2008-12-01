@@ -451,9 +451,6 @@ package org.flowplayer.view {
 		
 		private function addViewClickLiteners():void {
 			_screen.addEventListener(MouseEvent.CLICK, onViewClicked);
-			if (_playButtonOverlay) {
-				_playButtonOverlay.getDisplayObject().addEventListener(MouseEvent.CLICK, onViewClicked);
-			}
 		}
 
 		private function createPanel():void {
@@ -506,7 +503,11 @@ package org.flowplayer.view {
 
 		private function onViewClicked(event:MouseEvent):void {
 			log.debug("onViewClicked, target " + event.target + ", current target " + event.currentTarget);
-			if (event.currentTarget != _screen) return;
+			if (DisplayObjectContainer(event.target).parent == _playButtonOverlay.getDisplayObject()) {
+				_flowplayer.toggle();
+				return;
+			}
+			
 			var clip:Clip = _flowplayer.playlist.current; 
 			if (clip.linkUrl) {
 				_flowplayer.pause();
