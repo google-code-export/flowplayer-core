@@ -61,25 +61,36 @@
 	
 	<target name="build" description="builds all" depends="check-uptodate, build-lib, plugins" unless="uptodate.main">
 		<antcall target="prepare" />
+		<property name="licenselib" value="${lib-dir}/licensekey" />
 		<antcall target="compile" />
 		<example player-swf="${player-binary-versioned}"/>
 	</target>
 	
 	<target name="build-biz" description="builds all" depends="check-uptodate, build-lib, plugins" unless="uptodate.commercial">
 		<antcall target="prepare" />
+		<property name="licenselib" value="${lib-dir}/licensekey" />
 		<antcall target="compile-commercial" />
 		<example player-swf="${commercial-player-binary-versioned}"/>
 	</target>
 	
 	<target name="build-all" description="builds all" depends="build, build-biz" />
 	
+	<target name="zip-bundled">
+		<antcall target="prepare" />
+
+		<compile-player binary="${bundled-basename}.swf" commercial="true" free="false" license-lib="${bundled-license-lib}" />
+    	<copy file="${build-dir}/${bundled-basename}.swf" tofile="${build-dir}/${bundled-basename}-${version-info}.swf" />
+		<example player-swf="${bundled-basename}-${version-info}.swf"/>
+		<zip-player license="LICENSE_BUNDLED.txt" player-swf="${bundled-basename}-${version-info}.swf" player-swf-dir="${build-dir}" zip-name="${bundled-basename}-${version-info}.zip" />
+	</target>
+	
     <target name="compile">
-    	<compile-player binary="${player-binary}" commercial="false" free="true"/>
+    	<compile-player binary="${player-binary}" commercial="false" free="true" license-lib="${licenselib}"/>
     	<copy file="${build-dir}/${player-binary}" tofile="${build-dir}/${player-binary-versioned}" />
     </target>
 	
     <target name="compile-commercial">
-    	<compile-player binary="${commercial-player-binary}" commercial="true" free="false"/>
+    	<compile-player binary="${commercial-player-binary}" commercial="true" free="false" license-lib="${licenselib}" />
     	<copy file="${build-dir}/${commercial-player-binary}" tofile="${build-dir}/${commercial-player-binary-versioned}" />
     </target>
 
@@ -110,6 +121,7 @@
         <attribute name="binary" />
         <attribute name="commercial" />
         <attribute name="free" />
+    	<attribute name="license-lib" />
         <sequential>
         	<echo message="Building binary @{binary}" />
     		<exec executable="${mxmlc_bin}">
@@ -122,7 +134,7 @@
     			<arg line="-define+=CONFIG::controlsVersion,'${controls-version-info-quoted}'" />
     			<arg line="-keep-as3-metadata=Value,External" />
     			<arg line="-source-path ${src-as} ${src-as-commercial} ${classpath}" />
-    			<arg line="-library-path ${libs-path} ${src-flash} ${lib-dir}/licensekey" />
+    			<arg line="-library-path ${libs-path} ${src-flash} @{license-lib}" />
     			<arg line="-default-frame-rate=${framerate}" />
     			<arg line="-default-background-color=${bgcolor}" />
     			<arg line="-strict=true" />
