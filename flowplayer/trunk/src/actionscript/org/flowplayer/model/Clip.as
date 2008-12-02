@@ -424,6 +424,7 @@ package org.flowplayer.model {
 		
 		[Value]
 		public function get provider():String {
+			if (type == ClipType.AUDIO) return "audio";
 			return _provider;
 		}
 		

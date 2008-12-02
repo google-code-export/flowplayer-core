@@ -50,7 +50,7 @@ package org.flowplayer.view {
 			var display:DisplayObject;
 			if (clip.type == ClipType.VIDEO)
 				display = new VideoDisplay(clip);
-			if (clip.type == ClipType.IMAGE)
+			if (clip.type == ClipType.IMAGE || clip.type == ClipType.AUDIO)
 				display = new ImageDisplay(clip);
 			return display;
 		}

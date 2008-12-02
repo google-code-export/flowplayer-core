@@ -41,12 +41,12 @@ package org.flowplayer.controller {
 		 * @param event the event that this provider should dispatch once loading has successfully started,
 		 * once dispatched the player will call <code>getVideo()</code>
 		 * @param clip the clip to load
-		 * @param autoPlay if <code>false</code> the playback is paused on first frame and
+		 * @param pauseAfterStart if <code>true</code> the playback is paused on first frame and
 		 * buffering is continued
 		 * @see Clip#setContent()
 		 * @see #getVideo()
 		 */
-		function load(event:ClipEvent, clip:Clip, autoPlay:Boolean = true):void;
+		function load(event:ClipEvent, clip:Clip, pauseAfterStart:Boolean = true):void;
 		
 		/**
 		 * Gets the <a href="http://livedocs.adobe.com/flash/9.0/ActionScriptLangRefV3/flash/media/Video.html">Video</a> object.

@@ -38,15 +38,15 @@ package org.flowplayer.controller {
 	 * 
 	 * @author anssi
 	 */
-	internal class VideoController extends AbstractDurationTrackingController implements MediaController {
+	internal class StreamProviderController extends AbstractDurationTrackingController implements MediaController {
 		private var _config:Config;
 		private var _controllerFactory:MediaControllerFactory;
 
-		public function VideoController(controllerFactory:MediaControllerFactory, volumeController:VolumeController, config:Config, playlist:Playlist) {
+		public function StreamProviderController(controllerFactory:MediaControllerFactory, volumeController:VolumeController, config:Config, playlist:Playlist) {
 			super(volumeController, playlist);
 			_controllerFactory = controllerFactory;
 			_config = config;
-			playlist.onBegin(onBegin, function(clip:Clip):Boolean { 				return clip.type == ClipType.VIDEO; 			}, true);
+			playlist.onBegin(onBegin, function(clip:Clip):Boolean { 				return clip.type == ClipType.VIDEO || clip.type == ClipType.AUDIO; 			}, true);
 		}
 
 		private function onBegin(event:ClipEvent):void {
@@ -57,9 +57,11 @@ package org.flowplayer.controller {
 				getProvider(clip).attachStream(video);
 			} else {
 				video = getProvider(clip).getVideo(clip);
-				getProvider(clip).attachStream(video);
-				if (!video) throw new Error("No video object available for clip " + clip);
-				clip.setContent(video);
+				if (video) { 
+					getProvider(clip).attachStream(video);
+					if (!video) throw new Error("No video object available for clip " + clip);
+					clip.setContent(video);
+				}
 			}
 		}
 

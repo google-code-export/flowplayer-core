@@ -58,8 +58,8 @@ package org.flowplayer.controller {
 
 		flow_internal function getMediaController(clip:Clip, playlist:Playlist):MediaController {
 			var clipType:ClipType = clip.type;
-			if (clipType == ClipType.VIDEO) {
-				return getVideoController(playlist);
+			if (clipType == ClipType.VIDEO || clipType == ClipType.AUDIO) {
+				return getStreamProviderController(playlist);
 			}
 			if (clipType == ClipType.IMAGE) {
 				return getImageController(playlist);
@@ -72,9 +72,9 @@ package org.flowplayer.controller {
 			return _volumeController;
 		}
 		
-		private function getVideoController(playlist:Playlist):MediaController {
+		private function getStreamProviderController(playlist:Playlist):MediaController {
 			if (!_videoController) {
-				_videoController = new VideoController(this, getVolumeController(), _config, playlist);
+				_videoController = new StreamProviderController(this, getVolumeController(), _config, playlist);
 			}
 			return _videoController;
 		}

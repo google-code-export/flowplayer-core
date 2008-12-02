@@ -21,6 +21,7 @@ package org.flowplayer.model {
 
 	public class ClipType {
 		public static const VIDEO:ClipType = new ClipType("video");
+		public static const AUDIO:ClipType = new ClipType("audio");
 		public static const IMAGE:ClipType = new ClipType("image");
 
 		private static var enumCreated:Boolean;
@@ -50,6 +51,8 @@ package org.flowplayer.model {
 				return ClipType.VIDEO;
 			if (['png', 'jpg', 'jpeg', 'gif', 'swf', 'image'].indexOf(type) >= 0)
 				return ClipType.IMAGE;
+			if (type == 'mp3')
+				return ClipType.AUDIO;
 			
 			return ClipType.VIDEO;
 		}
