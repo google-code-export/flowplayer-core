@@ -250,6 +250,13 @@ package org.flowplayer.model {
 				return _metaData.duration;
 			return 0;
 		}
+		
+		public function set durationFromMetadata(value:Number):void {
+			if (! _metaData) {
+				_metaData = new Object();
+			}
+			_metaData.duration = value;
+		}
 
 		[Value]
 		public function get duration():Number {
