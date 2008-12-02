@@ -35,7 +35,7 @@ package org.flowplayer.controller {
 	/**
 	 * @author api
 	 */
-	internal class VolumeController {
+	public class VolumeController {
 
 		private var log:Log = new Log(this);
 		private var _soundTransform:SoundTransform;
@@ -163,6 +163,10 @@ package org.flowplayer.controller {
 			} else {
 				unMute();
 			}
+		}
+		
+		public function get soundTransform():SoundTransform {
+			return _soundTransform;
 		}
 	}
 }
