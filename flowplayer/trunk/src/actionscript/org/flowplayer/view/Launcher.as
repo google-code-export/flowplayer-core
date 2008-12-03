@@ -388,7 +388,7 @@ package org.flowplayer.view {
 				return;
 			}
 			
-			_config = ConfigLoader.flow_internal::parseConfig(stage.loaderInfo.parameters["config"], playerSwfName(), VersionInfo.controlsVersion); 
+			_config = ConfigLoader.flow_internal::parseConfig(stage.loaderInfo.parameters["config"], playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion); 
 		}
 
 		private function createPlayListController():PlayListController {
