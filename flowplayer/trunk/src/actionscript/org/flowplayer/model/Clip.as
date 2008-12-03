@@ -44,6 +44,7 @@ package org.flowplayer.model {
 		private var _duration:Number;
 		private var _metaData:Object;
 		private var _autoPlay:Boolean = true;
+		private var _autoPlayNext:Boolean = false;
 		private var _autoBuffering:Boolean;
 		private var _scaling:MediaSize;
 		private var _accelerated:Boolean;
@@ -60,6 +61,7 @@ package org.flowplayer.model {
 		private var _live:Boolean;		
 		private var _linkUrl:String;
 		private var _linkWindow:String;
+		private var _image:Boolean;
 
 		public function Clip() {
 			_cuepoints = new Array();
@@ -73,6 +75,7 @@ package org.flowplayer.model {
 			_fadeInSpeed = 1000;
 			_fadeOutSpeed = 1000;
 			_linkWindow = "_self";
+			_image = true;
 		}
 
 		public static function create(url:String, baseUrl:String = null):Clip {
@@ -546,5 +549,26 @@ package org.flowplayer.model {
 			_linkWindow = linkWindow;
 		}				protected function get cuepointsInNegative():Array {
 			return _cuepointsInNegative;		}
+		
+		/**
+		 * Use the previous clip in the playlist as an image for this audio clip?
+		 * This is only for audio clips.
+		 */
+		[Value]
+		public function get image():Boolean {
+			return _image;
+		}
+		
+		public function set image(image:Boolean):void {
+			_image = image;
+		}
+		
+		public function get autoPlayNext():Boolean {
+			return _autoPlayNext;
+		}
+		
+		public function set autoPlayNext(autoPlayNext:Boolean):void {
+			_autoPlayNext = autoPlayNext;
+		}
 	}
 }

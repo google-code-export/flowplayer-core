@@ -18,20 +18,21 @@
  */
 
 package org.flowplayer.controller {
-	import org.flowplayer.model.ClipType;	
-	import org.flowplayer.view.PlayerEventDispatcher;	
-	
-	import flash.utils.Dictionary;
-	
+	import org.flowplayer.config.Config;
 	import org.flowplayer.flow_internal;
 	import org.flowplayer.model.Clip;
+	import org.flowplayer.model.ClipEvent;
+	import org.flowplayer.model.ClipType;
 	import org.flowplayer.model.Playlist;
+	import org.flowplayer.model.ProviderModel;
 	import org.flowplayer.model.State;
 	import org.flowplayer.model.Status;
-	import org.flowplayer.util.Log;	
+	import org.flowplayer.util.Log;
+	import org.flowplayer.view.PlayerEventDispatcher;
+	
+	import flash.utils.Dictionary;		
+	
 	use namespace flow_internal;
-	import org.flowplayer.model.ProviderModel;
-	import org.flowplayer.config.Config;	
 
 	/**
 	 * PlayListController is responsible in moving the playback within the clips in the playList.
@@ -75,20 +76,31 @@ package org.flowplayer.controller {
 			return _playList;
 		}
 
+
 		flow_internal function rewind():Clip {
 			log.info("rewind()");
 			setPlayState(PlayState.waitingState);
 			_playList.toIndex(firstNonSplashClip());
 			_state.play();
 			return _playList.current;
-		}				private function firstNonSplashClip():Number {
+		}
+
+		private function firstNonSplashClip():Number {
 			var clips:Array = _playList.clips;
 			for (var i:Number = 0; i < clips.length; i++) {
 				var clip:Clip = clips[i];
 				if (clip.type == ClipType.IMAGE && clip.duration > 0) {
 					return i;
 				}
-				if (clip.type == ClipType.VIDEO) {
+				if (clip.type == ClipType.IMAGE && i < clips.length - 1) {
+					var nextClip:Clip = clips[i+1] as Clip;
+					if (nextClip.type == ClipType.AUDIO && nextClip.image) {
+						// this is a splash image for the next audio clip
+						nextClip.autoPlayNext = true;
+						return i;
+					}
+				}
+				if (clip.type == ClipType.VIDEO || clip.type == ClipType.AUDIO) {
 					return i;
 				}
 			}
@@ -163,7 +175,11 @@ package org.flowplayer.controller {
 			log.debug("moved in playlist, next clip autoPlay " + clip.autoPlay + ", autoBuffering " + clip.autoBuffering);
 			if (obeyClipPlaySettings) {
 				log.debug("obeying clip autoPlay & autoBuffeing");
-				if (clip.autoPlay) {
+				// autoPlayNext is used when rewinding
+				if (clip.autoPlayNext) {
+					clip.autoPlayNext = false;
+					_state.play();
+				} else if (clip.autoPlay) {
 					_state.play();
 				} else if (clip.autoBuffering) {
 					_state.startBuffering();

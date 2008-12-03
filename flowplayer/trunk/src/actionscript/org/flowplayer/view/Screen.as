@@ -167,29 +167,31 @@ package org.flowplayer.view {
 			log.info("showDisplay()");
 			var clipNow:Clip = event.target as Clip;
 			if (clipNow.isNullClip) return;
+			setDisplayVisible(clipNow, true);
 
-			if (_prevClip && _prevClip != clipNow) {
-				log.debug("hiding previous display");
-				setDisplayVisible(_prevClip, false);
-				setDisplayVisible(clipNow, true);
-			} else {
-				if (_prevClip && _prevClip == clipNow && MediaDisplay(_displays[clipNow]).hasContent()) {
-					return;
-				}
-				setDisplayVisible(clipNow, true);
-			}
+//			if (_prevClip && _prevClip != clipNow) {
+//				log.debug("hiding previous display");
+//				setDisplayVisible(_prevClip, false);
+//				setDisplayVisible(clipNow, true);
+//			} else {
+//				if (_prevClip && _prevClip == clipNow && MediaDisplay(_displays[clipNow]).hasContent()) {
+//					return;
+//				}
+//				setDisplayVisible(clipNow, true);
+//			}
 			_prevClip = clipNow;
 			log.info("showDisplay done");
 		}
 
 		private function setDisplayVisible(clipNow:Clip, visible:Boolean):void {
 			var disp:DisplayObject = _displays[clipNow];
-			log.debug("display " + disp + ", will be made " + (visible ? "visible" : "hidden"));
+			log.debug("display " + disp + ", " + disp.name + ", will be made " + (visible ? "visible" : "hidden"));
 			if (visible) {
 				MediaDisplay(disp).init(clipNow);
 				disp.visible = true;
 				disp.alpha = 0;
 				log.debug("starting fadeIn");
+				hideAllDisplays(disp as MediaDisplay);
 				_animatioEngine.animateProperty(disp, "alpha", 1, clipNow.fadeInSpeed);
 				Arrange.center(disp, width, height);
 			} else if (disp.visible) {
@@ -218,10 +220,10 @@ package org.flowplayer.view {
 // if this is enabled, the video will show first as a small rectangle 
 //			eventSupport.onBegin(showDisplayIfNotBufferingOnSplash);
 
-			eventSupport.onStart(showDisplayIfNotBufferingOnSplash);
+			eventSupport.onStart(onStart);
 		}
 
-		private function showDisplayIfNotBufferingOnSplash(event:ClipEvent):void {
+		private function onStart(event:ClipEvent):void {
 			var clip:Clip = event.target as Clip;
 			if (clip.isNullClip) return;
 			
@@ -232,9 +234,34 @@ package org.flowplayer.view {
 				// we are autoBuffering on splash, don't switch display
 				return;
 			}
+			
+			if (_prevClip  && clip.type == ClipType.AUDIO) {
+				log.debug("this is an audio clip, will check if previous clip was an image that should stay visible");
+				if (_prevClip.type == ClipType.IMAGE && clip.image) {
+					log.debug("previous image stays visible");
+					// do not hide the previous image
+				} else {
+					log.debug("hiding all displays for this audio clip");
+					hideAllDisplays();
+				}
+				_prevClip = clip;
+				return;
+			}
+			
 			showDisplay(event);
 		}
 		
+		private function hideAllDisplays(except:MediaDisplay = null):void {
+			var clips:Array = _playList.clips;
+			for (var i:Number = 0; i < clips.length; i++) {
+				var clip:Clip = clips[i] as Clip;
+				var disp:MediaDisplay = _displays[clip];
+				if (! except || disp != except) {
+					setDisplayVisible(clips[i] as Clip, false);
+				}
+			}
+		}
+
 		private function onFirstFrameResume(event:ClipEvent):void {
 			var clip:Clip = event.target as Clip;
 			clip.unbind(onFirstFrameResume);			
