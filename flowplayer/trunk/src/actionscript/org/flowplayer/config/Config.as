@@ -43,13 +43,15 @@ package org.flowplayer.config {
 		public var logFilter:String;
 		private var _playerSwfName:String;
 		private var _controlsVersion:String;
-		
-		public function Config(config:Object, playerSwfName:String, controlsVersion:String) {
+		private var _audioVersion:String;
+
+		public function Config(config:Object, playerSwfName:String, controlsVersion:String, audioVersion:String) {
 			Assert.notNull(config, "No configuration provided.");
 			this.config = config;
 			_playerSwfName = playerSwfName;
 			_playlistBuilder = new PlaylistBuilder(playerId, config.playlist, config.clip);
 			_controlsVersion = controlsVersion;
+			_audioVersion = audioVersion;
 		}
 
 		public function get playerId():String {
@@ -75,12 +77,12 @@ package org.flowplayer.config {
 		}
 		
 		public function getLoadables():Array {
-			return viewObjectBuilder.createLoadables(config.plugins);
+			return viewObjectBuilder.createLoadables(config.plugins, getPlaylist());
 		}
 		
 		private function get viewObjectBuilder():PluginBuilder {
 			if (_pluginBuilder == null) {
-				_pluginBuilder = new PluginBuilder(_playerSwfName, _controlsVersion, this, config.plugins, config);
+				_pluginBuilder = new PluginBuilder(_playerSwfName, _controlsVersion, _audioVersion, this, config.plugins, config);
 			}
 			return _pluginBuilder;
 		}

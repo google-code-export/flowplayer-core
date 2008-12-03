@@ -18,6 +18,9 @@
  */
 
 package org.flowplayer.config {
+	import org.flowplayer.model.ClipType;	
+	import org.flowplayer.model.Playlist;	
+	
 	import flash.display.DisplayObject;
 	
 	import org.flowplayer.model.DisplayPluginModel;
@@ -37,15 +40,18 @@ package org.flowplayer.config {
 		private var _skinObjects:Object;
 		private var _config:Config;
 		private var _playerSwfName:String;		private var _controlsVersion:String;
-		public function PluginBuilder(playerSwfName:String, controlsVersion:String, config:Config, pluginObjects:Object, skinObjects:Object) {
+		private var _audioVersion:String;
+
+		public function PluginBuilder(playerSwfName:String, controlsVersion:String, audioVersion:String, config:Config, pluginObjects:Object, skinObjects:Object) {
 			_playerSwfName = playerSwfName;
 			_config = config;
 			_pluginObjects = pluginObjects || new Object();
 			_skinObjects = skinObjects || new Object();
 			_controlsVersion = controlsVersion;
+			_audioVersion = audioVersion;
 		}
 
-		public function createLoadables(fromObjects:Object):Array {
+		public function createLoadables(fromObjects:Object, playlist:Playlist):Array {
 			var pluginsToLoad:Array = new Array();
 			for (var name:String in fromObjects) {
 				if (! isObjectDisabled(name, _pluginObjects)) {
@@ -56,10 +62,13 @@ package org.flowplayer.config {
 				}
 			}
 			createLoadable("controls", pluginsToLoad, _controlsVersion);
+			if (playlist.hasType(ClipType.AUDIO)) {
+				createLoadable("audio", pluginsToLoad, _audioVersion);
+			}
 //			createLoadable("controlbuttons", pluginsToLoad, _controlsVersion);
 			return pluginsToLoad;
 		}
-		
+
 		private function isObjectDisabled(name:String, confObjects:Object):Boolean {
 			if (! confObjects.hasOwnProperty(name)) return false;
 			var pluginObj:Object = confObjects[name];

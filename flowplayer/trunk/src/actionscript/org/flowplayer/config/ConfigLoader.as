@@ -29,10 +29,10 @@ package org.flowplayer.config {
 	public class ConfigLoader {
 		private static var log:Log = new Log(ConfigLoader);
 
-		flow_internal static function parseConfig(config:Object, playerSwfName:String, controlsVersion:String):Config {
-			if (!config) return new Config({}, playerSwfName, controlsVersion);
+		flow_internal static function parseConfig(config:Object, playerSwfName:String, controlsVersion:String, audioVersion:String):Config {
+			if (!config) return new Config({}, playerSwfName, controlsVersion, audioVersion);
 			var configObj:Object = config is String ? JSON.decode(config as String) : config;
-			return new Config(configObj, playerSwfName, controlsVersion);
+			return new Config(configObj, playerSwfName, controlsVersion, audioVersion);
 		}
 	}
 }

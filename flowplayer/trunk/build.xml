@@ -3,9 +3,10 @@
 
 	<property name="version-1" value="3" />
 	<property name="version-2" value="0" />
-	<property name="version-3" value="0" />	
-	<property name="version-status" value="" />
-	<property name="controls-version-info" value="3.0.0" />
+	<property name="version-3" value="1" />	
+	<property name="version-status" value="dev" />
+	<property name="controls-version-info" value="3.0.1-dev" />
+	<property name="audio-version-info" value="3.0.1-dev" />
 	<property name="flowplayer-js-version-info" value="3.0.0" />
 	<property name ="source-dist-root-folder" value="flowplayer" />
 	
@@ -19,6 +20,7 @@
 	</condition>
 	
 	<property name="controls-version-info-quoted" value="&quot;${controls-version-info}&quot;" />
+	<property name="audio-version-info-quoted" value="&quot;${audio-version-info}&quot;" />
 	<property name="src" value="src" />
 	<property name="src-as" value="${src}/actionscript" />
 	<property name="src-flash" value="${src}/flash" />
@@ -132,6 +134,7 @@
        			<arg line="-define+=CONFIG::version3,'${version-3-quoted}'" />
        			<arg line="-define+=CONFIG::versionStatus,'${version-status-quoted}'" />
     			<arg line="-define+=CONFIG::controlsVersion,'${controls-version-info-quoted}'" />
+    			<arg line="-define+=CONFIG::audioVersion,'${audio-version-info-quoted}'" />
     			<arg line="-keep-as3-metadata=Value,External" />
     			<arg line="-source-path ${src-as} ${src-as-commercial} ${classpath}" />
     			<arg line="-library-path ${libs-path} ${src-flash} @{license-lib}" />

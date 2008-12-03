@@ -27,7 +27,7 @@ package org.flowplayer.config {
 		
 		private static const VERSION_INFO:String = CONFIG::commercialVersion ? "Flowplayer commercial version " : 
 		"Flowplayer free version " + VERSION_NUMBER + (CONFIG::versionStatus ? "-" + CONFIG::versionStatus : "");
-		
+
 		public static function get version():Array {
 			return [new int(CONFIG::version1), new int(CONFIG::version2), new int(CONFIG::version3), CONFIG::commercialVersion ? 'commercial' : 'free', CONFIG::versionStatus];
 		}
@@ -42,6 +42,10 @@ package org.flowplayer.config {
 		
 		public static function get controlsVersion():String {
 			return CONFIG::controlsVersion;
+		}
+		
+		public static function get audioVersion():String {
+			return CONFIG::audioVersion;
 		}
 	}
 	

@@ -171,5 +171,17 @@ package org.flowplayer.model {
 		public function get commonClip():Clip {
 			return _commonClip;
 		}
+		
+		/**
+		 * Does this playlist have a clip with the specified type?
+		 */
+		public function hasType(type:ClipType):Boolean {
+			for (var i:Number = 0; i < _clips.length; i++) {
+				if (Clip(_clips[i]).type == type) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 }
