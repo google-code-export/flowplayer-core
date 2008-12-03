@@ -35,9 +35,9 @@ package org.flowplayer.view {
 
 		public function init(clip:Clip):void {
 			log.debug("received image to display");
-			if (! clip.getContent()) return;
 			if (image)
 				removeChild(image);
+			if (! clip.getContent()) return;
 			image = clip.getContent();
 			addChild(image);
 		}
