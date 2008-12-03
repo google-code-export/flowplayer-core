@@ -18,6 +18,8 @@
  */
 
 package org.flowplayer.controller {
+	import flash.media.SoundChannel;	
+	
 	import org.flowplayer.view.PlayerEventDispatcher;	
 	
 	import flash.events.TimerEvent;
@@ -44,6 +46,7 @@ package org.flowplayer.controller {
 		private var _storeDelayTimer:Timer;
 		private var _muted:Boolean;
 		private var _playerEventDispatcher:PlayerEventDispatcher;
+		private var _soundChannel:SoundChannel;
 
 		public function VolumeController(playerEventDispatcher:PlayerEventDispatcher) {
 			_playerEventDispatcher = playerEventDispatcher;
@@ -55,18 +58,23 @@ package org.flowplayer.controller {
 
 		public function set netStream(netStream:NetStream):void {
 			_netStream = netStream;
-			if (_muted)
-				_netStream.soundTransform = new SoundTransform(0);
-			else
-				_netStream.soundTransform = _soundTransform;
+			setTransform(_muted ? new SoundTransform(0) : _soundTransform);
 		}
 		
+		private function setTransform(transform:SoundTransform):void {
+			if (_netStream) {
+				_netStream.soundTransform = transform;
+			}
+			if (_soundChannel) {
+				_soundChannel.soundTransform = transform;
+			}	
+		}
+
 		private function doMute(persistMuteSetting:Boolean):void {
 			log.debug("muting volume");
 			if (dispatchBeforeEvent(PlayerEvent.mute())) {
 				_muted = true;
-				if (_netStream)
-					_netStream.soundTransform = new SoundTransform(0);
+				setTransform(new SoundTransform(0));
 				dispatchEvent(PlayerEvent.mute());
 				if (persistMuteSetting)
 					storeVolume(true);
@@ -77,8 +85,7 @@ package org.flowplayer.controller {
 			log.debug("unmuting volume to level " + _soundTransform.volume);
 			if (dispatchBeforeEvent(PlayerEvent.unMute())) {
 				_muted = false;
-				if (_netStream)
-					_netStream.soundTransform = _soundTransform;
+				setTransform(_soundTransform);
 				dispatchEvent(PlayerEvent.unMute());
 				storeVolume(false);
 				}
@@ -95,8 +102,8 @@ package org.flowplayer.controller {
 					volume = 0;
 				}
 				_soundTransform.volume = volumePercentage / 100;
-				if (!_muted && _netStream) {
-					_netStream.soundTransform = _soundTransform;
+				if (!_muted) {
+					setTransform(_soundTransform);
 				}
 				dispatchEvent(PlayerEvent.volume(this.volume));
 				if (!_storeDelayTimer.running) {
@@ -140,10 +147,6 @@ package org.flowplayer.controller {
 			if (volumeObj as Number < 0) return 0;
 			return volumeObj as Number;
 		}
-
-		private function get storedVolume():Number {
-			return _soundTransform.volume;
-		}
 		
 		private function dispatchBeforeEvent(event:PlayerEvent):Boolean {
 			return _playerEventDispatcher.dispatchBeforeEvent(event);
@@ -165,8 +168,9 @@ package org.flowplayer.controller {
 			}
 		}
 		
-		public function get soundTransform():SoundTransform {
-			return _soundTransform;
+		public function set soundChannel(channel:SoundChannel):void {
+			_soundChannel = channel;
+			setTransform(_muted ? new SoundTransform(0) : _soundTransform);
 		}
 	}
 }
