@@ -9,6 +9,7 @@ Version history:
   starts playing (when onBeforeBegin is fired)
 - added possibility to disable the buffering animation like so: buffering: false
 - pressing the play button overlay does not open a linkUrl associated with a clip
+- license key verification failed if a port number was used in the URL (like in this url: http://mydomain.com:8080/video.html)
 
 3.0.0
 -----
