@@ -12,6 +12,7 @@ Version history:
 - license key verification failed if a port number was used in the URL (like in this url: http://mydomain.com:8080/video.html)
 - added audio support, clip has a new "image" property
 - workaround for missing "NetStream.Play.Start" notfication that was happending with Red5. Because of this issue the video was not shown.
+- commercial version has the possibility to change the zIndex of the logo
 
 3.0.0
 -----

@@ -155,7 +155,9 @@ package org.flowplayer.view {
 		private function show():void {
 			this.alpha = 1;
 			this.visible = true;
-			_model.zIndex = 100;
+			CONFIG::freeVersion {
+				_model.zIndex = 100;
+			}
 			if (! this.parent) {
 				log.debug("showing " + _model.dimensions);
 				_panel.addView(this, null, _model);
