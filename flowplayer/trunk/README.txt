@@ -10,6 +10,8 @@ Version history:
 - added possibility to disable the buffering animation like so: buffering: false
 - pressing the play button overlay does not open a linkUrl associated with a clip
 - license key verification failed if a port number was used in the URL (like in this url: http://mydomain.com:8080/video.html)
+- added audio support, clip has a new "image" property
+- workaround for missing "NetStream.Play.Start" notfication that was happending with Red5. Because of this issue the video was not shown.
 
 3.0.0
 -----

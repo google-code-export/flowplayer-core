@@ -190,8 +190,8 @@ package org.flowplayer.view {
 				MediaDisplay(disp).init(clipNow);
 				disp.visible = true;
 				disp.alpha = 0;
-				log.debug("starting fadeIn");
 				hideAllDisplays(disp as MediaDisplay);
+				log.debug("starting fadeIn for " + disp);
 				_animatioEngine.animateProperty(disp, "alpha", 1, clipNow.fadeInSpeed);
 				Arrange.center(disp, width, height);
 			} else if (disp.visible) {
@@ -215,7 +215,7 @@ package org.flowplayer.view {
 
 		private function addListeners(eventSupport:ClipEventSupport):void {
 			eventSupport.onPlaylistReplace(onPlaylistChanged);
-			eventSupport.onBufferFull(showImageDisplay);
+			eventSupport.onBufferFull(onBufferFull);
 			
 // if this is enabled, the video will show first as a small rectangle 
 //			eventSupport.onBegin(showDisplayIfNotBufferingOnSplash);
@@ -268,10 +268,14 @@ package org.flowplayer.view {
 			showDisplay(event);
 		}
 
-		private function showImageDisplay(event:ClipEvent):void {
+		private function onBufferFull(event:ClipEvent):void {
 			var clipNow:Clip = event.target as Clip;
 			if (clipNow.type == ClipType.IMAGE) {
 				showDisplay(event);
+			}
+			if (clipNow.type == ClipType.VIDEO) {
+				var disp:MediaDisplay = _displays[clipNow];
+				disp.init(clipNow);
 			}
 		}
 		
