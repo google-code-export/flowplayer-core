@@ -493,7 +493,6 @@ package org.flowplayer.controller {
 				dispatchPlayEvent(ClipEventType.CONNECT);
 			}
 			else if (event.info.code == "NetStream.Play.Start") {
-				_started = true;
 				if (! _paused && canDispatchBegin()) {
 					log.debug("dispatching onBegin");
 					clip.dispatchEvent(new ClipEvent(ClipEventType.BEGIN));
@@ -598,6 +597,7 @@ package org.flowplayer.controller {
 
 			try {
 				doLoad(event, _netStream, clip);
+				_started = true;
 			} catch (e:SecurityError) {
 				dispatchError(clip, "cannot access the video file (try loosening Flash security settings): " + e.message);	
 			} catch (e:IOError) {

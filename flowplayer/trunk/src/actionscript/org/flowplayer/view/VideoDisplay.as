@@ -29,6 +29,7 @@ package org.flowplayer.view {
 		private var _clip:Clip;
 
 		public function VideoDisplay(clip:Clip) {
+			_clip = clip;
 			createOverlay();
 		}
 		
@@ -63,6 +64,7 @@ package org.flowplayer.view {
 				removeChild(video);
 			video = clip.getContent() as Video;
 			if (video == null) {
+				log.warn("no video content in clip " + clip);
 				return;
 			}
 			video.width = this.width;
@@ -71,6 +73,10 @@ package org.flowplayer.view {
 			swapChildren(_overlay, video);
 		}				public function hasContent():Boolean {
 			return video != null;
+		}
+		
+		override public function toString():String {
+			return "[VideoDisplay] for clip " + _clip;
 		}
 	}
 }

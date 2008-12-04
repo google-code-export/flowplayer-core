@@ -46,12 +46,16 @@ package org.flowplayer.controller {
 			super(volumeController, playlist);
 			_controllerFactory = controllerFactory;
 			_config = config;
-			playlist.onBegin(onBegin, function(clip:Clip):Boolean { 				return clip.type == ClipType.VIDEO || clip.type == ClipType.AUDIO; 			}, true);
+			var filter:Function = function(clip:Clip):Boolean { 
+				return clip.type == ClipType.VIDEO || clip.type == ClipType.AUDIO; 
+			};
+			playlist.onBegin(onBegin, filter, true);
+			playlist.onBufferFull(onBegin, filter, true);
 		}
 
 		private function onBegin(event:ClipEvent):void {
 			var clip:Clip = event.target as Clip;
-			log.debug("onBegin, initializing content for clip " + clip);
+			log.info("onBegin, initializing content for clip " + clip);
 			var video:DisplayObject = clip.getContent();
 			if (video) {
 				getProvider(clip).attachStream(video);
