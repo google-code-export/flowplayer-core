@@ -17,8 +17,6 @@
  *    along with Flowplayer.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.flowplayer.view {
-	import flash.events.TimerEvent;	
-	
 	import org.flowplayer.config.Config;
 	import org.flowplayer.config.ConfigLoader;
 	import org.flowplayer.config.ExternalInterfaceHelper;
@@ -45,7 +43,6 @@ package org.flowplayer.view {
 	import org.flowplayer.util.TextUtil;
 	import org.flowplayer.util.URLUtil;
 	import org.flowplayer.view.Panel;
-	import org.flowplayer.view.PlayButtonOverlayView;
 	import org.flowplayer.view.Screen;
 	import org.osflash.thunderbolt.Logger;
 	
@@ -55,6 +52,7 @@ package org.flowplayer.view {
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
+	import flash.events.TimerEvent;
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
 	import flash.system.Security;
@@ -62,7 +60,7 @@ package org.flowplayer.view {
 	import flash.text.TextFieldAutoSize;
 	import flash.ui.Keyboard;
 	import flash.utils.Dictionary;
-	import flash.utils.Timer;	
+	import flash.utils.Timer;		
 	
 	use namespace flow_internal;
 
@@ -400,7 +398,7 @@ package org.flowplayer.view {
 		}
 		
 		private function createScreen():void {
-			_screen = new Screen(_config.getPlaylist(), _animationEngine, _playButtonOverlay);
+			_screen = new Screen(_config.getPlaylist(), _animationEngine, _playButtonOverlay, _pluginRegistry);
 			var screenModel:DisplayProperties = _config.getScreenProperties();
 			initView(_screen, screenModel, null, false);
 			if (_playButtonOverlay) {
@@ -415,7 +413,7 @@ package org.flowplayer.view {
 				return;
 			}
 			log.debug("playlist has clips? " + hasClip);
-			var overlay:PlayButtonOverlayView = new PlayButtonOverlayView(! playButtonOverlayWidthDefined(), _playButtonOverlay, _config.getPlaylist(), true);
+			var overlay:PlayButtonOverlayView = new PlayButtonOverlayView(! playButtonOverlayWidthDefined(), _playButtonOverlay, _pluginRegistry, _config.getPlaylist(), true);
 			overlay.addEventListener(Event.COMPLETE, initPhase3);
 			initView(overlay, _playButtonOverlay, null, false);
 		}
