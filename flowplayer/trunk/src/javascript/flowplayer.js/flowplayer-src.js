@@ -1100,7 +1100,7 @@ if (document.all) {
 				this.close();	
 			}
 		});
-	}		
+	};	
 }
 
 
