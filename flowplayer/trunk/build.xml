@@ -4,10 +4,10 @@
 	<property name="version-1" value="3" />
 	<property name="version-2" value="0" />
 	<property name="version-3" value="1" />	
-	<property name="version-status" value="dev" />
-	<property name="controls-version-info" value="3.0.1-dev" />
-	<property name="audio-version-info" value="3.0.1-dev" />
-	<property name="flowplayer-js-version-info" value="3.0.0" />
+	<property name="version-status" value="" />
+	<property name="controls-version-info" value="3.0.1" />
+	<property name="audio-version-info" value="3.0.1" />
+	<property name="flowplayer-js-version-info" value="3.0.1" />
 	<property name ="source-dist-root-folder" value="flowplayer" />
 	
 	<property name="version-status-quoted" value="&quot;${version-status}&quot;" />
@@ -65,14 +65,14 @@
 		<antcall target="prepare" />
 		<property name="licenselib" value="${lib-dir}/licensekey" />
 		<antcall target="compile" />
-		<example player-swf="${player-binary-versioned}"/>
+		<example player-swf="${player-binary-versioned}" example-dir="example-free"/>
 	</target>
 	
 	<target name="build-biz" description="builds all" depends="check-uptodate, build-lib, plugins" unless="uptodate.commercial">
 		<antcall target="prepare" />
 		<property name="licenselib" value="${lib-dir}/licensekey" />
 		<antcall target="compile-commercial" />
-		<example player-swf="${commercial-player-binary-versioned}"/>
+		<example player-swf="${commercial-player-binary-versioned}" example-dir="example-biz"/>
 	</target>
 	
 	<target name="build-all" description="builds all" depends="build, build-biz" />
@@ -82,8 +82,8 @@
 
 		<compile-player binary="${bundled-basename}.swf" commercial="true" free="false" license-lib="${bundled-license-lib}" />
     	<copy file="${build-dir}/${bundled-basename}.swf" tofile="${build-dir}/${bundled-basename}-${version-info}.swf" />
-		<example player-swf="${bundled-basename}-${version-info}.swf"/>
-		<zip-player license="LICENSE_BUNDLED.txt" player-swf="${bundled-basename}-${version-info}.swf" player-swf-dir="${build-dir}" zip-name="${bundled-basename}-${version-info}.zip" />
+		<example player-swf="${bundled-basename}-${version-info}.swf" example-dir="examble-bundled"/>
+		<zip-player license="LICENSE_BUNDLED.txt" player-swf="${bundled-basename}-${version-info}.swf" player-swf-dir="${build-dir}" zip-name="${bundled-basename}-${version-info}.zip" example-dir="examble-bundled" />
 	</target>
 	
     <target name="compile">
@@ -98,8 +98,11 @@
 
 	<macrodef name="example">
         <attribute name="player-swf" />
+        <attribute name="example-dir" />
 		<sequential>
-			<copy todir="${build-dir}/example" overwrite="true">
+			<echo message="building example" />
+			<delete dir="${build-dir}/@{example-dir}" />
+			<copy todir="${build-dir}/@{example-dir}" overwrite="true">
 	            <fileset dir="example">
 	                <include name="*.tmpl"/>
 	            </fileset>
@@ -109,7 +112,7 @@
 	                <filter token="PLAYER_SWF" value="../@{player-swf}"/>
 	            </filterset>
 	        </copy>
-			<copy todir="${build-dir}/example">
+			<copy todir="${build-dir}/@{example-dir}">
 	            <fileset dir="example">
 	                <include name="*.js"/>
 	                <include name="*.html"/>
@@ -267,12 +270,12 @@
 	</target>
 	
 	<target name="zip" description="creates a distribution zip package" depends="build">
-		<zip-player zip-name="${dist-name}" player-swf-dir="${build-dir}" player-swf="${player-binary-versioned}" license="LICENSE.txt" />
+		<zip-player zip-name="${dist-name}" player-swf-dir="${build-dir}" player-swf="${player-binary-versioned}" license="LICENSE.txt" example-dir="example-free" />
 	</target>
 	
 	<target name="zip-biz" description="creates a Commercial distribution zip package" depends="build-biz">
-		<zip-player zip-name="${commercial-dist-name}" player-swf-dir="${build-dir}" player-swf="${commercial-player-binary-versioned}" license="LICENSE_COMMERCIAL.txt" />
-		<zip-player zip-name="${multidomain-dist-name}" player-swf-dir="${build-dir}" player-swf="${commercial-player-binary-versioned}" license="LICENSE_MULTIDOMAIN.txt" />
+		<zip-player zip-name="${commercial-dist-name}" player-swf-dir="${build-dir}" player-swf="${commercial-player-binary-versioned}" license="LICENSE_COMMERCIAL.txt" example-dir="example-biz" />
+		<zip-player zip-name="${multidomain-dist-name}" player-swf-dir="${build-dir}" player-swf="${commercial-player-binary-versioned}" license="LICENSE_MULTIDOMAIN.txt" example-dir="example-biz"  />
 	</target>
 
 	<macrodef name="zip-player">
@@ -280,6 +283,7 @@
         <attribute name="player-swf" />
         <attribute name="player-swf-dir" />
         <attribute name="license" />
+        <attribute name="example-dir" />
     	<sequential>
     		<echo message="++ Zipping @{zip-name} +++"></echo>
     		
@@ -294,7 +298,7 @@
     			<zipfileset prefix="flowplayer" dir="${dist-dir}">
     				<include name="flowplayer.controls-${controls-version-info}.swf" />
     			</zipfileset>
-    			<zipfileset prefix="flowplayer/example" dir="${build-dir}/example">
+    			<zipfileset prefix="flowplayer/example" dir="${build-dir}/@{example-dir}">
     				<include name="*" />
     				<exclude name="index.html.tmpl" />
     			</zipfileset>
