@@ -17,7 +17,7 @@
  *    along with Flowplayer.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.flowplayer.view {
-	import org.flowplayer.controller.MediaController;
+	import org.flowplayer.model.DisplayProperties;		import org.flowplayer.controller.MediaController;
 	import org.flowplayer.flow_internal;
 	import org.flowplayer.model.Clip;
 	import org.flowplayer.model.ClipEvent;
@@ -45,16 +45,16 @@ package org.flowplayer.view {
 		private var _prevClip:Clip;
 		private var _fullscreenManaer:FullscreenManager;
 		private var _animatioEngine:AnimationEngine;
-		private var _play:PlayButtonOverlay;
+		private var _pluginRegistry:PluginRegistry;
 
-		public function Screen(playList:Playlist, animationEngine:AnimationEngine, play:PlayButtonOverlay) {
+		public function Screen(playList:Playlist, animationEngine:AnimationEngine, play:PlayButtonOverlay, pluginRegistry:PluginRegistry) {
 			_displayFactory = new MediaDisplayFactory(playList);
 			_resizer = new ClipResizer(playList, this);
 			createDisplays(playList);
 			addListeners(playList);
 			_playList = playList;
 			_animatioEngine = animationEngine;
-			_play = play;
+			_pluginRegistry = pluginRegistry;
 		}
 
 		private function createDisplays(playList:Playlist):void {
@@ -81,11 +81,13 @@ package org.flowplayer.view {
 			arrangePlay();
 		}
 		
+		private function get play():DisplayProperties {
+			return DisplayProperties(_pluginRegistry.getPlugin("play"));
+		}
+
 		private function arrangePlay():void {
 			if (playView) {
-				log.debug("arranging play " + _play.dimensions);
-				log.debug("my width is " + width);
-				playView.setSize(_play.dimensions.width.toPx(this.width), _play.dimensions.height.toPx(this.height));
+				playView.setSize(play.dimensions.width.toPx(this.width), play.dimensions.height.toPx(this.height));
 				Arrange.center(playView, width, height);
 				if (playView.parent == this) {
 					setChildIndex(playView, numChildren-1);
@@ -94,8 +96,8 @@ package org.flowplayer.view {
 		}
 
 		private function get playView():AbstractSprite {
-			if (! _play) return null;
-			return _play.getDisplayObject() as AbstractSprite;
+			if (! play) return null;
+			return play.getDisplayObject() as AbstractSprite;
 		}
 
 		private function resizeClip(clip:Clip):void {
@@ -168,17 +170,6 @@ package org.flowplayer.view {
 			var clipNow:Clip = event.target as Clip;
 			if (clipNow.isNullClip) return;
 			setDisplayVisible(clipNow, true);
-
-//			if (_prevClip && _prevClip != clipNow) {
-//				log.debug("hiding previous display");
-//				setDisplayVisible(_prevClip, false);
-//				setDisplayVisible(clipNow, true);
-//			} else {
-//				if (_prevClip && _prevClip == clipNow && MediaDisplay(_displays[clipNow]).hasContent()) {
-//					return;
-//				}
-//				setDisplayVisible(clipNow, true);
-//			}
 			_prevClip = clipNow;
 			log.info("showDisplay done");
 		}
@@ -227,19 +218,18 @@ package org.flowplayer.view {
 			var clip:Clip = event.target as Clip;
 			if (clip.isNullClip) return;
 			
-			log.debug("previous clip " + _prevClip + " clip " + clip);
-			if (! clip.autoPlay && clip.autoBuffering && _prevClip && _prevClip.type == ClipType.IMAGE) {
+			if (! clip.autoPlay && clip.autoBuffering && _playList.previousClip && _playList.previousClip.type == ClipType.IMAGE) {
 				log.debug("autoBuffering next clip on a splash image, will not show next display");
 				clip.onResume(onFirstFrameResume);
-				// we are autoBuffering on splash, don't switch display
+				setDisplayVisibleIfHidden(_playList.previousClip);
 				return;
 			}
 			
-			if (_prevClip  && clip.type == ClipType.AUDIO) {
+			if (_playList.previousClip && clip.type == ClipType.AUDIO) {
 				log.debug("this is an audio clip, will check if previous clip was an image that should stay visible");
-				if (_prevClip.type == ClipType.IMAGE && clip.image) {
+				if (_playList.previousClip.type == ClipType.IMAGE && clip.image) {
 					log.debug("previous image stays visible");
-					// do not hide the previous image
+					setDisplayVisibleIfHidden(_playList.previousClip);
 				} else {
 					log.debug("hiding all displays for this audio clip");
 					hideAllDisplays();
@@ -251,6 +241,13 @@ package org.flowplayer.view {
 			showDisplay(event);
 		}
 		
+		private function setDisplayVisibleIfHidden(clip:Clip):void {
+			var disp:DisplayObject = _displays[clip];
+			if (disp.alpha < 1 || ! disp.visible) {
+				setDisplayVisible(clip, true);
+			}
+		}
+
 		private function hideAllDisplays(except:MediaDisplay = null):void {
 			var clips:Array = _playList.clips;
 			for (var i:Number = 0; i < clips.length; i++) {
@@ -289,7 +286,7 @@ package org.flowplayer.view {
 			log.debug("showPlay");
 			addChild(playView);
 			playView.visible = true;
-			playView.alpha = _play.alpha;
+			playView.alpha = play.alpha;
 			arrangePlay();
 			log.debug("play bounds: " + Arrange.describeBounds(playView));
 			log.debug("play parent: " + playView.parent);

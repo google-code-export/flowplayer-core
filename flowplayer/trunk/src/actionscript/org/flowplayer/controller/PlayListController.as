@@ -153,7 +153,19 @@ package org.flowplayer.controller {
 
 		flow_internal function previous():Clip {
 			if (!_playList.hasPrevious()) return _playList.current;
+			
+			if (currentIsAudioWithSplash() && _playList.currentIndex >= 3) {
+				_playList.toIndex(_playList.currentIndex - 2);
+				_state.play();
+				return _playList.current;
+			}
+			
 			return moveTo(_playList.previous, false, false);
+		}
+		
+		private function currentIsAudioWithSplash():Boolean {
+			return _playList.current.type == ClipType.AUDIO && _playList.current.image 
+				&& _playList.previousClip && _playList.previousClip.type == ClipType.IMAGE;
 		}
 
 		flow_internal function moveTo(advanceFunction:Function, obeyClipPlaySettings:Boolean, silent:Boolean):Clip {
