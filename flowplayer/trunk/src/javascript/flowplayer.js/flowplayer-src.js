@@ -1,5 +1,5 @@
 /** 
- * flowplayer.js [3.0.0]. The Flowplayer API
+ * flowplayer.js [3.0.1]. The Flowplayer API
  * 
  * Copyright 2008 Flowplayer Oy
  * 
@@ -220,7 +220,7 @@
 				var fnId = makeId();  
 				cuepoints[fnId] = [points, fn]; 
 				
-				if (player.isLoaded()) {
+				if (player.isLoaded()) { 
 					player._api().fp_addCuepoints(points, index, fnId);	
 				}  
 				
@@ -244,7 +244,9 @@
 				
 				if (evt == 'onLoad') { 
 					each(cuepoints, function(key, val) {
-						player._api().fp_addCuepoints(val[0], index, key); 		
+						if (val[0]) {
+							player._api().fp_addCuepoints(val[0], index, key); 		
+						}
 					}); 
 					return false;
 				}					
@@ -284,7 +286,8 @@
 		
 		// get cuepoints from config
 		if (json.onCuepoint) {
-			self.onCuepoint.apply(self, json.onCuepoint);
+			var arg = json.onCuepoint;
+			self.onCuepoint.apply(self, typeof arg == 'function' ? [arg] : arg);
 			delete json.onCuepoint;
 		} 
 		
@@ -534,7 +537,7 @@ function Player(wrapper, params, conf) {
 			
 			return self;	
 		},
-		
+
 		unload: function() {  
 			
          if (api && html.replace(/\s/g, '') !== '' && !api.fp_isFullscreen() && 
@@ -643,7 +646,7 @@ function Player(wrapper, params, conf) {
 		},
 		
 		getVersion: function() {
-			var js = "flowplayer.js 3.0.0-rc5";
+			var js = "flowplayer.js 3.0.1";
 			if (api) {
 				var ver = api.fp_getVersion();
 				ver.push(js);
@@ -691,7 +694,7 @@ function Player(wrapper, params, conf) {
 	
 	
 	// core API methods
-	each(("pause,resume,mute,unmute,stop,toggle,seek,getStatus,getVolume,setVolume,getTime,isPaused,isPlaying,startBuffering,stopBuffering,isFullscreen,reset").split(","),		
+	each(("pause,resume,mute,unmute,stop,toggle,seek,getStatus,getVolume,setVolume,getTime,isPaused,isPlaying,startBuffering,stopBuffering,isFullscreen,reset,close").split(","),		
 		function() {		 
 			var name = this;
 			
@@ -838,7 +841,7 @@ function Player(wrapper, params, conf) {
 		
 		
 		// wrapper href as playlist
-		if (wrapper.getAttribute("href")) { 
+		if (wrapper.getAttribute("href", 2)) { 
 			conf.playlist = [{url:wrapper.getAttribute("href", 2)}];			
 		} 
 		
@@ -860,7 +863,11 @@ function Player(wrapper, params, conf) {
 			} 
 			
 			// populate common clip properties to each clip
-			extend(clip, conf.clip, true);		
+			each(conf.clip, function(key, val) {
+				if (clip[key] === null && typeof val != 'function')  {
+					clip[key] = val;	
+				}
+			});		
 			
 			// modify configuration playlist
 			conf.playlist[index] = clip;			
@@ -904,8 +911,8 @@ function Player(wrapper, params, conf) {
 		
 		
 		// click function
-		function doClick(e) {
-			if (self._fireEvent("onBeforeClick") !== false) {
+		function doClick(e) { 
+			if (!self.isLoaded() && self._fireEvent("onBeforeClick") !== false) {
 				self.load();		
 			} 
 			return stopEvent(e);					
@@ -1083,6 +1090,20 @@ extend(window.$f, {
 	extend: extend
 	
 });
+
+
+// sometimes IE leaves sockets open
+if (document.all) {
+	window.onbeforeunload = function() {
+		$f("*").each(function() {
+			if (this.isLoaded()) {
+				this.close();	
+			}
+		});
+	}		
+}
+
+
 	
 //}}}
 
