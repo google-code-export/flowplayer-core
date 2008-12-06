@@ -1,5 +1,9 @@
 Version history:
 
+3.0.2
+-----
+- setting play: null now works again
+
 3.0.1
 -----
 - Fixed negative cuepoints from common clip. Now these are properly propagated to the clips in playlist.
