@@ -155,6 +155,7 @@ package org.flowplayer.controller {
 			if (!_playList.hasPrevious()) return _playList.current;
 			
 			if (currentIsAudioWithSplash() && _playList.currentIndex >= 3) {
+				_state.stop();
 				_playList.toIndex(_playList.currentIndex - 2);
 				_state.play();
 				return _playList.current;

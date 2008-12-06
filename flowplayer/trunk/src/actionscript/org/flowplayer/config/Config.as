@@ -93,7 +93,9 @@ package org.flowplayer.config {
 
 		public function getPlayButtonOverlay():PlayButtonOverlay {
 			var play:PlayButtonOverlay = viewObjectBuilder.getDisplayProperties(getObject("play"), "play", PlayButtonOverlay) as PlayButtonOverlay;
-			play.buffering = useBufferingAnimation;
+			if (play) {
+				play.buffering = useBufferingAnimation;
+			}
 			return play;
 		}
 		

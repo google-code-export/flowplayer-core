@@ -432,11 +432,11 @@ package org.flowplayer.controller {
 		 * Should we pause on first frame after starting.
 		 * @see #load() the load() method has an autoPlay parameter that controls whether we stop on first frame or not
 		 */
-		internal final function get pauseAfterStart():Boolean {
+		protected final function get pauseAfterStart():Boolean {
 			return _pauseAfterStart;
 		}
 		
-		internal final function set pauseAfterStart(value:Boolean):void {
+		protected final function set pauseAfterStart(value:Boolean):void {
 			_pauseAfterStart = value;
 		}
 		

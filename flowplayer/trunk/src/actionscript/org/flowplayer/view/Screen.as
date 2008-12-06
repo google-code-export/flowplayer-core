@@ -220,8 +220,10 @@ package org.flowplayer.view {
 			
 			if (! clip.autoPlay && clip.autoBuffering && _playList.previousClip && _playList.previousClip.type == ClipType.IMAGE) {
 				log.debug("autoBuffering next clip on a splash image, will not show next display");
-				clip.onResume(onFirstFrameResume);
 				setDisplayVisibleIfHidden(_playList.previousClip);
+				if (clip.type == ClipType.AUDIO && clip.image) return;
+				
+				clip.onResume(onFirstFrameResume);
 				return;
 			}
 			
@@ -261,7 +263,7 @@ package org.flowplayer.view {
 
 		private function onFirstFrameResume(event:ClipEvent):void {
 			var clip:Clip = event.target as Clip;
-			clip.unbind(onFirstFrameResume);			
+			clip.unbind(onFirstFrameResume);						
 			showDisplay(event);
 		}
 

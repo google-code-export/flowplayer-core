@@ -501,7 +501,7 @@ package org.flowplayer.view {
 
 		private function onViewClicked(event:MouseEvent):void {
 			log.debug("onViewClicked, target " + event.target + ", current target " + event.currentTarget);
-			if (DisplayObject(event.target).parent == _playButtonOverlay.getDisplayObject()) {
+			if (_playButtonOverlay && DisplayObject(event.target).parent == _playButtonOverlay.getDisplayObject()) {
 				_flowplayer.toggle();
 				return;
 			}
