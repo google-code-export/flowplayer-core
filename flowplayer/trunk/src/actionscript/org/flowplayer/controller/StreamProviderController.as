@@ -18,22 +18,8 @@
  */
 
 package org.flowplayer.controller {
-	import flash.net.NetStream;	
-	
-	import org.flowplayer.model.ClipType;	
-	import org.flowplayer.config.Config;
-	import org.flowplayer.controller.AbstractDurationTrackingController;
-	import org.flowplayer.controller.MediaController;
-	import org.flowplayer.controller.StreamProvider;
-	import org.flowplayer.model.Clip;
-	import org.flowplayer.model.ClipEvent;
-	import org.flowplayer.model.ClipEventType;
-	import org.flowplayer.model.Playlist;
-	import org.flowplayer.util.Log;
-
-	import flash.display.DisplayObject;		
-
-	/**
+	import org.flowplayer.config.Config;	import org.flowplayer.controller.AbstractDurationTrackingController;	import org.flowplayer.controller.MediaController;	import org.flowplayer.controller.StreamProvider;	import org.flowplayer.model.Clip;	import org.flowplayer.model.ClipEvent;	import org.flowplayer.model.ClipEventType;	import org.flowplayer.model.ClipType;	import org.flowplayer.model.Playlist;	import org.flowplayer.util.Log;		import flash.display.DisplayObject;	import flash.media.Video;		
+	/**
 	 * Video controller is responsible for loading and showing video.
 	 * It's also responsible for scaling and resizing the video screen.
 	 * It receives the cuePoints and metaData from the loaded video data.
@@ -60,11 +46,11 @@ package org.flowplayer.controller {
 			var clip:Clip = event.target as Clip;
 			log.info("onBegin, initializing content for clip " + clip);
 			var video:DisplayObject = clip.getContent();
-			if (video) {
+			if (video && video is Video) {
 				getProvider(clip).attachStream(video);
 			} else {
 				video = getProvider(clip).getVideo(clip);
-				if (video) { 
+				if (video && video is Video) { 
 					getProvider(clip).attachStream(video);
 					if (!video) throw new Error("No video object available for clip " + clip);
 					clip.setContent(video);
