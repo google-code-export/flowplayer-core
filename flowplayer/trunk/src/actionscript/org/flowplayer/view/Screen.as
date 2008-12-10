@@ -275,6 +275,10 @@ package org.flowplayer.view {
 			if (clipNow.type == ClipType.VIDEO) {
 				var disp:MediaDisplay = _displays[clipNow];
 				disp.init(clipNow);
+				
+				if (clipNow.live) {
+					showDisplay(event);
+				}
 			}
 		}
 		

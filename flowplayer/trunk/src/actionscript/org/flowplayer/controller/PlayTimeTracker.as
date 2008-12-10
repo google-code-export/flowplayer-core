@@ -39,16 +39,16 @@ package org.flowplayer.controller {
 			_timer = new Timer(200);
 			_timer.addEventListener(TimerEvent.TIMER, checkProgress);
 			_startTime = getTimer();
-			log.debug("starting tracker at time " + time);
+			log.debug("started at time " + time);
 			_timer.start();
 			_onLastSecondDispatched = false;
 		}
 
 		public function stop():void {
 			if (!_timer) return;
-			_storedTime = time;
 			_timer.stop();
-			log.debug("stopped tracker at time " + _storedTime);
+			_storedTime = time;
+			log.debug("stopped at time " + _storedTime);
 		}
 
 		public function set time(value:Number):void {
@@ -59,13 +59,19 @@ package org.flowplayer.controller {
 
 		public function get time():Number {
 			if (! _timer) return 0;
-			if (! _timer.running) return _storedTime;
-			if (_clip.type == ClipType.VIDEO) {
-				return _controller.time;
-			}
 			
 			var timeNow:Number = getTimer();
 			var _timePassed:Number = _storedTime + (timeNow - _startTime)/1000;
+
+			if (_clip.type == ClipType.VIDEO) {
+				// this is a sanity check that we have played at least one second
+				if (getTimer() - _startTime < 2000) {
+					return _timePassed;
+				}
+				return _controller.time;
+			}
+			
+			if (! _timer.running) return _storedTime;
 			return _timePassed;
 		}
 
@@ -86,7 +92,9 @@ package org.flowplayer.controller {
 			}
 			if (completelyPlayed(_clip)) {
 				stop();
-				log.info("completely played, dispatching complete");
+				log.info(this + " completely played, dispatching complete");
+				log.info("clip.durationFromMetadata " + _clip.durationFromMetadata);
+				log.info("clip.duration " + _clip.duration);
 				dispatchEvent(new TimerEvent(TimerEvent.TIMER_COMPLETE));
 			}
 			
@@ -97,6 +105,7 @@ package org.flowplayer.controller {
 		}
 		
 		private function completelyPlayed(clip:Clip):Boolean {
+			
 			if (clip.durationFromMetadata > clip.duration) {
 				return time >= clip.duration;
 			}

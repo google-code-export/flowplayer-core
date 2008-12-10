@@ -4,6 +4,7 @@ Version history:
 -----
 - setting play: null now works again
 - pressing the play again button overlay does not open a linkUrl associated with a clip
+- now displays a live feed even when the RTMP server does not send any metadata and the onStart method is not therefore dispatched
 
 3.0.1
 -----

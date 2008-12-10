@@ -79,5 +79,9 @@ package org.flowplayer.view {
 		public function get canceled():Boolean {
 			return _canceled;
 		}
+		
+		public function get tweenProperty():String {
+			return _tweenProperty;
+		}
 	}
 }

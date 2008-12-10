@@ -143,21 +143,33 @@ package org.flowplayer.view {
 		 * Cancels all animations that are currently running for the specified view. The callbacks specified in animation calls
 		 * are not invoked for canceled animations.
 		 */
-		public function cancel(view:DisplayObject):void {
+		public function cancel(view:DisplayObject, property:String = null):void {
+			log.debug("cancel");
 			for (var viewObj:Object in _runningPlayablesByView) {
 				var viewWithRunningAnimation:DisplayObject = viewObj as DisplayObject;
 				if (viewWithRunningAnimation == view) {
-					var playable:IPlayable = _runningPlayablesByView[viewWithRunningAnimation] as IPlayable; 
-					_canceledByPlayable[playable] = true;
-					playable.stop();
+					var playable:Animation = _runningPlayablesByView[viewWithRunningAnimation] as Animation;
+					if (! property || (property && property == playable.tweenProperty)) {
+						log.info("tween for property " + playable.tweenProperty + " was canceled on view " + view);
+						_canceledByPlayable[playable] = true;
+						playable.stop();
+					}
 				}
 			}
 		}
 
 		private function animateAlpha(view:DisplayObject, target:Number, durationMillis:Number = 500, callback:Function = null, updatePanel:Boolean = true):Animation {
 			Assert.notNull(view, "animateAlpha: view cannot be null");
-			var playable:IPlayable = createTween("alpha", view, target, durationMillis);
-			if (! playable) return null;
+			var playable:Animation = createTween("alpha", view, target, durationMillis);
+			if (! playable) {
+				if (callback != null) {
+					callback();
+				}
+				return null;
+			}
+
+			// cancel previous alpha animations
+			cancel(view, playable.tweenProperty);
 
 			var plugin:DisplayProperties = _pluginRegistry.getPluginByDisplay(view);
 			if (updatePanel && plugin) {
@@ -166,8 +178,12 @@ package org.flowplayer.view {
 				if (target == 0) {
 					playable.addEventListener(GoEvent.COMPLETE, 
 						function(event:GoEvent):void {
-							log.debug("removing " + view + " from panel");
-							_panel.removeView(view);
+							if (!_canceledByPlayable[playable]) { 
+								log.debug("removing " + view + " from panel");
+								_panel.removeView(view);
+							} else {
+								log.info("previous fadeout was canceled, will not remove " + view + " from panel");
+							}
 						});
 				} else if (view.parent != _panel) {
 					_panel.addView(view);
@@ -201,16 +217,25 @@ package org.flowplayer.view {
 		
 		private function startTweens(view:DisplayObject, alpha: Number, width:Number, height:Number, x:Number, y:Number, durationMillis:int, callback:Function):Array {
 			var tweens:Array = new Array();
-			addTween(tweens, createTween("alpha", view, alpha, durationMillis));
+			
+			var alphaTween:Animation = createTween("alpha", view, alpha, durationMillis);
+			if (alphaTween) {
+				cancel(view, alphaTween.tweenProperty); 
+				addTween(tweens, alphaTween);
+			}
+			
 			addTween(tweens, createTween("width", view, width, durationMillis));
 			addTween(tweens, createTween("height", view, height, durationMillis));
 			addTween(tweens, createTween("x", view, x, durationMillis));
 			addTween(tweens, createTween("y", view, y, durationMillis));
 			if (tweens.length == 0) {
+				// call the callback also when not animating anything
+				if (callback != null) {
+					callback();
+				}
 				return tweens;
 			}
 			var playable:IPlayable = tweens.length > 1 ? new PlayableGroup(tweens) : tweens[0];
-			_runningPlayablesByView[view] = playable; 
 			start(view, playable, callback);
 			return tweens;
 		}
@@ -223,6 +248,7 @@ package org.flowplayer.view {
 
 		private function start(view:DisplayObject, playable:IPlayable, callback:Function = null):IPlayable {
 			if (playable == null) return null;
+			_runningPlayablesByView[view] = playable; 
 			log.debug("staring animation " + playable);
 
 			playable.addEventListener(GoEvent.COMPLETE, 
@@ -243,7 +269,7 @@ package org.flowplayer.view {
 			delete _runningPlayablesByView[view];
 		}
 
-		private function createTween(property:String, view:DisplayObject, targetValue:Number, durationMillis:int):IPlayable {
+		private function createTween(property:String, view:DisplayObject, targetValue:Number, durationMillis:int):Animation {
 			if (isNaN(targetValue)) return null;
 			if (view[property] == targetValue) {
 				log.debug("view property " + property + " already in target value " + targetValue + ", will not animate");
