@@ -195,7 +195,7 @@ package org.flowplayer.view {
 				startStreams();
 
 				stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
-				addViewClickLiteners();
+				addListeners();
 		}
 
 		private function resizeCanvasLogo():void {
@@ -447,11 +447,19 @@ package org.flowplayer.view {
 			}
 		}
 		
-		private function addViewClickLiteners():void {
+		private function addListeners():void {
 			_screen.addEventListener(MouseEvent.CLICK, onViewClicked);
+			addEventListener(MouseEvent.ROLL_OVER, onMouseOver);
+			addEventListener(MouseEvent.ROLL_OUT, onMouseOut);
 		}
-
-		private function createPanel():void {
+		
+		private function onMouseOut(event:MouseEvent):void {
+			_flowplayer.dispatchEvent(PlayerEvent.mouseOut());
+		}
+		private function onMouseOver(event:MouseEvent):void {
+			_flowplayer.dispatchEvent(PlayerEvent.mouseOver());
+		}
+		private function createPanel():void {
 			_panel = new Panel();
 			addChild(_panel);
 		}
@@ -501,7 +509,7 @@ package org.flowplayer.view {
 
 		private function onViewClicked(event:MouseEvent):void {
 			log.debug("onViewClicked, target " + event.target + ", current target " + event.currentTarget);
-			if (_playButtonOverlay && DisplayObject(event.target).parent == _playButtonOverlay.getDisplayObject()) {
+			if (_playButtonOverlay && isParent(DisplayObject(event.target), _playButtonOverlay.getDisplayObject())) {
 				_flowplayer.toggle();
 				return;
 			}
@@ -513,6 +521,18 @@ package org.flowplayer.view {
 			} else {
 				_flowplayer.toggle();
 			}
+		}
+		
+		private function isParent(child:DisplayObject, parent:DisplayObject):Boolean {
+			if (DisplayObject(child).parent == parent) return true;
+			if (! (parent is DisplayObjectContainer)) return false;
+			for (var i:Number = 0;i < DisplayObjectContainer(parent).numChildren; i++) {
+				var curChild:DisplayObject = DisplayObjectContainer(parent).getChildAt(i);
+				if (isParent(child, curChild)) { 
+					return true;
+				}
+			}
+			return false;
 		}
 
 		private function onKeyDown(event:KeyboardEvent):void {
