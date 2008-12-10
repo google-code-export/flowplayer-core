@@ -155,7 +155,9 @@ package org.flowplayer.view {
 		}
 
 		private function animateAlpha(view:DisplayObject, target:Number, durationMillis:Number = 500, callback:Function = null, updatePanel:Boolean = true):Animation {
+			Assert.notNull(view, "animateAlpha: view cannot be null");
 			var playable:IPlayable = createTween("alpha", view, target, durationMillis);
+			if (! playable) return null;
 
 			var plugin:DisplayProperties = _pluginRegistry.getPluginByDisplay(view);
 			if (updatePanel && plugin) {

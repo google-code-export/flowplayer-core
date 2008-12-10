@@ -3,6 +3,7 @@ Version history:
 3.0.2
 -----
 - setting play: null now works again
+- pressing the play again button overlay does not open a linkUrl associated with a clip
 
 3.0.1
 -----
