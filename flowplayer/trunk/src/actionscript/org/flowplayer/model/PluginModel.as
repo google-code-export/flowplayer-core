@@ -24,11 +24,19 @@ package org.flowplayer.model {
 	 */
 	public interface PluginModel extends Identifiable, Callable, Cloneable {
 		
-		function dispatch(eventType:PluginEventType, callbackId:String):void;
+		function dispatchOnLoad():void;
+		
+		function dispatchOnLoadError():void;
+			
+		function dispatch(eventType:PluginEventType, eventkId:String = null):void;
 		
 		function dispatchEvent(event:PluginEvent):void;
 
 		function onPluginEvent(listener:Function):void;
+
+		function onLoad(listener:Function):void;
+
+		function onError(listener:Function):void;
 		
 		function unbind(listener:Function, event:EventType = null, beforePhase:Boolean = false):void;
 

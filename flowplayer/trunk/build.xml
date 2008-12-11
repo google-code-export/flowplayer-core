@@ -4,8 +4,8 @@
 	<property name="version-1" value="3" />
 	<property name="version-2" value="0" />
 	<property name="version-3" value="2" />	
-	<property name="version-status" value="dev" />
-	<property name="controls-version-info" value="3.0.1" />
+	<property name="version-status" value="dev3" />
+	<property name="controls-version-info" value="3.0.2-dev2" />
 	<property name="audio-version-info" value="3.0.1" />
 	<property name="flowplayer-js-version-info" value="3.0.1" />
 	<property name ="source-dist-root-folder" value="flowplayer" />
@@ -207,6 +207,10 @@
 				  <include name="*.xml"/>
 				  <include name="*.properties"/>
 				  <include name="*.txt"/>
+			</srcfiles>
+			<srcfiles dir="${lib-dir}">
+				  <include name="**/*.as"/>
+				  <include name="**/*.swc"/>
 			</srcfiles>
 		</uptodate>
 		<echo message="main up-to-date: ${uptodate.main}"/>

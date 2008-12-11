@@ -27,23 +27,33 @@ package org.flowplayer.model {
 
 		public static const PLUGIN_EVENT:String = "onPluginEvent";
 		
-		private var _callbackId:String;
+		private var _id:String;
 
-		public function PluginEvent(eventType:PluginEventType, callbackId:String = null, info:Object = null) {
+		public function PluginEvent(eventType:PluginEventType, id:String = null, info:Object = null) {
 			super(eventType, info);
-			_callbackId = callbackId;
+			_id = id;
 		}
 
 		public override function clone():Event {
-			return new PluginEvent(eventType as PluginEventType, _callbackId, info);
+			return new PluginEvent(eventType as PluginEventType, _id, info);
 		}
 
 		public override function toString():String {
 			return formatToString("PluginEvent", "callbackId", "info");
 		}
-		
+
+		/**
+		 * Same as Id. Preserved here for backward compatibility.
+		 */
 		public function get callbackId():String {
-			return _callbackId;
+			return _id;
+		}
+		
+		/**
+		 * Gets the event Id.
+		 */
+		public function get id():String {
+			return _id;
 		}
 
 		protected override function get externalEventArgument():Object {
@@ -51,7 +61,7 @@ package org.flowplayer.model {
 		}
 
 		protected override function get externalEventArgument2():Object {
-			return _callbackId;
+			return _id;
 		}
 	}
 }
