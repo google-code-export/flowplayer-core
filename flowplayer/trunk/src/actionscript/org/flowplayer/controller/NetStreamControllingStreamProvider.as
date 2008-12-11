@@ -515,7 +515,7 @@ package org.flowplayer.controller {
 				event.info.code == "NetConnection.Connect.Failed") {
 				
 				if (canDispatchStreamNotFound()) {
-					dispatchPlayEvent(ClipEventType.ERROR, "streamNotFound");
+					clip.dispatchStreamNotFoundError(event.info.code);
 				}
 			}
 			

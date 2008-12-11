@@ -20,15 +20,17 @@ package org.flowplayer.model {
 	public class AbstractEvent extends Event {
 
 		private var _info:Object;
+		private var _info2:Object;
+		private var _info3:Object;
 		private var _eventType:EventType;
 		private var _target:Object;
-		private var _propagationStopped:Boolean;
-		private var _isDefaultPrevented:Boolean;
-
-		public function AbstractEvent(eventType:EventType, info:Object = null) {
+		private var _propagationStopped:Boolean;		private var _isDefaultPrevented:Boolean;
+		public function AbstractEvent(eventType:EventType, info:Object = null, info2:Object = null, info3:Object = null) {
 			super(eventType.name);
 			this._eventType = eventType;
 			this._info = info;
+			this._info2 = info2;
+			this._info3 = info3;
 			_target = target;
 		}
 
@@ -78,7 +80,7 @@ package org.flowplayer.model {
 			// NOTE: externalEventArgument3 is not converted!
 			var returnVal:Object = ExternalInterface.call(
 				"flowplayer.fireEvent",
-				playerId || ExternalInterface.objectID, getExternalName(eventType.name, beforePhase), convert(externalEventArgument), convert(externalEventArgument2), externalEventArgument3);
+				playerId || ExternalInterface.objectID, getExternalName(eventType.name, beforePhase), convert(externalEventArgument), convert(externalEventArgument2), externalEventArgument3, externalEventArgument4);
 			if (returnVal + "" == "false") return false;
 			return true;
 		}
@@ -107,7 +109,11 @@ package org.flowplayer.model {
 		}
 		
 		protected function get externalEventArgument3():Object {
-			return null;
+			return _info2;
+		}
+		
+		protected function get externalEventArgument4():Object {
+			return _info3;
 		}
 		
 		override public function isDefaultPrevented():Boolean {
@@ -116,6 +122,11 @@ package org.flowplayer.model {
 		
 		override public function preventDefault():void {
 			_isDefaultPrevented = true;
+		}				public function get info2():Object {
+			return _info2;		}
+		
+		public function get info3():Object {
+			return _info3;
 		}
 	}
 }

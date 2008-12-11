@@ -527,7 +527,7 @@ package org.flowplayer.view {
 		}
 		
 		private function onError(event:ClipEvent):void {
-			handleError(new Error(event.info + ", clip: '" + Clip(event.target).completeUrl + "'"));
+			handleError(new Error(event.info + ", " + event.info2 + ", " + event.info3 + ", clip: '" + Clip(event.target).completeUrl + "'"));
 		}
 
 		private function onViewClicked(event:MouseEvent):void {

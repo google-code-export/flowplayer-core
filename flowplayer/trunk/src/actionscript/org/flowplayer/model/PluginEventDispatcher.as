@@ -14,10 +14,12 @@ package org.flowplayer.model {
 		 * Dispatches a plugin event.
 		 * @param eventType the type of the event to dispatch
 		 * @param eventId the ID for the event, this the ID used to distinguis between diferent generic plugin events
+		 * @param info optional info object, will be passed to JavaScript
+		 * @param info2 optional info object, will be passed to JavaScript
 		 * @see PluginEvent#id
 		 */
-		public function dispatch(eventType:PluginEventType, eventId:String = null):void {
-			doDispatchEvent(new PluginEvent(eventType, eventId, name), true);
+		public function dispatch(eventType:PluginEventType, eventId:Object = null, info:Object = null, info2:Object = null):void {
+			doDispatchEvent(new PluginEvent(eventType, name, eventId, info, info2), true);
 		}
 		
 		/**
@@ -32,8 +34,8 @@ package org.flowplayer.model {
 		 * Dispatches a plugin error event.
 		 * @see PluginEventType#ERROR
 		 */
-		public function dispatchOnLoadError():void {
-			dispatch(PluginEventType.ERROR, "pluginLoad");
+		public function dispatchOnLoadError(message:String, info:Object = null):void {
+			dispatch(PluginEventType.ERROR, 0, message, info);
 		}
 
 		public function dispatchEvent(event:PluginEvent):void {

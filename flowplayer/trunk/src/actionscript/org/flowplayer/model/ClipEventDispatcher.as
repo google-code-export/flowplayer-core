@@ -14,8 +14,12 @@ package org.flowplayer.model {
 	 */
 	public class ClipEventDispatcher extends EventDispatcher {
 		
-		public function dispatch(eventType:ClipEventType, infoObj:Object = null):void {
-			doDispatchEvent(new ClipEvent(eventType, infoObj), false);
+		public function dispatch(eventType:ClipEventType, info:Object = null, info2:Object = null, info3:Object = null):void {
+			doDispatchEvent(new ClipEvent(eventType, info, info2, info3), false);
+		}
+		
+		public function dispatchStreamNotFoundError(info:Object = null):void {
+			doDispatchEvent(new ClipEvent(ClipEventType.ERROR, 0, "Stream not found", info), false);
 		}
 		
 		public function dispatchEvent(event:ClipEvent):void {
