@@ -24,8 +24,8 @@ package org.flowplayer.model {
 	 */
 	public class ClipEvent extends AbstractEvent  {
 
-		public function ClipEvent(eventType:EventType, info:Object = null) {
-			super(eventType, info);
+		public function ClipEvent(eventType:EventType, info:Object = null, info2:Object = null, info3:Object = null) {
+			super(eventType, info, info2, info3);
 		}
 
 		public override function clone():Event {
