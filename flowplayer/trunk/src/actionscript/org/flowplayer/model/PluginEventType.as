@@ -9,6 +9,8 @@ package org.flowplayer.model {
 	public class PluginEventType extends EventType {
 		
 		public static const PLUGIN_EVENT:PluginEventType = new PluginEventType("onPluginEvent");		
+		public static const LOAD:PluginEventType = new PluginEventType("onLoad");		
+		public static const ERROR:PluginEventType = new PluginEventType("onError");		
 
 		private static var _allValues:Dictionary;
 		private static var _cancellable:Dictionary = new Dictionary();

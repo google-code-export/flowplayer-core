@@ -18,7 +18,20 @@
  */
 
 package org.flowplayer.view {
-	import flash.display.DisplayObject;	import flash.utils.Dictionary;		import org.flowplayer.model.Cloneable;	import org.flowplayer.model.DisplayProperties;	import org.flowplayer.model.Plugin;	import org.flowplayer.model.PluginModel;	import org.flowplayer.model.ProviderModel;	import org.flowplayer.util.Assert;	import org.flowplayer.util.Log;	import org.flowplayer.util.PropertyBinder;		/**
+	import org.flowplayer.model.DisplayPluginModel;	
+	import org.flowplayer.model.Cloneable;
+	import org.flowplayer.model.DisplayProperties;
+	import org.flowplayer.model.Plugin;
+	import org.flowplayer.model.PluginModel;
+	import org.flowplayer.model.ProviderModel;
+	import org.flowplayer.util.Assert;
+	import org.flowplayer.util.Log;
+	import org.flowplayer.util.PropertyBinder;
+	
+	import flash.display.DisplayObject;
+	import flash.utils.Dictionary;		
+
+	/**
 	 * @author api
 	 */
 	public class PluginRegistry {
@@ -111,6 +124,16 @@ package org.flowplayer.view {
 			plugin.setDisplayObject(view);
 			_plugins[plugin.name] = plugin;
 			_originalProps[plugin.name] = plugin.clone();
+		}
+		
+		internal function removePlugin(plugin:PluginModel):void {
+			delete _plugins[plugin.name];
+			delete _originalProps[plugin.name];
+			delete _providers[plugin.name];
+			
+			if (plugin is DisplayPluginModel) {
+				_panel.removeView(DisplayPluginModel(plugin).getDisplayObject());
+			}
 		}
 		
 		public function updateDisplayProperties(props:DisplayProperties, updateOriginalProps:Boolean = false):void {

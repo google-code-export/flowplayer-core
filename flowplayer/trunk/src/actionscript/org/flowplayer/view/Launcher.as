@@ -37,6 +37,8 @@ package org.flowplayer.view {
 	import org.flowplayer.model.PlayButtonOverlay;
 	import org.flowplayer.model.PlayerEvent;
 	import org.flowplayer.model.Playlist;
+	import org.flowplayer.model.PluginEvent;
+	import org.flowplayer.model.PluginModel;
 	import org.flowplayer.model.State;
 	import org.flowplayer.util.Arrange;
 	import org.flowplayer.util.Log;
@@ -60,7 +62,7 @@ package org.flowplayer.view {
 	import flash.text.TextFieldAutoSize;
 	import flash.ui.Keyboard;
 	import flash.utils.Dictionary;
-	import flash.utils.Timer;		
+	import flash.utils.Timer;	
 	
 	use namespace flow_internal;
 
@@ -77,6 +79,7 @@ package org.flowplayer.view {
 		private var _canvasLogo:Sprite;
 		private var _pluginLoader:PluginLoader;
 		private var _error:TextField;
+		private var _pluginsInitialized:Number = 0;
 
 		[Frame(factoryClass="org.flowplayer.view.Preloader")]
 
@@ -167,30 +170,23 @@ package org.flowplayer.view {
 
 				log.debug("calling onLoad to plugins");
 				_pluginRegistry.onLoad(_flowplayer);
-				
-				if (pluginsLoadedEvent) {
-					log.debug("Adding visible plugins to panel");
-					addPluginsToPanel(_pluginRegistry);
-				}
 
 				log.debug("arranging screen");
 				arrangeScreen();
-				
-				log.debug("dispatching onLoad");
-				if (useExternalInterfade()) {
-					_flowplayer.dispatchEvent(PlayerEvent.load());
-				} 
-	
-				if (! _playButtonOverlay) {
-					initPhase3();
-				}
-				
 			} catch (e:Error) {
 				handleError(e);
 			}
 		}
 		
 		private function initPhase3(event:Event = null):void {
+				log.debug("Adding visible plugins to panel");
+				addPluginsToPanel(_pluginRegistry);
+				
+				log.debug("dispatching onLoad");
+				if (useExternalInterfade()) {
+					_flowplayer.dispatchEvent(PlayerEvent.load("player"));
+				} 
+
 				log.debug("starting configured streams");
 				startStreams();
 
@@ -223,15 +219,44 @@ package org.flowplayer.view {
 
 		private function loadPluginsIfConfigured():void {
 			var plugins:Array = _config.getLoadables();
-			_pluginLoader = new PluginLoader(URLUtil.playerBaseUrl(loaderInfo), _pluginRegistry, this, useExternalInterfade());
+			log.info("will load following plugins: ");
+			for (var i:Number = 0; i < plugins.length; i++) {
+				log.info("" + plugins[i]);
+			}
+			_pluginLoader = new PluginLoader(URLUtil.playerBaseUrl(loaderInfo), _pluginRegistry, this, useExternalInterfade(), onPluginLoad, onPluginLoadError);
 			_pluginLoader.addEventListener(Event.COMPLETE, initPhase2);
 			if (plugins.length == 0) {
 				log.debug("configuration has no plugins");
 				initPhase2();
 			} else {
 				log.debug("loading plugins and providers");
-				loadPluginsAndProviders(plugins);
+				_pluginLoader.load(plugins);
 			}
+		}
+		
+		private function onPluginLoad(event:PluginEvent):void {
+			var plugin:PluginModel = event.target as PluginModel;
+			log.info("plugin " + plugin + " initialized");
+			checkPluginsLoaded();
+		}
+
+		private function onPluginLoadError(event:PluginEvent):void {
+			if (event.id != "pluginLoad") return;
+			
+			var plugin:PluginModel = event.target as PluginModel;
+			log.warn("load/init error on " + plugin);
+			_pluginRegistry.removePlugin(plugin);
+			checkPluginsLoaded();
+		}
+		
+		private function checkPluginsLoaded():void {
+			var numPlugins:int = _config.getLoadables().length + 1;
+			
+			if (++_pluginsInitialized == numPlugins) {
+				log.info("all plugins initialized");
+				initPhase3();
+			}
+			log.info(_pluginsInitialized + " out of " + numPlugins + " plugins initialized");
 		}
 		
 		private function playerSwfName():String {
@@ -299,10 +324,6 @@ package org.flowplayer.view {
 
 		private function createAnimationEngine(pluginRegistry:PluginRegistry):void {
 			_animationEngine = new AnimationEngine(_panel, pluginRegistry);
-		}
-
-		private function loadPluginsAndProviders(plugins:Array):void {
-			_pluginLoader.load(plugins);
 		}
 
 		private function addPluginsToPanel(_pluginRegistry:PluginRegistry):void {
@@ -409,12 +430,14 @@ package org.flowplayer.view {
 
 		private function createPlayButtonOverlay():void {
 			_playButtonOverlay = _config.getPlayButtonOverlay();
+			_playButtonOverlay.onLoad(onPluginLoad);
+			_playButtonOverlay.onError(onPluginLoadError);
+
 			if (_playButtonOverlay == null) {
 				return;
 			}
 			log.debug("playlist has clips? " + hasClip);
 			var overlay:PlayButtonOverlayView = new PlayButtonOverlayView(! playButtonOverlayWidthDefined(), _playButtonOverlay, _pluginRegistry, _config.getPlaylist(), true);
-			overlay.addEventListener(Event.COMPLETE, initPhase3);
 			initView(overlay, _playButtonOverlay, null, false);
 		}
 		

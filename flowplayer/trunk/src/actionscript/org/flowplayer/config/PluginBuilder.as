@@ -72,7 +72,6 @@ package org.flowplayer.config {
 		private function isObjectDisabled(name:String, confObjects:Object):Boolean {
 			if (! confObjects.hasOwnProperty(name)) return false;
 			var pluginObj:Object = confObjects[name];
-			log.debug("'" + name + "' was found in configuration " + pluginObj);
 			return pluginObj == null;
 		}
 		
@@ -80,20 +79,25 @@ package org.flowplayer.config {
 				log.debug(name + " is disabled");
 				return;
 			}
-			var loadable:Loadable = findOrCreate(name, plugins);
+			var loadable:Loadable = findLoadable(name, plugins);
+
+			if (! loadable) { 
+				loadable = new Loadable(name, _config);
+				plugins.push(loadable);
+			} else {
+				log.debug(name + " was found in configuration, will not automatically add it into loadables");
+			}
+			
 			if (! loadable.url) {
 				loadable.url = getLoadableUrl(name, version);
-			}
-			plugins.push(loadable);
-		}
-				private function findOrCreate(name:String, plugins:Array):Loadable {			var loadable:Loadable;
-			for each (var plugin:Loadable in plugins) {
-				if (plugin.name == name)
-					loadable = plugin;
-			}
-			if (! loadable) {				loadable = new Loadable(name, _config);
-			}
-			return loadable;		}
+			}		}		
+		private function findLoadable(name:String, plugins:Array):Loadable {
+			for (var i:Number = 0; i < plugins.length; i++) {
+				var plugin:Loadable = plugins[i];
+				if (plugin.name == name) {
+					return plugin;
+				}
+			}			return null;		}
 		private function getLoadableUrl(name:String, version:String):String {
 			var playerVersion:String = getPlayerVersion();
 			if (playerVersion) {

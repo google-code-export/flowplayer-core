@@ -44,6 +44,7 @@ package org.flowplayer.config {
 		private var _playerSwfName:String;
 		private var _controlsVersion:String;
 		private var _audioVersion:String;
+		private var _loadables:Array;
 
 		public function Config(config:Object, playerSwfName:String, controlsVersion:String, audioVersion:String) {
 			Assert.notNull(config, "No configuration provided.");
@@ -77,7 +78,10 @@ package org.flowplayer.config {
 		}
 		
 		public function getLoadables():Array {
-			return viewObjectBuilder.createLoadables(config.plugins, getPlaylist());
+			if (!_loadables) {
+				_loadables = viewObjectBuilder.createLoadables(config.plugins, getPlaylist());
+			}
+			return _loadables;
 		}
 		
 		private function get viewObjectBuilder():PluginBuilder {

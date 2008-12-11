@@ -142,17 +142,21 @@ package org.flowplayer.view {
 		/**
 		 * Cancels all animations that are currently running for the specified view. The callbacks specified in animation calls
 		 * are not invoked for canceled animations.
+		 * @param currentAnimation if specified all other animations except the specified one will be canceled
 		 */
-		public function cancel(view:DisplayObject, property:String = null):void {
+		public function cancel(view:DisplayObject, currentAnimation:Animation = null):void {
 			log.debug("cancel");
 			for (var viewObj:Object in _runningPlayablesByView) {
 				var viewWithRunningAnimation:DisplayObject = viewObj as DisplayObject;
 				if (viewWithRunningAnimation == view) {
-					var playable:Animation = _runningPlayablesByView[viewWithRunningAnimation] as Animation;
-					if (! property || (property && property == playable.tweenProperty)) {
-						log.info("tween for property " + playable.tweenProperty + " was canceled on view " + view);
-						_canceledByPlayable[playable] = true;
-						playable.stop();
+					var anim:Animation = _runningPlayablesByView[viewWithRunningAnimation] as Animation;
+					
+					if (anim && currentAnimation && anim != currentAnimation) {
+						if (currentAnimation.tweenProperty == anim.tweenProperty) {
+							log.info("tween for property " + anim.tweenProperty + " was canceled on view " + view);
+							_canceledByPlayable[anim] = true;
+							anim.stop();
+						}
 					}
 				}
 			}
@@ -169,7 +173,7 @@ package org.flowplayer.view {
 			}
 
 			// cancel previous alpha animations
-			cancel(view, playable.tweenProperty);
+			cancel(view, playable);
 
 			var plugin:DisplayProperties = _pluginRegistry.getPluginByDisplay(view);
 			if (updatePanel && plugin) {
@@ -220,7 +224,7 @@ package org.flowplayer.view {
 			
 			var alphaTween:Animation = createTween("alpha", view, alpha, durationMillis);
 			if (alphaTween) {
-				cancel(view, alphaTween.tweenProperty); 
+				cancel(view, alphaTween); 
 				addTween(tweens, alphaTween);
 			}
 			

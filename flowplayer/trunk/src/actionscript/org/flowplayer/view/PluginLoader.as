@@ -18,9 +18,18 @@
  */
 
 package org.flowplayer.view {
-	import flash.system.Security;			import org.flowplayer.util.URLUtil;	
-	import org.flowplayer.model.FontProvider;	
-	import org.flowplayer.controller.StreamProvider;		import org.flowplayer.model.DisplayPluginModel;	
+	import com.adobe.utils.StringUtil;
+	
+	import org.flowplayer.config.ExternalInterfaceHelper;
+	import org.flowplayer.controller.StreamProvider;
+	import org.flowplayer.model.Callable;
+	import org.flowplayer.model.DisplayPluginModel;
+	import org.flowplayer.model.FontProvider;
+	import org.flowplayer.model.Loadable;
+	import org.flowplayer.model.PluginModel;
+	import org.flowplayer.model.ProviderModel;
+	import org.flowplayer.util.Log;
+	import org.flowplayer.util.URLUtil;
 	
 	import flash.display.DisplayObject;
 	import flash.display.Loader;
@@ -34,17 +43,7 @@ package org.flowplayer.view {
 	import flash.system.LoaderContext;
 	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
-	import flash.utils.getQualifiedClassName;
-	
-	import org.flowplayer.config.ExternalInterfaceHelper;
-	import org.flowplayer.model.Callable;
-	import org.flowplayer.model.Loadable;
-	import org.flowplayer.model.PluginModel;
-	import org.flowplayer.model.ProviderModel;
-	import org.flowplayer.util.Log;
-	
-	import com.adobe.utils.StringUtil;		
-
+	import flash.utils.getQualifiedClassName;		
 	/**
 	 * @author api
 	 */
@@ -61,12 +60,17 @@ package org.flowplayer.view {
 		private var _callback:Function;
 		private var _baseUrl:String;
 		private var _useExternalInterface:Boolean;
+		private var _loadErrorListener:Function;
+		private var _loadListener:Function;
 
-		public function PluginLoader(baseUrl:String, pluginRegistry:PluginRegistry, errorHandler:ErrorHandler, useExternalInterface:Boolean) {
+		public function PluginLoader(baseUrl:String, pluginRegistry:PluginRegistry, errorHandler:ErrorHandler, useExternalInterface:Boolean, loadListener:Function, loadErrorListener:Function) {
 			_baseUrl = baseUrl;
 			_pluginRegistry = pluginRegistry;
 			_errorHandler = errorHandler;
 			_useExternalInterface = useExternalInterface;
+			_loadListener = loadListener;
+			_loadErrorListener = loadErrorListener;
+			_loadedCount = 0;
 		}
 
 		private function getPluginSwiffUrls(plugins:Array):Array {
@@ -173,6 +177,8 @@ package org.flowplayer.view {
 				if (plugin is Callable && _useExternalInterface) {
 					ExternalInterfaceHelper.initializeInterface(plugin as Callable, pluginInstance);
 				}
+				plugin.onLoad(_loadListener);
+				plugin.onError(_loadErrorListener);
 				try {
 					pluginInstance.onConfig(plugin);
 				} catch (e: Error) {
@@ -209,6 +215,10 @@ package org.flowplayer.view {
 		
 		public function get providers():Dictionary {
 			return _providers;
+		}
+		
+		public function get loadedCount():int {
+			return _loadedCount;
 		}
 	}
 }
