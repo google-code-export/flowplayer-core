@@ -18,7 +18,7 @@
  */
 
 package org.flowplayer.view {
-	import com.adobe.utils.StringUtil;
+	import org.flowplayer.model.PlayerError;			import com.adobe.utils.StringUtil;
 	
 	import org.flowplayer.config.ExternalInterfaceHelper;
 	import org.flowplayer.controller.StreamProvider;
@@ -127,7 +127,7 @@ package org.flowplayer.view {
 		}
 
 		private function onIoError(event:IOErrorEvent, pluginUrls:Dictionary):void {
-			_errorHandler.showError("Unable to load plugin using url '" + pluginUrls[LoaderInfo(event.target)] + "': " + event.text);
+			_errorHandler.handleError(PlayerError.PLUGIN_LOAD_FAILED, "Unable to load plugin using url '" + pluginUrls[LoaderInfo(event.target)] + "': " + event.text);
 		}
 
 		public function get plugins():Dictionary {

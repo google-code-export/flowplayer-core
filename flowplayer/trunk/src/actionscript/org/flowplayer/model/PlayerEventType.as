@@ -16,6 +16,7 @@ package org.flowplayer.model {
 		public static const FULLSCREEN_EXIT:PlayerEventType = new PlayerEventType("onFullscreenExit");
 		public static const MOUSE_OVER:PlayerEventType = new PlayerEventType("onMouseOver");
 		public static const MOUSE_OUT:PlayerEventType = new PlayerEventType("onMouseOut");
+		public static const ERROR:PlayerEventType = new PlayerEventType("onError");
 
 		private static var _allValues:Dictionary;
 		private static var _cancellable:Dictionary = new Dictionary();

@@ -34,6 +34,10 @@ package org.flowplayer.model {
 			_target = target;
 		}
 
+		public function hasError(error:ErrorCode):Boolean {
+			return _info == error.code;
+		}
+
 		public function isCancellable():Boolean {
 			return _eventType.isCancellable;
 		}

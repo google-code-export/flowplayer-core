@@ -19,25 +19,17 @@
 
 
 package org.flowplayer.view {
-	import org.flowplayer.controller.ResourceLoaderImpl;	
-	import org.flowplayer.controller.ResourceLoader;	
-	import org.flowplayer.util.URLUtil;	
-	import org.flowplayer.util.LogConfiguration;	
-	import org.flowplayer.util.TextUtil;	
-	
-	import flash.text.TextField;	
-	import flash.display.DisplayObject;
-	import flash.display.Stage;
-	import flash.utils.getDefinitionByName;
-	
 	import org.flowplayer.config.Config;
 	import org.flowplayer.controller.PlayListController;
+	import org.flowplayer.controller.ResourceLoader;
+	import org.flowplayer.controller.ResourceLoaderImpl;
 	import org.flowplayer.flow_internal;
 	import org.flowplayer.model.Clip;
 	import org.flowplayer.model.DisplayPluginModel;
 	import org.flowplayer.model.DisplayProperties;
 	import org.flowplayer.model.EventDispatcher;
 	import org.flowplayer.model.Loadable;
+	import org.flowplayer.model.PlayerError;
 	import org.flowplayer.model.PlayerEvent;
 	import org.flowplayer.model.Playlist;
 	import org.flowplayer.model.Plugin;
@@ -47,7 +39,17 @@ package org.flowplayer.view {
 	import org.flowplayer.model.Status;
 	import org.flowplayer.util.Assert;
 	import org.flowplayer.util.Log;
-	import org.flowplayer.view.Panel;		use namespace flow_internal;
+	import org.flowplayer.util.LogConfiguration;
+	import org.flowplayer.util.TextUtil;
+	import org.flowplayer.util.URLUtil;
+	import org.flowplayer.view.Panel;
+	
+	import flash.display.DisplayObject;
+	import flash.display.Stage;
+	import flash.text.TextField;
+	import flash.utils.getDefinitionByName;		
+	
+	use namespace flow_internal;
 
 	/**
 	 * @author anssi
@@ -384,8 +386,8 @@ package org.flowplayer.view {
 		/**
 		 * Handles the specified error.
 		 */
-		public function handleError(e:Error, message:String = null):void {
-			_errorHandler.handleError(e, message);
+		public function handleError(error:PlayerError, info:Object = null, throwError:Boolean = true):void {
+			_errorHandler.handleError(error, info);
 		}
 
 		/**

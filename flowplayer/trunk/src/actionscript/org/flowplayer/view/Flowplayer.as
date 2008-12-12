@@ -18,6 +18,7 @@
  */
 
 package org.flowplayer.view {
+	import org.flowplayer.model.PlayerError;	
 	import org.flowplayer.controller.ResourceLoader;	
 	import org.flowplayer.config.Config;
 	import org.flowplayer.config.ExternalInterfaceHelper;
@@ -132,7 +133,7 @@ package org.flowplayer.view {
 				addCallback("logging", logging);
 
 			} catch (e:Error) {
-				handleError(e, "Unable to add callback to ExternalInterface");
+				handleError(PlayerError.INIT_FAILED, "Unable to add callback to ExternalInterface");
 			}
 		}
 
@@ -281,7 +282,7 @@ package org.flowplayer.view {
 					plugin.invokeMethod(methodName, args is Array ? args as Array : [ args ]);
 				}
 			} catch (e:Error) {
-				handleError(e, "Error when invoking method '" + methodName + "', on plugin '" + pluginName + "'");
+				handleError(PlayerError.PLUGIN_INVOKE_FAILED, "Error when invoking method '" + methodName + "', on plugin '" + pluginName + "'");
 			}
 			return "undefined";
 		}

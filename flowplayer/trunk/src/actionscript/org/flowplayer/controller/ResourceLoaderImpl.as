@@ -18,6 +18,7 @@
  */
 
 package org.flowplayer.controller {
+	import org.flowplayer.model.PlayerError;	
 	import org.flowplayer.util.URLUtil;	
 	
 	import flash.display.Loader;
@@ -141,11 +142,7 @@ package org.flowplayer.controller {
 		
 		protected function handleError(errorMessage:String, e:Error = null):void {
 			if (_errorHandler) {
-				if (e) {
-					_errorHandler.handleError(e, errorMessage);
-				} else {
-					_errorHandler.showError(errorMessage);
-				}
+				_errorHandler.handleError(PlayerError.RESOURCE_LOAD_FAILED, errorMessage + (e ? ": " + e.message : ""));
 			}
 		}
 		

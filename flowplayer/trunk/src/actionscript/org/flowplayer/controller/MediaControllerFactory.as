@@ -18,6 +18,7 @@
  */
 
 package org.flowplayer.controller {
+	import org.flowplayer.model.ClipError;	
 	import org.flowplayer.config.Config;	
 	import org.flowplayer.model.ClipEventType;	
 	import org.flowplayer.view.PlayerEventDispatcher;	
@@ -92,7 +93,7 @@ package org.flowplayer.controller {
 		public function getProvider(clip:Clip):StreamProvider {
 			var provider:StreamProvider = _streamProviders[clip.provider];
 			if (! provider) {
-				clip.dispatch(ClipEventType.ERROR, "Provider '" + clip.provider + "' not found");
+				clip.dispatchError(ClipError.PROVIDER_NOT_LOADED, "Provider '" + clip.provider);
 				return null;
 			}
 			provider.volumeController = getVolumeController();
