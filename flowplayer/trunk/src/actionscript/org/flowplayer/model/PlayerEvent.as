@@ -79,6 +79,14 @@ package org.flowplayer.model {
 		}
 				
 		protected override function get externalEventArgument2():Object {
+			return info2;
+		}
+				
+		protected override function get externalEventArgument3():Object {
+			return info3;
+		}
+				
+		protected override function get externalEventArgument4():Object {
 			return null;
 		}
 	}
