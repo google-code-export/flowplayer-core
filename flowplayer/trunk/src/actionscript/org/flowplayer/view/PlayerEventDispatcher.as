@@ -1,10 +1,12 @@
 package org.flowplayer.view {
-	import flash.utils.Dictionary;
-	
 	import org.flowplayer.flow_internal;
 	import org.flowplayer.model.EventDispatcher;
+	import org.flowplayer.model.PlayerError;
 	import org.flowplayer.model.PlayerEvent;
-	import org.flowplayer.model.PlayerEventType;	
+	import org.flowplayer.model.PlayerEventType;
+	
+	import flash.utils.Dictionary;	
+	
 	use namespace flow_internal;
 	
 	/**
@@ -24,6 +26,10 @@ package org.flowplayer.view {
 		 */
 		public function dispatchEvent(event:PlayerEvent):void {
 			doDispatchEvent(event, true);
+		}
+		
+		public function dispatchError(error:PlayerError, info:Object = null):void {
+			doDispatchEvent(new PlayerEvent(error.eventType, error.code, error.message, info), true);
 		}
 
 		/**

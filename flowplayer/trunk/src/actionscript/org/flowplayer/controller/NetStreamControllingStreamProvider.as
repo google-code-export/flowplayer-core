@@ -18,7 +18,7 @@
  */
 
 package org.flowplayer.controller {
-	import org.flowplayer.controller.StreamProvider;
+	import org.flowplayer.model.ClipError;		import org.flowplayer.controller.StreamProvider;
 	import org.flowplayer.controller.VolumeController;
 	import org.flowplayer.model.Clip;
 	import org.flowplayer.model.ClipEvent;
@@ -464,8 +464,8 @@ package org.flowplayer.controller {
 		/* ---- Private methods ----- */
 		/* -------------------------- */
 		
-		private function dispatchError(clip:Clip, message:String):void {
-			clip.dispatch(ClipEventType.ERROR, message);
+		private function dispatchError(error:ClipError, info:String):void {
+			clip.dispatchError(error, info);
 		}
 
 		private function _onNetStatus(event:NetStatusEvent):void {
@@ -515,7 +515,7 @@ package org.flowplayer.controller {
 				event.info.code == "NetConnection.Connect.Failed") {
 				
 				if (canDispatchStreamNotFound()) {
-					clip.dispatchStreamNotFoundError(event.info.code);
+					clip.dispatchError(ClipError.STREAM_NOT_FOUND, event.info.code);
 				}
 			}
 			
@@ -599,11 +599,11 @@ package org.flowplayer.controller {
 				doLoad(event, _netStream, clip);
 				_started = true;
 			} catch (e:SecurityError) {
-				dispatchError(clip, "cannot access the video file (try loosening Flash security settings): " + e.message);	
+				dispatchError(ClipError.STREAM_LOAD_FAILED, "cannot access the video file (try loosening Flash security settings): " + e.message);	
 			} catch (e:IOError) {
-				dispatchError(clip, "cannot load the video file, incorrect URL?: " + e.message);
+				dispatchError(ClipError.STREAM_LOAD_FAILED, "cannot load the video file, incorrect URL?: " + e.message);
 			} catch (e:Error) {
-				dispatchError(clip, "cannot play video: " + e.message);
+				dispatchError(ClipError.STREAM_LOAD_FAILED, "cannot play video: " + e.message);
 			}
 			
 			if (pauseAfterStart) {

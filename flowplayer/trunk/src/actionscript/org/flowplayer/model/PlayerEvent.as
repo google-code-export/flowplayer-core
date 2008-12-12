@@ -18,8 +18,7 @@
  */
 
 package org.flowplayer.model {
-	import flash.events.Event;
-	import flash.external.ExternalInterface;		
+	import flash.events.Event;	
 
 	/**
 	 * Event related to the whole player.
@@ -27,8 +26,8 @@ package org.flowplayer.model {
 	 */
 	public class PlayerEvent extends AbstractEvent {
 
-		public function PlayerEvent(eventType:EventType, info:Object = null) {
-			super(eventType, info);
+		public function PlayerEvent(eventType:EventType, info:Object = null, info2:Object = null, info3:Object = null) {
+			super(eventType, info, info2, info3);
 		}
 		
 		public static function load(eventObject:Object = null):PlayerEvent {

@@ -17,7 +17,8 @@
  *    along with Flowplayer.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.flowplayer.view {
-	import org.flowplayer.config.Config;
+	import org.flowplayer.model.PlayerError;	
+	import org.flowplayer.model.PluginError;		import org.flowplayer.config.Config;
 	import org.flowplayer.config.ConfigLoader;
 	import org.flowplayer.config.ExternalInterfaceHelper;
 	import org.flowplayer.config.VersionInfo;
@@ -133,7 +134,7 @@ package org.flowplayer.view {
 				
 				loadPluginsIfConfigured();
 			} catch (e:Error) {
-				handleError(e);
+				handleError(PlayerError.INIT_FAILED, "Failed in phase1: " + e.message, false);
 			}
 		}
 
@@ -174,11 +175,12 @@ package org.flowplayer.view {
 				log.debug("arranging screen");
 				arrangeScreen();
 			} catch (e:Error) {
-				handleError(e);
+				handleError(PlayerError.INIT_FAILED, "Failed in phase2: " + e.message, false);
 			}
 		}
 		
 		private function initPhase3(event:Event = null):void {
+			try {
 				log.debug("Adding visible plugins to panel");
 				addPluginsToPanel(_pluginRegistry);
 				
@@ -192,6 +194,9 @@ package org.flowplayer.view {
 
 				stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 				addListeners();
+			} catch (e:Error) {
+				handleError(PlayerError.INIT_FAILED, "Failed in phase3: " + e.message, false);
+			}
 		}
 
 		private function resizeCanvasLogo():void {
@@ -241,7 +246,7 @@ package org.flowplayer.view {
 		}
 
 		private function onPluginLoadError(event:PluginEvent):void {
-			if (event.id != "pluginLoad") return;
+			if (! event.hasError(PluginError.INIT_FAILED)) return;
 			
 			var plugin:PluginModel = event.target as PluginModel;
 			log.warn("load/init error on " + plugin);
@@ -281,6 +286,10 @@ package org.flowplayer.view {
 		public function showError(message:String):void {
 			if (! _panel) return;
 			if (! _config.showErrors) return;
+			if (_error) {
+				removeChild(_error);
+			}
+			
 			_error = TextUtil.createTextField(false);
 			_error.background = true;
 			_error.backgroundColor = 0;
@@ -304,22 +313,34 @@ package org.flowplayer.view {
 		private function hideErrorMessage(event:TimerEvent = null):void {
 			if (_error && _error.parent == this) {
 				if (_animationEngine) {
-					_animationEngine.fadeOut(_error, 1000, function():void { removeChild(_error); })
+					_animationEngine.fadeOut(_error, 1000, function():void { removeChild(_error); });
 				} else {
 					removeChild(_error);
 				}
 			}
 		}
 
-		public function handleError(e:Error, message:String = null):void {
-			if (_config && _config.playerId) {
-				Logger.error(message + ": " + e.message);
+		public function handleError(error:PlayerError, info:Object = null, throwError:Boolean = true):void {
+			if (_flowplayer) {
+				_flowplayer.dispatchError(error, info);
+			} else {
+				// initialization is not complete, create a dispatches just to dispatch this error
+				new PlayerEventDispatcher().dispatchError(error, info);
 			}
-			showError((message == null ? "" : message + ": ") + e.message);
+			doHandleError(error.code + ": " + error.message + ( info ? ": " + info : ""), throwError);
+		}
+
+		private function doHandleError(message:String, throwError:Boolean = true):void {
+			if (_config && _config.playerId) {
+				Logger.error(message);
+			}
+			showError(message);
 			if (_flowplayer) {
 				_flowplayer.stop();
 			}
-			throw e;
+			if (throwError) {
+				throw new Error(message);
+			}
 		}
 
 		private function createAnimationEngine(pluginRegistry:PluginRegistry):void {
@@ -523,11 +544,11 @@ package org.flowplayer.view {
 		
 		private function addPlayListListeners():void {
 			var playlist:Playlist = _config.getPlaylist();
-			playlist.onError(onError);
+			playlist.onError(onClipError);
 		}
 		
-		private function onError(event:ClipEvent):void {
-			handleError(new Error(event.info + ", " + event.info2 + ", " + event.info3 + ", clip: '" + Clip(event.target).completeUrl + "'"));
+		private function onClipError(event:ClipEvent):void {
+			doHandleError(event.info + ", " + event.info2 + ", " + event.info3 + ", clip: '" + Clip(event.target).completeUrl + "'");
 		}
 
 		private function onViewClicked(event:MouseEvent):void {

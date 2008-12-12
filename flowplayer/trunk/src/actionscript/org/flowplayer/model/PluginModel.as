@@ -26,7 +26,7 @@ package org.flowplayer.model {
 		
 		function dispatchOnLoad():void;
 		
-		function dispatchOnLoadError(message:String, info:Object = null):void;
+		function dispatchError(code:PluginError, info:Object = null):void;
 			
 		function dispatch(eventType:PluginEventType, eventId:Object = null, info:Object = null, info2:Object = null):void;
 		

@@ -32,12 +32,12 @@ package org.flowplayer.model {
 		
 		/**
 		 * Dispatches a plugin error event.
-		 * @param message the error message
+		 * @param error
 		 * @param info optional info object, will be passed to JavaScript
 		 * @see PluginEventType#ERROR
 		 */
-		public function dispatchOnLoadError(message:String, info:Object = null):void {
-			dispatch(PluginEventType.ERROR, 0, message, info);
+		public function dispatchError(error:PluginError, info:Object = null):void {
+			doDispatchEvent(new PluginEvent(error.eventType as PluginEventType, name, error.code, error.message, info), true);
 		}
 
 		public function dispatchEvent(event:PluginEvent):void {

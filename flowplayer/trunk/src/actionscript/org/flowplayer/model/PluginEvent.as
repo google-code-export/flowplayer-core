@@ -33,6 +33,10 @@ package org.flowplayer.model {
 			_id = id;
 		}
 
+		override public function hasError(error:ErrorCode):Boolean {
+			return _id == error.code;
+		}
+
 		public override function clone():Event {
 			return new PluginEvent(eventType as PluginEventType, info.toString(), _id, info2);
 		}

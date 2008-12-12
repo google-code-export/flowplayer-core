@@ -18,8 +18,8 @@ package org.flowplayer.model {
 			doDispatchEvent(new ClipEvent(eventType, info, info2, info3), false);
 		}
 		
-		public function dispatchStreamNotFoundError(info:Object = null):void {
-			doDispatchEvent(new ClipEvent(ClipEventType.ERROR, 0, "Stream not found", info), false);
+		public function dispatchError(error:ClipError, info:Object = null):void {
+			doDispatchEvent(new ClipEvent(error.eventType, error.code, error.message, info), false);
 		}
 		
 		public function dispatchEvent(event:ClipEvent):void {
