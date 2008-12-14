@@ -17,55 +17,8 @@
  *    along with Flowplayer.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.flowplayer.view {
-	import org.flowplayer.model.PlayerError;	
-	import org.flowplayer.model.PluginError;		import org.flowplayer.config.Config;
-	import org.flowplayer.config.ConfigLoader;
-	import org.flowplayer.config.ExternalInterfaceHelper;
-	import org.flowplayer.config.VersionInfo;
-	import org.flowplayer.controller.NetStreamControllingStreamProvider;
-	import org.flowplayer.controller.PlayListController;
-	import org.flowplayer.controller.ResourceLoader;
-	import org.flowplayer.controller.ResourceLoaderImpl;
-	import org.flowplayer.flow_internal;
-	import org.flowplayer.model.Callable;
-	import org.flowplayer.model.Clip;
-	import org.flowplayer.model.ClipEvent;
-	import org.flowplayer.model.DisplayPluginModel;
-	import org.flowplayer.model.DisplayProperties;
-	import org.flowplayer.model.DisplayPropertiesImpl;
-	import org.flowplayer.model.EventDispatcher;
-	import org.flowplayer.model.Logo;
-	import org.flowplayer.model.PlayButtonOverlay;
-	import org.flowplayer.model.PlayerEvent;
-	import org.flowplayer.model.Playlist;
-	import org.flowplayer.model.PluginEvent;
-	import org.flowplayer.model.PluginModel;
-	import org.flowplayer.model.State;
-	import org.flowplayer.util.Arrange;
-	import org.flowplayer.util.Log;
-	import org.flowplayer.util.TextUtil;
-	import org.flowplayer.util.URLUtil;
-	import org.flowplayer.view.Panel;
-	import org.flowplayer.view.Screen;
-	import org.osflash.thunderbolt.Logger;
-	
-	import flash.display.DisplayObject;
-	import flash.display.DisplayObjectContainer;
-	import flash.display.Sprite;
-	import flash.events.Event;
-	import flash.events.KeyboardEvent;
-	import flash.events.MouseEvent;
-	import flash.events.TimerEvent;
-	import flash.net.URLRequest;
-	import flash.net.navigateToURL;
-	import flash.system.Security;
-	import flash.text.TextField;
-	import flash.text.TextFieldAutoSize;
-	import flash.ui.Keyboard;
-	import flash.utils.Dictionary;
-	import flash.utils.Timer;	
-	
-	use namespace flow_internal;
+	import org.flowplayer.config.Config;	import org.flowplayer.config.ConfigLoader;	import org.flowplayer.config.ExternalInterfaceHelper;	import org.flowplayer.config.VersionInfo;	import org.flowplayer.controller.NetStreamControllingStreamProvider;	import org.flowplayer.controller.PlayListController;	import org.flowplayer.controller.ResourceLoader;	import org.flowplayer.controller.ResourceLoaderImpl;	import org.flowplayer.flow_internal;	import org.flowplayer.model.Callable;	import org.flowplayer.model.Clip;	import org.flowplayer.model.ClipEvent;	import org.flowplayer.model.DisplayPluginModel;	import org.flowplayer.model.DisplayProperties;	import org.flowplayer.model.DisplayPropertiesImpl;	import org.flowplayer.model.EventDispatcher;	import org.flowplayer.model.Logo;	import org.flowplayer.model.PlayButtonOverlay;	import org.flowplayer.model.PlayerError;	import org.flowplayer.model.PlayerEvent;	import org.flowplayer.model.Playlist;	import org.flowplayer.model.PluginError;	import org.flowplayer.model.PluginEvent;	import org.flowplayer.model.PluginModel;	import org.flowplayer.model.State;	import org.flowplayer.util.Arrange;	import org.flowplayer.util.Log;	import org.flowplayer.util.TextUtil;	import org.flowplayer.util.URLUtil;	import org.flowplayer.view.Panel;	import org.flowplayer.view.Screen;	import org.osflash.thunderbolt.Logger;		import flash.display.DisplayObject;	import flash.display.DisplayObjectContainer;	import flash.display.Sprite;	import flash.events.Event;	import flash.events.KeyboardEvent;	import flash.events.MouseEvent;	import flash.events.TimerEvent;	import flash.net.URLRequest;	import flash.net.navigateToURL;	import flash.system.Capabilities;	import flash.system.Security;	import flash.text.TextField;	import flash.text.TextFieldAutoSize;	import flash.ui.Keyboard;	import flash.utils.Dictionary;	import flash.utils.Timer;		
+		use namespace flow_internal;
 
 	public class Launcher extends StyleableSprite implements ErrorHandler {
 		private var _panel:Panel;
@@ -338,7 +291,7 @@ package org.flowplayer.view {
 			if (_flowplayer) {
 				_flowplayer.stop();
 			}
-			if (throwError) {
+			if (throwError && Capabilities.isDebugger) {
 				throw new Error(message);
 			}
 		}
@@ -548,7 +501,7 @@ package org.flowplayer.view {
 		}
 		
 		private function onClipError(event:ClipEvent):void {
-			doHandleError(event.info + ", " + event.info2 + ", " + event.info3 + ", clip: '" + Clip(event.target).completeUrl + "'");
+			doHandleError(event.info + ", " + event.info2 + ", " + event.info3 + ", clip: '" + Clip(event.target) + "'");
 		}
 
 		private function onViewClicked(event:MouseEvent):void {

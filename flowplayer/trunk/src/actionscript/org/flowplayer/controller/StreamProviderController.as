@@ -29,7 +29,7 @@ package org.flowplayer.controller {
 	internal class StreamProviderController extends AbstractDurationTrackingController implements MediaController {
 		private var _config:Config;
 		private var _controllerFactory:MediaControllerFactory;
-		private var _startDispatched:Boolean;
+		private var _metadataDispatched:Boolean;
 
 		public function StreamProviderController(controllerFactory:MediaControllerFactory, volumeController:VolumeController, config:Config, playlist:Playlist) {
 			super(volumeController, playlist);
@@ -40,6 +40,7 @@ package org.flowplayer.controller {
 			};
 			playlist.onBegin(onBegin, filter, true);
 			playlist.onBufferFull(onBegin, filter, true);
+			playlist.onStart(onBegin, filter, true);
 		}
 
 		private function onBegin(event:ClipEvent):void {
@@ -59,7 +60,7 @@ package org.flowplayer.controller {
 		}
 
 		protected override function doLoad(event:ClipEvent, clip:Clip, pauseAfterStart:Boolean = false):void {
-			_startDispatched = false;
+			_metadataDispatched = false;
 			getProvider().load(event, clip, pauseAfterStart);
 		}
 
@@ -119,7 +120,7 @@ package org.flowplayer.controller {
 			if (provider.stopping) return;
 
 			if (clip.metaData) {
-				dispatchStart();
+				dispatchMetaData();
 				return;
 			}
 
@@ -135,15 +136,14 @@ package org.flowplayer.controller {
 				log.debug("clip has embedded cuepoints");
 				clip.addCuepoints(_config.createCuepoints(metaData.cuePoints, "embedded"));
 			}
-			
-			dispatchStart();
+			dispatchMetaData();
 		}
 		
-		private function dispatchStart():void {
-			if (!_startDispatched) {
-				clip.dispatch(ClipEventType.START);
+		private function dispatchMetaData():void {
+			if (!_metadataDispatched) {
+				clip.dispatch(ClipEventType.METADATA);
 			}
-			_startDispatched = true;
+			_metadataDispatched = true;
 		}
 
 		public function onXMPData(infoObject:Object):void {

@@ -51,7 +51,7 @@ package org.flowplayer.controller {
 
 		public function PlayListController(playList:Playlist, streamProviders:Dictionary, config:Config, loader:ResourceLoader) {
 			log = new Log(this);
-			setPlaylist(playList);
+			_playList = playList;
 			_streamProviders = streamProviders;
 			_config = config;
 			_loader = loader;
@@ -61,15 +61,9 @@ package org.flowplayer.controller {
 			PlayState.initStates(_playList, this, _streamProviders, playerEventDispatcher, _config, _loader);
 		}
 
-		flow_internal function setPlaylist(playList:Playlist):void {
-			if (getState() && getState() != State.WAITING) {
-				stop();
-			}
-			if (_playList) {
-				_playList.replaceClips2(playList.clips);
-			} else {
-				_playList = playList;
-			}
+		flow_internal function setPlaylist(clips:Array):void {
+			close();
+			_playList.replaceClips2(clips);
 		}
 
 		flow_internal function get playlist():Playlist {

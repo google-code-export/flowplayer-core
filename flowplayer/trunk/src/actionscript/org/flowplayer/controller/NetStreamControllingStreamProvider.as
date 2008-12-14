@@ -18,6 +18,8 @@
  */
 
 package org.flowplayer.controller {
+	import mx.events.CloseEvent;	
+	
 	import org.flowplayer.model.ClipError;		import org.flowplayer.controller.StreamProvider;
 	import org.flowplayer.controller.VolumeController;
 	import org.flowplayer.model.Clip;
@@ -47,7 +49,6 @@ package org.flowplayer.controller {
 		private var _netStream:NetStream;
 		private var _startedClip:Clip;
 		private var _playlist:Playlist;
-		private var _startAfterConnect:Boolean;
 		private var _pauseAfterStart:Boolean;
 		private var _volumeController:VolumeController;
 		private var _netStreamClient:Object;
@@ -69,17 +70,23 @@ package org.flowplayer.controller {
 			_paused = false;
 			_stopping = false;
 			Assert.notNull(clip, "load(clip): clip cannot be null");
+			if (pauseAfterStart) {
+				log.info("this clip will pause after start");
+			}
 			_pauseAfterStart = pauseAfterStart;
-			clip.onStart(onStart);
-			if (_startedClip == clip && _connection) {
-				log.debug("playing previous clip again, reusing existing connection and resuming");
+			clip.onMetaData(onMetaData, function(clip:Clip):Boolean { return clip.provider == 'http'; });
+			
+			log.debug("previously started clip " + _startedClip);
+			if (_startedClip && _startedClip == clip && _connection) {
+				log.info("playing previous clip again, reusing existing connection and resuming");
 				_started = false;
 				netStream.resume();
 				start(null, _startedClip, _pauseAfterStart);
 			} else {
 				log.debug("will create a new connection");
 				_startedClip = clip;
-				connect(clip, true);
+				
+				connect(clip);
 			}
 		}
 
@@ -238,16 +245,15 @@ package org.flowplayer.controller {
 		 * 
 		 * @see #getConnectUrl()
 		 */
-		protected function connect(clip:Clip, startAfterConnect:Boolean = false, ... rest):void {
-			_startAfterConnect = startAfterConnect;
+		protected function connect(clip:Clip, ... rest):void {
 			
-			if (_connection) {
-				_connection.close();
-				_connection = null;
-			}
 			if (_netStream) {
 				_netStream.close();
 				_netStream = null;
+			}
+			if (_connection) {
+				_connection.close();
+				_connection = null;
 			}
 			
 			_connection = new NetConnection();
@@ -256,8 +262,7 @@ package org.flowplayer.controller {
 			addConnectionStatusListener(_connection);
 			log.debug("Connecting to " + getConnectUrl(clip));
 			
-			if (rest.length > 0)
-			{
+			if (rest.length > 0) {
 				_connection.connect(getConnectUrl(clip), rest);
 			} else {
 				_connection.connect(getConnectUrl(clip));
@@ -460,6 +465,13 @@ package org.flowplayer.controller {
 		protected function get started():Boolean {
 			return _started;
 		}
+		
+		/**
+		 * Previous seek target value in seconds.
+		 */
+		public function get seekTarget():Number {
+			return _seekTarget;
+		}
 
 		/* ---- Private methods ----- */
 		/* -------------------------- */
@@ -469,9 +481,7 @@ package org.flowplayer.controller {
 		}
 
 		private function _onNetStatus(event:NetStatusEvent):void {
-			log.info("onNetStatus", event.toString());
-			log.info("code " + event.info.code);
-			
+			log.info("_onNetStatus, code: ", event.info.code);
 			
 			if (_stopping) {
 				log.info("_onNetStatus(), _stopping == true and will not process the event any further");
@@ -480,9 +490,7 @@ package org.flowplayer.controller {
 			
 			if (event.info.code == "NetConnection.Connect.Success") {
 				createNetStream();
-				if (_startAfterConnect) {
-					start(null, clip, _pauseAfterStart);
-				}
+				start(null, clip, _pauseAfterStart);
 			} else if (event.info.code == "NetStream.Buffer.Empty") {
 				dispatchPlayEvent(ClipEventType.BUFFER_EMPTY);
 			}
@@ -508,7 +516,6 @@ package org.flowplayer.controller {
 				silentSeek = false;
 
 			} else if (event.info.code == "NetStream.Seek.InvalidTime") {
-				dispatchPlayEvent(ClipEventType.SEEK, time);
 
 			} else if (event.info.code == "NetStream.Play.StreamNotFound" || 
 				event.info.code == "NetConnection.Connect.Rejected" || 
@@ -520,16 +527,6 @@ package org.flowplayer.controller {
 			}
 			
 			onNetStatus(event);
-		}
-
-		private function onStart(event:ClipEvent):void {
-			// some files require that we seek to the first frame only after receiving metadata
-			// otherwise we will never receive the metadata
-			if (_pauseAfterStart) {
-				seek(null, 0);
-				dispatchPlayEvent(ClipEventType.PAUSE);
-				_pauseAfterStart = false;
-			}
 		}
 		
 		private function startSeekTargetWait():void {
@@ -555,9 +552,10 @@ package org.flowplayer.controller {
 		}
 		
 		private function doStop(event:ClipEvent, netStream:NetStream, closeStreamAndConnection:Boolean = false):void {
-			log.debug("doStop");;
+			log.debug("doStop");
 			_stopping = true;
 			if (closeStreamAndConnection) {
+				_startedClip = null;
 				log.debug("doStop(), closing netStream and connection");
 				netStream.close();
 				if (_connection) {
@@ -572,17 +570,7 @@ package org.flowplayer.controller {
 			}
 			dispatchEvent(event);
 		}
-/*
-		private function onConnectionStatus(event:NetStatusEvent):void {
-			log.debug("onConnectionStatus: " + event.info.code);
-			if (event.info.code == "NetConnection.Connect.Success") {
-				createNetStream();
-				if (_startAfterConnect) {
-					start(null, clip, _pauseAfterStart);
-				}
-			}
-		}
-		*/
+
 		private function createNetStream():void {
 			_netStream = new NetStream(_connection);
 			_netStream.bufferTime = clip.bufferLength;
@@ -591,7 +579,20 @@ package org.flowplayer.controller {
 			if (_netStreamClient)
 				_netStream.client = _netStreamClient;
 		}
-		
+
+		protected function onMetaData(event:ClipEvent):void {
+			log.info("in NetStreamControllingStremProvider.onStart");
+			clip.dispatch(ClipEventType.START);
+			// some files require that we seek to the first frame only after receiving metadata
+			// otherwise we will never receive the metadata
+			if (_pauseAfterStart) {
+				log.info("seeking to frame zero");
+				seek(null, 0);
+				dispatchPlayEvent(ClipEventType.PAUSE);
+				_pauseAfterStart = false;
+			}
+		}
+
 		private function start(event:ClipEvent, clip:Clip, pauseAfterStart:Boolean = false):void {
 			log.debug("start called with clip " + clip + ", pauseAfterStart " + pauseAfterStart);
 
@@ -607,9 +608,9 @@ package org.flowplayer.controller {
 			}
 			
 			if (pauseAfterStart) {
-				log.info("pausing netStream and seeking to first frame");
-				doPause(_netStream, event);
-//				seek(null, 0);
+				log.info("pausing to first frame!");
+				doPause(_netStream, null);
+//				_netStream.seek(0);
 			}
 		}
 		
