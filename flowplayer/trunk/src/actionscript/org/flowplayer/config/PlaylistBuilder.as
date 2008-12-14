@@ -44,6 +44,18 @@ package org.flowplayer.config {
 			this.clipObjects = clipObjects || [];
 			this._commonClip = commonClip;
 		}
+		
+		public function createClips(clipObjects:Array):Array {
+			var clips:Array = new Array();
+			for (var i : Number = 0; i < clipObjects.length; i++) {
+				var clipObj:Object = clipObjects[i];
+				if (clipObj is String) {
+					clipObj = { url: clipObj };
+				}
+				clips.push(createClip(clipObj));
+			}
+			return clips;
+		}
 
 		public function createPlaylist():Playlist {
 			var commonClip:Clip;
@@ -51,20 +63,12 @@ package org.flowplayer.config {
 				commonClip = createClip(_commonClip);
 			}
 			var playList:Playlist = new Playlist(commonClip);
-			
-			if (clipObjects.length > 0) {
-				for (var i : Number = 0; i < clipObjects.length; i++) {
-					var clipObj:Object = clipObjects[i];
-					if (clipObj is String) {
-						clipObj = { url: clipObj };
-					} 
-					playList.addClip(createClip(clipObj));
-				}
-			} else {
-				if (_commonClip) {
-					playList.addClip(createClip(_commonClip));
-				}
+			if (clipObjects) {
+				playList.setClips(createClips(clipObjects));
+			} else if (_commonClip) {
+				playList.addClip(createClip(_commonClip));
 			}
+			
 			return playList;
 		}
 		

@@ -334,7 +334,7 @@ package org.flowplayer.model {
 		}
 
 		public function toString():String {
-			return "[Clip] '" + url + "'";
+			return "[Clip] '" + (provider == "http" ? completeUrl : url) + "'";
 		}
 
 		public function set originalWidth(width:int):void {

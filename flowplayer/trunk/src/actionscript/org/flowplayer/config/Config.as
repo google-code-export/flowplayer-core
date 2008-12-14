@@ -67,11 +67,12 @@ package org.flowplayer.config {
 			return _playlistBuilder.createCuepointGroup(cueObjects, callbackId);
 		}
 
-		public function getPlaylist(clipObjects:Array = null):Playlist {
-			if (clipObjects) {
-				_playlistBuilder = new PlaylistBuilder(playerId, clipObjects, config.clip);
-				playList = _playlistBuilder.createPlaylist();
-			} else if (! playList) {
+		public function createClips(clipObjects:Array = null):Array {
+			return _playlistBuilder.createClips(clipObjects);
+		}
+
+		public function getPlaylist():Playlist {
+			if (! playList) {
 				playList = _playlistBuilder.createPlaylist();
 			}
 			return playList;

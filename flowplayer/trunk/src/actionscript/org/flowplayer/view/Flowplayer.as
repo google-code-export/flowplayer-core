@@ -107,7 +107,7 @@ package org.flowplayer.view {
 				addCallback("getCurrentClip", function():Object { 
 					return new ObjectConverter(currentClip).convert(); });
 				addCallback("getClip", function(index:Number):Object { return convert(playlist.getClip(index)); });
-				addCallback("setPlaylist", function(clipObjects:Array):void { setPlaylist(_config.getPlaylist(clipObjects)); });
+				addCallback("setPlaylist", function(clipObjects:Array):void { setPlaylist(_config.createClips(clipObjects)); });
 				addCallback("showError", showError);
 
 				addCallback("loadPlugin", pluginLoad);
@@ -287,8 +287,7 @@ package org.flowplayer.view {
 			return "undefined";
 		}
 
-		private function setPlaylist(playlist:Playlist):void {
-			log.debug("setPlaylist, clips " + playlist.clips);
+		private function setPlaylist(playlist:Array):void {
 			_playListController.setPlaylist(playlist);
 		}
 

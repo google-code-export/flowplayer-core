@@ -26,6 +26,7 @@ package org.flowplayer.model {
 		
 		public static const CONNECT:ClipEventType = new ClipEventType("onConnect");
 		public static const BEGIN:ClipEventType = new ClipEventType("onBegin");
+		public static const METADATA:ClipEventType = new ClipEventType("onMetaData");
 		public static const START:ClipEventType = new ClipEventType("onStart");
 		public static const PAUSE:ClipEventType = new ClipEventType("onPause");
 		public static const RESUME:ClipEventType = new ClipEventType("onResume");

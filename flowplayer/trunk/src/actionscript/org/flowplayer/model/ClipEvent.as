@@ -50,7 +50,7 @@ package org.flowplayer.model {
 			if (eventType == ClipEventType.CUEPOINT) {
 				return Cuepoint(info).callbackId;
 			} 
-			if (eventType == ClipEventType.START || eventType == ClipEventType.UPDATE) {
+			if (eventType == ClipEventType.START || eventType == ClipEventType.UPDATE || eventType == ClipEventType.METADATA) {
 				return target;
 			}
 			return super.externalEventArgument2;

@@ -47,7 +47,7 @@ package org.flowplayer.model {
 			initialize();		
 		}
 		
-		private function initialize(newClips:Array = null):void {
+		private function initialize(newClips:Array = null):void {			
 			_clips = new Array();
 			if (newClips) {
 				for (var i:Number = 0; i < newClips.length; i++) {
@@ -72,6 +72,13 @@ package org.flowplayer.model {
 		 */
 		public function replaceClips2(clips:Array):void {
 			doReplace(clips);
+		}
+
+		override flow_internal function setClips(clips:Array):void {
+			for (var i:Number = 0; i < clips.length; i++) {
+				addClip(clips[i]);
+			}
+			super.setClips(clips);
 		}
 		
 		private function doReplace(newClips:Array):void {
