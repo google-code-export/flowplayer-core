@@ -100,7 +100,7 @@ package org.flowplayer.controller {
 		function get fileSize():Number;
 		
 		/**
-		 * Current playhead time.
+		 * Current playhead time in seconds.
 		 */
 		function get time():Number;
 		

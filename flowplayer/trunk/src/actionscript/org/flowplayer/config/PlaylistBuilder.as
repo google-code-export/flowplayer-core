@@ -111,14 +111,20 @@ package org.flowplayer.config {
 		}
 
 		private function createCuepoint(cueObj:Object, callbackId:String):Object {
-			if (cueObj is Number) return new Cuepoint(cueObj as int, callbackId);
+			if (cueObj is Number) return new Cuepoint(roundTime(cueObj as int), callbackId);
 			if (! cueObj.hasOwnProperty("time")) throw new Error("Cuepoint does not have time: " + cueObj);
-			var cue:Object = Cuepoint.createDynamic(cueObj.time, callbackId);
+			var cue:Object = Cuepoint.createDynamic(roundTime(cueObj.time), callbackId);
 			for (var prop:String in cueObj) {
-				cue[prop] = cueObj[prop];
+				if (prop != "time") {
+					cue[prop] = cueObj[prop];
+				}
 //				log.debug("added cynamic property " + prop + ", to value " + cue[prop]);
 			}
 			return cue;
+		}
+		
+		private function roundTime(time:int):int {
+			return Math.round(time/100) * 100;
 		}
 	}
 }

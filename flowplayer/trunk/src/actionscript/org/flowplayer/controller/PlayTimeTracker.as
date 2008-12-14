@@ -36,7 +36,7 @@ package org.flowplayer.controller {
 		public function start():void {
 			if (_timer && _timer.running)
 				stop();
-			_timer = new Timer(200);
+			_timer = new Timer(30);
 			_timer.addEventListener(TimerEvent.TIMER, checkProgress);
 			_startTime = getTimer();
 			log.debug("started at time " + time);
@@ -114,10 +114,10 @@ package org.flowplayer.controller {
 
 		private function checkAndFireCuepoints():void {
 			var streamTime:Number = _controller.time;
-			var timeRounded:Number = Math.floor(streamTime);
+			var timeRounded:Number = Math.round(streamTime*10) * 100;
 //			log.debug("checkAndFireCuepoints, rounded stream time is " + timeRounded);			
 			// clear previous cuepoint after 1 sec has passed from it
-			if (Math.abs(streamTime - _previousCuePointTime) > 1) {
+			if (Math.abs(streamTime*1000 - _previousCuePointTime) > 100) {
 				_previousCuePointTime = -1;
 			}
 			
@@ -125,13 +125,14 @@ package org.flowplayer.controller {
 			if (! points || points.length == 0) {
 				return;
 			}
+//			log.debug("found cuepoints ", points);
 			if (alreadyFired(points[0], streamTime)) {
 //				log.debug("alreadyFired at " + streamTime);
 				return;
 			}
 			for (var i:Number = 0; i < points.length; i++) {
 				var cue:Cuepoint = points[i];
-				log.info("cuePointReached: " + cue);
+//				log.info("cuePointReached: " + cue);
 				_clip.dispatch(ClipEventType.CUEPOINT, cue);
 			}
 			_previousCuePointTime = (points[points.length -1] as Cuepoint).time;
@@ -139,7 +140,7 @@ package org.flowplayer.controller {
 
 		private function alreadyFired(currentCuePoint:Cuepoint, streamTime:Number):Boolean {
 			if (_previousCuePointTime == -1) return false;
-			return currentCuePoint.time == _previousCuePointTime && streamTime - currentCuePoint.time <= 1;
+			return currentCuePoint.time == _previousCuePointTime && streamTime*1000 - currentCuePoint.time <= 100;
 		}
 
 		public function get durationReached():Boolean {
