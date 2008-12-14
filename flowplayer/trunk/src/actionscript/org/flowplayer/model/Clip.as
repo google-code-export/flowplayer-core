@@ -168,7 +168,7 @@ package org.flowplayer.model {
 		
 		private function convertToPositive(cue:Cuepoint):void {
 			var positive:Cuepoint = cue.clone() as Cuepoint; 
-			positive.time = duration - Math.abs(Cuepoint(cue).time); 
+			positive.time = duration * 1000 - Math.abs(Cuepoint(cue).time); 
 			addCuepoint(positive);
 			_previousPositives.push(positive);
 		}
