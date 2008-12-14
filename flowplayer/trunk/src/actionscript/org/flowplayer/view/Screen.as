@@ -106,8 +106,12 @@ package org.flowplayer.view {
 				log.warn("clip does not have content, cannot resize. Clip " + clip);
 			}
 			if (clip && clip.getContent()) {
-				var nonHwScaled:MediaSize = clip.scaling == MediaSize.ORIGINAL ? MediaSize.FITTED_PRESERVING_ASPECT_RATIO : clip.scaling; 
-				_resizer.resizeClipTo(clip, _fullscreenManaer.isFullscreen && clip.accelerated ? MediaSize.ORIGINAL : nonHwScaled);
+				if (_fullscreenManaer.isFullscreen) {
+					var nonHwScaled:MediaSize = clip.scaling == MediaSize.ORIGINAL ? MediaSize.FITTED_PRESERVING_ASPECT_RATIO : clip.scaling; 
+					_resizer.resizeClipTo(clip, clip.accelerated ? MediaSize.ORIGINAL : nonHwScaled);
+				} else {
+					_resizer.resizeClipTo(clip, clip.scaling);
+				}
 			}
 		}
 
