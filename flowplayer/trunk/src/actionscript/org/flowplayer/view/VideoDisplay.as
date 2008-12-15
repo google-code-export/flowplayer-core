@@ -18,6 +18,7 @@
  */
 
 package org.flowplayer.view {
+	import org.flowplayer.util.Arrange;	
 	import org.flowplayer.model.Clip;	import org.flowplayer.view.MediaDisplay;		import flash.display.Sprite;	import flash.media.Video;	
 	/**
 	 * @author api
@@ -43,8 +44,7 @@ package org.flowplayer.view {
 		}
 
 		override protected function onResize():void {
-			_overlay.width = width;
-			_overlay.height = height;
+			Arrange.sameSize(_overlay, this);
 		}
 
 		override public function set alpha(value:Number):void {

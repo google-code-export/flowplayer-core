@@ -20,7 +20,7 @@
 package org.flowplayer.util {
 	import flash.display.DisplayObject;
 	import flash.display.Stage;
-	import flash.display.StageDisplayState;		
+	import flash.display.StageDisplayState;	
 
 	/**
 	 * @author api
@@ -38,6 +38,23 @@ package org.flowplayer.util {
 				disp.x = (areaWidth / 2) - (disp.width / 2);
 			if (areaHeight > 0)
 				disp.y = (areaHeight / 2) - (disp.height / 2);
+		}
+		
+		/**
+		 * Resize the specified display object to have the same size as the other specified display object.
+		 * @param disp the object to resize
+		 * @param other the object where the size is taken from
+		 */
+		public static function sameSize(disp:DisplayObject, other:DisplayObject):void {
+			if (! disp) return;
+			if (! other) return;
+			if (other is Stage) {
+				disp.width =  Stage(other).stageWidth;
+				disp.height = Stage(other).stageHeight;
+			} else {
+				disp.width =  other.width;
+				disp.height = other.height;
+			}
 		}
 
 		/**
