@@ -87,7 +87,8 @@ package org.flowplayer.view {
 				
 				loadPluginsIfConfigured();
 			} catch (e:Error) {
-				handleError(PlayerError.INIT_FAILED, "Failed in phase1: " + e.message, false);
+				throw e;
+//				handleError(PlayerError.INIT_FAILED, "Failed in phase1: " + e.message, false);
 			}
 		}
 

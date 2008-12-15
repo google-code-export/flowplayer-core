@@ -118,10 +118,15 @@ package org.flowplayer.util {
 		}
 		
 		private function write(writeFunc:Function, msg:String, rest:Array):void {
-			if (rest.length > 0)
-				writeFunc(_owner + " : " + msg, rest);
-			else
-				writeFunc(_owner + " : " + msg);
+			try {
+				if (rest.length > 0)
+					writeFunc(_owner + " : " + msg, rest);
+				else
+					writeFunc(_owner + " : " + msg);
+			} catch (e:Error) {
+				trace(msg);
+				trace(e.message);
+			}
 		}
 		
 		public function get enabled():Boolean {

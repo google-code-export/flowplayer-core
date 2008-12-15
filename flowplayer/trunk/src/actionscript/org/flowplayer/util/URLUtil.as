@@ -51,12 +51,17 @@ package org.flowplayer.util {
 		}
 		
 		public static function get pageUrl():String {
-			var href:String = ExternalInterface.call("window.location.href.toString");
-			var endPos:int = href.indexOf("?");
-			if (endPos < 0) {
-				endPos = href.lastIndexOf("/");
+			if (!ExternalInterface.available) return null;
+			try {
+				var href:String = ExternalInterface.call("window.location.href.toString");
+				var endPos:int = href.indexOf("?");
+				if (endPos < 0) {
+					endPos = href.lastIndexOf("/");
+				}
+				return href.substring(0, endPos);
+			} catch (e:Error) {
 			}
-			return href.substring(0, endPos);
+			return null;
 		}
 		
 		public static function playerBaseUrl(loaderInfo:LoaderInfo):String {

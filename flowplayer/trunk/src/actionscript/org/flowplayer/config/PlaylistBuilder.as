@@ -42,9 +42,9 @@ package org.flowplayer.config {
 		public function PlaylistBuilder(playerId:String, clipObjects:Array, commonClip:Object) {
 			_playerId = playerId;
 			this.clipObjects = clipObjects || [];
-			this._commonClip = commonClip;
+			_commonClip = commonClip;
 		}
-		
+
 		public function createClips(clipObjects:Array):Array {
 			var clips:Array = new Array();
 			for (var i : Number = 0; i < clipObjects.length; i++) {
@@ -100,20 +100,20 @@ package org.flowplayer.config {
 			return new PropertyBinder(clip, "customProperties").copyProperties(clipObj) as Clip;
 		}
 		
-		public function createCuepointGroup(cuepoints:Array, callbackId:String):Array {
+		public function createCuepointGroup(cuepoints:Array, callbackId:String, timeMultiplier:Number):Array {
 			var cues:Array = new Array();
 			for (var i:Number = 0; i < cuepoints.length; i++) {
 				var cueObj:Object = cuepoints[i];
-//				log.debug("creating cuepoint");
-				cues.push(createCuepoint(cueObj, callbackId));
+				var cue:Object = createCuepoint(cueObj, callbackId, timeMultiplier);
+				cues.push(cue);
 			}
 			return cues;
 		}
 
-		private function createCuepoint(cueObj:Object, callbackId:String):Object {
-			if (cueObj is Number) return new Cuepoint(roundTime(cueObj as int), callbackId);
+		private function createCuepoint(cueObj:Object, callbackId:String, timeMultiplier:Number):Object {
+			if (cueObj is Number) return new Cuepoint(roundTime(cueObj as int, timeMultiplier), callbackId);
 			if (! cueObj.hasOwnProperty("time")) throw new Error("Cuepoint does not have time: " + cueObj);
-			var cue:Object = Cuepoint.createDynamic(roundTime(cueObj.time), callbackId);
+			var cue:Object = Cuepoint.createDynamic(roundTime(cueObj.time, timeMultiplier), callbackId);
 			for (var prop:String in cueObj) {
 				if (prop != "time") {
 					cue[prop] = cueObj[prop];
@@ -123,8 +123,8 @@ package org.flowplayer.config {
 			return cue;
 		}
 		
-		private function roundTime(time:int):int {
-			return Math.round(time/100) * 100;
+		private function roundTime(time:int, timeMultiplier:Number):int {
+			return Math.round(time * timeMultiplier / 100) * 100;
 		}
 	}
 }

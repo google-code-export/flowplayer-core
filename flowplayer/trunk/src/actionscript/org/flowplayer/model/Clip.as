@@ -62,6 +62,7 @@ package org.flowplayer.model {
 		private var _linkUrl:String;
 		private var _linkWindow:String;
 		private var _image:Boolean;
+		private var _cuepointMultiplier:Number;
 
 		public function Clip() {
 			_cuepoints = new Array();
@@ -76,6 +77,7 @@ package org.flowplayer.model {
 			_fadeOutSpeed = 1000;
 			_linkWindow = "_self";
 			_image = true;
+			_cuepointMultiplier = 1000;
 		}
 
 		public static function create(url:String, baseUrl:String = null):Clip {
@@ -569,6 +571,14 @@ package org.flowplayer.model {
 		
 		public function set autoPlayNext(autoPlayNext:Boolean):void {
 			_autoPlayNext = autoPlayNext;
+		}
+		
+		public function get cuepointMultiplier():Number {
+			return _cuepointMultiplier;
+		}
+		
+		public function set cuepointMultiplier(cuepointMultiplier:Number):void {
+			_cuepointMultiplier = cuepointMultiplier;
 		}
 	}
 }
