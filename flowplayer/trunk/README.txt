@@ -10,6 +10,7 @@ Version history:
 - cuepoint times are now given in milliseconds, the firing precision is 100 ms. All cuepoint times are rounded to the nearest 100 ms value (for example 1120 rounds to 1100) 
 - backgroundGradient was drawn over the background image in the canvas and in the content and controlbar plugins. Now it's drawn below the image.
 - added cuepointMultiplier property to clips. This can be used to multiply the time values read from cuepoint metadata embedded into video files.
+- the player's framerate was increased to 24 FPS, makes all animations smoother
 
 3.0.1
 -----

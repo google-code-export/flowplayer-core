@@ -289,11 +289,19 @@ package org.flowplayer.view {
 
 		private function setPlaylist(playlist:Array):void {
 			_playListController.setPlaylist(playlist);
+			var clip:Clip = _playListController.playlist.current;
+			if (clip.autoPlay) {
+				log.debug("clip is autoPlay");
+				_playListController.play();
+			} else if (clip.autoBuffering) {
+				log.debug("clip is autoBuffering");
+				_playListController.startBuffering();
+			}
 		}
 
 		private function addCuepoints(cuepoints:Array, clipIndex:int, callbackId:String):void {
 			var clip:Clip = _playListController.playlist.getClip(clipIndex);
-			var points:Array = _config.createCuepoints(cuepoints, callbackId);
+			var points:Array = _config.createCuepoints(cuepoints, callbackId, 1);
 			if (! points || points.length == 0) {
 				showError("unable to create cuepoints from " + cuepoints);
 			}
