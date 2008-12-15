@@ -582,7 +582,7 @@ package org.flowplayer.controller {
 
 		protected function onMetaData(event:ClipEvent):void {
 			log.info("in NetStreamControllingStremProvider.onStart");
-			clip.dispatch(ClipEventType.START);
+			clip.dispatch(ClipEventType.START, _pauseAfterStart);
 			// some files require that we seek to the first frame only after receiving metadata
 			// otherwise we will never receive the metadata
 			if (_pauseAfterStart) {

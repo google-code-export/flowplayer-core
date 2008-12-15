@@ -222,7 +222,8 @@ package org.flowplayer.view {
 			var clip:Clip = event.target as Clip;
 			if (clip.isNullClip) return;
 			
-			if (! clip.autoPlay && clip.autoBuffering && _playList.previousClip && _playList.previousClip.type == ClipType.IMAGE) {
+			var pauseAfterStart:Boolean = event.info as Boolean;
+			if (pauseAfterStart && _playList.previousClip && _playList.previousClip.type == ClipType.IMAGE) {
 				log.debug("autoBuffering next clip on a splash image, will not show next display");
 				setDisplayVisibleIfHidden(_playList.previousClip);
 				if (clip.type == ClipType.AUDIO && clip.image) return;
@@ -244,7 +245,7 @@ package org.flowplayer.view {
 				return;
 			}
 			
-			showDisplay(event);
+			setDisplayVisibleIfHidden(clip);
 		}
 		
 		private function setDisplayVisibleIfHidden(clip:Clip):void {
