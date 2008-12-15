@@ -8,6 +8,7 @@ Version history:
 - added onMetaData clip event
 - fixed 'orig' scaling: the player went to 'fit' scaling after coming back from fullscreen. This is now fixed and the original dimensions are preserved in non-fullscreen mode.
 - cuepoint times are now given in milliseconds, the firing precision is 100 ms. All cuepoint times are rounded to the nearest 100 ms value (for example 1120 rounds to 1100) 
+- backgroundGradient was drawn over the background image in the canvas and in the content and controlbar plugins. Now it's drawn below the image.
 
 3.0.1
 -----
