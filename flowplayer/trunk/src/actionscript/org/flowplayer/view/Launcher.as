@@ -168,7 +168,7 @@ package org.flowplayer.view {
 			setSize(stage.stageWidth, stage.stageHeight);
 			arrangeCanvasLogo();
 		}
-		
+
 		private function arrangeCanvasLogo():void {
 			if (!_canvasLogo) return;
 			_canvasLogo.x = 15;
@@ -448,6 +448,11 @@ package org.flowplayer.view {
 			_screen.addEventListener(MouseEvent.CLICK, onViewClicked);
 			addEventListener(MouseEvent.ROLL_OVER, onMouseOver);
 			addEventListener(MouseEvent.ROLL_OUT, onMouseOut);
+			
+			// add some color so that the ROLL_OVER/ROLL_OUT events are always triggered
+			graphics.beginFill(0, 0);
+			graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
+			graphics.endFill();
 		}
 		
 		private function onMouseOut(event:MouseEvent):void {
