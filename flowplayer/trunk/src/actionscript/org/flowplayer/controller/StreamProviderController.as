@@ -134,7 +134,7 @@ package org.flowplayer.controller {
 			
 			if (metaData.cuePoints) {
 				log.debug("clip has embedded cuepoints");
-				clip.addCuepoints(_config.createCuepoints(metaData.cuePoints, "embedded"));
+				clip.addCuepoints(_config.createCuepoints(metaData.cuePoints, "embedded", clip.cuepointMultiplier));
 			}
 			dispatchMetaData();
 		}
