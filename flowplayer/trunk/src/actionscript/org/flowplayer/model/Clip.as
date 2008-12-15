@@ -18,15 +18,16 @@
  */
 
 package org.flowplayer.model {
-	import org.flowplayer.util.ArrayUtil;	
+	import org.flowplayer.flow_internal;
+	import org.flowplayer.model.ClipEvent;
+	import org.flowplayer.util.ArrayUtil;
+	import org.flowplayer.util.Log;
+	import org.flowplayer.util.URLUtil;
 	
 	import flash.display.DisplayObject;
 	import flash.media.Video;
+	import flash.utils.Dictionary;		
 	
-	import org.flowplayer.flow_internal;
-	import org.flowplayer.model.ClipEvent;
-	import org.flowplayer.util.Log;
-	import org.flowplayer.util.URLUtil;				
 	use namespace flow_internal;		
 
 	/**
@@ -34,7 +35,7 @@ package org.flowplayer.model {
 	 */
 	public class Clip extends ClipEventDispatcher {
 		private var _playlist:Playlist;
-		private var _cuepoints:Array;
+		private var _cuepoints:Dictionary;
 		private var _cuepointsInNegative:Array;
 		private var _previousPositives:Array;
 		private var _baseUrl:String;
@@ -65,7 +66,7 @@ package org.flowplayer.model {
 		private var _cuepointMultiplier:Number;
 
 		public function Clip() {
-			_cuepoints = new Array();
+			_cuepoints = new Dictionary();
 			_cuepointsInNegative = new Array();
 			_previousPositives = new Array();
 			_start = 0;
@@ -446,7 +447,11 @@ package org.flowplayer.model {
 		
 		[Value]
 		public function get cuepoints():Array {
-			return _cuepoints;
+			var cues:Array = new Array();
+			for each (var cue:Object in _cuepoints) {
+				cues.push(cue);
+			}
+			return cues;
 		}
 		
 		public function set accelerated(accelerated:Boolean):void {

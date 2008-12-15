@@ -209,7 +209,7 @@ package org.flowplayer.view {
 		}
 		
 		private function checkPluginsLoaded():void {
-			var numPlugins:int = _config.getLoadables().length + 1;
+			var numPlugins:int = _config.getLoadables().length + (_playButtonOverlay ? 1 : 0);
 			
 			if (++_pluginsInitialized == numPlugins) {
 				log.info("all plugins initialized");
@@ -405,12 +405,11 @@ package org.flowplayer.view {
 
 		private function createPlayButtonOverlay():void {
 			_playButtonOverlay = _config.getPlayButtonOverlay();
+			if (! _playButtonOverlay) return;
+			
 			_playButtonOverlay.onLoad(onPluginLoad);
 			_playButtonOverlay.onError(onPluginLoadError);
 
-			if (_playButtonOverlay == null) {
-				return;
-			}
 			log.debug("playlist has clips? " + hasClip);
 			var overlay:PlayButtonOverlayView = new PlayButtonOverlayView(! playButtonOverlayWidthDefined(), _playButtonOverlay, _pluginRegistry, _config.getPlaylist(), true);
 			initView(overlay, _playButtonOverlay, null, false);
