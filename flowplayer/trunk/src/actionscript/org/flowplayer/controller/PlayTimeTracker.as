@@ -46,8 +46,8 @@ package org.flowplayer.controller {
 
 		public function stop():void {
 			if (!_timer) return;
-			_timer.stop();
 			_storedTime = time;
+			_timer.stop();
 			log.debug("stopped at time " + _storedTime);
 		}
 
