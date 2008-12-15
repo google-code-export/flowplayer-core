@@ -1,5 +1,5 @@
 /** 
- * flowplayer.js [3.0.1]. The Flowplayer API
+ * flowplayer.js [3.0.2]. The Flowplayer API
  * 
  * Copyright 2008 Flowplayer Oy
  * 
@@ -276,7 +276,7 @@
 				
 				var ret = true;
 				each(listeners[evt], function() {
-					ret = this.call(player, target, arg1);		
+					ret = this.call(player, target, arg1, arg2);		
 				}); 
 				return ret;				
 			}			
@@ -646,7 +646,7 @@ function Player(wrapper, params, conf) {
 		},
 		
 		getVersion: function() {
-			var js = "flowplayer.js 3.0.1";
+			var js = "flowplayer.js 3.0.2";
 			if (api) {
 				var ver = api.fp_getVersion();
 				ver.push(js);
@@ -664,6 +664,10 @@ function Player(wrapper, params, conf) {
 		
 		_dump: function() {
 			console.log(listeners);
+		},
+		
+		setClip: function(clip) {
+			self.setPlaylist([clip]);
 		}
 		
 	}); 
@@ -694,7 +698,7 @@ function Player(wrapper, params, conf) {
 	
 	
 	// core API methods
-	each(("pause,resume,mute,unmute,stop,toggle,seek,getStatus,getVolume,setVolume,getTime,isPaused,isPlaying,startBuffering,stopBuffering,isFullscreen,reset,close").split(","),		
+	each(("pause,resume,mute,unmute,stop,toggle,seek,getStatus,getVolume,setVolume,getTime,isPaused,isPlaying,startBuffering,stopBuffering,isFullscreen,reset,close,setPlaylist").split(","),		
 		function() {		 
 			var name = this;
 			
@@ -718,7 +722,7 @@ function Player(wrapper, params, conf) {
 		}				
 		
 		// internal onLoad
-		if (evt == 'onLoad' && !api) {  
+		if (!api && evt == 'onLoad' && arg0 == 'player') {
 			
 			api = api || el(apiId); 
 			swfHeight = api.clientHeight;
@@ -759,14 +763,14 @@ function Player(wrapper, params, conf) {
 			playlist = [];
 			var index = 0;
 			each(arg0, function() {
-				playlist.push(new Clip(this, index++));
+				playlist.push(new Clip(this, index++, self));
 			});		
 		}
 		
 		var ret = true;
 		
 		// clip event
-		if (arg0 === 0 || (arg0 && arg0 >= 0)) {
+		if (arg0 === 0 || (arg0 && arg0 >= 0 && arg0 < playlist.length)) {
 			
 			activeIndex = arg0;
 			var clip = playlist[arg0];			
@@ -776,7 +780,7 @@ function Player(wrapper, params, conf) {
 			} 
 			
 			if (!clip || ret !== false) {
-				
+
 				// clip argument is given for common clip, because it behaves as the target
 				ret = commonClip._fireEvent(evt, arg1, arg2, clip);	
 			}  
@@ -785,7 +789,7 @@ function Player(wrapper, params, conf) {
 		// player event	
 		var i = 0;
 		each(listeners[evt], function() {
-			ret = this.call(self, arg0);		
+			ret = this.call(self, arg0, arg1);		
 			
 			// remove cached entry
 			if (this.cached) {
