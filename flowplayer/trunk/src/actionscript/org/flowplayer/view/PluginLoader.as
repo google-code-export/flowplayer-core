@@ -18,7 +18,7 @@
  */
 
 package org.flowplayer.view {
-	import org.flowplayer.model.PlayerError;			import com.adobe.utils.StringUtil;
+	import com.adobe.utils.StringUtil;
 	
 	import org.flowplayer.config.ExternalInterfaceHelper;
 	import org.flowplayer.controller.StreamProvider;
@@ -26,6 +26,7 @@ package org.flowplayer.view {
 	import org.flowplayer.model.DisplayPluginModel;
 	import org.flowplayer.model.FontProvider;
 	import org.flowplayer.model.Loadable;
+	import org.flowplayer.model.PlayerError;
 	import org.flowplayer.model.PluginModel;
 	import org.flowplayer.model.ProviderModel;
 	import org.flowplayer.util.Log;
@@ -41,9 +42,10 @@ package org.flowplayer.view {
 	import flash.net.URLRequest;
 	import flash.system.ApplicationDomain;
 	import flash.system.LoaderContext;
+	import flash.system.SecurityDomain;
 	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
-	import flash.utils.getQualifiedClassName;		
+	import flash.utils.getQualifiedClassName;		
 	/**
 	 * @author api
 	 */
@@ -108,6 +110,7 @@ package org.flowplayer.view {
 			_loadedCount = 0;
 			var loaderContext:LoaderContext = new LoaderContext();
 			loaderContext.applicationDomain = ApplicationDomain.currentDomain;
+			loaderContext.securityDomain = SecurityDomain.currentDomain;
 			var urls:Dictionary = new Dictionary();
 			
 			for (var i:Number = 0; i < _swiffsToLoad.length; i++) {

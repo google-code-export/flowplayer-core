@@ -1,5 +1,9 @@
 Version history:
 
+3.0.3
+-----
+- Plugins can now be loaded from a different domain to the flowplayer.swf
+
 3.0.2
 -----
 - setting play: null now works again
