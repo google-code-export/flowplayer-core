@@ -3,6 +3,7 @@ Version history:
 3.0.3
 -----
 - Plugins can now be loaded from a different domain to the flowplayer.swf
+- Specifying a clip to play by just using the 'clip' node in the configuration was not working, a playlist definition was required. This is now fixed.
 
 3.0.2
 -----

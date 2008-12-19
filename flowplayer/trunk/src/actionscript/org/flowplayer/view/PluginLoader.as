@@ -110,7 +110,9 @@ package org.flowplayer.view {
 			_loadedCount = 0;
 			var loaderContext:LoaderContext = new LoaderContext();
 			loaderContext.applicationDomain = ApplicationDomain.currentDomain;
-			loaderContext.securityDomain = SecurityDomain.currentDomain;
+			if (!URLUtil.localDomain(_baseUrl)) {
+				loaderContext.securityDomain = SecurityDomain.currentDomain;
+			}
 			var urls:Dictionary = new Dictionary();
 			
 			for (var i:Number = 0; i < _swiffsToLoad.length; i++) {

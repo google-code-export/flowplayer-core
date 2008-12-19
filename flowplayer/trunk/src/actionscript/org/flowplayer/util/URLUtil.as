@@ -71,5 +71,14 @@ package org.flowplayer.util {
 			var lastSlashBeforeSwf:Number = url.lastIndexOf("/");
 			return url.substring(0, lastSlashBeforeSwf);
 		}
+		
+		public static function localDomain(swfUrl:String):Boolean {
+			if (swfUrl.indexOf("http://localhost/") == 0) return true;
+			if (swfUrl.indexOf("file://") == 0) return true;
+			if (swfUrl.indexOf("http://127.0.0.1") == 0) return true;
+			if (swfUrl.indexOf("http://") == 0) return false;
+			if (swfUrl.indexOf("/") == 0) return true;
+			return false;
+		}
 	}
 }
