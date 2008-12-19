@@ -63,7 +63,7 @@ package org.flowplayer.config {
 				commonClip = createClip(_commonClip);
 			}
 			var playList:Playlist = new Playlist(commonClip);
-			if (clipObjects) {
+			if (clipObjects && clipObjects.length > 0) {
 				playList.setClips(createClips(clipObjects));
 			} else if (_commonClip) {
 				playList.addClip(createClip(_commonClip));
