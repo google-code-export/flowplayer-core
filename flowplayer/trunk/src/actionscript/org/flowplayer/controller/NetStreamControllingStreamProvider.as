@@ -18,27 +18,8 @@
  */
 
 package org.flowplayer.controller {
-	import mx.events.CloseEvent;	
-	
-	import org.flowplayer.model.ClipError;		import org.flowplayer.controller.StreamProvider;
-	import org.flowplayer.controller.VolumeController;
-	import org.flowplayer.model.Clip;
-	import org.flowplayer.model.ClipEvent;
-	import org.flowplayer.model.ClipEventType;
-	import org.flowplayer.model.Playlist;
-	import org.flowplayer.util.Assert;
-	import org.flowplayer.util.Log;
-	
-	import flash.display.DisplayObject;
-	import flash.errors.IOError;
-	import flash.events.NetStatusEvent;
-	import flash.events.TimerEvent;
-	import flash.media.Video;
-	import flash.net.NetConnection;
-	import flash.net.NetStream;
-	import flash.utils.Timer;	
-
-	/**
+	import org.flowplayer.controller.StreamProvider;	import org.flowplayer.controller.VolumeController;	import org.flowplayer.model.Clip;	import org.flowplayer.model.ClipError;	import org.flowplayer.model.ClipEvent;	import org.flowplayer.model.ClipEventType;	import org.flowplayer.model.Playlist;	import org.flowplayer.model.PluginModel;	import org.flowplayer.util.Assert;	import org.flowplayer.util.Log;	import org.flowplayer.view.Flowplayer;		import flash.display.DisplayObject;	import flash.errors.IOError;	import flash.events.NetStatusEvent;	import flash.events.TimerEvent;	import flash.media.Video;	import flash.net.NetConnection;	import flash.net.NetStream;	import flash.utils.Timer;		
+	/**
 	 * A StreamProvider that does it's job using the Flash's NetStream class.
 	 * Implements standard HTTP based progressive download.
 	 */
@@ -60,6 +41,22 @@ package org.flowplayer.controller {
 		private var _paused:Boolean;
 		private var _stopping:Boolean;
 		private var _started:Boolean;
+		private var _model:PluginModel;
+
+		/**
+		 * Sets the plugin model.
+		 */
+		public function set config(model:PluginModel):void {
+			_model = model;
+			onConfig(model);
+		} 
+
+		/**
+		 * Sets the player instance.
+		 */
+		public function set player(player:Flowplayer):void {
+			onLoad(player); 
+		} 	
 
 		/* ---- implementation of StreamProvider: ---- */
 
@@ -74,7 +71,7 @@ package org.flowplayer.controller {
 				log.info("this clip will pause after start");
 			}
 			_pauseAfterStart = pauseAfterStart;
-			clip.onMetaData(onMetaData, function(clip:Clip):Boolean { return clip.provider == 'http'; });
+			clip.onMetaData(onMetaData, function(clip:Clip):Boolean { return clip.provider == (_model ? _model.name : 'http'); });
 			
 			log.debug("previously started clip " + _startedClip);
 			if (_startedClip && _startedClip == clip && _connection) {
@@ -472,6 +469,18 @@ package org.flowplayer.controller {
 		public function get seekTarget():Number {
 			return _seekTarget;
 		}
+
+		/**
+		 * Override this to receive the plugin model.
+		 */
+		public function onConfig(model:PluginModel):void {
+		} 
+
+		/**
+		 * Override this to receive the player instance.
+		 */
+		public function onLoad(player:Flowplayer):void { 
+		} 	
 
 		/* ---- Private methods ----- */
 		/* -------------------------- */
