@@ -18,6 +18,8 @@
  */
 
 package org.flowplayer.view {
+	import org.flowplayer.controller.NetStreamControllingStreamProvider;	
+	
 	import com.adobe.utils.StringUtil;
 	
 	import org.flowplayer.config.ExternalInterfaceHelper;
@@ -184,10 +186,14 @@ package org.flowplayer.view {
 				}
 				plugin.onLoad(_loadListener);
 				plugin.onError(_loadErrorListener);
-				try {
-					pluginInstance.onConfig(plugin);
-				} catch (e: Error) {
-					log.debug("the plugin did not have the plugin property/accessor");
+				if (pluginInstance is NetStreamControllingStreamProvider) {
+					NetStreamControllingStreamProvider(pluginInstance).config = plugin;
+				} else {
+					try {
+						pluginInstance.onConfig(plugin);
+					} catch (e: Error) {
+						log.debug("the plugin did not have the plugin property/accessor");
+					}
 				}
 			}
 		}

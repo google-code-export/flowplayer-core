@@ -4,7 +4,7 @@
 	<property name="version-1" value="3" />
 	<property name="version-2" value="0" />
 	<property name="version-3" value="3" />	
-	<property name="version-status" value="dev1" />
+	<property name="version-status" value="dev2" />
 	<property name="controls-version-info" value="3.0.2" />
 	<property name="audio-version-info" value="3.0.2" />
 	<property name="flowplayer-js-version-info" value="3.0.2" />

@@ -18,6 +18,7 @@
  */
 
 package org.flowplayer.view {
+	import org.flowplayer.controller.NetStreamControllingStreamProvider;	
 	import org.flowplayer.model.DisplayPluginModel;	
 	import org.flowplayer.model.Cloneable;
 	import org.flowplayer.model.DisplayProperties;
@@ -180,7 +181,11 @@ package org.flowplayer.view {
 				} else {
 					pluginObj = ProviderModel(plugin).getProviderObject(); 
 				}
-				pluginObj["onLoad"](_flowPlayer);
+				if (pluginObj is NetStreamControllingStreamProvider) {
+					NetStreamControllingStreamProvider(pluginObj).player = _flowPlayer as Flowplayer;
+				} else {
+					pluginObj["onLoad"](_flowPlayer);
+				}
 				log.debug("onLoad() successfully executed for plugin " + plugin);
 			} catch (e:Error) {
 				if (pluginObj is Plugin) {
