@@ -40,10 +40,10 @@ package org.flowplayer.controller {
 		internal override function play():void {
 			log.debug("play()");
 			stop();
-			playList.current.played = true;
 			bufferingState.nextStateAfterBufferFull = playingState;
 			if (onEvent(ClipEventType.BEGIN, getMediaController(), [false])) {
 				changeState(bufferingState);
+				playList.current.played = true;
 			}
 		}
 
