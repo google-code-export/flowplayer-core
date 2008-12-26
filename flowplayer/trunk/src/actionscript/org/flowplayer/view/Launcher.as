@@ -125,9 +125,6 @@ package org.flowplayer.view {
 
 				log.debug("calling onLoad to plugins");
 				_pluginRegistry.onLoad(_flowplayer);
-
-				log.debug("arranging screen");
-				arrangeScreen();
 			} catch (e:Error) {
 				handleError(PlayerError.INIT_FAILED, "Failed in phase2: " + e.message, false);
 			}
@@ -137,6 +134,9 @@ package org.flowplayer.view {
 			try {
 				log.debug("Adding visible plugins to panel");
 				addPluginsToPanel(_pluginRegistry);
+				
+				log.debug("arranging screen");
+				arrangeScreen();
 				
 				log.debug("dispatching onLoad");
 				if (useExternalInterfade()) {
@@ -326,6 +326,7 @@ package org.flowplayer.view {
 			// if controls visible and screen was not explicitly configured --> place screen on top of controls
 			var screen:DisplayProperties = _pluginRegistry.getPlugin("screen") as DisplayProperties;
 			screen.display = "none";
+			screen.getDisplayObject().visible = false;
 			_panel.addView(screen.getDisplayObject(), null, screen);
 		}
 		
@@ -348,6 +349,7 @@ package org.flowplayer.view {
 			}
 			log.debug("arranging screen to pos " + screen.position);
 			screen.display = "block";
+			screen.getDisplayObject().visible = true;
 			_pluginRegistry.updateDisplayProperties(screen);
 			_panel.update(screen.getDisplayObject(), screen);
 			_panel.draw(screen.getDisplayObject());
@@ -389,7 +391,9 @@ package org.flowplayer.view {
 			if (! _providers) {
 				_providers = new Dictionary();
 			}
-			_providers["http"] = new NetStreamControllingStreamProvider();
+			var httpProvider:NetStreamControllingStreamProvider = new NetStreamControllingStreamProvider();
+			httpProvider.playerConfig = _config;
+			_providers["http"] = httpProvider;
 			return new PlayListController(_config.getPlaylist(), _providers, _config, createNewLoader());
 		}
 		
