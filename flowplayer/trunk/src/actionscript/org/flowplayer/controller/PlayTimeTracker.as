@@ -24,7 +24,6 @@ package org.flowplayer.controller {
 		private var _startTime:int;
 		private var _timer:Timer;
 		private var _storedTime:int = 0;
-		private var _previousCuePointTime:int = -1;
 		private var _onLastSecondDispatched:Boolean;
 		private var _controller:MediaController;
 
@@ -116,31 +115,36 @@ package org.flowplayer.controller {
 			var streamTime:Number = _controller.time;
 			var timeRounded:Number = Math.round(streamTime*10) * 100;
 //			log.debug("checkAndFireCuepoints, rounded stream time is " + timeRounded);			
-			// clear previous cuepoint after 1 sec has passed from it
-			if (Math.abs(streamTime*1000 - _previousCuePointTime) > 100) {
-				_previousCuePointTime = -1;
-			}
 			
-			var points:Array = _clip.getCuepoints(timeRounded);
+			// also get the points from previous rounds, just to make sure we are not skipping any
+			var points:Array = collectCuepoints(_clip, timeRounded);
+			
 			if (! points || points.length == 0) {
-				return;
-			}
-//			log.debug("found cuepoints ", points);
-			if (alreadyFired(points[0], streamTime)) {
-//				log.debug("alreadyFired at " + streamTime);
 				return;
 			}
 			for (var i:Number = 0; i < points.length; i++) {
 				var cue:Cuepoint = points[i];
 //				log.info("cuePointReached: " + cue);
-				_clip.dispatch(ClipEventType.CUEPOINT, cue);
+				if (! alreadyFired(cue)) {
+					trace("firing cuepoint with time " + cue.time);
+					_clip.dispatch(ClipEventType.CUEPOINT, cue);
+					cue.lastFireTime = getTimer();
+				}
 			}
-			_previousCuePointTime = (points[points.length -1] as Cuepoint).time;
+		}
+		
+		private function collectCuepoints(clip:Clip, timeRounded:Number):Array {
+			var result:Array = new Array();
+			for (var i:Number = 5; i >= 0; i--) {
+				result = result.concat(clip.getCuepoints(timeRounded - i * 100));
+			}
+			return result;
 		}
 
-		private function alreadyFired(currentCuePoint:Cuepoint, streamTime:Number):Boolean {
-			if (_previousCuePointTime == -1) return false;
-			return currentCuePoint.time == _previousCuePointTime && streamTime*1000 - currentCuePoint.time <= 100;
+		private function alreadyFired(cue:Cuepoint):Boolean {
+			var lastFireTime:int = cue.lastFireTime;
+			if (! lastFireTime > 0) return false;
+			return getTimer() - cue.lastFireTime < 1000;
 		}
 
 		public function get durationReached():Boolean {
