@@ -18,8 +18,30 @@
  */
 
 package org.flowplayer.controller {
-	import org.flowplayer.controller.StreamProvider;	import org.flowplayer.controller.VolumeController;	import org.flowplayer.model.Clip;	import org.flowplayer.model.ClipError;	import org.flowplayer.model.ClipEvent;	import org.flowplayer.model.ClipEventType;	import org.flowplayer.model.Playlist;	import org.flowplayer.model.PluginModel;	import org.flowplayer.util.Assert;	import org.flowplayer.util.Log;	import org.flowplayer.view.Flowplayer;		import flash.display.DisplayObject;	import flash.errors.IOError;	import flash.events.NetStatusEvent;	import flash.events.TimerEvent;	import flash.media.Video;	import flash.net.NetConnection;	import flash.net.NetStream;	import flash.utils.Timer;		
-	/**
+	import org.flowplayer.config.Config;
+	import org.flowplayer.controller.StreamProvider;
+	import org.flowplayer.controller.VolumeController;
+	import org.flowplayer.flow_internal;
+	import org.flowplayer.model.Clip;
+	import org.flowplayer.model.ClipError;
+	import org.flowplayer.model.ClipEvent;
+	import org.flowplayer.model.ClipEventType;
+	import org.flowplayer.model.Playlist;
+	import org.flowplayer.model.PluginModel;
+	import org.flowplayer.util.Assert;
+	import org.flowplayer.util.Log;
+	import org.flowplayer.view.Flowplayer;
+	
+	import flash.display.DisplayObject;
+	import flash.errors.IOError;
+	import flash.events.NetStatusEvent;
+	import flash.events.TimerEvent;
+	import flash.media.Video;
+	import flash.net.NetConnection;
+	import flash.net.NetStream;
+	import flash.utils.Timer;	
+
+	/**
 	 * A StreamProvider that does it's job using the Flash's NetStream class.
 	 * Implements standard HTTP based progressive download.
 	 */
@@ -32,7 +54,6 @@ package org.flowplayer.controller {
 		private var _playlist:Playlist;
 		private var _pauseAfterStart:Boolean;
 		private var _volumeController:VolumeController;
-		private var _netStreamClient:Object;
 		private var _seekTargetWaitTimer:Timer;
 		private var _seekTarget:Number;
 		
@@ -42,6 +63,7 @@ package org.flowplayer.controller {
 		private var _stopping:Boolean;
 		private var _started:Boolean;
 		private var _model:PluginModel;
+		private var _config:Config;
 
 		/**
 		 * Sets the plugin model.
@@ -51,10 +73,15 @@ package org.flowplayer.controller {
 			onConfig(model);
 		} 
 
+		flow_internal function set playerConfig(config:Config):void {
+			_config = config;
+		}
+
 		/**
 		 * Sets the player instance.
 		 */
 		public function set player(player:Flowplayer):void {
+			_config = player.config;
 			onLoad(player); 
 		} 	
 
@@ -141,15 +168,6 @@ package org.flowplayer.controller {
 			if (! _netStream) return;
 			doStop(event, _netStream, closeStreamAndConnection);
 		}
-
-		/**
-		 * @inheritDoc
-		 */
-		public function set netStreamClient(client:Object):void {
-			_netStreamClient = client;
-			if (_netStream)
-				_netStream.client = client;
-		}
 		
 		/**
 		 * @inheritDoc
@@ -158,7 +176,6 @@ package org.flowplayer.controller {
 			if (! _netStream) return 0;
 			if (! currentClipStarted()) return 0;
 			if (! _started) {
-				log.debug("get time, not started yet, returning zero");
 				return 0;
 			}
 			return getCurrentPlayheadTime(netStream);
@@ -293,6 +310,7 @@ package org.flowplayer.controller {
 		 * @param clip
 		 */
 		protected function doLoad(event:ClipEvent, netStream:NetStream, clip:Clip):void {
+			netStream.client = new NetStreamClient(clip, _config);
 			netStream.play(getClipUrl(clip));
 		}
 
@@ -574,6 +592,7 @@ package org.flowplayer.controller {
 				clip.setContent(null);
 			} else {
 				silentSeek = true;
+				netStream.client = new NullNetStreamClient();
 				netStream.pause();
 				netStream.seek(0);
 			}
@@ -582,11 +601,10 @@ package org.flowplayer.controller {
 
 		private function createNetStream():void {
 			_netStream = new NetStream(_connection);
+			netStream.client = new NetStreamClient(clip, _config);
 			_netStream.bufferTime = clip.bufferLength;
 			_volumeController.netStream = _netStream;
 			_netStream.addEventListener(NetStatusEvent.NET_STATUS, _onNetStatus);
-			if (_netStreamClient)
-				_netStream.client = _netStreamClient;
 		}
 
 		protected function onMetaData(event:ClipEvent):void {

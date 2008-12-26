@@ -89,12 +89,6 @@ package org.flowplayer.controller {
 		function seek(event:ClipEvent, seconds:Number):void;
 		
 		/**
-		 * This object is attached to the <code>NetStream.client</code> property.
-		 * The player sets this to be able to receive NetStream notifications.
-		 */		
-		function set netStreamClient(client:Object):void;
-		
-		/**
 		 * File size in bytes.
 		 */
 		function get fileSize():Number;

@@ -105,82 +105,15 @@ package org.flowplayer.controller {
 			return getProvider().allowRandomSeek;
 		}
 
-		public function onCuePoint(infoObject:Object):void {
-		}
-
 		override protected function onDurationReached():void {
 			// pause silently
 			log.debug("pausing silently");
 			getProvider().pause(null);
 		}
 
-		public function onMetaData(infoObject:Object):void {
-			log.info("onMetaData:");
-			var provider:StreamProvider = getProvider(clip);
-			if (provider.stopping) return;
-
-			if (clip.metaData) {
-				dispatchMetaData();
-				return;
-			}
-
-			log.debug("onMetaData, data for clip " + clip + ":");
-			var metaData:Object = new Object();
-			for (var key:String in infoObject) {
-				log.debug(key + ": " + infoObject[key]);
-				metaData[key] = infoObject[key];
-			}
-			clip.metaData = metaData;
-			
-			if (metaData.cuePoints) {
-				log.debug("clip has embedded cuepoints");
-				clip.addCuepoints(_config.createCuepoints(metaData.cuePoints, "embedded", clip.cuepointMultiplier));
-			}
-			dispatchMetaData();
-		}
-		
-		private function dispatchMetaData():void {
-			if (!_metadataDispatched) {
-				clip.dispatch(ClipEventType.METADATA);
-			}
-			_metadataDispatched = true;
-		}
-
-		public function onXMPData(infoObject:Object):void {
-		} 
-
-		public function onBWDone():void { 
-		}
-
-		public function onCaption(cps:String,spk:Number):void { 
-		}
-
-		public function onCaptionInfo(obj:Object):void { 
-		}
-
-		public function onFCSubscribe(obj:Object):void { 
-		}		
-
-		public function onLastSecond(infoObject:Object):void {
-			log.debug("onLastSecond", infoObject);
-		}
-
-		public function onPlayStatus(infoObject:Object):void {
-			log.debug("onPlayStatus", infoObject);
-		}
-
-		public function onImageData(obj:Object):void { 
-		}
-		public function RtmpSampleAccess(obj:Object):void { 
-		}
-
-		public function onTextData(obj:Object):void { 
-		}
-
 		public function getProvider(clipParam:Clip = null):StreamProvider {
 			if (!(clipParam || clip)) return null;
 			var provider:StreamProvider = _controllerFactory.getProvider(clipParam || clip);
-			provider.netStreamClient = this;
 			provider.playlist = playlist;
 			return provider;
 		}
