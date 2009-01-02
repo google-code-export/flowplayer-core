@@ -153,7 +153,7 @@ package org.flowplayer.view {
 		}
 
 		private function show():void {
-			this.alpha = 1;
+			this.alpha = _model.opacity;
 			this.visible = true;
 			CONFIG::freeVersion {
 				_model.zIndex = 100;
