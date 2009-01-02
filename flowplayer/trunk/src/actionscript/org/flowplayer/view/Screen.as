@@ -17,12 +17,13 @@
  *    along with Flowplayer.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.flowplayer.view {
-	import org.flowplayer.model.DisplayProperties;		import org.flowplayer.controller.MediaController;
+	import org.flowplayer.controller.MediaController;
 	import org.flowplayer.flow_internal;
 	import org.flowplayer.model.Clip;
 	import org.flowplayer.model.ClipEvent;
 	import org.flowplayer.model.ClipEventSupport;
 	import org.flowplayer.model.ClipType;
+	import org.flowplayer.model.DisplayProperties;
 	import org.flowplayer.model.MediaSize;
 	import org.flowplayer.model.PlayButtonOverlay;
 	import org.flowplayer.model.Playlist;
@@ -31,9 +32,10 @@ package org.flowplayer.view {
 	import org.flowplayer.view.MediaDisplay;
 	
 	import flash.display.DisplayObject;
+	import flash.events.Event;
+	import flash.events.FullScreenEvent;
 	import flash.geom.Rectangle;
-	import flash.utils.Dictionary;	
-	
+	import flash.utils.Dictionary;			
 	use namespace flow_internal;
 
 	internal class Screen extends AbstractSprite {
