@@ -16,5 +16,6 @@
     <component id="ProviderPlugin" class="org.flowplayer.model.ProviderModel" />
     <component id="GraphicsUtil" class="org.flowplayer.util.GraphicsUtil" />
     <component id="URLUtil" class="org.flowplayer.util.URLUtil" />
+    <component id="Animation" class="org.flowplayer.view.AnimationEngine" />
 </componentPackage>
 

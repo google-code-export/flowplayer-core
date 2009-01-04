@@ -189,10 +189,8 @@ package org.flowplayer.view {
 				if (pluginInstance is NetStreamControllingStreamProvider) {
 					NetStreamControllingStreamProvider(pluginInstance).config = plugin;
 				} else {
-					try {
+					if (pluginInstance.hasOwnProperty("onConfig")) {
 						pluginInstance.onConfig(plugin);
-					} catch (e: Error) {
-						log.debug("the plugin did not have the plugin property/accessor");
 					}
 				}
 			}
