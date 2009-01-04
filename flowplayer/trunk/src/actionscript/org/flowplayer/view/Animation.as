@@ -25,7 +25,7 @@ package org.flowplayer.view {
 	/**
 	 * @author api
 	 */
-	internal class Animation extends LinearGo {
+	public class Animation extends LinearGo {
 		
 		protected var log:Log = new Log(this);
 		private var _target:DisplayObject;

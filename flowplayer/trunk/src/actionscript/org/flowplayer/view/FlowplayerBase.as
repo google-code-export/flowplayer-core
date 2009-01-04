@@ -89,6 +89,7 @@ package org.flowplayer.view {
 			var plugFac:PluginFactory;
 			var style:FlowStyleSheet;
 			var styleable:StyleableSprite;
+			var animation:Animation;
 			
 			if (_instance) {
 				log.error("Flowplayer already instantiated");
