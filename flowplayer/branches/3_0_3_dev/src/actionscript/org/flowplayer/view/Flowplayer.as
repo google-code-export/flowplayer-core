@@ -81,8 +81,8 @@ package org.flowplayer.view {
 				addCallback("getPlaylist", function():Array { return convert(playlist.clips) as Array; });
 				addCallback("getId", function():String { return id; });
 				addCallback("play", genericPlay);
-				addCallback("startBuffering", startBuffering);
-				addCallback("stopBuffering", stopBuffering);
+				addCallback("startBuffering", function():void { startBuffering(); });
+				addCallback("stopBuffering", function():void { stopBuffering(); } );
 				addCallback("isFullscreen", isFullscreen);
 				
 				addCallback("toggle", toggle);
