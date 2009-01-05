@@ -328,7 +328,7 @@ package org.flowplayer.view {
 				if (plugin || pluginArg is PluginModel) {
 					PluginModel(pluginArg || plugin).dispatch(PluginEventType.PLUGIN_EVENT, listenerId);
 				} else {
-					new PluginEvent(PluginEventType.PLUGIN_EVENT, listenerId, pluginArg is DisplayProperties ? DisplayProperties(pluginArg).name : pluginArg).fireExternal(_playerId);
+					new PluginEvent(PluginEventType.PLUGIN_EVENT, pluginArg is DisplayProperties ? DisplayProperties(pluginArg).name : pluginArg.toString(), listenerId).fireExternal(_playerId);
 				} 
 			};
 		}
