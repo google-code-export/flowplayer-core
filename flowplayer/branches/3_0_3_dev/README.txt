@@ -6,6 +6,7 @@ Version history:
 - Specifying a clip to play by just using the 'clip' node in the configuration was not working, a playlist definition was required. This is now fixed.
 - Fixed: A playlist with different providers caused the onMetadata event to fire events with metadata from the previous clip in the playlist. Occurred when moving in the playlist with next() and prev()
 - the opacity setting now works with the logo
+- fadeOut() call to the "screen" plugin was sending the listenerId and pluginName arguments in wrong order
 
 3.0.2
 -----
