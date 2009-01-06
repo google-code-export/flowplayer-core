@@ -179,6 +179,10 @@ package org.flowplayer.view {
 				_playListController.play(null, param as Number);
 				return;
 			}
+			if (param is Array) {
+				_playListController.playClips(_config.createClips(param as Array));
+				return;
+			}
 			var clip:Clip = _config.createClip(param);
 			if (! clip) {
 				showError("cannot convert " + param + " to a clip");
@@ -290,13 +294,6 @@ package org.flowplayer.view {
 		private function setPlaylist(playlist:Array):void {
 			_playListController.setPlaylist(playlist);
 			var clip:Clip = _playListController.playlist.current;
-			if (clip.autoPlay) {
-				log.debug("clip is autoPlay");
-				_playListController.play();
-			} else if (clip.autoBuffering) {
-				log.debug("clip is autoBuffering");
-				_playListController.startBuffering();
-			}
 		}
 
 		private function addCuepoints(cuepoints:Array, clipIndex:int, callbackId:String):void {
