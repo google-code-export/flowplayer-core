@@ -18,6 +18,7 @@
  */
 
 package org.flowplayer.view {
+	import org.flowplayer.model.Plugin;	
 	import org.flowplayer.controller.NetStreamControllingStreamProvider;	
 	
 	import com.adobe.utils.StringUtil;
@@ -184,8 +185,11 @@ package org.flowplayer.view {
 				if (plugin is Callable && _useExternalInterface) {
 					ExternalInterfaceHelper.initializeInterface(plugin as Callable, pluginInstance);
 				}
-				plugin.onLoad(_loadListener);
-				plugin.onError(_loadErrorListener);
+				// add onLoad and onError listeners for plugins implementing the Plugin interface
+				if (pluginInstance is Plugin) {
+					plugin.onLoad(_loadListener);
+					plugin.onError(_loadErrorListener);
+				}
 				if (pluginInstance is NetStreamControllingStreamProvider) {
 					NetStreamControllingStreamProvider(pluginInstance).config = plugin;
 				} else {

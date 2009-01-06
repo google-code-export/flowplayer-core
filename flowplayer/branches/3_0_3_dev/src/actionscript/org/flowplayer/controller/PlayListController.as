@@ -99,6 +99,11 @@ package org.flowplayer.controller {
 				}
 			}
 			return 0;		}
+
+		flow_internal function playClips(clips:Array):void {
+			replacePlaylistAndPlay(clips);
+			
+		}
 		flow_internal function play(clip:Clip = null, clipIndex:Number = -1):Clip {
 			log.debug("play() " + clip + ", " + clipIndex);
 			if (clip || clipIndex >= 0) {
@@ -281,9 +286,13 @@ package org.flowplayer.controller {
 			return _state.status;
 		}
 
-		private function replacePlaylistAndPlay(clip:Clip):void {
+		private function replacePlaylistAndPlay(clips:Object):void {
 			stop();
-			_playList.replaceClips(clip);
+			if (clips is Clip) {
+				_playList.replaceClips(clips as Clip);
+			} else {
+				_playList.replaceClips2(clips as Array);
+			}
 			play();
 		}
 		

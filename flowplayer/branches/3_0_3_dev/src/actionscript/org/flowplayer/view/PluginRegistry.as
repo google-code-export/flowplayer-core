@@ -56,6 +56,14 @@ package org.flowplayer.view {
 		public function get plugins():Dictionary {
 			return _plugins;
 		}
+		
+		/**
+		 * Gets all providers.
+		 * @return the providers keyed by the plugin name
+		 */
+		public function get providers():Dictionary {
+			return _providers;
+		}
 
 		/**
 		 * Gets a plugin by it's name.

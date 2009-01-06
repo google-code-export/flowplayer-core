@@ -10,6 +10,9 @@ Version history:
 - fadeOut() call to the "screen" plugin was sending the listenerId and pluginName arguments in wrong order
 - stop(), pause(), resume(), close() no longer return the flowplayer object to JS
 - changing the size of the screen in a onFullscreen listener now always works, there was a bug that caused this to fail occasionally
+- fixed using arbitrary SWFs as plugins
+- the API method setPlaylist() no longer starts playing if autoPlay: true, neither it starts buffering if autoBuffering: true
+- the API method play() now accepts an array of clip objects as an argument, the playlist is replaced with the specified clips and playback starts from the 1st clip
 
 3.0.2
 -----
