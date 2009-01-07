@@ -1,5 +1,5 @@
 /** 
- * flowplayer.js [3.0.2]. The Flowplayer API
+ * flowplayer.js [3.0.3]. The Flowplayer API
  * 
  * Copyright 2008 Flowplayer Oy
  * 
@@ -40,15 +40,7 @@
 // {{{ private utility methods
 	
 	function log(args) {
-		
-		// write into opera console
-		if (typeof opera == 'object') {
-			opera.postError("$f.fireEvent: " + args.join(" | "));	
-
-			
-		} else if (typeof console == 'object') {
-			console.log("$f.fireEvent", [].slice.call(args));	
-		}
+		console.log("$f.fireEvent", [].slice.call(args));	
 	}
 
 		
@@ -158,7 +150,7 @@
 		var self = this;
 		var cuepoints = {};
 		var listeners = {}; 
-		this.index = index;
+		self.index = index;
 		
 		// instance variables
 		if (typeof json == 'string') {
@@ -202,10 +194,9 @@
 			
 		});			  
 		
-		extend(this, {
-			
+		extend(this, { 
 			 
-			onCuepoint: function(points, fn) {
+			onCuepoint: function(points, fn) {    
 				
 				// embedded cuepoints
 				if (arguments.length == 1) {
@@ -220,7 +211,7 @@
 				var fnId = makeId();  
 				cuepoints[fnId] = [points, fn]; 
 				
-				if (player.isLoaded()) { 
+				if (player.isLoaded()) {
 					player._api().fp_addCuepoints(points, index, fnId);	
 				}  
 				
@@ -419,11 +410,10 @@
 			
 			// internal method not meant to be used by clients
          _fireEvent: function(evt, arg) {
-
 				
             // update plugins properties & methods
             if (evt == 'onUpdate') {
-               var json = arg || player._api().fp_getPlugin(name); 
+               var json = player._api().fp_getPlugin(name); 
 					if (!json) { return;	}					
 					
                extend(self, json);
@@ -478,7 +468,13 @@ function Player(wrapper, params, conf) {
 		listeners = {},
 		playerId,
 		apiId,
+		
+		// n'th player on the page
+		playerIndex,
+		
+		// active clip's index number
 		activeIndex,
+		
 		swfHeight,
 		wrapperHeight;	
 
@@ -540,8 +536,15 @@ function Player(wrapper, params, conf) {
 
 		unload: function() {  
 			
-         if (api && html.replace(/\s/g, '') !== '' && !api.fp_isFullscreen() && 
-            self._fireEvent("onBeforeUnload") !== false) { 
+			// if player is dead, do nothing
+			try {
+				if (api && api.fp_isFullscreen()) { }
+			} catch (error) {
+				return;
+			}
+			
+			
+         if (api && html.replace(/\s/g, '') !== '' && !api.fp_isFullscreen() &&  self._fireEvent("onBeforeUnload") !== false) { 
 				api.fp_close();
 				wrapper.innerHTML = html; 
 				self._fireEvent("onUnload");
@@ -646,7 +649,7 @@ function Player(wrapper, params, conf) {
 		},
 		
 		getVersion: function() {
-			var js = "flowplayer.js 3.0.2";
+			var js = "flowplayer.js 3.0.3";
 			if (api) {
 				var ver = api.fp_getVersion();
 				ver.push(js);
@@ -668,6 +671,10 @@ function Player(wrapper, params, conf) {
 		
 		setClip: function(clip) {
 			self.setPlaylist([clip]);
+		},
+		
+		getIndex: function() {
+			return playerIndex;	
 		}
 		
 	}); 
@@ -733,11 +740,23 @@ function Player(wrapper, params, conf) {
 			
 			each(plugins, function(name, p) {
 				p._fireEvent("onUpdate");		
-			});
-			
+			}); 
 			
 			commonClip._fireEvent("onLoad");  
 		}
+		
+		// other onLoad events are skipped
+		if (evt == 'onLoad' && arg0 != 'player') { return; }
+		
+		
+		// "normalize" error handling
+		if (evt == 'onError') { 
+			if (typeof arg0 == 'string' || (typeof arg0 == 'number' && typeof arg1 == 'number'))  {
+				arg0 = arg1;
+				arg1 = arg2;
+			}			 
+		}
+		
 		
       if (evt == 'onContextMenu') {
          each(conf.contextMenu[arg0], function(key, fn)  {
@@ -746,13 +765,12 @@ function Player(wrapper, params, conf) {
          return;
       }
 
-		if (evt == 'onPluginEvent') {
+		if (evt == 'onPluginEvent') { 
 			var name = arg0.name || arg0;
 			var p = plugins[name];
+
 			if (p) {
-				if (arg0.name) {
-					p._fireEvent("onUpdate", arg0);		
-				}
+				p._fireEvent("onUpdate", arg0);		
 				p._fireEvent(arg1);		
 			}
 			return;
@@ -812,15 +830,19 @@ function Player(wrapper, params, conf) {
 	
    function init() {
 		
+		// replace previous installation 
 		if ($f(wrapper)) {
-			return null;	
-		}		
-		
-		wrapperHeight = parseInt(wrapper.style.height, 10) || wrapper.clientHeight;
-		
+			$f(wrapper).getParent().innerHTML = ""; 
+			playerIndex = $f(wrapper).getIndex();
+			players[playerIndex] = self;
+			
 		// register this player into global array of instances
-		players.push(self);  
+		} else {
+			players.push(self);
+			playerIndex = players.length -1;
+		}
 		
+		wrapperHeight = parseInt(wrapper.style.height, 10) || wrapper.clientHeight;     
 		
 		// flashembed parameters
 		if (typeof params == 'string') {
@@ -832,22 +854,22 @@ function Player(wrapper, params, conf) {
 		apiId = params.id || playerId + "_api"; 		
 		params.id = apiId;
 		conf.playerId = playerId;
-		
-		
+
 		// plain url is given as config
 		if (typeof conf == 'string') {
 			conf = {clip:{url:conf}};	
 		} 
 		
 		// common clip is always there
-		conf.clip = conf.clip || {};
-		commonClip = new Clip(conf.clip, -1, self);  
+		conf.clip = conf.clip || {};  
 		
 		
-		// wrapper href as playlist
-		if (wrapper.getAttribute("href", 2)) { 
-			conf.playlist = [{url:wrapper.getAttribute("href", 2)}];			
+		// wrapper href as common clip's url
+		if (wrapper.getAttribute("href", 2) && !conf.clip.url) { 
+			conf.clip.url = wrapper.getAttribute("href", 2);			
 		} 
+		
+		commonClip = new Clip(conf.clip, -1, self); 
 		
 		// playlist
 		conf.playlist = conf.playlist || [conf.clip]; 
@@ -910,9 +932,8 @@ function Player(wrapper, params, conf) {
 		
 		
 		// setup default settings for express install
-		params.version = params.version || [9,0];		
+		params.version = params.version || [9, 0];		
 		params.expressInstall = 'http://www.flowplayer.org/swf/expressinstall.swf';
-		
 		
 		// click function
 		function doClick(e) { 
