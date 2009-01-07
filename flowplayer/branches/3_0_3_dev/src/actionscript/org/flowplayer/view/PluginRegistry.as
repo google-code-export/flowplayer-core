@@ -190,6 +190,7 @@ package org.flowplayer.view {
 					pluginObj = ProviderModel(plugin).getProviderObject(); 
 				}
 				if (pluginObj is NetStreamControllingStreamProvider) {
+					log.debug("setting player to " + pluginObj);
 					NetStreamControllingStreamProvider(pluginObj).player = _flowPlayer as Flowplayer;
 				} else {
 					pluginObj["onLoad"](_flowPlayer);

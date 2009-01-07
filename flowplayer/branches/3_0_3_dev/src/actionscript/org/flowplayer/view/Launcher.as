@@ -86,123 +86,108 @@ package org.flowplayer.view {
 		private var _error:TextField;
 		private var _pluginsInitialized:Number = 0;
 		private var _numLoadablePlugins:int = -1;
-
-		[Frame(factoryClass="org.flowplayer.view.Preloader")]
-
-		public function Launcher() {
+		[Frame(factoryClass="org.flowplayer.view.Preloader")]
+		public function Launcher() {
 			super("#canvas", this);
 			addEventListener(Event.ADDED_TO_STAGE, initPhase1);
 		}
 
 		private function initPhase1(event:Event):void {
-			try {
-				
-				createFlashVarsConfig();
-				Log.configure(_config.getLogConfiguration());
+			createFlashVarsConfig();
+			Log.configure(_config.getLogConfiguration());
 
-				if (_config.playerId) {
-					Security.allowDomain(URLUtil.pageUrl);
-				}
-				
-				_config.getPlaylist().onBeforeBegin(function(event:ClipEvent):void { hideErrorMessage(); });
-
-				loader = createNewLoader(); 
-
-				rootStyle = _config.canvasStyle;
-				stage.addEventListener(Event.RESIZE, onStageResize);
-				setSize(stage.stageWidth, stage.stageHeight);
-
-				if (! VersionInfo.commercial) {
-					log.debug("Adding logo to canvas");
-					createLogoForCanvas();
-				}
-
-				log = new Log(this);
-				EventDispatcher.playerId = _config.playerId;
-				
-				log.debug("security sandbox type: " + Security.sandboxType);
-				
-				log.info(VersionInfo.versionInfo());
-				log.debug("creating Panel");
-
-				createPanel();
-				_pluginRegistry = new PluginRegistry(_panel);
-				
-				log.debug("Creating animation engine");
-				createAnimationEngine(_pluginRegistry);
-				
-				log.debug("creating play button overlay");
-				createPlayButtonOverlay();
-				
-				log.debug("creating screen");
-				createScreen();
-				
-				loadPluginsIfConfigured();
-			} catch (e:Error) {
-				throw e;
-//				handleError(PlayerError.INIT_FAILED, "Failed in phase1: " + e.message, false);
+			if (_config.playerId) {
+				Security.allowDomain(URLUtil.pageUrl);
 			}
+			
+			_config.getPlaylist().onBeforeBegin(function(event:ClipEvent):void { hideErrorMessage(); });
+
+			loader = createNewLoader(); 
+
+			rootStyle = _config.canvasStyle;
+			stage.addEventListener(Event.RESIZE, onStageResize);
+			setSize(stage.stageWidth, stage.stageHeight);
+
+			if (! VersionInfo.commercial) {
+				log.debug("Adding logo to canvas");
+				createLogoForCanvas();
+			}
+
+			log = new Log(this);
+			EventDispatcher.playerId = _config.playerId;
+			
+			log.debug("security sandbox type: " + Security.sandboxType);
+			
+			log.info(VersionInfo.versionInfo());
+			log.debug("creating Panel");
+
+			createPanel();
+			_pluginRegistry = new PluginRegistry(_panel);
+			
+			log.debug("Creating animation engine");
+			createAnimationEngine(_pluginRegistry);
+			
+			log.debug("creating play button overlay");
+			createPlayButtonOverlay();
+			
+			log.debug("creating screen");
+			createScreen();
+			
+			loadPluginsIfConfigured();
 		}
 
 		private function initPhase2(pluginsLoadedEvent:Event = null):void {
-			try {
-				_pluginLoader.removeEventListener(Event.COMPLETE, this.initPhase2);
-				
-				log.debug("creating PlayListController");
-				_providers = _pluginLoader.providers;
-				var playListController:PlayListController = createPlayListController();
-				
-				addPlayListListeners();
-				createFullscreenManager(playListController.playlist);
-				
-				log.debug("creating Flowplayer API");
-				createFlowplayer(playListController);
+			_pluginLoader.removeEventListener(Event.COMPLETE, this.initPhase2);
+			
+			log.debug("creating PlayListController");
+			_providers = _pluginLoader.providers;
+			var playListController:PlayListController = createPlayListController();
+			
+			addPlayListListeners();
+			createFullscreenManager(playListController.playlist);
+			
+			log.debug("creating Flowplayer API");
+			createFlowplayer(playListController);
 
-				addScreenToPanel();
+			addScreenToPanel();
 
-				if (!validateLicenseKey()) {
-					createLogoForCanvas();
-					resizeCanvasLogo();
-				}
-				
-				log.debug("creating logo");
-				createLogo();
-				
-				contextMenu = new ContextMenuBuilder(_config.playerId, _config.contextMenu).build();
-				
-				log.debug("initializing ExternalInterface");
-				if (useExternalInterfade()) {
-					_flowplayer.initExternalInterface();
-				}
-
-				log.debug("calling onLoad to plugins");
-				_pluginRegistry.onLoad(_flowplayer);
-			} catch (e:Error) {
-				handleError(PlayerError.INIT_FAILED, "Failed in phase2: " + e.message, false);
+			if (!validateLicenseKey()) {
+				createLogoForCanvas();
+				resizeCanvasLogo();
 			}
+			
+			log.debug("creating logo");
+			createLogo();
+			
+			contextMenu = new ContextMenuBuilder(_config.playerId, _config.contextMenu).build();
+			
+			log.debug("initializing ExternalInterface");
+			if (useExternalInterfade()) {
+				_flowplayer.initExternalInterface();
+			}
+
+			log.debug("calling onLoad to plugins");
+			_pluginRegistry.onLoad(_flowplayer);
 		}
-		
+
 		private function initPhase3(event:Event = null):void {
-			try {
-				log.debug("Adding visible plugins to panel");
-				addPluginsToPanel(_pluginRegistry);
-				
-				log.debug("arranging screen");
-				arrangeScreen();
-				
-				log.debug("dispatching onLoad");
-				if (useExternalInterfade()) {
-					_flowplayer.dispatchEvent(PlayerEvent.load("player"));
-				} 
+			
+			log.debug("Adding visible plugins to panel");
+			addPluginsToPanel(_pluginRegistry);
+			
+			log.debug("arranging screen");
+			arrangeScreen();
+			
+			log.debug("dispatching onLoad");
+			if (useExternalInterfade()) {
+				_flowplayer.dispatchEvent(PlayerEvent.load("player"));
+			} 
 
-				log.debug("starting configured streams");
-				startStreams();
+			log.debug("starting configured streams");
+			startStreams();
 
-				stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
-				addListeners();
-			} catch (e:Error) {
-				handleError(PlayerError.INIT_FAILED, "Failed in phase3: " + e.message, false);
-			}
+			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+			addListeners();
 		}
 
 		private function resizeCanvasLogo():void {
@@ -248,7 +233,7 @@ package org.flowplayer.view {
 		private function onPluginLoad(event:PluginEvent):void {
 			var plugin:PluginModel = event.target as PluginModel;
 			log.info("plugin " + plugin + " initialized");
-			checkPluginsLoaded();
+			checkPluginsInitialized();
 		}
 
 		private function onPluginLoadError(event:PluginEvent):void {
@@ -257,10 +242,10 @@ package org.flowplayer.view {
 			var plugin:PluginModel = event.target as PluginModel;
 			log.warn("load/init error on " + plugin);
 			_pluginRegistry.removePlugin(plugin);
-			checkPluginsLoaded();
+			checkPluginsInitialized();
 		}
 		
-		private function checkPluginsLoaded():void {
+		private function checkPluginsInitialized():void {
 			var numPlugins:int = getLoadablePluginCount();
 			
 			if (++_pluginsInitialized == numPlugins) {
@@ -281,14 +266,16 @@ package org.flowplayer.view {
 			var count:Number = 0;
 			var loadables:Array = _config.getLoadables();
 			for (var i:Number = 0; i < loadables.length; i++) {
+
 				var plugin:PluginModel = Loadable(loadables[i]).plugin;
 				var isNonAdHocPlugin:Boolean = (plugin is DisplayPluginModel && DisplayPluginModel(plugin).getDisplayObject() is Plugin) ||
 					plugin is ProviderModel && ProviderModel(plugin).getProviderObject() is Plugin;
+
 				if (isNonAdHocPlugin) {
 					log.debug("will wait for onLoad from plugin " + plugin);
 					count++;
 				} else {
-					log.debug("will NOT wait for onLoad from plugin " + Loadable(loadables[i]));
+					log.debug("will NOT wait for onLoad from plugin " + Loadable(loadables[i]).plugin);
 				}
 			}
 			// +1 comes from the playbuttonoverlay
