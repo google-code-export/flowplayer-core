@@ -56,6 +56,14 @@ package org.flowplayer.view {
 		public function get plugins():Dictionary {
 			return _plugins;
 		}
+		
+		/**
+		 * Gets all providers.
+		 * @return the providers keyed by the plugin name
+		 */
+		public function get providers():Dictionary {
+			return _providers;
+		}
 
 		/**
 		 * Gets a plugin by it's name.
@@ -182,6 +190,7 @@ package org.flowplayer.view {
 					pluginObj = ProviderModel(plugin).getProviderObject(); 
 				}
 				if (pluginObj is NetStreamControllingStreamProvider) {
+					log.debug("setting player to " + pluginObj);
 					NetStreamControllingStreamProvider(pluginObj).player = _flowPlayer as Flowplayer;
 				} else {
 					pluginObj["onLoad"](_flowPlayer);
