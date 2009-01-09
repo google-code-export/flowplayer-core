@@ -18,6 +18,7 @@
  */
 
 package org.flowplayer.view {
+	import org.flowplayer.model.Plugin;	
 	import org.flowplayer.controller.NetStreamControllingStreamProvider;	
 	
 	import com.adobe.utils.StringUtil;
@@ -54,7 +55,7 @@ package org.flowplayer.view {
 	public class PluginLoader extends EventDispatcher {
 
 		private var log:Log = new Log(this);
-		private var _pluginModels:Array;
+		private var _loadables:Array;
 		private var _loadedPlugins:Dictionary;
 		private var _loadedCount:int;
 		private var _errorHandler:ErrorHandler;
@@ -102,9 +103,9 @@ package org.flowplayer.view {
 		public function load(plugins:Array):void {
 			log.debug("load()");
 			_providers = new Dictionary();
-			_pluginModels = plugins;
+			_loadables = plugins;
 			_swiffsToLoad = getPluginSwiffUrls(plugins);
-			if (! _pluginModels || _pluginModels.length == 0) {
+			if (! _loadables || _loadables.length == 0) {
 				log.info("Not loading any plugins.");
 				return;
 			}
@@ -148,16 +149,16 @@ package org.flowplayer.view {
 //			Security.allowDomain(info.url);
 			
 			var instanceUsed:Boolean = false;
-			_pluginModels.forEach(function(model:Loadable, index:int, array:Array):void {
-				if (hasSwiff(info.url, model.url)) {
-					log.debug("this is the swf for plugin " + model);
-					_loadedPlugins[model] = createPluginInstance(instanceUsed, info.content);
+			_loadables.forEach(function(loadable:Loadable, index:int, array:Array):void {
+				if (! loadable.plugin && hasSwiff(info.url, loadable.url)) {
+					log.debug("this is the swf for loadable " + loadable);
+					initializePlugin(loadable, createPluginInstance(instanceUsed, info.content));
 					instanceUsed = true;
 				}
 			});
 			if (++_loadedCount == _swiffsToLoad.length) {
-				log.debug("all plugin SWFs loaded");
-				initializePlugins();
+				log.debug("all plugin SWFs loaded. loaded total " + loadedCount + " plugins");
+				setConfigPlugins();
 				dispatchEvent(new Event(Event.COMPLETE, true, false));
 			}
 			if (_callback != null) {
@@ -165,55 +166,63 @@ package org.flowplayer.view {
 			}
 		}
 
-		private function initializePlugins():void {
-			for (var loadable:Object in _loadedPlugins) {
-				log.debug("initializing plugin " + loadable);
-				var pluginInstance:Object = getPluginInstance(plugins, loadable);
-				log.debug("pluginInstance " + pluginInstance);
-				var plugin:PluginModel;
-				if (pluginInstance is FontProvider) {
-					_pluginRegistry.registerFont(FontProvider(pluginInstance).fontFamily);
-				} else if (pluginInstance is DisplayObject) {
-					plugin = Loadable(loadable).createDisplayPlugin(pluginInstance as DisplayObject);
-					_pluginRegistry.registerDisplayPlugin(plugin as DisplayPluginModel, pluginInstance as DisplayObject);
-				} else if (pluginInstance is StreamProvider) {
-					plugin = Loadable(loadable).createProvider(pluginInstance);
-					_providers[plugin.name] = pluginInstance;
-					_pluginRegistry.registerProvider(plugin as ProviderModel, pluginInstance);
-				} 
-				if (plugin is Callable && _useExternalInterface) {
-					ExternalInterfaceHelper.initializeInterface(plugin as Callable, pluginInstance);
-				}
+		private function initializePlugin(loadable:Loadable, pluginInstance:Object):void {
+			log.debug("initializing plugin for loadable " + loadable + ", instance " + pluginInstance);
+				
+			_loadedPlugins[loadable] = pluginInstance;
+		
+			log.debug("pluginInstance " + pluginInstance);
+			var plugin:PluginModel;
+			if (pluginInstance is FontProvider) {
+				_pluginRegistry.registerFont(FontProvider(pluginInstance).fontFamily);
+
+			} else if (pluginInstance is DisplayObject) {
+				plugin = Loadable(loadable).createDisplayPlugin(pluginInstance as DisplayObject);
+				_pluginRegistry.registerDisplayPlugin(plugin as DisplayPluginModel, pluginInstance as DisplayObject);
+
+			} else if (pluginInstance is StreamProvider) {
+				plugin = Loadable(loadable).createProvider(pluginInstance);
+				_providers[plugin.name] = pluginInstance;
+				_pluginRegistry.registerProvider(plugin as ProviderModel, pluginInstance);
+
+			} else {
+				log.error("unknown plugin type " + pluginInstance);
+			}
+			if (pluginInstance is Plugin) {
 				plugin.onLoad(_loadListener);
 				plugin.onError(_loadErrorListener);
-				if (pluginInstance is NetStreamControllingStreamProvider) {
-					NetStreamControllingStreamProvider(pluginInstance).config = plugin;
-				} else {
-					if (pluginInstance.hasOwnProperty("onConfig")) {
-						pluginInstance.onConfig(plugin);
-					}
-				}
+			}
+			if (plugin is Callable && _useExternalInterface) {
+				ExternalInterfaceHelper.initializeInterface(plugin as Callable, pluginInstance);
 			}
 		}
 		
-		private function getPluginInstance(plugins:Dictionary, model:Object):Object {
-			var plugin:Object = plugins[model];
-			if (plugin.hasOwnProperty("newPlugin")) {
-				log.debug("Instantiating using newPlugin()");
-				return plugin.newPlugin();
-			}
-			return plugin;
-		}
-		
-		private function createPluginInstance(instanceUsed:Boolean, instance:DisplayObject):DisplayObject {
+		private function createPluginInstance(instanceUsed:Boolean, instance:DisplayObject):Object {
+			if (instance.hasOwnProperty("newPlugin")) return instance["newPlugin"](); 
+			
 			if (! instanceUsed) {
 				log.debug("using existing instance " + instance);
-				return instance;
+				return instance; 
 			}
 			var className:String = getQualifiedClassName(instance);
 			log.info("creating new " + className);
 			var PluginClass:Class = Class(getDefinitionByName(className));
-			return new PluginClass() as DisplayObject; 
+			return new PluginClass() as DisplayObject;
+		}
+		
+		public function setConfigPlugins():void {
+			_loadables.forEach(function(loadable:Loadable, index:int, array:Array):void {
+				var pluginInstance:Object = plugins[loadable];
+				log.info(index + ": setting config to " + pluginInstance + ", " + loadable);
+				if (pluginInstance is NetStreamControllingStreamProvider) {
+					log.debug("NetStreamControllingStreamProvider(pluginInstance).config = " +loadable.plugin);
+					NetStreamControllingStreamProvider(pluginInstance).config = loadable.plugin;
+				} else {
+					if (pluginInstance.hasOwnProperty("onConfig")) {
+						pluginInstance.onConfig(loadable.plugin);
+					}
+				}
+			});
 		}
 
 		private function hasSwiff(infoUrl:String, modelUrl:String):Boolean {

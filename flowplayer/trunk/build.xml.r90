@@ -2,14 +2,12 @@
 	<property file="build.properties" />
 
 	<property name="version-1" value="3" />
-	<property name="version-2" value="1" />
-	<property name="version-3" value="0" />	
-	<property name="version-status" value="dev" />
-
-	<property name="controls-version-info" value="3.0.3" />
+	<property name="version-2" value="0" />
+	<property name="version-3" value="3" />	
+	<property name="version-status" value="dev5" />
 	<property name="controls-version-info" value="3.0.3-dev" />
 	<property name="audio-version-info" value="3.0.2" />
-	<property name="flowplayer-js-version-info" value="3.0.3" />
+	<property name="flowplayer-js-version-info" value="3.0.2" />
 	<property name ="source-dist-root-folder" value="flowplayer" />
 	
 	<property name="version-status-quoted" value="&quot;${version-status}&quot;" />
@@ -246,10 +244,6 @@
 	<target name="plugins" description="Build all plugins">
         <iterate-plugins target="deploy"/>
 	</target>
-	
-	<target name="plugin-names" description="Echoes all plugin names">
-        <iterate-plugins target="echo-name"/>
-	</target>
 		
 	<target name="clean-plugins" description="Cleans all plugins">
         <iterate-plugins target="clean"/>
@@ -261,7 +255,6 @@
             <subant target="@{target}">
                 <fileset dir="${plugins.dir}" includes="${plugin.buildfiles}"/>
             	<property name="remotedir" value="${remotedir}" />
-            	<property name="swfremotedir" value="${swfremotedir}" />
             	<property name="keyfile" value="${keyfile}" />
 		    	<property name="pass" value="${remotepass}" />
             </subant>

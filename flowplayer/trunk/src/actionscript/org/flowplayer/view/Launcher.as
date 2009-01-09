@@ -17,8 +17,59 @@
  *    along with Flowplayer.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.flowplayer.view {
-	import org.flowplayer.config.Config;	import org.flowplayer.config.ConfigLoader;	import org.flowplayer.config.ExternalInterfaceHelper;	import org.flowplayer.config.VersionInfo;	import org.flowplayer.controller.NetStreamControllingStreamProvider;	import org.flowplayer.controller.PlayListController;	import org.flowplayer.controller.ResourceLoader;	import org.flowplayer.controller.ResourceLoaderImpl;	import org.flowplayer.flow_internal;	import org.flowplayer.model.Callable;	import org.flowplayer.model.Clip;	import org.flowplayer.model.ClipEvent;	import org.flowplayer.model.DisplayPluginModel;	import org.flowplayer.model.DisplayProperties;	import org.flowplayer.model.DisplayPropertiesImpl;	import org.flowplayer.model.EventDispatcher;	import org.flowplayer.model.Logo;	import org.flowplayer.model.PlayButtonOverlay;	import org.flowplayer.model.PlayerError;	import org.flowplayer.model.PlayerEvent;	import org.flowplayer.model.Playlist;	import org.flowplayer.model.PluginError;	import org.flowplayer.model.PluginEvent;	import org.flowplayer.model.PluginModel;	import org.flowplayer.model.State;	import org.flowplayer.util.Arrange;	import org.flowplayer.util.Log;	import org.flowplayer.util.TextUtil;	import org.flowplayer.util.URLUtil;	import org.flowplayer.view.Panel;	import org.flowplayer.view.Screen;	import org.osflash.thunderbolt.Logger;		import flash.display.DisplayObject;	import flash.display.DisplayObjectContainer;	import flash.display.Sprite;	import flash.events.Event;	import flash.events.KeyboardEvent;	import flash.events.MouseEvent;	import flash.events.TimerEvent;	import flash.net.URLRequest;	import flash.net.navigateToURL;	import flash.system.Capabilities;	import flash.system.Security;	import flash.text.TextField;	import flash.text.TextFieldAutoSize;	import flash.ui.Keyboard;	import flash.utils.Dictionary;	import flash.utils.Timer;		
-		use namespace flow_internal;
+	import org.flowplayer.model.Loadable;	
+	import org.flowplayer.model.ProviderModel;	
+	import org.flowplayer.config.Config;
+	import org.flowplayer.config.ConfigLoader;
+	import org.flowplayer.config.ExternalInterfaceHelper;
+	import org.flowplayer.config.VersionInfo;
+	import org.flowplayer.controller.NetStreamControllingStreamProvider;
+	import org.flowplayer.controller.PlayListController;
+	import org.flowplayer.controller.ResourceLoader;
+	import org.flowplayer.controller.ResourceLoaderImpl;
+	import org.flowplayer.flow_internal;
+	import org.flowplayer.model.Callable;
+	import org.flowplayer.model.Clip;
+	import org.flowplayer.model.ClipEvent;
+	import org.flowplayer.model.DisplayPluginModel;
+	import org.flowplayer.model.DisplayProperties;
+	import org.flowplayer.model.DisplayPropertiesImpl;
+	import org.flowplayer.model.EventDispatcher;
+	import org.flowplayer.model.Logo;
+	import org.flowplayer.model.PlayButtonOverlay;
+	import org.flowplayer.model.PlayerError;
+	import org.flowplayer.model.PlayerEvent;
+	import org.flowplayer.model.Playlist;
+	import org.flowplayer.model.Plugin;
+	import org.flowplayer.model.PluginError;
+	import org.flowplayer.model.PluginEvent;
+	import org.flowplayer.model.PluginModel;
+	import org.flowplayer.model.State;
+	import org.flowplayer.util.Arrange;
+	import org.flowplayer.util.Log;
+	import org.flowplayer.util.TextUtil;
+	import org.flowplayer.util.URLUtil;
+	import org.flowplayer.view.Panel;
+	import org.flowplayer.view.Screen;
+	import org.osflash.thunderbolt.Logger;
+	
+	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
+	import flash.display.Sprite;
+	import flash.events.Event;
+	import flash.events.KeyboardEvent;
+	import flash.events.MouseEvent;
+	import flash.events.TimerEvent;
+	import flash.net.URLRequest;
+	import flash.net.navigateToURL;
+	import flash.system.Capabilities;
+	import flash.system.Security;
+	import flash.text.TextField;
+	import flash.text.TextFieldAutoSize;
+	import flash.ui.Keyboard;
+	import flash.utils.Dictionary;
+	import flash.utils.Timer;		
+	use namespace flow_internal;
 
 	public class Launcher extends StyleableSprite implements ErrorHandler {
 		private var _panel:Panel;
@@ -34,123 +85,109 @@ package org.flowplayer.view {
 		private var _pluginLoader:PluginLoader;
 		private var _error:TextField;
 		private var _pluginsInitialized:Number = 0;
-
-		[Frame(factoryClass="org.flowplayer.view.Preloader")]
-
-		public function Launcher() {
+		private var _numLoadablePlugins:int = -1;
+		[Frame(factoryClass="org.flowplayer.view.Preloader")]
+		public function Launcher() {
 			super("#canvas", this);
 			addEventListener(Event.ADDED_TO_STAGE, initPhase1);
 		}
 
 		private function initPhase1(event:Event):void {
-			try {
-				
-				createFlashVarsConfig();
-				Log.configure(_config.getLogConfiguration());
+			createFlashVarsConfig();
+			Log.configure(_config.getLogConfiguration());
 
-				if (_config.playerId) {
-					Security.allowDomain(URLUtil.pageUrl);
-				}
-				
-				_config.getPlaylist().onBeforeBegin(function(event:ClipEvent):void { hideErrorMessage(); });
-
-				loader = createNewLoader(); 
-
-				rootStyle = _config.canvasStyle;
-				stage.addEventListener(Event.RESIZE, onStageResize);
-				setSize(stage.stageWidth, stage.stageHeight);
-
-				if (! VersionInfo.commercial) {
-					log.debug("Adding logo to canvas");
-					createLogoForCanvas();
-				}
-
-				log = new Log(this);
-				EventDispatcher.playerId = _config.playerId;
-				
-				log.debug("security sandbox type: " + Security.sandboxType);
-				
-				log.info(VersionInfo.versionInfo());
-				log.debug("creating Panel");
-
-				createPanel();
-				_pluginRegistry = new PluginRegistry(_panel);
-				
-				log.debug("Creating animation engine");
-				createAnimationEngine(_pluginRegistry);
-				
-				log.debug("creating play button overlay");
-				createPlayButtonOverlay();
-				
-				log.debug("creating screen");
-				createScreen();
-				
-				loadPluginsIfConfigured();
-			} catch (e:Error) {
-				throw e;
-//				handleError(PlayerError.INIT_FAILED, "Failed in phase1: " + e.message, false);
+			if (_config.playerId) {
+				Security.allowDomain(URLUtil.pageUrl);
 			}
+			
+			_config.getPlaylist().onBeforeBegin(function(event:ClipEvent):void { hideErrorMessage(); });
+
+			loader = createNewLoader(); 
+
+			rootStyle = _config.canvasStyle;
+			stage.addEventListener(Event.RESIZE, onStageResize);
+			setSize(stage.stageWidth, stage.stageHeight);
+
+			if (! VersionInfo.commercial) {
+				log.debug("Adding logo to canvas");
+				createLogoForCanvas();
+			}
+
+			log = new Log(this);
+			EventDispatcher.playerId = _config.playerId;
+			
+			log.debug("security sandbox type: " + Security.sandboxType);
+			
+			log.info(VersionInfo.versionInfo());
+			log.debug("creating Panel");
+
+			createPanel();
+			_pluginRegistry = new PluginRegistry(_panel);
+			
+			log.debug("Creating animation engine");
+			createAnimationEngine(_pluginRegistry);
+			
+			log.debug("creating play button overlay");
+			createPlayButtonOverlay();
+			
+			log.debug("creating screen");
+			createScreen();
+			
+			loadPluginsIfConfigured();
 		}
 
 		private function initPhase2(pluginsLoadedEvent:Event = null):void {
-			try {
-				_pluginLoader.removeEventListener(Event.COMPLETE, this.initPhase2);
-				
-				log.debug("creating PlayListController");
-				_providers = _pluginLoader.providers;
-				var playListController:PlayListController = createPlayListController();
-				
-				addPlayListListeners();
-				createFullscreenManager(playListController.playlist);
-				
-				log.debug("creating Flowplayer API");
-				createFlowplayer(playListController);
+			_pluginLoader.removeEventListener(Event.COMPLETE, this.initPhase2);
+			
+			log.debug("creating PlayListController");
+			_providers = _pluginLoader.providers;
+			var playListController:PlayListController = createPlayListController();
+			
+			addPlayListListeners();
+			createFullscreenManager(playListController.playlist);
+			
+			log.debug("creating Flowplayer API");
+			createFlowplayer(playListController);
 
-				addScreenToPanel();
+			addScreenToPanel();
 
-				if (!validateLicenseKey()) {
-					createLogoForCanvas();
-					resizeCanvasLogo();
-				}
-				
-				log.debug("creating logo");
-				createLogo();
-				
-				contextMenu = new ContextMenuBuilder(_config.playerId, _config.contextMenu).build();
-				
-				log.debug("initializing ExternalInterface");
-				if (useExternalInterfade()) {
-					_flowplayer.initExternalInterface();
-				}
-
-				log.debug("calling onLoad to plugins");
-				_pluginRegistry.onLoad(_flowplayer);
-			} catch (e:Error) {
-				handleError(PlayerError.INIT_FAILED, "Failed in phase2: " + e.message, false);
+			if (!validateLicenseKey()) {
+				createLogoForCanvas();
+				resizeCanvasLogo();
 			}
+			
+			log.debug("creating logo");
+			createLogo();
+			
+			contextMenu = new ContextMenuBuilder(_config.playerId, _config.contextMenu).build();
+			
+			log.debug("initializing ExternalInterface");
+			if (useExternalInterfade()) {
+				_flowplayer.initExternalInterface();
+			}
+
+			log.debug("calling onLoad to plugins");
+			_pluginRegistry.onLoad(_flowplayer);
 		}
-		
+
 		private function initPhase3(event:Event = null):void {
-			try {
-				log.debug("Adding visible plugins to panel");
-				addPluginsToPanel(_pluginRegistry);
-				
-				log.debug("arranging screen");
-				arrangeScreen();
-				
-				log.debug("dispatching onLoad");
-				if (useExternalInterfade()) {
-					_flowplayer.dispatchEvent(PlayerEvent.load("player"));
-				} 
+			
+			log.debug("Adding visible plugins to panel");
+			addPluginsToPanel(_pluginRegistry);
+			
+			log.debug("arranging screen");
+			arrangeScreen();
+			
+			log.debug("dispatching onLoad");
+			if (useExternalInterfade()) {
+				_flowplayer.dispatchEvent(PlayerEvent.load("player"));
+			} 
 
-				log.debug("starting configured streams");
-				startStreams();
+			log.debug("starting configured streams");
+			startStreams();
 
-				stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
-				addListeners();
-			} catch (e:Error) {
-				handleError(PlayerError.INIT_FAILED, "Failed in phase3: " + e.message, false);
-			}
+			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+			addListeners();
 		}
 
 		private function resizeCanvasLogo():void {
@@ -196,7 +233,7 @@ package org.flowplayer.view {
 		private function onPluginLoad(event:PluginEvent):void {
 			var plugin:PluginModel = event.target as PluginModel;
 			log.info("plugin " + plugin + " initialized");
-			checkPluginsLoaded();
+			checkPluginsInitialized();
 		}
 
 		private function onPluginLoadError(event:PluginEvent):void {
@@ -205,17 +242,44 @@ package org.flowplayer.view {
 			var plugin:PluginModel = event.target as PluginModel;
 			log.warn("load/init error on " + plugin);
 			_pluginRegistry.removePlugin(plugin);
-			checkPluginsLoaded();
+			checkPluginsInitialized();
 		}
 		
-		private function checkPluginsLoaded():void {
-			var numPlugins:int = _config.getLoadables().length + (_playButtonOverlay ? 1 : 0);
+		private function checkPluginsInitialized():void {
+			var numPlugins:int = getLoadablePluginCount();
 			
 			if (++_pluginsInitialized == numPlugins) {
 				log.info("all plugins initialized");
 				initPhase3();
 			}
 			log.info(_pluginsInitialized + " out of " + numPlugins + " plugins initialized");
+		}
+		
+		private function getLoadablePluginCount():int {
+			if (_numLoadablePlugins == -1) {
+				_numLoadablePlugins = countLoadablePlugins();
+			}
+			return _numLoadablePlugins;
+		}
+		
+		private function countLoadablePlugins():int {
+			var count:Number = 0;
+			var loadables:Array = _config.getLoadables();
+			for (var i:Number = 0; i < loadables.length; i++) {
+
+				var plugin:PluginModel = Loadable(loadables[i]).plugin;
+				var isNonAdHocPlugin:Boolean = (plugin is DisplayPluginModel && DisplayPluginModel(plugin).getDisplayObject() is Plugin) ||
+					plugin is ProviderModel && ProviderModel(plugin).getProviderObject() is Plugin;
+
+				if (isNonAdHocPlugin) {
+					log.debug("will wait for onLoad from plugin " + plugin);
+					count++;
+				} else {
+					log.debug("will NOT wait for onLoad from plugin " + Loadable(loadables[i]).plugin);
+				}
+			}
+			// +1 comes from the playbuttonoverlay
+			return count + (_playButtonOverlay ? 1 : 0);
 		}
 		
 		private function playerSwfName():String {
@@ -240,7 +304,7 @@ package org.flowplayer.view {
 		public function showError(message:String):void {
 			if (! _panel) return;
 			if (! _config.showErrors) return;
-			if (_error) {
+			if (_error && _error.parent == this) {
 				removeChild(_error);
 			}
 			

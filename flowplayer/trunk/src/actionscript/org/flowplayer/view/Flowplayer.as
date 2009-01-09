@@ -81,8 +81,8 @@ package org.flowplayer.view {
 				addCallback("getPlaylist", function():Array { return convert(playlist.clips) as Array; });
 				addCallback("getId", function():String { return id; });
 				addCallback("play", genericPlay);
-				addCallback("startBuffering", startBuffering);
-				addCallback("stopBuffering", stopBuffering);
+				addCallback("startBuffering", function():void { startBuffering(); });
+				addCallback("stopBuffering", function():void { stopBuffering(); } );
 				addCallback("isFullscreen", isFullscreen);
 				
 				addCallback("toggle", toggle);
@@ -177,6 +177,10 @@ package org.flowplayer.view {
 			}
 			if (param is Number) {
 				_playListController.play(null, param as Number);
+				return;
+			}
+			if (param is Array) {
+				_playListController.playClips(_config.createClips(param as Array));
 				return;
 			}
 			var clip:Clip = _config.createClip(param);
@@ -290,13 +294,6 @@ package org.flowplayer.view {
 		private function setPlaylist(playlist:Array):void {
 			_playListController.setPlaylist(playlist);
 			var clip:Clip = _playListController.playlist.current;
-			if (clip.autoPlay) {
-				log.debug("clip is autoPlay");
-				_playListController.play();
-			} else if (clip.autoBuffering) {
-				log.debug("clip is autoBuffering");
-				_playListController.startBuffering();
-			}
 		}
 
 		private function addCuepoints(cuepoints:Array, clipIndex:int, callbackId:String):void {
@@ -328,7 +325,7 @@ package org.flowplayer.view {
 				if (plugin || pluginArg is PluginModel) {
 					PluginModel(pluginArg || plugin).dispatch(PluginEventType.PLUGIN_EVENT, listenerId);
 				} else {
-					new PluginEvent(PluginEventType.PLUGIN_EVENT, listenerId, pluginArg is DisplayProperties ? DisplayProperties(pluginArg).name : pluginArg).fireExternal(_playerId);
+					new PluginEvent(PluginEventType.PLUGIN_EVENT, pluginArg is DisplayProperties ? DisplayProperties(pluginArg).name : pluginArg.toString(), listenerId).fireExternal(_playerId);
 				} 
 			};
 		}

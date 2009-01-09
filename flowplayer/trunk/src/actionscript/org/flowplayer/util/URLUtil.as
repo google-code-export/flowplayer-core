@@ -53,7 +53,7 @@ package org.flowplayer.util {
 		public static function get pageUrl():String {
 			if (!ExternalInterface.available) return null;
 			try {
-				var href:String = ExternalInterface.call("window.location.href.toString");
+				var href:String = ExternalInterface.call("self.location.href.toString");
 				var endPos:int = href.indexOf("?");
 				if (endPos < 0) {
 					endPos = href.lastIndexOf("/");
