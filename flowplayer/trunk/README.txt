@@ -1,5 +1,10 @@
 Version history:
 
+3.1.0
+-----
+- Fixed context menu for with IE (commercial version)
+- 
+
 3.0.3
 -----
 - fixed cuepoint firing: Does not skip cuepoints any more
