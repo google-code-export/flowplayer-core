@@ -7,7 +7,7 @@
 	<property name="version-status" value="dev" />
 
 	<property name="controls-version-info" value="3.0.3" />
-	<property name="controls-version-info" value="3.0.3-dev" />
+	<property name="controls-version-info" value="3.0.3" />
 	<property name="audio-version-info" value="3.0.2" />
 	<property name="flowplayer-js-version-info" value="3.0.3" />
 	<property name ="source-dist-root-folder" value="flowplayer" />
