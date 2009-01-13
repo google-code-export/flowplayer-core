@@ -2,8 +2,11 @@ Version history:
 
 3.1.0
 -----
+New features:
+
+Bug fixes:
 - Fixed context menu for with IE (commercial version)
-- 
+- a cuepoint at time zero was fired several times
 
 3.0.3
 -----

@@ -143,8 +143,8 @@ package org.flowplayer.controller {
 
 		private function alreadyFired(cue:Cuepoint):Boolean {
 			var lastFireTime:int = cue.lastFireTime;
-			if (! lastFireTime > 0) return false;
-			return getTimer() - cue.lastFireTime < 1000;
+			if (lastFireTime == -1) return false;
+			return getTimer() - cue.lastFireTime < 2000;
 		}
 
 		public function get durationReached():Boolean {
