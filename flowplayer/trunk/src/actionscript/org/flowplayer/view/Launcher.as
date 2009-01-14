@@ -396,18 +396,21 @@ package org.flowplayer.view {
 		
 		private function arrangeScreen():void {
 			var screen:DisplayProperties = _pluginRegistry.getPlugin("screen") as DisplayProperties;
-			if (_controlsModel && _controlsModel.visible && ! screenTopOrBottomConfigured()) {
-				var heightConfigured:Boolean = _config.getObject("screen") && _config.getObject("screen").hasOwnProperty("height"); 
+			 
+			if (_controlsModel && _controlsModel.visible) {
+				
 				if (isControlsAlwaysAutoHide() || (_controlsModel.position.bottom.px > 0)) {
-					screen.bottom = 0;
-					if (! heightConfigured) {
-						screen.height =  "100%";
-					}
+					log.debug("controls is autoHide or it's in a non-default vertical position, configuring screen to take all available space");
+					setScreenBottomAndHeight(screen, 100, 0);
 				} else {
 					var controlsHeight:Number = _controlsModel.getDisplayObject().height;
-					screen.bottom = controlsHeight;
-					if (! heightConfigured) {
-						screen.height =  ((stage.stageHeight - controlsHeight) / stage.stageHeight) * 100 + "%";
+					var occupiedHeight:Number = screenTopOrBottomConfigured() ? getScreenTopOrBottomPx(screen) : controlsHeight;
+
+					if (screen.position.top.pct >= 0 || screen.position.bottom.pct >= 0) {
+						var heightPct:Number = 100 - Math.abs(50 - (screen.position.top.pct >= 0 ? screen.position.top.pct : screen.position.bottom.pct))*2; 
+						setScreenBottomAndHeight(screen, heightPct, controlsHeight);
+					} else {
+						setScreenBottomAndHeight(screen, ((stage.stageHeight - occupiedHeight) / stage.stageHeight) * 100, controlsHeight);
 					}
 				}
 			}
@@ -417,6 +420,26 @@ package org.flowplayer.view {
 			_pluginRegistry.updateDisplayProperties(screen);
 			_panel.update(screen.getDisplayObject(), screen);
 			_panel.draw(screen.getDisplayObject());
+		}
+		
+		private function getScreenTopOrBottomPx(screen:DisplayProperties):Number {
+			var screenConf:Object = _config.getObject("screen");
+			if (screenConf.hasOwnProperty("top")) return screen.position.top.toPx(stage.stageHeight);
+			if (screenConf.hasOwnProperty("bottom")) return screen.position.bottom.toPx(stage.stageHeight);
+			return 0;
+		}
+
+		private function setScreenBottomAndHeight(screen:DisplayProperties, heightPct:Number, bottom:Number = 0):void {
+			if (! screenTopOrBottomConfigured()) {
+				log.debug("screen vertical pos not configured, setting bottom to value " + bottom);
+				screen.bottom = bottom;
+			}
+			
+			var heightConfigured:Boolean = _config.getObject("screen") && _config.getObject("screen").hasOwnProperty("height");
+			if (! heightConfigured) {
+				log.debug("screen height not configured, setting it to value " + heightPct + "%");
+				screen.height =  heightPct + "%";
+			}
 		}
 
 		private function screenTopOrBottomConfigured():Boolean {

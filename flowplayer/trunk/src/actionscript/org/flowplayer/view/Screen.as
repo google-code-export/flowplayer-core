@@ -75,7 +75,7 @@ package org.flowplayer.view {
 		}
 
 		protected override function onResize():void {
-			log.debug("arrange");
+			log.debug("arranged to " + Arrange.describeBounds(this));
 			_resizer.setMaxSize(width, height);
 			// we need to resize the previous clip because it might be the stopped image that we are currently showing
 			resizeClip(_playList.previousClip);

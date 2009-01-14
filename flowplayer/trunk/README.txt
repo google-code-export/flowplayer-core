@@ -7,6 +7,7 @@ New features:
 Bug fixes:
 - Fixed context menu for with IE (commercial version)
 - a cuepoint at time zero was fired several times
+- screen is now arranged correctly even when only bottom or top is defined for it in the configuration
 
 3.0.3
 -----
