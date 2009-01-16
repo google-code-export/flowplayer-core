@@ -18,30 +18,8 @@
  */
 
 package org.flowplayer.controller {
-	import org.flowplayer.config.Config;
-	import org.flowplayer.controller.StreamProvider;
-	import org.flowplayer.controller.VolumeController;
-	import org.flowplayer.flow_internal;
-	import org.flowplayer.model.Clip;
-	import org.flowplayer.model.ClipError;
-	import org.flowplayer.model.ClipEvent;
-	import org.flowplayer.model.ClipEventType;
-	import org.flowplayer.model.Playlist;
-	import org.flowplayer.model.PluginModel;
-	import org.flowplayer.util.Assert;
-	import org.flowplayer.util.Log;
-	import org.flowplayer.view.Flowplayer;
-	
-	import flash.display.DisplayObject;
-	import flash.errors.IOError;
-	import flash.events.NetStatusEvent;
-	import flash.events.TimerEvent;
-	import flash.media.Video;
-	import flash.net.NetConnection;
-	import flash.net.NetStream;
-	import flash.utils.Timer;	
-
-	/**
+	import org.flowplayer.controller.StreamProvider;	import org.flowplayer.controller.VolumeController;	import org.flowplayer.model.Clip;	import org.flowplayer.model.ClipError;	import org.flowplayer.model.ClipEvent;	import org.flowplayer.model.ClipEventType;	import org.flowplayer.model.Playlist;	import org.flowplayer.model.PluginModel;	import org.flowplayer.model.ProviderModel;	import org.flowplayer.util.Assert;	import org.flowplayer.util.Log;	import org.flowplayer.view.Flowplayer;		import flash.display.DisplayObject;	import flash.errors.IOError;	import flash.events.NetStatusEvent;	import flash.events.TimerEvent;	import flash.media.Video;	import flash.net.NetConnection;	import flash.net.NetStream;	import flash.utils.Timer;	
+	/**
 	 * A StreamProvider that does it's job using the Flash's NetStream class.
 	 * Implements standard HTTP based progressive download.
 	 */
@@ -56,34 +34,33 @@ package org.flowplayer.controller {
 		private var _volumeController:VolumeController;
 		private var _seekTargetWaitTimer:Timer;
 		private var _seekTarget:Number;
-		
-		// state variables
+		private var _model:ProviderModel;
+		private var _connectionProvider:ConnectionProvider;
+		private var _clipUrlResolver:ClipURLResolver;
+		private var _player:Flowplayer;
+					// state variables
 		private var _silentSeek:Boolean;
 		private var _paused:Boolean;
 		private var _stopping:Boolean;
 		private var _started:Boolean;
-		private var _model:PluginModel;
-		private var _config:Config;
 
 		/**
 		 * Sets the plugin model.
 		 */
-		public function set config(model:PluginModel):void {
+		public function set config(model:ProviderModel):void {
 			_model = model;
 			onConfig(model);
 		} 
-
-		flow_internal function set playerConfig(config:Config):void {
-			_config = config;
-		}
 
 		/**
 		 * Sets the player instance.
 		 */
 		public function set player(player:Flowplayer):void {
-			_config = player.config;
+			_player = player;
+			createConnectionProvider();
+			createClipUrlResolver();
 			onLoad(player); 
-		} 	
+		}
 
 		/* ---- implementation of StreamProvider: ---- */
 
@@ -270,34 +247,7 @@ package org.flowplayer.controller {
 				_connection = null;
 			}
 			
-			_connection = new NetConnection();
-			_connection.proxyType = "best";
-			_connection.client = this;
-			addConnectionStatusListener(_connection);
-			log.debug("Connecting to " + getConnectUrl(clip));
-			
-			if (rest.length > 0) {
-				_connection.connect(getConnectUrl(clip), rest);
-			} else {
-				_connection.connect(getConnectUrl(clip));
-			}
-		}
-		
-		/**
-		 * Adds a connection status listener to the <code>NetConnection</code>.
-		 */
-		protected final function addConnectionStatusListener(connection:NetConnection):void {
-			//connection.addEventListener(NetStatusEvent.NET_STATUS, onConnectionStatus);
-			connection.addEventListener(NetStatusEvent.NET_STATUS, _onNetStatus);
-		}
-
-		/**
-		 * Gets the url used for <code>NetStream.connect(url)</code>. Meant to be overridden by providers that need special
-		 * NetConnection URLs. This implementation return's <code>null</code> as required when doing HTTP progressive
-		 * download.
-		 */
-		protected function getConnectUrl(clip:Clip):String {
-			return null;
+			_connectionProvider.connect(clip, onConnectionSuccess, rest);
 		}
 
 		/**
@@ -310,15 +260,9 @@ package org.flowplayer.controller {
 		 * @param clip
 		 */
 		protected function doLoad(event:ClipEvent, netStream:NetStream, clip:Clip):void {
-			netStream.client = new NetStreamClient(clip, _config);
-			netStream.play(getClipUrl(clip));
-		}
-
-		/**
-		 * Gets the url when calling <code>NetStream.play(url)</code>. Override this if you need to manipulate the clip's URL.
-		 */
-		protected function getClipUrl(clip:Clip):String {
-			return clip.completeUrl;
+			netStream.client = new NetStreamClient(clip, _player.config);
+			resolveClipUrl(clip, onClipUrlResolved);
+//			netStream.play(getClipUrl(clip));
 		}
 		
 		/**
@@ -482,6 +426,13 @@ package org.flowplayer.controller {
 		}
 		
 		/**
+		 * Resolves the url for the specified clip.
+		 */		
+		protected final function resolveClipUrl(clip:Clip, successListener:Function):void {
+			_clipUrlResolver.resolve(clip, successListener);
+		}
+
+		/**
 		 * Previous seek target value in seconds.
 		 */
 		public function get seekTarget():Number {
@@ -499,10 +450,42 @@ package org.flowplayer.controller {
 		 */
 		public function onLoad(player:Flowplayer):void { 
 		} 	
-
-		/* ---- Private methods ----- */
+		
+		/**
+		 * Gets the default connection provider to be used if the ProviderModel
+		 * supplied to this provider does not specify a connection provider.
+		 */
+		protected function getDefaultConnectionProvider():ConnectionProvider {
+			return new DefaultRTMPConnectionProvider();
+		} 	
+		
+		/**
+		 * Gets the default clip url resolver to be used if the ProviderModel
+		 * supplied to this provider does not specify a connection provider.
+		 */
+		protected function getDefaultClipURLResolver():ClipURLResolver {
+			return new DefaultClipURLResolver();
+		}
+		/* ---- Private methods ----- */
 		/* -------------------------- */
 		
+		private function createClipUrlResolver():void {
+			if (_model.clipURLResolver) {
+				_clipUrlResolver = _player.pluginRegistry.getPlugin(_model.clipURLResolver) as ClipURLResolver;
+			} else {
+				_clipUrlResolver = getDefaultClipURLResolver();
+			}
+		}
+
+		private function createConnectionProvider():void {
+			if (_model.connectionProvider) {
+				_connectionProvider = _player.pluginRegistry.getPlugin(_model.connectionProvider) as ConnectionProvider;
+			} else {
+				_connectionProvider = getDefaultConnectionProvider();
+			}
+			_connectionProvider.connectionClient = this;
+		}
+
 		private function dispatchError(error:ClipError, info:String):void {
 			clip.dispatchError(error, info);
 		}
@@ -515,17 +498,11 @@ package org.flowplayer.controller {
 				return;
 			}
 			
-			if (event.info.code == "NetConnection.Connect.Success") {
-				createNetStream();
-				start(null, clip, _pauseAfterStart);
-			} else if (event.info.code == "NetStream.Buffer.Empty") {
+			if (event.info.code == "NetStream.Buffer.Empty") {
 				dispatchPlayEvent(ClipEventType.BUFFER_EMPTY);
 			}
 			else if (event.info.code == "NetStream.Buffer.Full") {
 				dispatchPlayEvent(ClipEventType.BUFFER_FULL);
-			}
-			else if (event.info.code == "NetConnection.Connect.Success") {
-				dispatchPlayEvent(ClipEventType.CONNECT);
 			}
 			else if (event.info.code == "NetStream.Play.Start") {
 				if (! _paused && canDispatchBegin()) {
@@ -552,8 +529,15 @@ package org.flowplayer.controller {
 					clip.dispatchError(ClipError.STREAM_NOT_FOUND, event.info.code);
 				}
 			}
-			
+
 			onNetStatus(event);
+		}
+
+		private function onConnectionSuccess(connection:NetConnection):void {
+			_connection = connection;
+			createNetStream();
+			start(null, clip, _pauseAfterStart);
+			dispatchPlayEvent(ClipEventType.CONNECT);
 		}
 		
 		private function startSeekTargetWait():void {
@@ -601,7 +585,7 @@ package org.flowplayer.controller {
 
 		private function createNetStream():void {
 			_netStream = new NetStream(_connection);
-			netStream.client = new NetStreamClient(clip, _config);
+			netStream.client = new NetStreamClient(clip, _player.config);
 			_netStream.bufferTime = clip.bufferLength;
 			_volumeController.netStream = _netStream;
 			_netStream.addEventListener(NetStatusEvent.NET_STATUS, _onNetStatus);
@@ -642,6 +626,10 @@ package org.flowplayer.controller {
 		}
 		
 		public function onBWDone(... rest):void {
+		}
+		
+		private function onClipUrlResolved(url:String):void {
+			_netStream.play(url);
 		}
 	}
 }
