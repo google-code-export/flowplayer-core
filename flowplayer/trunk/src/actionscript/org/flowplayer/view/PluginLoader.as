@@ -183,7 +183,7 @@ package org.flowplayer.view {
 			} else if (pluginInstance is StreamProvider) {
 				plugin = Loadable(loadable).createProvider(pluginInstance);
 				_providers[plugin.name] = pluginInstance;
-				_pluginRegistry.registerProvider(plugin as ProviderModel, pluginInstance);
+				_pluginRegistry.registerProvider(plugin as ProviderModel);
 
 			} else {
 				log.error("unknown plugin type " + pluginInstance);
@@ -216,7 +216,7 @@ package org.flowplayer.view {
 				log.info(index + ": setting config to " + pluginInstance + ", " + loadable);
 				if (pluginInstance is NetStreamControllingStreamProvider) {
 					log.debug("NetStreamControllingStreamProvider(pluginInstance).config = " +loadable.plugin);
-					NetStreamControllingStreamProvider(pluginInstance).config = loadable.plugin;
+					NetStreamControllingStreamProvider(pluginInstance).config = loadable.plugin as ProviderModel;
 				} else {
 					if (pluginInstance.hasOwnProperty("onConfig")) {
 						pluginInstance.onConfig(loadable.plugin);

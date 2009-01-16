@@ -478,9 +478,10 @@ package org.flowplayer.view {
 			if (! _providers) {
 				_providers = new Dictionary();
 			}
-			var httpProvider:NetStreamControllingStreamProvider = new NetStreamControllingStreamProvider();
-			httpProvider.playerConfig = _config;
-			_providers["http"] = httpProvider;
+			var httpProvider:ProviderModel = _config.getHttpProvider();
+			_providers["http"] = httpProvider.getProviderObject();
+			_pluginRegistry.registerProvider(httpProvider);
+			
 			return new PlayListController(_config.getPlaylist(), _providers, _config, createNewLoader());
 		}
 		

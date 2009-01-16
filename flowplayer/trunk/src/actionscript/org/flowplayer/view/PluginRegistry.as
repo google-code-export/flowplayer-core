@@ -18,6 +18,7 @@
  */
 
 package org.flowplayer.view {
+	import org.flowplayer.controller.StreamProvider;	
 	import org.flowplayer.controller.NetStreamControllingStreamProvider;	
 	import org.flowplayer.model.DisplayPluginModel;	
 	import org.flowplayer.model.Cloneable;
@@ -72,7 +73,7 @@ package org.flowplayer.view {
 		 */
 		public function getPlugin(name:String):Object {
 			var plugin:Object = _plugins[name] || _providers[name];
-			log.debug("found plugin " + plugin);
+//			log.debug("found plugin " + plugin);
 			if (plugin is DisplayProperties) {
 				updateZIndex(plugin as DisplayProperties);
 			}
@@ -165,14 +166,16 @@ package org.flowplayer.view {
 			}
 		}
 
-		internal function registerProvider(model:ProviderModel, provider:Object):void {
+		internal function registerProvider(model:ProviderModel):void {
+			log.info("registering provider " + model);
 			_providers[model.name] = model;
 		}
 		
 		internal function onLoad(flowPlayer:FlowplayerBase):void {
+			log.debug("onLoad");
 			_flowPlayer = flowPlayer;
-			setPlayerToPlugins(_plugins);
 			setPlayerToPlugins(_providers);
+			setPlayerToPlugins(_plugins);
 		}
 		
 		private function setPlayerToPlugins(plugins:Dictionary):void {
@@ -184,6 +187,7 @@ package org.flowplayer.view {
 		internal function setPlayerToPlugin(plugin:Object):void {
 			var pluginObj:Object;
 			try {
+				log.debug("setPlayerToPlugin " + plugin);
 				if (plugin is DisplayProperties) {
 					pluginObj = DisplayProperties(plugin).getDisplayObject(); 
 				} else {
@@ -197,10 +201,10 @@ package org.flowplayer.view {
 				}
 				log.debug("onLoad() successfully executed for plugin " + plugin);
 			} catch (e:Error) {
-				if (pluginObj is Plugin) {
+				if (pluginObj is Plugin || pluginObj is StreamProvider) {
 					throw e;
 				}
-				log.warn("was not able to initialize player to plugin: " + e.message);
+				log.warn("was not able to initialize player to plugin " + plugin + ": "+ e.message);
 			}
 		}
 
