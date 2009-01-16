@@ -18,18 +18,24 @@
  */
 
 package org.flowplayer.config {
-	import flash.display.DisplayObject;
-	
 	import org.flowplayer.config.PluginBuilder;
+	import org.flowplayer.controller.NetStreamControllingStreamProvider;
+	import org.flowplayer.flow_internal;
 	import org.flowplayer.model.Clip;
 	import org.flowplayer.model.DisplayProperties;
+	import org.flowplayer.model.Loadable;
 	import org.flowplayer.model.Logo;
 	import org.flowplayer.model.PlayButtonOverlay;
 	import org.flowplayer.model.Playlist;
 	import org.flowplayer.model.PluginModel;
+	import org.flowplayer.model.ProviderModel;
 	import org.flowplayer.util.Assert;
 	import org.flowplayer.util.LogConfiguration;
-	import org.flowplayer.util.PropertyBinder;		
+	import org.flowplayer.util.PropertyBinder;
+	
+	import flash.display.DisplayObject;		
+	
+	use namespace flow_internal;
 
 	/**
 	 * @author anssi
@@ -83,6 +89,17 @@ package org.flowplayer.config {
 				_loadables = viewObjectBuilder.createLoadables(config.plugins, getPlaylist());
 			}
 			return _loadables;
+		}
+		
+		private function getLoadable(name:String):Loadable {
+			var loadables:Array = getLoadables();
+			for (var i:Number = 0; i < loadables.length; i++) {
+				var loadable:Loadable = loadables[i];
+				if (loadable.name == name) {
+					return loadable;
+				}
+			}
+			return null;
 		}
 		
 		private function get viewObjectBuilder():PluginBuilder {
@@ -154,6 +171,16 @@ package org.flowplayer.config {
 		private function get useBufferingAnimation():Boolean {
 			if (! config.hasOwnProperty("buffering")) return true;
 			return config["buffering"];
-		}
+		}				public function getHttpProvider():ProviderModel {
+			var provider:NetStreamControllingStreamProvider =  new NetStreamControllingStreamProvider();
+			
+			var model:ProviderModel = new ProviderModel(provider, "http");
+			provider.config = model;
+			
+			var conf:Loadable = getLoadable("http");
+			if (conf) {
+				new PropertyBinder(model).copyProperties(conf.config);
+			}
+			return model;		}
 	}
 }
