@@ -269,7 +269,7 @@ package org.flowplayer.view {
 
 				var plugin:PluginModel = Loadable(loadables[i]).plugin;
 				var isNonAdHocPlugin:Boolean = (plugin is DisplayPluginModel && DisplayPluginModel(plugin).getDisplayObject() is Plugin) ||
-					plugin is ProviderModel && ProviderModel(plugin).getProviderObject() is Plugin;
+					plugin is PluginModel && PluginModel(plugin).pluginObject is Plugin;
 
 				if (isNonAdHocPlugin) {
 					log.debug("will wait for onLoad from plugin " + plugin);
@@ -479,7 +479,7 @@ package org.flowplayer.view {
 				_providers = new Dictionary();
 			}
 			var httpProvider:ProviderModel = _config.getHttpProvider();
-			_providers["http"] = httpProvider.getProviderObject();
+			_providers["http"] = httpProvider.pluginObject;
 			_pluginRegistry.registerProvider(httpProvider);
 			
 			return new PlayListController(_config.getPlaylist(), _providers, _config, createNewLoader());

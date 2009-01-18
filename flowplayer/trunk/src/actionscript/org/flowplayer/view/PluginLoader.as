@@ -186,7 +186,8 @@ package org.flowplayer.view {
 				_pluginRegistry.registerProvider(plugin as ProviderModel);
 
 			} else {
-				log.error("unknown plugin type " + pluginInstance);
+				plugin = Loadable(loadable).createPlugin(pluginInstance);
+				_pluginRegistry.registerGenericPlugin(plugin);
 			}
 			if (pluginInstance is Plugin) {
 				plugin.onLoad(_loadListener);
