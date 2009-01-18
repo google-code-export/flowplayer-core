@@ -44,5 +44,8 @@ package org.flowplayer.model {
 		
 		function set config(config:Object):void;
 		
+		function get pluginObject():Object;
+		
+		function set pluginObject(pluginObject:Object):void;
 	}
 }

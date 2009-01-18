@@ -87,7 +87,7 @@ package org.flowplayer.controller {
 		}
 		
 		internal function addProvider(provider:ProviderModel):void {
-			_streamProviders[provider.name] = provider.getProviderObject();
+			_streamProviders[provider.name] = provider.pluginObject;
 		}
 		
 		public function getProvider(clip:Clip):StreamProvider {

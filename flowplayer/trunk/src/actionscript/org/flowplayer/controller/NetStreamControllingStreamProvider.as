@@ -479,7 +479,11 @@ package org.flowplayer.controller {
 
 		private function createConnectionProvider():void {
 			if (_model.connectionProvider) {
-				_connectionProvider = _player.pluginRegistry.getPlugin(_model.connectionProvider) as ConnectionProvider;
+				log.debug("getting connection provider " + _model.connectionProvider + " from registry");
+				_connectionProvider = PluginModel(_player.pluginRegistry.getPlugin(_model.connectionProvider)).pluginObject as ConnectionProvider;
+				if (! _connectionProvider) {
+					throw new Error("connection provider " + _model.connectionProvider + " not loaded");
+				}
 			} else {
 				_connectionProvider = getDefaultConnectionProvider();
 			}

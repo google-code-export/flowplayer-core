@@ -71,5 +71,13 @@ package org.flowplayer.model {
 		public function get methodNames():Array {
 			return PluginMethodHelper.methodNames(_methods);
 		}
+		
+		public function get pluginObject():Object {
+			return getDisplayObject();
+		}
+		
+		public function set pluginObject(pluginObject:Object):void {
+			setDisplayObject(pluginObject as DisplayObject);
+		}
 	}
 }

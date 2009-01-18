@@ -5,8 +5,7 @@
 	
 	import org.flowplayer.util.PropertyBinder;		
 	/**	 * @author api	 */	public class Loadable {				private var _name:String;		private var _url:String;		private var _config:Object;		private var _plugin:PluginModel;		private var _playerConfig:Config;		
-		public function Loadable(name:String, playerConfig:Config, url:String = null) {			_name = name;			_playerConfig = playerConfig;			_url = url;		}				public function createDisplayPlugin(disp:DisplayObject):DisplayPluginModel {			if (!_plugin) {				_plugin = _playerConfig.getPlugin(disp, _name, _config);			}			return _plugin as DisplayPluginModel;		}		public function createProvider(provider:Object):ProviderModel {			if (!_plugin) {				_plugin = (new PropertyBinder(new ProviderModel(provider, _name), "config")).copyProperties(_config) as PluginModel;			}			return _plugin as ProviderModel;		}
-		public function get url():String {			return _url;
+		public function Loadable(name:String, playerConfig:Config, url:String = null) {			_name = name;			_playerConfig = playerConfig;			_url = url;		}				public function createDisplayPlugin(disp:DisplayObject):DisplayPluginModel {			if (!_plugin) {				_plugin = _playerConfig.getPlugin(disp, _name, _config);			}			return _plugin as DisplayPluginModel;		}		public function createProvider(provider:Object):ProviderModel {			if (!_plugin) {				_plugin = (new PropertyBinder(new ProviderModel(provider, _name), "config")).copyProperties(_config) as PluginModel;			}			return _plugin as ProviderModel;		}		public function createPlugin(plugin:Object):PluginModel {			if (!_plugin) {				_plugin = (new PropertyBinder(new PluginModelImpl(plugin, _name), "config")).copyProperties(_config) as PluginModel;			}			return _plugin as PluginModel;		}		public function get url():String {			return _url;
 		}
 		
 		public function set url(url:String):void {			_url = url;

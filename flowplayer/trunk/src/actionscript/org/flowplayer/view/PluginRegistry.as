@@ -42,6 +42,7 @@ package org.flowplayer.view {
 		private var _plugins:Dictionary = new Dictionary();
 		private var _originalProps:Dictionary = new Dictionary();
 		private var _providers:Dictionary = new Dictionary();
+		private var _genericPlugins:Dictionary = new Dictionary();
 		private var _fonts:Array = new Array();
 		private var _panel:Panel;
 		private var _flowPlayer:FlowplayerBase;
@@ -72,8 +73,8 @@ package org.flowplayer.view {
 		 * to the returned object are not reflected to the copy stored in this registrty
 		 */
 		public function getPlugin(name:String):Object {
-			var plugin:Object = _plugins[name] || _providers[name];
-//			log.debug("found plugin " + plugin);
+			var plugin:Object = _plugins[name] || _providers[name] || _genericPlugins[name];
+			log.debug("found plugin " + plugin);
 			if (plugin is DisplayProperties) {
 				updateZIndex(plugin as DisplayProperties);
 			}
@@ -135,6 +136,16 @@ package org.flowplayer.view {
 			_plugins[plugin.name] = plugin;
 			_originalProps[plugin.name] = plugin.clone();
 		}
+
+		internal function registerProvider(model:ProviderModel):void {
+			log.info("registering provider " + model);
+			_providers[model.name] = model;
+		}
+		
+		internal function registerGenericPlugin(model:PluginModel):void {
+			log.info("registering generic plugin " + model.name);
+			_genericPlugins[model.name] = model;
+		}
 		
 		internal function removePlugin(plugin:PluginModel):void {
 			delete _plugins[plugin.name];
@@ -165,20 +176,15 @@ package org.flowplayer.view {
 				updateDisplayProperties(props);
 			}
 		}
-
-		internal function registerProvider(model:ProviderModel):void {
-			log.info("registering provider " + model);
-			_providers[model.name] = model;
-		}
 		
 		internal function onLoad(flowPlayer:FlowplayerBase):void {
 			log.debug("onLoad");
 			_flowPlayer = flowPlayer;
 			setPlayerToPlugins(_providers);
 			setPlayerToPlugins(_plugins);
+			setPlayerToPlugins(_genericPlugins);
 		}
-		
-		private function setPlayerToPlugins(plugins:Dictionary):void {
+		private function setPlayerToPlugins(plugins:Dictionary):void {
 			for each (var model:Object in plugins) {
 				setPlayerToPlugin(model);
 			}
@@ -190,8 +196,8 @@ package org.flowplayer.view {
 				log.debug("setPlayerToPlugin " + plugin);
 				if (plugin is DisplayProperties) {
 					pluginObj = DisplayProperties(plugin).getDisplayObject(); 
-				} else {
-					pluginObj = ProviderModel(plugin).getProviderObject(); 
+				} else if (plugin is PluginModel) {
+					pluginObj = PluginModel(plugin).pluginObject; 
 				}
 				if (pluginObj is NetStreamControllingStreamProvider) {
 					log.debug("setting player to " + pluginObj);
