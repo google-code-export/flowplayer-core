@@ -429,7 +429,7 @@ package org.flowplayer.controller {
 		 * Resolves the url for the specified clip.
 		 */		
 		protected final function resolveClipUrl(clip:Clip, successListener:Function):void {
-			_clipUrlResolver.resolve(clip, successListener);
+			_clipUrlResolver.resolve(clip, _connection, successListener);
 		}
 
 		/**
