@@ -5,6 +5,7 @@ Version history:
 New features:
 
 Bug fixes:
+- clip urls were not resolved correctly if the HTML page URL had a query string starting with a question mark (http://flowplayer.org/forum/8/14016#post-14016)
 - Fixed context menu for with IE (commercial version)
 - a cuepoint at time zero was fired several times
 - screen is now arranged correctly even when only bottom or top is defined for it in the configuration
