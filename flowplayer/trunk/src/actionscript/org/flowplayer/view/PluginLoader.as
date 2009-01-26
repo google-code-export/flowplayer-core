@@ -152,8 +152,12 @@ package org.flowplayer.view {
 			_loadables.forEach(function(loadable:Loadable, index:int, array:Array):void {
 				if (! loadable.plugin && hasSwiff(info.url, loadable.url)) {
 					log.debug("this is the swf for loadable " + loadable);
-					initializePlugin(loadable, createPluginInstance(instanceUsed, info.content));
-					instanceUsed = true;
+					if (loadable.type == "classLibrary") {
+						initializeClassLibrary(loadable, info);
+					} else {
+						initializePlugin(loadable, instanceUsed, info);
+						instanceUsed = true;
+					}
 				}
 			});
 			if (++_loadedCount == _swiffsToLoad.length) {
@@ -164,10 +168,14 @@ package org.flowplayer.view {
 			if (_callback != null) {
 				_callback();
 			}
+		}				private function initializeClassLibrary(loadable:Loadable, info:LoaderInfo):void {
+			_pluginRegistry.registerGenericPlugin(loadable.createPlugin(info.applicationDomain));
 		}
 
-		private function initializePlugin(loadable:Loadable, pluginInstance:Object):void {
+		private function initializePlugin(loadable:Loadable, instanceUsed:Boolean, info:LoaderInfo):void {
 			log.debug("initializing plugin for loadable " + loadable + ", instance " + pluginInstance);
+			
+			var pluginInstance:Object = createPluginInstance(instanceUsed, info.content);
 				
 			_loadedPlugins[loadable] = pluginInstance;
 		
