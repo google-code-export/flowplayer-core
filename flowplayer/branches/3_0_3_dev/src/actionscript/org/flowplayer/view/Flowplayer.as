@@ -234,7 +234,16 @@ package org.flowplayer.view {
 			checkPlugin(plugin, pluginName, DisplayPluginModel);
 			log.debug("going to animate plugin " + pluginName); 
 
-			var result:Object = convert(props ? _animationEngine.animate(DisplayProperties(plugin).getDisplayObject(), collectDisplayProps(props, animate), durationMillis, createCallback(listenerId, plugin)) : plugin);
+			var result:Object;
+			if (props) {
+				if (pluginName == 'play') {
+					result = convert(_animationEngine.animateNonPanel(DisplayProperties(_pluginRegistry.getPlugin("screen")).getDisplayObject(), DisplayProperties(plugin).getDisplayObject(), collectDisplayProps(props, animate), durationMillis, createCallback(listenerId, plugin))); 
+				} else {
+					result = convert(_animationEngine.animate(DisplayProperties(plugin).getDisplayObject(), collectDisplayProps(props, animate), durationMillis, createCallback(listenerId, plugin))); 
+				}
+			} else {
+				result = convert(plugin);
+			}
 
 			// check if plugin is Styleable and delegate to it
 			if (plugin is DisplayProperties && DisplayProperties(plugin).getDisplayObject() is Styleable) {
@@ -253,12 +262,18 @@ package org.flowplayer.view {
 
 		private function fadeIn(pluginName:String, durationMillis:Number = 400, listenerId:String = null):void {
 			var props:DisplayProperties = prepareFade(pluginName, true);
-			_animationEngine.fadeIn(props.getDisplayObject(), durationMillis, createCallback(listenerId, props));
+			if (pluginName == "play") {
+				screen.showPlay();
+			}
+			_animationEngine.fadeIn(props.getDisplayObject(), durationMillis, createCallback(listenerId, props), pluginName != "play");
 		}
 
 		private function fadeTo(pluginName:String, alpha:Number, durationMillis:Number = 400, listenerId:String = null):void {
 			var props:DisplayProperties = prepareFade(pluginName, true);
-			_animationEngine.fadeTo(props.getDisplayObject(), alpha, durationMillis, createCallback(listenerId, props));
+			if (pluginName == "play") {
+				screen.showPlay();
+			}
+			_animationEngine.fadeTo(props.getDisplayObject(), alpha, durationMillis, createCallback(listenerId, props), pluginName != "play");
 		}
 		
 		private function prepareFade(pluginName:String, show:Boolean):DisplayProperties {

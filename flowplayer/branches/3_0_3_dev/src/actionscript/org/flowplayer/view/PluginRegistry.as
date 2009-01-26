@@ -141,7 +141,7 @@ package org.flowplayer.view {
 			delete _providers[plugin.name];
 			
 			if (plugin is DisplayPluginModel) {
-				_panel.removeView(DisplayPluginModel(plugin).getDisplayObject());
+				_panel.removeChild(DisplayPluginModel(plugin).getDisplayObject());
 			}
 		}
 		

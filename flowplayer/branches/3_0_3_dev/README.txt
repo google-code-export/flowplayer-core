@@ -1,5 +1,16 @@
 Version history:
 
+3.0.4
+-----
+- The "play" pseudo-plugin now supports fadeIn(), fadeOut(), showPlugin(), hidePlugin() and
+  additionally you can configure it like this:
+  // make only the play button invisible (buffering animation is still used)
+  play: { display: 'none' }
+  // disable the play button and the buffering animation
+  play: null
+  // disable the buffering animation
+  buffering: null 
+
 3.0.3
 -----
 - fixed cuepoint firing: Does not skip cuepoints any more

@@ -38,7 +38,7 @@ package org.flowplayer.model {
 			left = "50%";
 			width = "22%";
 			height = "22%";
-			visible = false;
+			display = "block";
 			_buffering = true;
 			_rotateSpeed = 50;
 			_fadeSpeed = 500;
