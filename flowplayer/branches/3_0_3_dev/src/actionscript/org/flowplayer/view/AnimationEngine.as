@@ -18,20 +18,22 @@
  */
 
 package org.flowplayer.view {
-	import flash.utils.Dictionary;		import flash.display.DisplayObject;
-	import flash.geom.Rectangle;
-	
+	import org.flowplayer.flow_internal;
 	import org.flowplayer.layout.LengthMath;
 	import org.flowplayer.model.DisplayProperties;
-	import org.flowplayer.model.DisplayPropertiesImpl;
 	import org.flowplayer.util.Assert;
 	import org.flowplayer.util.Log;
 	import org.flowplayer.view.Animation;
 	import org.flowplayer.view.Panel;
 	import org.goasap.events.GoEvent;
 	import org.goasap.interfaces.IPlayable;
-	import org.goasap.utils.PlayableGroup;	
-
+	import org.goasap.utils.PlayableGroup;
+	
+	import flash.display.DisplayObject;
+	import flash.geom.Rectangle;
+	import flash.utils.Dictionary;			
+	use namespace flow_internal;
+	
 	/**
 	 * AnimationAngine is used to animate DisplayProperties. 
 	 * 
@@ -72,7 +74,7 @@ package org.flowplayer.view {
 		 * The <code>opacity</code> property only supports absolute numeric values.
 		 * </p>
 		 * <p>
-		 * All changed made to the plugin's display propertites are stored into the PluginRegistry
+		 * All changes made to the plugin's display propertites are stored into the PluginRegistry
 		 * </p>
 		 * 
 		 * @param pluginName the name of the plugin to animate, the plugin is looked up from the PluginRegistry using this name
@@ -91,21 +93,35 @@ package org.flowplayer.view {
 				log.debug("animating non-plugin displayObject " + disp);
 			}
 			
-			var newProps:DisplayProperties;
+			
 			if (isPlugin) {
+				var newProps:DisplayProperties = props is DisplayProperties ? props as DisplayProperties : LengthMath.sum(currentProps, props, _panel.stage);
 				log.debug("current dimensions " + currentProps.dimensions);
-				newProps = props is DisplayProperties ? props as DisplayProperties : LengthMath.sum(currentProps, props, _panel.stage);
 				disp.visible = newProps.visible;
 				if (disp.visible) {
 					panelAnimate(currentProps.getDisplayObject(), newProps, durationMillis, endCallback);
 				} else {
-					_panel.removeView(disp);
+					_panel.removeChild(disp);
 				}
 				_pluginRegistry.updateDisplayProperties(newProps);
 			} else {
-				startTweens(disp, props.alpha, props.width, props.height, props.x, props.y, durationMillis, endCallback);
+				startTweens(disp, alpha(props), props.width, props.height, props.x, props.y, durationMillis, endCallback);
 			}
 			return newProps;
+		}
+
+		flow_internal function animateNonPanel(parent:DisplayObject, disp:DisplayObject, props:Object, durationMillis:int = 400, endCallback:Function = null):DisplayProperties {
+			log.debug("animateNonPanel", props);
+			var currentProps:DisplayProperties = _pluginRegistry.getPluginByDisplay(disp);
+			var newProps:DisplayProperties = props is DisplayProperties ? props as DisplayProperties : LengthMath.sum(currentProps, props, parent);
+			startTweens(disp, alpha(props), props.width, props.height, props.x, props.y, durationMillis, endCallback);
+			return newProps;
+		}
+		
+		private function alpha(props:Object):Number {
+			if (props.hasOwnProperty("alpha")) return props["alpha"];
+			if (props.hasOwnProperty("opacity")) return props["opacity"];
+			return NaN;
 		}
 
 		/**
@@ -184,7 +200,7 @@ package org.flowplayer.view {
 						function(event:GoEvent):void {
 							if (!_canceledByPlayable[playable]) { 
 								log.debug("removing " + view + " from panel");
-								_panel.removeView(view);
+								view.parent.removeChild(view);
 							} else {
 								log.info("previous fadeout was canceled, will not remove " + view + " from panel");
 							}

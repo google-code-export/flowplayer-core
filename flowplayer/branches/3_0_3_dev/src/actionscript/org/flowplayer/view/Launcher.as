@@ -372,7 +372,7 @@ package org.flowplayer.view {
 					log.debug("adding plugin '"+ model.name +"' to panel: " + model.visible + ", plugin object is " + model.getDisplayObject());
 					if (model.visible) {
 						if (model.zIndex == -1) {
-							model.zIndex = _playButtonOverlay ? _playButtonOverlay.zIndex : 100;
+							model.zIndex = 100;
 						}
 						_panel.addView(model.getDisplayObject(), undefined, model);
 					}

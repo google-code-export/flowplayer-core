@@ -300,6 +300,7 @@ package org.flowplayer.view {
 			addChild(playView);
 			playView.visible = true;
 			playView.alpha = play.alpha;
+			
 			arrangePlay();
 			log.debug("play bounds: " + Arrange.describeBounds(playView));
 			log.debug("play parent: " + playView.parent);
