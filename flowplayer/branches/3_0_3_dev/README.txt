@@ -10,6 +10,9 @@ Version history:
   play: null
   // disable the buffering animation
   buffering: null 
+- Now possible to call play() in an onError handler: http://flowplayer.org/forum/8/12939
+
+
 
 3.0.3
 -----
