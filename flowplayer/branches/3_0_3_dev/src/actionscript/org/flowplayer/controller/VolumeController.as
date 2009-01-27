@@ -18,21 +18,8 @@
  */
 
 package org.flowplayer.controller {
-	import flash.media.SoundChannel;	
-	
-	import org.flowplayer.view.PlayerEventDispatcher;	
-	
-	import flash.events.TimerEvent;
-	import flash.media.SoundTransform;
-	import flash.net.NetStream;
-	import flash.net.SharedObject;
-	import flash.utils.Timer;
-	
-	import org.flowplayer.flow_internal;
-	import org.flowplayer.model.PlayerEvent;
-	import org.flowplayer.util.Log;	
-
-	use namespace flow_internal;
+	import org.flowplayer.flow_internal;	import org.flowplayer.model.PlayerEvent;	import org.flowplayer.util.Log;	import org.flowplayer.view.PlayerEventDispatcher;		import flash.events.TimerEvent;	import flash.media.SoundChannel;	import flash.media.SoundTransform;	import flash.net.NetStream;	import flash.utils.Timer;		
+		use namespace flow_internal;
 
 	/**
 	 * @author api
@@ -42,7 +29,7 @@ package org.flowplayer.controller {
 		private var log:Log = new Log(this);
 		private var _soundTransform:SoundTransform;
 		private var _netStream:NetStream;
-		private var _storedVolume:SharedObject;
+		private var _storedVolume:VolumeStorage;
 		private var _storeDelayTimer:Timer;
 		private var _muted:Boolean;
 		private var _playerEventDispatcher:PlayerEventDispatcher;
@@ -127,25 +114,17 @@ package org.flowplayer.controller {
 		private function storeVolume(muted:Boolean = false):void {
 			log.info("persisting volume level");
 			_storeDelayTimer.stop();
-			_storedVolume.data.volume = _soundTransform.volume;
-			_storedVolume.data.volumeMuted = muted;
-			_storedVolume.flush();
+			_storedVolume.volume = _soundTransform.volume;
+			_storedVolume.muted = muted;
+			_storedVolume.persist();
 		}
 		
 		private function restoreVolume():void {
-			_storedVolume = SharedObject.getLocal("org.flowplayer");
-			_soundTransform.volume = getVolume(_storedVolume.data.volume);
-			if (_storedVolume.data.volumeMuted)
+			_storedVolume = LocalSOVolumeStorage.create();
+				
+			_soundTransform.volume = _storedVolume.volume;
+			if (_storedVolume.muted)
 				doMute(false);
-		}
-		
-		private function getVolume(volumeObj:Object):Number {
-			if (!volumeObj) return 0.5;
-			if (!volumeObj is Number) return 0.5;
-			if (isNaN(volumeObj as Number)) return 0.5;
-			if (volumeObj as Number > 1) return 1;
-			if (volumeObj as Number < 0) return 0;
-			return volumeObj as Number;
 		}
 		
 		private function dispatchBeforeEvent(event:PlayerEvent):Boolean {
