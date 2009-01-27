@@ -353,9 +353,6 @@ package org.flowplayer.view {
 				Logger.error(message);
 			}
 			showError(message);
-			if (_flowplayer) {
-				_flowplayer.stop();
-			}
 			if (throwError && Capabilities.isDebugger) {
 				throw new Error(message);
 			}
