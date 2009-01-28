@@ -43,17 +43,24 @@ package org.flowplayer.view {
 		 * Adds a onLoad event listener. The event is triggered when the player has been loaded and initialized.
 		 * @param listener
 		 * @param add if true the listener is addes, otherwise removed
-		 * @see PlayerEvent
+		 * @see PlayerEventType
 		 */
 		public function onLoad(listener:Function):void {
 			setListener(PlayerEventType.LOAD, listener);
 		}
 		
 		/**
+		 * Add a fullscreen-enter event listener for the "before phase" of this event.
+		 */
+		public function onBeforeFullscreen(listener:Function):void {
+			setListener(PlayerEventType.FULLSCREEN, listener, null, true);
+		}
+
+		/**
 		 * Adds a fullscreen-enter event listener. The event is fired when the player goes to
 		 * the fullscreen mode.
 		 * @param listener
-		 * @see PlayerEvent
+		 * @see PlayerEventType
 		 */
 		public function onFullscreen(listener:Function):void {
 			log.debug("adding listener for fullscreen " + PlayerEventType.FULLSCREEN);
@@ -64,7 +71,7 @@ package org.flowplayer.view {
 		 * Adds a fullscreen-exit event listener. The event is fired when the player exits from
 		 * the fullscreen mode.
 		 * @param listener
-		 * @see PlayerEvent
+		 * @see PlayerEventType
 		 */
 		public function onFullscreenExit(listener:Function):void {
 			setListener(PlayerEventType.FULLSCREEN_EXIT, listener);
@@ -73,7 +80,7 @@ package org.flowplayer.view {
 		/**
 		 * Adds a volume mute event listener. The event is fired when the volume is muted
 		 * @param listener
-		 * @see PlayerEvent
+		 * @see PlayerEventType
 		 */
 		public function onMute(listener:Function):void {
 			setListener(PlayerEventType.MUTE, listener);
@@ -82,7 +89,7 @@ package org.flowplayer.view {
 		/**
 		 * Adds a volume un-mute event listener. The event is fired when the volume is unmuted
 		 * @param listener
-		 * @see PlayerEvent
+		 * @see PlayerEventType
 		 */
 		public function onUnmute(listener:Function):void {
 			setListener(PlayerEventType.UNMUTE, listener);
@@ -91,7 +98,7 @@ package org.flowplayer.view {
 		/**
 		 * Adds a volume event listener. The event is fired when the volume level is changed.
 		 * @param listener
-		 * @see PlayerEvent
+		 * @see PlayerEventType
 		 */
 		public function onVolume(listener:Function):void {
 			setListener(PlayerEventType.VOLUME, listener);

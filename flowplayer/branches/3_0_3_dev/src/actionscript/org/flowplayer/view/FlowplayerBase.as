@@ -163,6 +163,7 @@ package org.flowplayer.view {
 		 * @return true if the player is playing after the call, false if it's paused
 		 */
 		public function toggle():Boolean {
+			log.debug("toggle()");
 			if (state == State.PAUSED) {
 				resume();
 				return true;
