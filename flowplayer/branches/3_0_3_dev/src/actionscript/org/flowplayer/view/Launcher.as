@@ -86,8 +86,9 @@ package org.flowplayer.view {
 		private var _error:TextField;
 		private var _pluginsInitialized:Number = 0;
 		private var _numLoadablePlugins:int = -1;
-		[Frame(factoryClass="org.flowplayer.view.Preloader")]
-		public function Launcher() {
+		private var _enteringFullscreen:Boolean;
+		[Frame(factoryClass="org.flowplayer.view.Preloader")]
+		public function Launcher() {
 			super("#canvas", this);
 			addEventListener(Event.ADDED_TO_STAGE, initPhase1);
 		}
@@ -435,6 +436,22 @@ package org.flowplayer.view {
 			_flowplayer = new Flowplayer(stage, playListController, _pluginRegistry, _panel, 
 				_animationEngine, this, this, _config, _fullscreenManager, _pluginLoader, URLUtil.playerBaseUrl(loaderInfo));
 			playListController.playerEventDispatcher = _flowplayer;
+			
+			_flowplayer.onBeforeFullscreen(onFullscreen);
+//			_flowplayer.onFullscreenExit(onFullscreen);
+		}
+		
+		private function onFullscreen(event:PlayerEvent):void {
+				log.debug("entering fullscreen, disabling display clicks");
+				_enteringFullscreen = true;
+				var delay:Timer = new Timer(1000, 1);
+				delay.addEventListener(TimerEvent.TIMER_COMPLETE, onTimerComplete);
+				delay.start();
+		}
+		
+		private function onTimerComplete(event:TimerEvent):void {
+			log.debug("fullscreen wait delay complete, display clicks are enabled again");
+			_enteringFullscreen = false;
 		}
 
 		private function createFlashVarsConfig():void {
@@ -575,6 +592,7 @@ package org.flowplayer.view {
 		}
 
 		private function onViewClicked(event:MouseEvent):void {
+			if (_enteringFullscreen) return;
 			log.debug("onViewClicked, target " + event.target + ", current target " + event.currentTarget);
 			if (_playButtonOverlay && isParent(DisplayObject(event.target), _playButtonOverlay.getDisplayObject())) {
 				_flowplayer.toggle();
@@ -585,7 +603,10 @@ package org.flowplayer.view {
 			if (clip.linkUrl) {
 				_flowplayer.pause();
 				navigateToURL(new URLRequest(clip.linkUrl), clip.linkWindow);
-			} else {
+				return;
+			}
+			
+			if (isParent(DisplayObject(event.target), _screen)) {
 				_flowplayer.toggle();
 			}
 		}
@@ -604,6 +625,7 @@ package org.flowplayer.view {
 
 		private function onKeyDown(event:KeyboardEvent):void {
 			log.debug("keydown");
+			if (_enteringFullscreen) return;
 			if (_flowplayer.dispatchBeforeEvent(PlayerEvent.keyPress(event.keyCode))) {
 				_flowplayer.dispatchEvent(PlayerEvent.keyPress(event.keyCode));
 				if (event.keyCode == Keyboard.SPACE) {
