@@ -35,9 +35,9 @@ package org.flowplayer.util {
 		 */
 		public static function center(disp:DisplayObject, areaWidth:Number = 0, areaHeight:Number = 0):void {
 			if (areaWidth > 0)
-				disp.x = (areaWidth / 2) - (disp.width / 2);
+				disp.x = int((areaWidth / 2) - (disp.width / 2));
 			if (areaHeight > 0)
-				disp.y = (areaHeight / 2) - (disp.height / 2);
+				disp.y = int((areaHeight / 2) - (disp.height / 2));
 		}
 		
 		/**
