@@ -10,9 +10,12 @@ Version history:
   play: null
   // disable the buffering animation
   buffering: null 
+
+Fixes:
 - Now possible to call play() in an onError handler: http://flowplayer.org/forum/8/12939
 - Does not throw an error if the player cannot persist the volume on the client computer: http://flowplayer.org/forum/8/13286#post-13495
-
+- Triggering fullscreen does not pause the player in IE
+- The play button overlay no longer has a gap between it's pieces when a label is used: http://flowplayer.org/forum/8/14250
 
 3.0.3
 -----
