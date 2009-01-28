@@ -12,6 +12,9 @@ Version history:
   buffering: null 
 
 Fixes:
+- Fixed context menu for with IE (commercial version)
+- a cuepoint at time zero was fired several times
+- screen is now arranged correctly even when only bottom or top is defined for it in the configuration
 - Now possible to call play() in an onError handler: http://flowplayer.org/forum/8/12939
 - Does not throw an error if the player cannot persist the volume on the client computer: http://flowplayer.org/forum/8/13286#post-13495
 - Triggering fullscreen does not pause the player in IE
