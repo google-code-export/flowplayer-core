@@ -55,7 +55,9 @@ package org.flowplayer.util {
 			try {
 				var href:String = ExternalInterface.call("self.location.href.toString");
 				var endPos:int = href.indexOf("?");
-				if (endPos < 0) {
+				if (endPos > 0) {
+					endPos = href.substring(0, endPos).lastIndexOf("/");
+				} else {
 					endPos = href.lastIndexOf("/");
 				}
 				return href.substring(0, endPos);
