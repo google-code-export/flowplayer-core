@@ -10,6 +10,7 @@ Version history:
   play: null
   // disable the buffering animation
   buffering: null 
+-- Added possibility to seek when in the buffering state: http://flowplayer.org/forum/3/13896
 
 Fixes:
 - Fixed context menu for with IE (commercial version)

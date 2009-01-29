@@ -63,6 +63,10 @@ package org.flowplayer.controller {
 				changeState(pausedState);
 			}
 		}
+		
+		internal override function seekTo(seconds:Number):void {
+			onEvent(ClipEventType.SEEK, getMediaController(), [seconds]);
+		}
 
 		override protected function setEventListeners(eventSupport:ClipEventSupport, add:Boolean = true):void {
 			if (add) {
