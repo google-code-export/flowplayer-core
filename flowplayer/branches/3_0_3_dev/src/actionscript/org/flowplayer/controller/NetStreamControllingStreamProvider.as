@@ -154,8 +154,7 @@ package org.flowplayer.controller {
 		 */
 		public final function seek(event:ClipEvent, seconds:Number):void {
 			silentSeek = event == null;
-			if (Math.abs(seconds - _seekTarget) < 1) return;
-			log.debug("seekTo " + seconds + ", previous target was " + _seekTarget);
+			log.debug("seekTo " + seconds);
 			_seekTarget = seconds;
 			doSeek(event, _netStream, seconds);
 		}
