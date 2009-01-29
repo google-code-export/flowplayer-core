@@ -19,6 +19,7 @@ Fixes:
 - Does not throw an error if the player cannot persist the volume on the client computer: http://flowplayer.org/forum/8/13286#post-13495
 - Triggering fullscreen does not pause the player in IE
 - The play button overlay no longer has a gap between it's pieces when a label is used: http://flowplayer.org/forum/8/14250
+- clip.update() JS call now resets the duration
 
 3.0.3
 -----
