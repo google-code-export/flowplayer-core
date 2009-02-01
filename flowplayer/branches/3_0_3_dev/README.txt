@@ -21,6 +21,7 @@ Fixes:
 - Triggering fullscreen does not pause the player in IE
 - The play button overlay no longer has a gap between it's pieces when a label is used: http://flowplayer.org/forum/8/14250
 - clip.update() JS call now resets the duration
+- a label configured for the play button overlay did not work in the commercial version
 
 3.0.3
 -----
