@@ -86,8 +86,8 @@ package org.flowplayer.view {
 		private var _error:TextField;
 		private var _pluginsInitialized:Number = 0;
 		private var _numLoadablePlugins:int = -1;
-		private var _enteringFullscreen:Boolean;
-		[Frame(factoryClass="org.flowplayer.view.Preloader")]
+		private var _enteringFullscreen:Boolean;		private var _copyrightNotice:TextField;
+		[Frame(factoryClass="org.flowplayer.view.Preloader")]
 		public function Launcher() {
 			super("#canvas", this);
 			addEventListener(Event.ADDED_TO_STAGE, initPhase1);
@@ -211,7 +211,9 @@ package org.flowplayer.view {
 		private function arrangeCanvasLogo():void {
 			if (!_canvasLogo) return;
 			_canvasLogo.x = 15;
-			_canvasLogo.y = stage.stageHeight - (_controlsModel ? _controlsModel.dimensions.height.toPx(stage.stageHeight) + 10 : 10) - _canvasLogo.height;
+			_canvasLogo.y = stage.stageHeight - (_controlsModel ? _controlsModel.dimensions.height.toPx(stage.stageHeight) + 10 : 10) - _canvasLogo.height - _copyrightNotice.height;
+			_copyrightNotice.x = 12;
+			_copyrightNotice.y  = _canvasLogo.y + _canvasLogo.height;
 		}
 
 		private function loadPluginsIfConfigured():void {
@@ -665,6 +667,9 @@ package org.flowplayer.view {
 		
 		private function createLogoForCanvas():void {
 			if (_canvasLogo) return;
+			_copyrightNotice = LogoUtil.createCopyrightNotice(8);
+			addChild(_copyrightNotice);
+			
 			_canvasLogo = new CanvasLogo();
 			_canvasLogo.width = 85;
 			_canvasLogo.scaleY = _canvasLogo.scaleX;
