@@ -405,12 +405,15 @@ package org.flowplayer.view {
 				} else {
 					var controlsHeight:Number = _controlsModel.getDisplayObject().height;
 					var occupiedHeight:Number = screenTopOrBottomConfigured() ? getScreenTopOrBottomPx(screen) : controlsHeight;
+					log.debug("occupied by controls or screen's configured bottom/top is " + occupiedHeight);
 
-					if (screen.position.top.pct >= 0 || screen.position.bottom.pct >= 0) {
-						var heightPct:Number = 100 - Math.abs(50 - (screen.position.top.pct >= 0 ? screen.position.top.pct : screen.position.bottom.pct))*2; 
+					var heightPct:Number = 0;
+					if (screenTopOrBottomConfigured() && (screen.position.top.pct >= 0 || screen.position.bottom.pct >= 0)) {
+						heightPct = 100 - Math.abs(50 - (screen.position.top.pct >= 0 ? screen.position.top.pct : screen.position.bottom.pct))*2; 
 						setScreenBottomAndHeight(screen, heightPct, controlsHeight);
 					} else {
-						setScreenBottomAndHeight(screen, ((stage.stageHeight - occupiedHeight) / stage.stageHeight) * 100, controlsHeight);
+						heightPct = ((stage.stageHeight - occupiedHeight) / stage.stageHeight) * 100;
+						setScreenBottomAndHeight(screen, heightPct, controlsHeight);
 					}
 				}
 			}
@@ -433,12 +436,16 @@ package org.flowplayer.view {
 			if (! screenTopOrBottomConfigured()) {
 				log.debug("screen vertical pos not configured, setting bottom to value " + bottom);
 				screen.bottom = bottom;
+			} else {
+				log.debug("using configured top/bottom for screen");
 			}
 			
 			var heightConfigured:Boolean = _config.getObject("screen") && _config.getObject("screen").hasOwnProperty("height");
 			if (! heightConfigured) {
 				log.debug("screen height not configured, setting it to value " + heightPct + "%");
 				screen.height =  heightPct + "%";
+			} else {
+				log.debug("using configured height for screen");
 			}
 		}
 
