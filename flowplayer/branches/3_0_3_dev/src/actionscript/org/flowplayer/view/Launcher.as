@@ -525,7 +525,7 @@ package org.flowplayer.view {
 			_playButtonOverlay.onError(onPluginLoadError);
 
 			log.debug("playlist has clips? " + hasClip);
-			var overlay:PlayButtonOverlayView = new PlayButtonOverlayView(! playButtonOverlayWidthDefined(), _playButtonOverlay, _pluginRegistry, _config.getPlaylist(), true);
+			var overlay:PlayButtonOverlayView = new PlayButtonOverlayView(! playButtonOverlayWidthDefined(), _playButtonOverlay, _pluginRegistry, _config.getPlaylist());
 			initView(overlay, _playButtonOverlay, null, false);
 		}
 		
