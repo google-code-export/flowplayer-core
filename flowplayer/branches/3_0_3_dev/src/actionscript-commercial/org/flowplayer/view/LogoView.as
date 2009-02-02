@@ -63,6 +63,8 @@ package org.flowplayer.view {
 			}
 
 			CONFIG::freeVersion {
+				_copyrightNotice = LogoUtil.createCopyrightNotice(10);
+				addChild(_copyrightNotice);
 				createLogoImage(new FlowplayerLogo());
 //				var logoTimer:Timer = new Timer(1000);
 //				logoTimer.addEventListener(TimerEvent.TIMER, onLogoTimer);
@@ -84,8 +86,8 @@ package org.flowplayer.view {
 			if (_image) {
 				log.debug("onResize, width " + width);
 				if (_model.dimensions.width.hasValue() && _model.dimensions.height.hasValue()) {
-					if (_image.height - _copyrightNotice.height > _image.width) {
-						_image.height = height - _copyrightNotice.height;
+					if (_image.height - copyrightNoticeheight() > _image.width) {
+						_image.height = height - copyrightNoticeheight();
 						_image.scaleX = _image.scaleY;
 					} else {
 						_image.width = width;
@@ -95,9 +97,22 @@ package org.flowplayer.view {
 //				Arrange.center(_image, width, height);
 				_image.x = width - _image.width;
 				_image.y = 0;
-				_copyrightNotice.y = _image.height;
-				_copyrightNotice.width = width;
+
+				CONFIG::freeVersion {
+					_copyrightNotice.y = _image.height;
+					_copyrightNotice.width = width;
+				}
 			}
+		}
+		
+		CONFIG::freeVersion
+		private function copyrightNoticeheight():Number {
+			return _copyrightNotice.height;
+		}
+		
+		CONFIG::commercialVersion
+		private function copyrightNoticeheight():Number {
+			return 0;
 		}
 		
 //		override public function get width():Number {
@@ -125,8 +140,6 @@ package org.flowplayer.view {
 		private function createLogoImage(image:DisplayObject):void {
 			_image = image;
 			addChild(_image);
-			_copyrightNotice = LogoUtil.createCopyrightNotice(10);
-			addChild(_copyrightNotice);
 			log.debug("logo shown in fullscreen only " + _model.fullscreenOnly);
 			if (! _model.fullscreenOnly) {
 				show();
