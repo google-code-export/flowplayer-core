@@ -87,7 +87,7 @@ package org.flowplayer.view {
 			return DisplayProperties(_pluginRegistry.getPlugin("play"));
 		}
 
-		private function arrangePlay():void {
+		internal function arrangePlay():void {
 			if (playView) {
 				playView.setSize(play.dimensions.width.toPx(this.width), play.dimensions.height.toPx(this.height));
 				Arrange.center(playView, width, height);
