@@ -1,5 +1,5 @@
 /** 
- * flowplayer.js [3.0.4]. The Flowplayer API
+ * flowplayer.js [3.0.5]. The Flowplayer API
  * 
  * Copyright 2009 Flowplayer Oy
  * 
@@ -647,7 +647,7 @@ function Player(wrapper, params, conf) {
 		},
 		
 		getVersion: function() {
-			var js = "flowplayer.js 3.0.4";
+			var js = "flowplayer.js 3.0.5";
 			if (api) {
 				var ver = api.fp_getVersion();
 				ver.push(js);
@@ -887,7 +887,7 @@ function Player(wrapper, params, conf) {
 			} 
 			
 			// populate common clip properties to each clip
-			each(conf.clip, function(key, val) {				
+			each(conf.clip, function(key, val) {
 				if (conf.clip[key] !== undefined && typeof val != 'function') {
 					clip[key] = val;	
 				}
