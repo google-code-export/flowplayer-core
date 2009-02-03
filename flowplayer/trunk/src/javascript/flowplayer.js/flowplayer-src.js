@@ -1,7 +1,7 @@
 /** 
- * flowplayer.js [3.0.3]. The Flowplayer API
+ * flowplayer.js [3.0.4]. The Flowplayer API
  * 
- * Copyright 2008 Flowplayer Oy
+ * Copyright 2009 Flowplayer Oy
  * 
  * This file is part of Flowplayer.
  * 
@@ -149,7 +149,7 @@
 		// private variables
 		var self = this;
 		var cuepoints = {};
-		var listeners = {}; 
+		var listeners = {};  
 		self.index = index;
 		
 		// instance variables
@@ -240,12 +240,10 @@
 						}
 					}); 
 					return false;
-				}					
+				}
 				
 				// target clip we are working against
-				if (index != -1) {
-					target = self;	
-				}
+				target = target || self;	
 				
 				if (evt == 'onCuepoint') {
 					var fn = cuepoints[arg1];
@@ -456,7 +454,7 @@
 
 
 function Player(wrapper, params, conf) {   
-		
+	
 	// private variables (+ arguments)
 	var 
 		self = this, 
@@ -649,7 +647,7 @@ function Player(wrapper, params, conf) {
 		},
 		
 		getVersion: function() {
-			var js = "flowplayer.js 3.0.3";
+			var js = "flowplayer.js 3.0.4";
 			if (api) {
 				var ver = api.fp_getVersion();
 				ver.push(js);
@@ -788,7 +786,7 @@ function Player(wrapper, params, conf) {
 		var ret = true;
 		
 		// clip event
-		if (arg0 === 0 || (arg0 && arg0 >= 0 && arg0 < playlist.length)) {
+		if (typeof arg0 == 'number' && arg0 < playlist.length) {
 			
 			activeIndex = arg0;
 			var clip = playlist[arg0];			
@@ -804,7 +802,7 @@ function Player(wrapper, params, conf) {
 			}  
 		} 
 		
-		// player event	
+		// player event	 
 		var i = 0;
 		each(listeners[evt], function() {
 			ret = this.call(self, arg0, arg1);		
@@ -854,11 +852,16 @@ function Player(wrapper, params, conf) {
 		apiId = params.id || playerId + "_api"; 		
 		params.id = apiId;
 		conf.playerId = playerId;
+		
 
 		// plain url is given as config
 		if (typeof conf == 'string') {
 			conf = {clip:{url:conf}};	
 		} 
+		
+		if (typeof conf.clip == 'string') {
+			conf.clip = {url: conf.clip};	
+		}
 		
 		// common clip is always there
 		conf.clip = conf.clip || {};  
@@ -879,21 +882,16 @@ function Player(wrapper, params, conf) {
 
 			var clip = this;
 			
-			// clip is an array, we don't allow that
-			if (typeof clip == 'object' && clip.length)  {
-				clip = "" + clip;	
-			}
-			
-			if (!clip.url && typeof clip == 'string') {				
+			if (typeof clip == 'string') {				
 				clip = {url: clip};				
 			} 
 			
 			// populate common clip properties to each clip
 			each(conf.clip, function(key, val) {
-				if (clip[key] === undefined && typeof val != 'function')  {
+				if (clip[key] !== undefined && typeof val != 'function')  {
 					clip[key] = val;	
 				}
-			});		
+			});	
 			
 			// modify configuration playlist
 			conf.playlist[index] = clip;			
@@ -1015,10 +1013,9 @@ function Iterator(arr) {
 
 // these two variables are the only global variables
 window.flowplayer = window.$f = function() {
-	
+
 	var instance = null;
 	var arg = arguments[0];	
-	
 	
 	// $f()
 	if (!arguments.length) {
@@ -1097,7 +1094,7 @@ window.flowplayer = window.$f = function() {
 extend(window.$f, {
 
 	// called by Flash External Interface 		
-	fireEvent: function(id, evt, a0, a1, a2) {		
+	fireEvent: function(id, evt, a0, a1, a2) {
 		var p = $f(id);		
 		return p ? p._fireEvent(evt, a0, a1, a2) : null;
 	},
