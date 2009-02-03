@@ -887,8 +887,8 @@ function Player(wrapper, params, conf) {
 			} 
 			
 			// populate common clip properties to each clip
-			each(conf.clip, function(key, val) {
-				if (clip[key] !== undefined && typeof val != 'function')  {
+			each(conf.clip, function(key, val) {				
+				if (conf.clip[key] !== undefined && typeof val != 'function') {
 					clip[key] = val;	
 				}
 			});	
