@@ -882,6 +882,10 @@ function Player(wrapper, params, conf) {
 
 			var clip = this;
 			
+			if (typeof clip == 'object' && clip.length) {
+				clip = "" + clip;	
+			}
+			
 			if (typeof clip == 'string') {				
 				clip = {url: clip};				
 			} 
