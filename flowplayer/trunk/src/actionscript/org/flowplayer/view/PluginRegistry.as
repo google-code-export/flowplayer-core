@@ -1,5 +1,5 @@
 /*    
- *    Copyright 2008 Flowplayer Oy
+ *    Copyright (c) 2008, 2009 Flowplayer Oy
  *
  *    This file is part of Flowplayer.
  *
@@ -153,7 +153,7 @@ package org.flowplayer.view {
 			delete _providers[plugin.name];
 			
 			if (plugin is DisplayPluginModel) {
-				_panel.removeView(DisplayPluginModel(plugin).getDisplayObject());
+				_panel.removeChild(DisplayPluginModel(plugin).getDisplayObject());
 			}
 		}
 		

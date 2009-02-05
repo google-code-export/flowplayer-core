@@ -1,5 +1,5 @@
 /*    
- *    Copyright 2008 Flowplayer Oy
+ *    Copyright (c) 2008, 2009 Flowplayer Oy
  *
  *    This file is part of Flowplayer.
  *
@@ -18,6 +18,8 @@
  */
 
 package org.flowplayer.view {
+	import flash.text.TextField;	
+	
 	import org.flowplayer.controller.ResourceLoader;	
 	import org.flowplayer.util.URLUtil;	
 	import org.flowplayer.controller.ResourceLoaderImpl;
@@ -46,7 +48,9 @@ package org.flowplayer.view {
 		private var _player:Flowplayer;
 		private var _image:DisplayObject;
 		private var _panel:Panel;
-		private var _originalProps:DisplayProperties;		public function LogoView(panel:Panel, model:Logo, player:Flowplayer) {
+		private var _originalProps:DisplayProperties;
+		private var _copyrightNotice:TextField;
+		public function LogoView(panel:Panel, model:Logo, player:Flowplayer) {
 			_panel = panel;
 			this.model = model;
 			_originalProps = _model.clone() as DisplayProperties;
@@ -59,6 +63,8 @@ package org.flowplayer.view {
 			}
 
 			CONFIG::freeVersion {
+				_copyrightNotice = LogoUtil.createCopyrightNotice(10);
+				addChild(_copyrightNotice);
 				createLogoImage(new FlowplayerLogo());
 //				var logoTimer:Timer = new Timer(1000);
 //				logoTimer.addEventListener(TimerEvent.TIMER, onLogoTimer);
@@ -80,16 +86,33 @@ package org.flowplayer.view {
 			if (_image) {
 				log.debug("onResize, width " + width);
 				if (_model.dimensions.width.hasValue() && _model.dimensions.height.hasValue()) {
-					if (_image.height > _image.width) {
-						_image.height = height;
+					if (_image.height - copyrightNoticeheight() > _image.width) {
+						_image.height = height - copyrightNoticeheight();
 						_image.scaleX = _image.scaleY;
 					} else {
 						_image.width = width;
 						_image.scaleY = _image.scaleX;
 					}
 				}
-				Arrange.center(_image, width, height);
+//				Arrange.center(_image, width, height);
+				_image.x = width - _image.width;
+				_image.y = 0;
+
+				CONFIG::freeVersion {
+					_copyrightNotice.y = _image.height;
+					_copyrightNotice.width = width;
+				}
 			}
+		}
+		
+		CONFIG::freeVersion
+		private function copyrightNoticeheight():Number {
+			return _copyrightNotice.height;
+		}
+		
+		CONFIG::commercialVersion
+		private function copyrightNoticeheight():Number {
+			return 0;
 		}
 		
 //		override public function get width():Number {
@@ -129,8 +152,7 @@ package org.flowplayer.view {
 				hide();
 			}
 		}
-
-		private function setEventListeners():void {
+		private function setEventListeners():void {
 			_panel.stage.addEventListener(FullScreenEvent.FULL_SCREEN, onFullscreen);
 			
 			if (_model.linkUrl) {
@@ -196,10 +218,11 @@ package org.flowplayer.view {
 			// in the free version we ignore the supplied logo configuration
 			_model = new Logo();
 			_model.fullscreenOnly = model.fullscreenOnly;
-			_model.height = "10%";
-			_model.width = "10%";
-			_model.top = "15";
-			_model.right = "1";
+			_model.height = "9%";
+			_model.width = "9%";
+			_model.top = "20";
+			_model.right = "20";
+			_model.opacity = 0.3;
 			_model.linkUrl = "http://flowplayer.org";
 			log.debug("initial model dimensions " + _model.dimensions);
 		}

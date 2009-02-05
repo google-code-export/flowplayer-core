@@ -1,5 +1,5 @@
 /*    
- *    Copyright 2008 Flowplayer Oy
+ *    Copyright (c) 2008, 2009 Flowplayer Oy
  *
  *    This file is part of Flowplayer.
  *
@@ -134,7 +134,7 @@ package org.flowplayer.view {
 			return layout.update(view, properties);
 		}
 
-		public function removeView(view:DisplayObject, speed:Number = 0, doAlpha:Boolean = false):void {
+		private function removeView(view:DisplayObject):void {
 			log.debug("removeView " + view);
 			if (! getChildByName(view.name)) {
 				return;

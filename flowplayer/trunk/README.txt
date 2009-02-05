@@ -10,6 +10,30 @@ Bug fixes:
 - a cuepoint at time zero was fired several times
 - screen is now arranged correctly even when only bottom or top is defined for it in the configuration
 
+3.0.4
+-----
+- The "play" pseudo-plugin now supports fadeIn(), fadeOut(), showPlugin(), hidePlugin() and
+  additionally you can configure it like this:
+  // make only the play button invisible (buffering animation is still used)
+  play: { display: 'none' }
+  // disable the play button and the buffering animation
+  play: null
+  // disable the buffering animation
+  buffering: null 
+- Added possibility to seek when in the buffering state: http://flowplayer.org/forum/3/13896
+- Added copyright notices and other GPL required entries to the user interface
+
+Fixes:
+- Fixed context menu for with IE (commercial version)
+- a cuepoint at time zero was fired several times
+- screen is now arranged correctly even when only bottom or top is defined for it in the configuration
+- Now possible to call play() in an onError handler: http://flowplayer.org/forum/8/12939
+- Does not throw an error if the player cannot persist the volume on the client computer: http://flowplayer.org/forum/8/13286#post-13495
+- Triggering fullscreen does not pause the player in IE
+- The play button overlay no longer has a gap between it's pieces when a label is used: http://flowplayer.org/forum/8/14250
+- clip.update() JS call now resets the duration
+- a label configured for the play button overlay did not work in the commercial version
+
 3.0.3
 -----
 - fixed cuepoint firing: Does not skip cuepoints any more

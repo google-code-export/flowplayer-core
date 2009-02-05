@@ -1,5 +1,5 @@
 /*    
- *    Copyright 2008 Flowplayer Oy
+ *    Copyright (c) 2008, 2009 Flowplayer Oy
  *
  *    This file is part of Flowplayer.
  *
@@ -87,7 +87,7 @@ package org.flowplayer.view {
 			return DisplayProperties(_pluginRegistry.getPlugin("play"));
 		}
 
-		private function arrangePlay():void {
+		internal function arrangePlay():void {
 			if (playView) {
 				playView.setSize(play.dimensions.width.toPx(this.width), play.dimensions.height.toPx(this.height));
 				Arrange.center(playView, width, height);
@@ -300,6 +300,7 @@ package org.flowplayer.view {
 			addChild(playView);
 			playView.visible = true;
 			playView.alpha = play.alpha;
+			
 			arrangePlay();
 			log.debug("play bounds: " + Arrange.describeBounds(playView));
 			log.debug("play parent: " + playView.parent);

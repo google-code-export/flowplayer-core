@@ -155,7 +155,8 @@ package org.flowplayer.view {
 					if (loadable.type == "classLibrary") {
 						initializeClassLibrary(loadable, info);
 					} else {
-						initializePlugin(loadable, instanceUsed, info);
+						initializePlugin(loadable, createPluginInstance(instanceUsed, info.content));
+						//initializePlugin(loadable, instanceUsed, info);
 						instanceUsed = true;
 					}
 				}
@@ -172,10 +173,8 @@ package org.flowplayer.view {
 			_pluginRegistry.registerGenericPlugin(loadable.createPlugin(info.applicationDomain));
 		}
 
-		private function initializePlugin(loadable:Loadable, instanceUsed:Boolean, info:LoaderInfo):void {
+		private function initializePlugin(loadable:Loadable, pluginInstance:Object):void {
 			log.debug("initializing plugin for loadable " + loadable + ", instance " + pluginInstance);
-			
-			var pluginInstance:Object = createPluginInstance(instanceUsed, info.content);
 				
 			_loadedPlugins[loadable] = pluginInstance;
 		
@@ -192,7 +191,6 @@ package org.flowplayer.view {
 				plugin = Loadable(loadable).createProvider(pluginInstance);
 				_providers[plugin.name] = pluginInstance;
 				_pluginRegistry.registerProvider(plugin as ProviderModel);
-
 			} else {
 				plugin = Loadable(loadable).createPlugin(pluginInstance);
 				_pluginRegistry.registerGenericPlugin(plugin);

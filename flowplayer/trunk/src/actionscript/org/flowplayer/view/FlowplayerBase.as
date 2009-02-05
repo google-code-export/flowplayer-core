@@ -1,5 +1,5 @@
 /**
- *    Copyright 2008 Flowplayer Oy
+ *    Copyright (c) 2008, 2009 Flowplayer Oy
  *
  *    This file is part of Flowplayer.
  *
@@ -29,6 +29,7 @@ package org.flowplayer.view {
 	import org.flowplayer.model.DisplayProperties;
 	import org.flowplayer.model.EventDispatcher;
 	import org.flowplayer.model.Loadable;
+	import org.flowplayer.model.PlayButtonOverlay;
 	import org.flowplayer.model.PlayerError;
 	import org.flowplayer.model.PlayerEvent;
 	import org.flowplayer.model.Playlist;
@@ -162,6 +163,7 @@ package org.flowplayer.view {
 		 * @return true if the player is playing after the call, false if it's paused
 		 */
 		public function toggle():Boolean {
+			log.debug("toggle()");
 			if (state == State.PAUSED) {
 				resume();
 				return true;
@@ -280,7 +282,11 @@ package org.flowplayer.view {
 				props.zIndex = newPluginZIndex;
 			}
 			log.debug("showPlugin, zIndex is " + props.zIndex);
-			_panel.addView(disp, null, props);
+			if (disp == playButtonOverlay.getDisplayObject()) {
+				playButtonOverlay.getDisplayObject()["showButton"]();
+			} else {
+				_panel.addView(disp, null, props);
+			}
 			_pluginRegistry.updateDisplayProperties(props);
 		}
 		/**
@@ -289,14 +295,18 @@ package org.flowplayer.view {
 		 * @param props the {@link DisplayProperties display properties} to be used
 		 */
 		public function hidePlugin(disp:DisplayObject):void {
-			_panel.removeView(disp);
+			if (disp.parent == screen && disp == playButtonOverlay.getDisplayObject()) {
+				playButtonOverlay.getDisplayObject()["hideButton"]();
+			} else {
+				disp.parent.removeChild(disp);
+			}
 			var props:DisplayProperties = _pluginRegistry.getPluginByDisplay(disp);
 			if (props) {
 				props.display = "none";
 				_pluginRegistry.updateDisplayProperties(props);
 			}
 		}
-		
+
 		/**
 		 * Shows or hides the specied display object to/from the panel.
 		 * @param the display objet to be shown/hidden
@@ -526,6 +536,14 @@ package org.flowplayer.view {
 			if (RequiredClass && ! plugin is RequiredClass) {
 				showError("Specifiec plugin '" + pluginName + "' is not an instance of " + RequiredClass);
 			}
+		}
+		
+		protected function get screen():Screen {
+			return DisplayProperties(_pluginRegistry.getPlugin("screen")).getDisplayObject() as Screen;
+		}
+		
+		protected function get playButtonOverlay():DisplayProperties {
+			return DisplayProperties(_pluginRegistry.getPlugin("play")) as DisplayProperties;
 		}
 		
 //

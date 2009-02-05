@@ -1,5 +1,5 @@
 /*    
- *    Copyright 2008 Flowplayer Oy
+ *    Copyright (c) 2008, 2009 Flowplayer Oy
  *
  *    This file is part of Flowplayer.
  *
@@ -191,6 +191,10 @@ package org.flowplayer.model {
 		}
 		
 		public function set url(url:String):void {
+			if (_url != url) {
+				_metaData = null;
+				_content = null;
+			}
 			this._url = url;
 		}
 
