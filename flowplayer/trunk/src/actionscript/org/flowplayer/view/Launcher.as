@@ -1,5 +1,5 @@
 /*    
- *    Copyright 2008 Flowplayer Oy
+ *    Copyright (c) 2008, 2009 Flowplayer Oy
  *
  *    This file is part of Flowplayer.
  *
@@ -17,59 +17,8 @@
  *    along with Flowplayer.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.flowplayer.view {
-	import org.flowplayer.model.Loadable;	
-	import org.flowplayer.model.ProviderModel;	
-	import org.flowplayer.config.Config;
-	import org.flowplayer.config.ConfigLoader;
-	import org.flowplayer.config.ExternalInterfaceHelper;
-	import org.flowplayer.config.VersionInfo;
-	import org.flowplayer.controller.NetStreamControllingStreamProvider;
-	import org.flowplayer.controller.PlayListController;
-	import org.flowplayer.controller.ResourceLoader;
-	import org.flowplayer.controller.ResourceLoaderImpl;
-	import org.flowplayer.flow_internal;
-	import org.flowplayer.model.Callable;
-	import org.flowplayer.model.Clip;
-	import org.flowplayer.model.ClipEvent;
-	import org.flowplayer.model.DisplayPluginModel;
-	import org.flowplayer.model.DisplayProperties;
-	import org.flowplayer.model.DisplayPropertiesImpl;
-	import org.flowplayer.model.EventDispatcher;
-	import org.flowplayer.model.Logo;
-	import org.flowplayer.model.PlayButtonOverlay;
-	import org.flowplayer.model.PlayerError;
-	import org.flowplayer.model.PlayerEvent;
-	import org.flowplayer.model.Playlist;
-	import org.flowplayer.model.Plugin;
-	import org.flowplayer.model.PluginError;
-	import org.flowplayer.model.PluginEvent;
-	import org.flowplayer.model.PluginModel;
-	import org.flowplayer.model.State;
-	import org.flowplayer.util.Arrange;
-	import org.flowplayer.util.Log;
-	import org.flowplayer.util.TextUtil;
-	import org.flowplayer.util.URLUtil;
-	import org.flowplayer.view.Panel;
-	import org.flowplayer.view.Screen;
-	import org.osflash.thunderbolt.Logger;
-	
-	import flash.display.DisplayObject;
-	import flash.display.DisplayObjectContainer;
-	import flash.display.Sprite;
-	import flash.events.Event;
-	import flash.events.KeyboardEvent;
-	import flash.events.MouseEvent;
-	import flash.events.TimerEvent;
-	import flash.net.URLRequest;
-	import flash.net.navigateToURL;
-	import flash.system.Capabilities;
-	import flash.system.Security;
-	import flash.text.TextField;
-	import flash.text.TextFieldAutoSize;
-	import flash.ui.Keyboard;
-	import flash.utils.Dictionary;
-	import flash.utils.Timer;		
-	use namespace flow_internal;
+	import org.flowplayer.config.Config;	import org.flowplayer.config.ConfigLoader;	import org.flowplayer.config.ExternalInterfaceHelper;	import org.flowplayer.config.VersionInfo;	import org.flowplayer.controller.PlayListController;	import org.flowplayer.controller.ResourceLoader;	import org.flowplayer.controller.ResourceLoaderImpl;	import org.flowplayer.flow_internal;	import org.flowplayer.model.Callable;	import org.flowplayer.model.Clip;	import org.flowplayer.model.ClipEvent;	import org.flowplayer.model.DisplayPluginModel;	import org.flowplayer.model.DisplayProperties;	import org.flowplayer.model.DisplayPropertiesImpl;	import org.flowplayer.model.EventDispatcher;	import org.flowplayer.model.Loadable;	import org.flowplayer.model.Logo;	import org.flowplayer.model.PlayButtonOverlay;	import org.flowplayer.model.PlayerError;	import org.flowplayer.model.PlayerEvent;	import org.flowplayer.model.Playlist;	import org.flowplayer.model.Plugin;	import org.flowplayer.model.PluginError;	import org.flowplayer.model.PluginEvent;	import org.flowplayer.model.PluginModel;	import org.flowplayer.model.ProviderModel;	import org.flowplayer.model.State;	import org.flowplayer.util.Arrange;	import org.flowplayer.util.Log;	import org.flowplayer.util.TextUtil;	import org.flowplayer.util.URLUtil;	import org.flowplayer.view.Panel;	import org.flowplayer.view.PluginLoader;	import org.flowplayer.view.Screen;	import org.osflash.thunderbolt.Logger;		import flash.display.DisplayObject;	import flash.display.DisplayObjectContainer;	import flash.display.Sprite;	import flash.events.Event;	import flash.events.KeyboardEvent;	import flash.events.MouseEvent;	import flash.events.TimerEvent;	import flash.net.URLRequest;	import flash.net.navigateToURL;	import flash.system.Capabilities;	import flash.system.Security;	import flash.text.TextField;	import flash.text.TextFieldAutoSize;	import flash.ui.Keyboard;	import flash.utils.Dictionary;	import flash.utils.Timer;		
+		use namespace flow_internal;
 
 	public class Launcher extends StyleableSprite implements ErrorHandler {
 		private var _panel:Panel;
@@ -86,8 +35,9 @@ package org.flowplayer.view {
 		private var _error:TextField;
 		private var _pluginsInitialized:Number = 0;
 		private var _numLoadablePlugins:int = -1;
+		private var _enteringFullscreen:Boolean;		private var _copyrightNotice:TextField;
 		[Frame(factoryClass="org.flowplayer.view.Preloader")]
-		public function Launcher() {
+		public function Launcher() {
 			super("#canvas", this);
 			addEventListener(Event.ADDED_TO_STAGE, initPhase1);
 		}
@@ -210,7 +160,9 @@ package org.flowplayer.view {
 		private function arrangeCanvasLogo():void {
 			if (!_canvasLogo) return;
 			_canvasLogo.x = 15;
-			_canvasLogo.y = stage.stageHeight - (_controlsModel ? _controlsModel.dimensions.height.toPx(stage.stageHeight) + 10 : 10) - _canvasLogo.height;
+			_canvasLogo.y = stage.stageHeight - (_controlsModel ? _controlsModel.dimensions.height.toPx(stage.stageHeight) + 10 : 10) - _canvasLogo.height - _copyrightNotice.height;
+			_copyrightNotice.x = 12;
+			_copyrightNotice.y  = _canvasLogo.y + _canvasLogo.height;
 		}
 
 		private function loadPluginsIfConfigured():void {
@@ -269,7 +221,7 @@ package org.flowplayer.view {
 
 				var plugin:PluginModel = Loadable(loadables[i]).plugin;
 				var isNonAdHocPlugin:Boolean = (plugin is DisplayPluginModel && DisplayPluginModel(plugin).getDisplayObject() is Plugin) ||
-					plugin is PluginModel && PluginModel(plugin).pluginObject is Plugin;
+					plugin is ProviderModel && ProviderModel(plugin).pluginObject is Plugin;
 
 				if (isNonAdHocPlugin) {
 					log.debug("will wait for onLoad from plugin " + plugin);
@@ -353,9 +305,6 @@ package org.flowplayer.view {
 				Logger.error(message);
 			}
 			showError(message);
-			if (_flowplayer) {
-				_flowplayer.stop();
-			}
 			if (throwError && Capabilities.isDebugger) {
 				throw new Error(message);
 			}
@@ -372,7 +321,7 @@ package org.flowplayer.view {
 					log.debug("adding plugin '"+ model.name +"' to panel: " + model.visible + ", plugin object is " + model.getDisplayObject());
 					if (model.visible) {
 						if (model.zIndex == -1) {
-							model.zIndex = _playButtonOverlay ? _playButtonOverlay.zIndex : 100;
+							model.zIndex = 100;
 						}
 						_panel.addView(model.getDisplayObject(), undefined, model);
 					}
@@ -405,12 +354,15 @@ package org.flowplayer.view {
 				} else {
 					var controlsHeight:Number = _controlsModel.getDisplayObject().height;
 					var occupiedHeight:Number = screenTopOrBottomConfigured() ? getScreenTopOrBottomPx(screen) : controlsHeight;
+					log.debug("occupied by controls or screen's configured bottom/top is " + occupiedHeight);
 
-					if (screen.position.top.pct >= 0 || screen.position.bottom.pct >= 0) {
-						var heightPct:Number = 100 - Math.abs(50 - (screen.position.top.pct >= 0 ? screen.position.top.pct : screen.position.bottom.pct))*2; 
+					var heightPct:Number = 0;
+					if (screenTopOrBottomConfigured() && (screen.position.top.pct >= 0 || screen.position.bottom.pct >= 0)) {
+						heightPct = 100 - Math.abs(50 - (screen.position.top.pct >= 0 ? screen.position.top.pct : screen.position.bottom.pct))*2; 
 						setScreenBottomAndHeight(screen, heightPct, controlsHeight);
 					} else {
-						setScreenBottomAndHeight(screen, ((stage.stageHeight - occupiedHeight) / stage.stageHeight) * 100, controlsHeight);
+						heightPct = ((stage.stageHeight - occupiedHeight) / stage.stageHeight) * 100;
+						setScreenBottomAndHeight(screen, heightPct, controlsHeight);
 					}
 				}
 			}
@@ -433,12 +385,16 @@ package org.flowplayer.view {
 			if (! screenTopOrBottomConfigured()) {
 				log.debug("screen vertical pos not configured, setting bottom to value " + bottom);
 				screen.bottom = bottom;
+			} else {
+				log.debug("using configured top/bottom for screen");
 			}
 			
 			var heightConfigured:Boolean = _config.getObject("screen") && _config.getObject("screen").hasOwnProperty("height");
 			if (! heightConfigured) {
 				log.debug("screen height not configured, setting it to value " + heightPct + "%");
 				screen.height =  heightPct + "%";
+			} else {
+				log.debug("using configured height for screen");
 			}
 		}
 
@@ -461,6 +417,22 @@ package org.flowplayer.view {
 			_flowplayer = new Flowplayer(stage, playListController, _pluginRegistry, _panel, 
 				_animationEngine, this, this, _config, _fullscreenManager, _pluginLoader, URLUtil.playerBaseUrl(loaderInfo));
 			playListController.playerEventDispatcher = _flowplayer;
+			
+			_flowplayer.onBeforeFullscreen(onFullscreen);
+//			_flowplayer.onFullscreenExit(onFullscreen);
+		}
+		
+		private function onFullscreen(event:PlayerEvent):void {
+				log.debug("entering fullscreen, disabling display clicks");
+				_enteringFullscreen = true;
+				var delay:Timer = new Timer(1000, 1);
+				delay.addEventListener(TimerEvent.TIMER_COMPLETE, onTimerComplete);
+				delay.start();
+		}
+		
+		private function onTimerComplete(event:TimerEvent):void {
+			log.debug("fullscreen wait delay complete, display clicks are enabled again");
+			_enteringFullscreen = false;
 		}
 
 		private function createFlashVarsConfig():void {
@@ -503,7 +475,7 @@ package org.flowplayer.view {
 			_playButtonOverlay.onError(onPluginLoadError);
 
 			log.debug("playlist has clips? " + hasClip);
-			var overlay:PlayButtonOverlayView = new PlayButtonOverlayView(! playButtonOverlayWidthDefined(), _playButtonOverlay, _pluginRegistry, _config.getPlaylist(), true);
+			var overlay:PlayButtonOverlayView = new PlayButtonOverlayView(! playButtonOverlayWidthDefined(), _playButtonOverlay, _pluginRegistry, _config.getPlaylist());
 			initView(overlay, _playButtonOverlay, null, false);
 		}
 		
@@ -602,6 +574,7 @@ package org.flowplayer.view {
 		}
 
 		private function onViewClicked(event:MouseEvent):void {
+			if (_enteringFullscreen) return;
 			log.debug("onViewClicked, target " + event.target + ", current target " + event.currentTarget);
 			if (_playButtonOverlay && isParent(DisplayObject(event.target), _playButtonOverlay.getDisplayObject())) {
 				_flowplayer.toggle();
@@ -612,7 +585,10 @@ package org.flowplayer.view {
 			if (clip.linkUrl) {
 				_flowplayer.pause();
 				navigateToURL(new URLRequest(clip.linkUrl), clip.linkWindow);
-			} else {
+				return;
+			}
+			
+			if (isParent(DisplayObject(event.target), _screen)) {
 				_flowplayer.toggle();
 			}
 		}
@@ -631,6 +607,7 @@ package org.flowplayer.view {
 
 		private function onKeyDown(event:KeyboardEvent):void {
 			log.debug("keydown");
+			if (_enteringFullscreen) return;
 			if (_flowplayer.dispatchBeforeEvent(PlayerEvent.keyPress(event.keyCode))) {
 				_flowplayer.dispatchEvent(PlayerEvent.keyPress(event.keyCode));
 				if (event.keyCode == Keyboard.SPACE) {
@@ -647,6 +624,9 @@ package org.flowplayer.view {
 		
 		private function createLogoForCanvas():void {
 			if (_canvasLogo) return;
+			_copyrightNotice = LogoUtil.createCopyrightNotice(8);
+			addChild(_copyrightNotice);
+			
 			_canvasLogo = new CanvasLogo();
 			_canvasLogo.width = 85;
 			_canvasLogo.scaleY = _canvasLogo.scaleX;
