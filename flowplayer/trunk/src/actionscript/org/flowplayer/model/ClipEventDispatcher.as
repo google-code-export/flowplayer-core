@@ -125,6 +125,14 @@ package org.flowplayer.model {
 			setListener(ClipEventType.LAST_SECOND, listener, clipFilter, false, addToFront);
 		}
 
+		public function onNetStreamEvent(listener:Function, clipFilter:Function = null, addToFront:Boolean = false):void {
+			setListener(ClipEventType.NETSTREAM_EVENT, listener, clipFilter, false, addToFront);
+		}
+
+		public function onConnectionEvent(listener:Function, clipFilter:Function = null, addToFront:Boolean = false):void {
+			setListener(ClipEventType.CONNECTION_EVENT, listener, clipFilter, false, addToFront);
+		}
+
 		public function onError(listener:Function, clipFilter:Function = null, addToFront:Boolean = false):void {
 			setListener(ClipEventType.ERROR, listener, clipFilter, false, addToFront);
 		}

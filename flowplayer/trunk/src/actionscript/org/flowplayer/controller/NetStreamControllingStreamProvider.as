@@ -245,6 +245,7 @@ package org.flowplayer.controller {
 				_connection.close();
 				_connection = null;
 			}
+			_connectionProvider.connectionClient = new NetConnectionClient(clip);
 			_connectionProvider.connect(clip, onConnectionSuccess, rest);
 		}
 
@@ -485,10 +486,8 @@ package org.flowplayer.controller {
 			} else {
 				_connectionProvider = getDefaultConnectionProvider();
 			}
-			_connectionProvider.connectionClient = this;
 		}
-
-		private function dispatchError(error:ClipError, info:String):void {
+		private function dispatchError(error:ClipError, info:String):void {
 			clip.dispatchError(error, info);
 		}
 
@@ -625,9 +624,6 @@ package org.flowplayer.controller {
 				doPause(_netStream, null);
 //				_netStream.seek(0);
 			}
-		}
-		
-		public function onBWDone(... rest):void {
 		}
 		
 		private function onClipUrlResolved(url:String):void {

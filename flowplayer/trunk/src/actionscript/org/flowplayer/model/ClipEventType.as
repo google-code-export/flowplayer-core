@@ -41,6 +41,8 @@ package org.flowplayer.model {
 		public static const LAST_SECOND:ClipEventType = new ClipEventType("onLastSecond");
 		public static const UPDATE:ClipEventType = new ClipEventType("onUpdate");
 		public static const ERROR:ClipEventType = new ClipEventType("onError");
+		public static const NETSTREAM_EVENT:ClipEventType = new ClipEventType("onNetStreamEvent");
+		public static const CONNECTION_EVENT:ClipEventType = new ClipEventType("onConnectionEvent");
 
 		public static const PLAYLIST_REPLACE:ClipEventType = new ClipEventType("onPlaylistReplace");
 
