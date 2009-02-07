@@ -588,6 +588,8 @@ package org.flowplayer.model {
 		
 		public function set cuepointMultiplier(cuepointMultiplier:Number):void {
 			_cuepointMultiplier = cuepointMultiplier;
+		}				public function dispatchNetStreamEvent(name:String, infoObject:Object):void {
+			dispatch(ClipEventType.NETSTREAM_EVENT, name, infoObject);
 		}
 	}
 }
