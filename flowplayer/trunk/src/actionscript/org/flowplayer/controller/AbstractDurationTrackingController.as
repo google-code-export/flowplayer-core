@@ -29,7 +29,8 @@ package org.flowplayer.controller {
 	import org.flowplayer.model.Status;
 	import org.flowplayer.util.Log;
 	
-	import flash.events.TimerEvent;		
+	import flash.events.TimerEvent;	
+	
 	use namespace flow_internal;
 	/**
 	 * @author anssi
@@ -185,5 +186,5 @@ package org.flowplayer.controller {
 		
 		protected function doStopBuffering():void {
 		}
-	}
+    }
 }

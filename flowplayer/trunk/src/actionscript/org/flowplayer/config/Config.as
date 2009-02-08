@@ -40,7 +40,7 @@ package org.flowplayer.config {
 	/**
 	 * @author anssi
 	 */
-	public class Config {
+	public class Config { 
 
 		private var playList:Playlist;
 		private var config:Object;
@@ -159,7 +159,8 @@ package org.flowplayer.config {
 		public function get contextMenu():Array {
 			return getObject("contextMenu") as Array;
 		}
-				public function getPlugin(disp:DisplayObject, name:String, config:Object):PluginModel {
+		
+		public function getPlugin(disp:DisplayObject, name:String, config:Object):PluginModel {
 			return viewObjectBuilder.getPlugin(disp, name, config);
 		}
 		
@@ -171,7 +172,9 @@ package org.flowplayer.config {
 		private function get useBufferingAnimation():Boolean {
 			if (! config.hasOwnProperty("buffering")) return true;
 			return config["buffering"];
-		}				public function getHttpProvider():ProviderModel {
+		}
+		
+		public function getHttpProvider():ProviderModel {
 			var provider:NetStreamControllingStreamProvider =  new NetStreamControllingStreamProvider();
 			
 			var model:ProviderModel = new ProviderModel(provider, "http");
@@ -181,6 +184,7 @@ package org.flowplayer.config {
 			if (conf) {
 				new PropertyBinder(model).copyProperties(conf.config);
 			}
-			return model;		}
+			return model;
+		}
 	}
 }

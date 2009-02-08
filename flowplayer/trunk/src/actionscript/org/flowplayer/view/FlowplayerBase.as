@@ -202,10 +202,12 @@ package org.flowplayer.view {
 			log.debug("stop()");
 			_playListController.stop();
 			return this;
-		}		
+		}
+		
 		/**
 		 * Stops the player and closes the stream and connection.
-		 */		public function close():FlowplayerBase {
+		 */
+		public function close():FlowplayerBase {
 			log.debug("close()");
 			_playListController.close();
 			return this;
@@ -289,7 +291,8 @@ package org.flowplayer.view {
 			}
 			_pluginRegistry.updateDisplayProperties(props);
 		}
-		/**
+
+		/**
 		 * Removes the specified plguin display object from the panel.
 		 * @param view the display object to remove
 		 * @param props the {@link DisplayProperties display properties} to be used
@@ -444,6 +447,18 @@ package org.flowplayer.view {
 			return TextUtil.createTextField(false, null, fontSize, bold);
 		}
 
+        /**
+         * Adds a callback function to the NetConnection. This function will fire a ClipEvent of type ConnectionEvent whenever
+         * the callback has been invoked on the connection. The invokations typically come from a server-side app running
+         * on RTMP server.
+         * @param name
+         * @return
+         * @see ClipEventType.CONNECTION_EVENT
+         */
+        public function addConnectionCallback(name:String):void {
+            _playListController.addConnectionCallback(name);
+        }
+
 		protected function loadPluginLoadable(loadable:Loadable, callback:Function = null):void {
 			var loaderCallback:Function = function():void {
 				log.debug("plugin loaded");
@@ -466,12 +481,15 @@ package org.flowplayer.view {
 				}
 			};
 			_pluginLoader.loadPlugin(loadable, loaderCallback);
-		}				private function get newPluginZIndex():Number {
+		}
+		
+		private function get newPluginZIndex():Number {
 			var play:DisplayProperties = _pluginRegistry.getPlugin("play") as DisplayProperties;
 			if (! play) return 100;
 			return play.zIndex;
 		}
-		/**
+
+		/**
 		 * Gets the fonts that have been loaded as plugins.
 		 */
 		public function get fonts():Array {

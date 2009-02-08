@@ -18,8 +18,29 @@
  */
 
 package org.flowplayer.controller {
-	import org.flowplayer.controller.StreamProvider;	import org.flowplayer.controller.VolumeController;	import org.flowplayer.model.Clip;	import org.flowplayer.model.ClipError;	import org.flowplayer.model.ClipEvent;	import org.flowplayer.model.ClipEventType;	import org.flowplayer.model.Playlist;	import org.flowplayer.model.PluginModel;	import org.flowplayer.model.ProviderModel;	import org.flowplayer.util.Assert;	import org.flowplayer.util.Log;	import org.flowplayer.view.Flowplayer;		import flash.display.DisplayObject;	import flash.errors.IOError;	import flash.events.NetStatusEvent;	import flash.events.TimerEvent;	import flash.media.Video;	import flash.net.NetConnection;	import flash.net.NetStream;	import flash.utils.Timer;	
-	/**
+	import org.flowplayer.controller.StreamProvider;
+	import org.flowplayer.controller.VolumeController;
+	import org.flowplayer.model.Clip;
+	import org.flowplayer.model.ClipError;
+	import org.flowplayer.model.ClipEvent;
+	import org.flowplayer.model.ClipEventType;
+	import org.flowplayer.model.Playlist;
+	import org.flowplayer.model.PluginModel;
+	import org.flowplayer.model.ProviderModel;
+	import org.flowplayer.util.Assert;
+	import org.flowplayer.util.Log;
+	import org.flowplayer.view.Flowplayer;
+	
+	import flash.display.DisplayObject;
+	import flash.errors.IOError;
+	import flash.events.NetStatusEvent;
+	import flash.events.TimerEvent;
+	import flash.media.Video;
+	import flash.net.NetConnection;
+	import flash.net.NetStream;
+	import flash.utils.Timer;	
+
+	/**
 	 * A StreamProvider that does it's job using the Flash's NetStream class.
 	 * Implements standard HTTP based progressive download.
 	 */
@@ -38,11 +59,17 @@ package org.flowplayer.controller {
 		private var _connectionProvider:ConnectionProvider;
 		private var _clipUrlResolver:ClipURLResolver;
 		private var _player:Flowplayer;
-					// state variables
+		
+			// state variables
 		private var _silentSeek:Boolean;
 		private var _paused:Boolean;
 		private var _stopping:Boolean;
 		private var _started:Boolean;
+        private var _connectionClient:NetConnectionClient;
+
+        public function NetStreamControllingStreamProvider() {
+            _connectionClient = new NetConnectionClient();            
+        }
 
 		/**
 		 * Sets the plugin model.
@@ -226,6 +253,11 @@ package org.flowplayer.controller {
 			_playlist = playlist;
 		}
 
+        public function addConnectionCallback(name:String):void {
+            log.debug("addConnectionCallback "+ name);
+            _connectionClient.addConnectionCallback(name);
+        }
+
 		/* ---- Methods that can be overridden ----- */
 		/* ----------------------------------------- */
 
@@ -245,7 +277,8 @@ package org.flowplayer.controller {
 				_connection.close();
 				_connection = null;
 			}
-			_connectionProvider.connectionClient = new NetConnectionClient(clip);
+            _connectionClient.clip = clip;
+			_connectionProvider.connectionClient = _connectionClient;
 			_connectionProvider.connect(clip, onConnectionSuccess, rest);
 		}
 
@@ -465,7 +498,8 @@ package org.flowplayer.controller {
 		protected function getDefaultClipURLResolver():ClipURLResolver {
 			return new DefaultClipURLResolver();
 		}
-		/* ---- Private methods ----- */
+
+		/* ---- Private methods ----- */
 		/* -------------------------- */
 		
 		private function createClipUrlResolver():void {
@@ -487,7 +521,8 @@ package org.flowplayer.controller {
 				_connectionProvider = getDefaultConnectionProvider();
 			}
 		}
-		private function dispatchError(error:ClipError, info:String):void {
+
+		private function dispatchError(error:ClipError, info:String):void {
 			clip.dispatchError(error, info);
 		}
 
