@@ -207,11 +207,13 @@ package org.flowplayer.view {
 				return props;
 			} 
 			return style(pluginName, props, false, 0);
-		}		
+		}
+		
 		private function convert(objToConvert:Object):Object {
 			return new ObjectConverter(objToConvert).convert();
 		}
-				private function collectDisplayProps(props:Object, animatable:Boolean):Object {
+		
+		private function collectDisplayProps(props:Object, animatable:Boolean):Object {
 			var result:Object = new Object();
 			var coreDisplayProps:Array = [ "width", "height", "left", "top", "bottom", "right", "opacity" ];
 			if (!animatable) {
@@ -223,7 +225,8 @@ package org.flowplayer.view {
 //					delete props[propName];
 				}
 			}
-			return result;		}
+			return result;
+		}
 
 		private function animate(pluginName:String, props:Object, durationMillis:Number = 400, listenerId:String = null):Object {
 			return style(pluginName, props, true, durationMillis, listenerId);
@@ -288,7 +291,8 @@ package org.flowplayer.view {
 			}
 			return plugin as DisplayProperties;
 		}
-		private function invoke(pluginName:String, methodName:String, args:Object = null):Object {
+
+		private function invoke(pluginName:String, methodName:String, args:Object = null):Object {
 			var plugin:Callable = _pluginRegistry.getPlugin(pluginName) as Callable;
 			checkPlugin(plugin, pluginName, Callable);
 			try {
@@ -344,6 +348,5 @@ package org.flowplayer.view {
 				} 
 			};
 		}
-
-	}
+    }
 }

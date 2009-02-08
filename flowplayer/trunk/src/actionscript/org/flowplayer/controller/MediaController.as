@@ -53,5 +53,5 @@ package org.flowplayer.controller {
 		 * Gets the current playhead time.
 		 */
 		function get time():Number;
-	}
+    }
 }

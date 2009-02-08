@@ -136,5 +136,14 @@ package org.flowplayer.controller {
 		function set playlist(playlist:Playlist):void;
 		
 		function get playlist():Playlist;
-	}
+
+        /**
+         * Adds a callback function to the NetConnection instance. This function will fire ClipEvents whenever
+         * the callback is invoked in the connection.
+         * @param name
+         * @return
+         * @see ClipEventType#CONNECTION_EVENT
+         */
+        function addConnectionCallback(name:String):void;
+    }
 }
