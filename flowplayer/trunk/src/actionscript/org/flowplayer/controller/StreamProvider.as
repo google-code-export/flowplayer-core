@@ -141,9 +141,21 @@ package org.flowplayer.controller {
          * Adds a callback function to the NetConnection instance. This function will fire ClipEvents whenever
          * the callback is invoked in the connection.
          * @param name
+         * @param listener
          * @return
          * @see ClipEventType#CONNECTION_EVENT
          */
-        function addConnectionCallback(name:String):void;
+        function addConnectionCallback(name:String, listener:Function):void;
+
+        /**
+         * Adds a callback function to the NetStream object. This function will fire a ClipEvent of type StreamEvent whenever
+         * the callback has been invoked on the stream. The invokations typically come from a server-side app running
+         * on RTMP server.
+         * @param name
+         * @param listener
+         * @return
+         * @see ClipEventType.NETSTREAM_EVENT
+         */
+        function addStreamCallback(name:String, listener:Function):void;
     }
 }

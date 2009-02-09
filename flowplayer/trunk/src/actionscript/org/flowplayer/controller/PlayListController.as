@@ -288,11 +288,19 @@ package org.flowplayer.controller {
 			return _state.status;
 		}
 
-        flow_internal function addConnectionCallback(name:String):void {
+        flow_internal function addConnectionCallback(name:String, listener:Function):void {
+            addCallback(name, listener, "addConnectionCallback");
+        }
+
+        flow_internal function addStreamCallback(name:String, listener:Function):void {
+            addCallback(name, listener, "addStreamCallback");
+        }
+
+        private function addCallback(name:String, listener:Function, registerFuncName:String):void {
             for each (var obj:Object in _streamProviders) {
                 log.debug("provider" + obj);
                 var provider:StreamProvider = obj as StreamProvider;
-                provider.addConnectionCallback(name);
+                provider[registerFuncName](name, listener);
             }
         }
 

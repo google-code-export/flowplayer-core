@@ -452,11 +452,25 @@ package org.flowplayer.view {
          * the callback has been invoked on the connection. The invokations typically come from a server-side app running
          * on RTMP server.
          * @param name
+         * @param listener
          * @return
          * @see ClipEventType.CONNECTION_EVENT
          */
-        public function addConnectionCallback(name:String):void {
-            _playListController.addConnectionCallback(name);
+        public function addConnectionCallback(name:String, listener:Function):void {
+            _playListController.addConnectionCallback(name, listener);
+        }
+
+        /**
+         * Adds a callback function to the NetStream object. This function will fire a ClipEvent of type StreamEvent whenever
+         * the callback has been invoked on the stream. The invokations typically come from a server-side app running
+         * on RTMP server.
+         * @param name
+         * @param listener
+         * @return
+         * @see ClipEventType.NETSTREAM_EVENT
+         */
+        public function addStreamCallback(name:String, listener:Function):void {
+            _playListController.addStreamCallback(name, listener);
         }
 
 		protected function loadPluginLoadable(loadable:Loadable, callback:Function = null):void {
