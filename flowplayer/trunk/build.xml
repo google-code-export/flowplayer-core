@@ -41,7 +41,8 @@
 	<property name="library-binary" value="flowplayer.swc" />
 	<property name="library-binary-versioned" value="flowplayer-${version-info}.swc" />
 	
-	<property name="player-binary" value="flowplayer.swf" />
+    <property name="player-binary" value="flowplayer.swf" />
+    <property name="debug-player-binary" value="flowplayer.debug.swf" />
 	<property name="commercial-player-binary" value="flowplayer.commercial.swf" />
 	<property name="player-binary-versioned" value="flowplayer-${version-info}.swf" />
 	<property name="commercial-player-binary-versioned" value="flowplayer.commercial-${version-info}.swf" />
@@ -85,12 +86,17 @@
 		<example player-swf="${bundled-basename}-${version-info}.swf" example-dir="examble-bundled"/>
 		<zip-player license="LICENSE_BUNDLED.txt" player-swf="${bundled-basename}-${version-info}.swf" player-swf-dir="${build-dir}" zip-name="${bundled-basename}-${version-info}.zip" example-dir="examble-bundled" />
 	</target>
-	
+
     <target name="compile">
-    	<compile-player binary="${player-binary}" commercial="false" free="true" license-lib="${licenselib}"/>
+    	<compile-player binary="${player-binary}" commercial="false" free="true" license-lib="${licenselib}" debug="false"/>
     	<copy file="${build-dir}/${player-binary}" tofile="${build-dir}/${player-binary-versioned}" />
     </target>
-	
+
+    <target name="build-debug" description="builds the debug version of the player" depends="prepare">
+        <property name="licenselib" value="${lib-dir}/licensekey" />
+    	<compile-player binary="${debug-player-binary}" commercial="false" free="true" license-lib="${licenselib}" debug="true"/>
+    </target>
+
     <target name="compile-commercial">
     	<compile-player binary="${commercial-player-binary}" commercial="true" free="false" license-lib="${licenselib}" />
     	<copy file="${build-dir}/${commercial-player-binary}" tofile="${build-dir}/${commercial-player-binary-versioned}" />
@@ -126,7 +132,8 @@
         <attribute name="binary" />
         <attribute name="commercial" />
         <attribute name="free" />
-    	<attribute name="license-lib" />
+        <attribute name="license-lib" />
+        <attribute name="debug" />
         <sequential>
         	<echo message="Building binary @{binary}" />
     		<exec executable="${mxmlc_bin}">
@@ -143,8 +150,9 @@
     			<arg line="-library-path ${libs-path} ${src-flash} @{license-lib}" />
     			<arg line="-default-frame-rate=${framerate}" />
     			<arg line="-default-background-color=${bgcolor}" />
-    			<arg line="-strict=true" />
-    			<arg line="-frame 'player' org.flowplayer.view.Launcher" /> 
+                <arg line="-strict=true" />
+                <arg line="-debug=@{debug}" />
+    			<arg line="-frame 'player' org.flowplayer.view.Launcher" />
     			<arg line="-file-specs '${src-as}/org/flowplayer/view/Preloader.as'" />
     			<arg line="-output '${build-dir}/@{binary}'"/>
     		</exec>            
