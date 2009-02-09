@@ -18,7 +18,8 @@
  */
 
 package org.flowplayer.controller {
-	import org.flowplayer.controller.StreamProvider;
+import flash.utils.Dictionary;
+import org.flowplayer.controller.StreamProvider;
 	import org.flowplayer.controller.VolumeController;
 	import org.flowplayer.model.Clip;
 	import org.flowplayer.model.ClipError;
@@ -66,6 +67,7 @@ package org.flowplayer.controller {
 		private var _stopping:Boolean;
 		private var _started:Boolean;
         private var _connectionClient:NetConnectionClient;
+        private var _streamCallbacks:Dictionary = new Dictionary();
 
         public function NetStreamControllingStreamProvider() {
             _connectionClient = new NetConnectionClient();            
@@ -253,9 +255,20 @@ package org.flowplayer.controller {
 			_playlist = playlist;
 		}
 
-        public function addConnectionCallback(name:String):void {
+        /**
+         * @inheritDoc
+         */
+        public function addConnectionCallback(name:String, listener:Function):void {
             log.debug("addConnectionCallback "+ name);
-            _connectionClient.addConnectionCallback(name);
+            _connectionClient.addConnectionCallback(name, listener);
+        }
+
+        /**
+         * @inheritDoc
+         */
+        public function addStreamCallback(name:String, listener:Function):void {
+            log.debug("addStreamCallback "+ name);
+            _streamCallbacks[name] = listener;
         }
 
 		/* ---- Methods that can be overridden ----- */
@@ -292,7 +305,7 @@ package org.flowplayer.controller {
 		 * @param clip
 		 */
 		protected function doLoad(event:ClipEvent, netStream:NetStream, clip:Clip):void {
-			netStream.client = new NetStreamClient(clip, _player.config);
+			netStream.client = new NetStreamClient(clip, _player.config, _streamCallbacks);
 			resolveClipUrl(clip, onClipUrlResolved);
 //			netStream.play(getClipUrl(clip));
 		}
@@ -621,7 +634,7 @@ package org.flowplayer.controller {
 
 		private function createNetStream():void {
 			_netStream = new NetStream(_connection);
-			netStream.client = new NetStreamClient(clip, _player.config);
+			netStream.client = new NetStreamClient(clip, _player.config, _streamCallbacks);
 			_netStream.bufferTime = clip.bufferLength;
 			_volumeController.netStream = _netStream;
 			_netStream.addEventListener(NetStatusEvent.NET_STATUS, _onNetStatus);
