@@ -2,12 +2,15 @@ package org.flowplayer.model {
 	import flash.events.Event;
 	import flash.external.ExternalInterface;
 	
-	import org.flowplayer.flow_internal;
+import flash.utils.getQualifiedClassName;
+import org.flowplayer.flow_internal;
 	import org.flowplayer.util.ObjectConverter;		
 	
 		
 	
-				
+		
+	
+	
 	
 	
 		
@@ -24,8 +27,10 @@ package org.flowplayer.model {
 		private var _info3:Object;
 		private var _eventType:EventType;
 		private var _target:Object;
-		private var _propagationStopped:Boolean;		private var _isDefaultPrevented:Boolean;
-		public function AbstractEvent(eventType:EventType, info:Object = null, info2:Object = null, info3:Object = null) {
+		private var _propagationStopped:Boolean;
+		private var _isDefaultPrevented:Boolean;
+
+		public function AbstractEvent(eventType:EventType, info:Object = null, info2:Object = null, info3:Object = null) {
 			super(eventType.name);
 			this._eventType = eventType;
 			this._info = info;
@@ -126,8 +131,11 @@ package org.flowplayer.model {
 		
 		override public function preventDefault():void {
 			_isDefaultPrevented = true;
-		}				public function get info2():Object {
-			return _info2;		}
+		}
+		
+		public function get info2():Object {
+			return _info2;
+		}
 		
 		public function get info3():Object {
 			return _info3;

@@ -80,6 +80,10 @@ package org.flowplayer.model {
 			_allValues[name] = this;
 		}
 
+        public static function forName(name:String):ClipEventType {
+            return _allValues[name];
+        }
+
 		public function toString():String {
 			return "[ClipEventType] '" + name + "'";
 		}

@@ -25,8 +25,10 @@ import org.flowplayer.controller.StreamProvider;
 	import org.flowplayer.model.ClipError;
 	import org.flowplayer.model.ClipEvent;
 	import org.flowplayer.model.ClipEventType;
-	import org.flowplayer.model.Playlist;
-	import org.flowplayer.model.PluginModel;
+import org.flowplayer.model.EventType;
+import org.flowplayer.model.Playlist;
+import org.flowplayer.model.PluginEventType;
+import org.flowplayer.model.PluginModel;
 	import org.flowplayer.model.ProviderModel;
 	import org.flowplayer.util.Assert;
 	import org.flowplayer.util.Log;
@@ -88,7 +90,7 @@ import org.flowplayer.controller.StreamProvider;
 			_player = player;
 			createConnectionProvider();
 			createClipUrlResolver();
-			onLoad(player); 
+			onLoad(player);
 		}
 
 		/* ---- implementation of StreamProvider: ---- */
@@ -306,7 +308,7 @@ import org.flowplayer.controller.StreamProvider;
 		 */
 		protected function doLoad(event:ClipEvent, netStream:NetStream, clip:Clip):void {
 			netStream.client = new NetStreamClient(clip, _player.config, _streamCallbacks);
-			resolveClipUrl(clip, onClipUrlResolved);
+			resolveClipUrl(clip, netStreamPlay);
 //			netStream.play(getClipUrl(clip));
 		}
 		
@@ -512,6 +514,15 @@ import org.flowplayer.controller.StreamProvider;
 			return new DefaultClipURLResolver();
 		}
 
+        /**
+         * Calls netStream.play(url)
+         * @param url
+         * @return
+         */
+        protected function netStreamPlay(url:String):void {
+            _netStream.play(url);
+        }
+
 		/* ---- Private methods ----- */
 		/* -------------------------- */
 		
@@ -641,7 +652,7 @@ import org.flowplayer.controller.StreamProvider;
 		}
 
 		protected function onMetaData(event:ClipEvent):void {
-			log.info("in NetStreamControllingStremProvider.onStart");
+			log.info("in NetStreamControllingStremProvider.onMetaData");
 			clip.dispatch(ClipEventType.START, _pauseAfterStart);
 			// some files require that we seek to the first frame only after receiving metadata
 			// otherwise we will never receive the metadata
@@ -672,10 +683,6 @@ import org.flowplayer.controller.StreamProvider;
 				doPause(_netStream, null);
 //				_netStream.seek(0);
 			}
-		}
-		
-		private function onClipUrlResolved(url:String):void {
-			_netStream.play(url);
 		}
 	}
 }

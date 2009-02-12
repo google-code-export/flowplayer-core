@@ -1,9 +1,11 @@
 package org.flowplayer.util {
 	import flash.utils.describeType;
+import flash.utils.getQualifiedClassName;
 	
 	public class ObjectConverter {
 		private var _input:Object;
-		public function ObjectConverter(value:*) {
+
+		public function ObjectConverter(value:*) {
 			_input = value;
 		}
 		
@@ -35,6 +37,7 @@ package org.flowplayer.util {
 		}
 		
 		private function convertObject(o:Object):Object {
+            if (getQualifiedClassName(o) == "Object") return o;
 			var obj:Object = new Object();
 			var classInfo:XML = describeType(o);
 			

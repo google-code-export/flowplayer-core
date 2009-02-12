@@ -19,13 +19,16 @@
 
 
 package org.flowplayer.view {
-	import org.flowplayer.config.Config;
+import flash.external.ExternalInterface;
+import org.flowplayer.config.Config;
 	import org.flowplayer.controller.PlayListController;
 	import org.flowplayer.controller.ResourceLoader;
 	import org.flowplayer.controller.ResourceLoaderImpl;
 	import org.flowplayer.flow_internal;
 	import org.flowplayer.model.Clip;
-	import org.flowplayer.model.DisplayPluginModel;
+import org.flowplayer.model.ClipEvent;
+import org.flowplayer.model.ClipEventType;
+import org.flowplayer.model.DisplayPluginModel;
 	import org.flowplayer.model.DisplayProperties;
 	import org.flowplayer.model.EventDispatcher;
 	import org.flowplayer.model.Loadable;
@@ -109,6 +112,8 @@ package org.flowplayer.view {
 			_pluginLoader = pluginLoader;
 			_playerSWFBaseURL = playerSWFBaseURL;
 			_instance = this;
+
+            addStreamAndConnectionCallbacks();
 		}
 		
 		/**
@@ -447,32 +452,6 @@ package org.flowplayer.view {
 			return TextUtil.createTextField(false, null, fontSize, bold);
 		}
 
-        /**
-         * Adds a callback function to the NetConnection. This function will fire a ClipEvent of type ConnectionEvent whenever
-         * the callback has been invoked on the connection. The invokations typically come from a server-side app running
-         * on RTMP server.
-         * @param name
-         * @param listener
-         * @return
-         * @see ClipEventType.CONNECTION_EVENT
-         */
-        public function addConnectionCallback(name:String, listener:Function):void {
-            _playListController.addConnectionCallback(name, listener);
-        }
-
-        /**
-         * Adds a callback function to the NetStream object. This function will fire a ClipEvent of type StreamEvent whenever
-         * the callback has been invoked on the stream. The invokations typically come from a server-side app running
-         * on RTMP server.
-         * @param name
-         * @param listener
-         * @return
-         * @see ClipEventType.NETSTREAM_EVENT
-         */
-        public function addStreamCallback(name:String, listener:Function):void {
-            _playListController.addStreamCallback(name, listener);
-        }
-
 		protected function loadPluginLoadable(loadable:Loadable, callback:Function = null):void {
 			var loaderCallback:Function = function():void {
 				log.debug("plugin loaded");
@@ -578,13 +557,39 @@ package org.flowplayer.view {
 			return DisplayProperties(_pluginRegistry.getPlugin("play")) as DisplayProperties;
 		}
 		
-//
-//		private function onFullScreen(event:FullScreenEvent):void {
-//			_eventHub.handlePlayerEvent(event.fullScreen ? PlayerEvent.fullscreen() : PlayerEvent.fullscreenExit());
-//		}
-//		
-//		private function onPluginEvent(event:PluginEvent):void {
-//			ExternalEvent.firePluginEvent(id, event.pluginName, event.methodName, null, event.eventObject);
-//		}
+        private function addStreamAndConnectionCallbacks():void {
+            createCallbacks(_config.connectionCallbacks, addConnectionCallback, ClipEventType.CONNECTION_EVENT);
+            createCallbacks(_config.streamCallbacks, addStreamCallback, ClipEventType.NETSTREAM_EVENT);
+        }
+
+        private function addConnectionCallback(name:String, listener:Function):void {
+            _playListController.addConnectionCallback(name, listener);
+        }
+
+        private function addStreamCallback(name:String, listener:Function):void {
+            _playListController.addStreamCallback(name, listener);
+        }
+
+        private function createCallbacks(callbacks:Array, registerFunc:Function, type:ClipEventType):void {
+            if (! callbacks) return;
+            log.debug("registering "+callbacks.length+" callbakcs");
+            for (var i:int = 0; i < callbacks.length; i++) {
+                var name:String = callbacks[i];
+                registerFunc(name, createCallbackListener(type, name));
+            }
+        }
+
+        private function createCallbackListener(type:ClipEventType, name:String):Function {
+            return function(infoObj:Object):void {
+                log.debug("received callback " + name + " forwarding it");
+//                for (var name:String in infoObj) {
+//                    log.debug(name + ": " + infoObj[name]);
+//                }
+//                for (var param:String in infoObj.parameters) {
+//                    log.debug(param + ": " + infoObj.parameters[param]);
+//                }
+                playlist.current.dispatch(ClipEventType.forName(name), infoObj);
+            };
+        }
 	}
 }

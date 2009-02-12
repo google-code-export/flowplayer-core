@@ -186,5 +186,13 @@ package org.flowplayer.config {
 			}
 			return model;
 		}
+
+        public function get streamCallbacks():Array {
+            return config["streamCallbacks"];
+        }
+
+        public function get connectionCallbacks():Array {
+            return config["connectionCallbacks"];
+        }
 	}
 }

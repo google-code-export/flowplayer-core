@@ -459,7 +459,8 @@ package org.flowplayer.model {
 		}
 		
 		public function set accelerated(accelerated:Boolean):void {
-			_accelerated = accelerated;		}
+			_accelerated = accelerated;
+		}
 		
 		[Value]
 		public function get accelerated():Boolean {
@@ -499,9 +500,15 @@ package org.flowplayer.model {
 			if (_customProperties && _customProperties["cuepoints"]) {
 				delete _customProperties["cuepoints"];
 			}
-		}				public function get smoothing():Boolean {
-			return _smoothing;		}				public function set smoothing(smoothing:Boolean):void {
-			_smoothing = smoothing;		}
+		}
+		
+		public function get smoothing():Boolean {
+			return _smoothing;
+		}
+		
+		public function set smoothing(smoothing:Boolean):void {
+			_smoothing = smoothing;
+		}
 		
 		public function getCustomProperty(property:String):Object {
 			if (!_customProperties) return null;
@@ -558,8 +565,11 @@ package org.flowplayer.model {
 		
 		public function set linkWindow(linkWindow:String):void {
 			_linkWindow = linkWindow;
-		}				protected function get cuepointsInNegative():Array {
-			return _cuepointsInNegative;		}
+		}
+		
+		protected function get cuepointsInNegative():Array {
+			return _cuepointsInNegative;
+		}
 		
 		/**
 		 * Use the previous clip in the playlist as an image for this audio clip?
@@ -588,8 +598,11 @@ package org.flowplayer.model {
 		
 		public function set cuepointMultiplier(cuepointMultiplier:Number):void {
 			_cuepointMultiplier = cuepointMultiplier;
-		}				public function dispatchNetStreamEvent(name:String, infoObject:Object):void {
+		}
+		
+		public function dispatchNetStreamEvent(name:String, infoObject:Object):void {
 			dispatch(ClipEventType.NETSTREAM_EVENT, name, infoObject);
 		}
-	}
+
+    }
 }
