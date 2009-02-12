@@ -3,12 +3,12 @@ Version history:
 3.1.0
 -----
 New features:
+- Added new configuration options 'connectionCallbacks' and 'streamCallbacks'. Both accept an Array of event names as a value.
+  When these events get fired on the connection or stream object, corresponding Clip events will be fired by the player.
+  This can be used for example when firing custom events from RTMP server apps
+- Added new clip event types: 'onConnectionEvent' and 'onStreamEvent' these get fired when the predefined events happen on the connection and stream objects.
 
 Bug fixes:
-- clip urls were not resolved correctly if the HTML page URL had a query string starting with a question mark (http://flowplayer.org/forum/8/14016#post-14016)
-- Fixed context menu for with IE (commercial version)
-- a cuepoint at time zero was fired several times
-- screen is now arranged correctly even when only bottom or top is defined for it in the configuration
 
 3.0.4
 -----
@@ -24,6 +24,10 @@ Bug fixes:
 - Added copyright notices and other GPL required entries to the user interface
 
 Fixes:
+- clip urls were not resolved correctly if the HTML page URL had a query string starting with a question mark (http://flowplayer.org/forum/8/14016#post-14016)
+- Fixed context menu for with IE (commercial version)
+- a cuepoint at time zero was fired several times
+- screen is now arranged correctly even when only bottom or top is defined for it in the configuration
 - Fixed context menu for with IE (commercial version)
 - a cuepoint at time zero was fired several times
 - screen is now arranged correctly even when only bottom or top is defined for it in the configuration
