@@ -20,7 +20,8 @@
 package org.flowplayer.model {
 	import flash.utils.Dictionary;
 	
-	import org.flowplayer.flow_internal;		
+import mx.messaging.messages.AcknowledgeMessage;
+import org.flowplayer.flow_internal;
 
 	public class ClipEventType extends EventType {
 		
@@ -72,8 +73,8 @@ package org.flowplayer.model {
 		/**
 		 * Creates a new type.
 		 */
-		public function ClipEventType(name:String) {
-			super(name);
+		public function ClipEventType(name:String, custom:Boolean = false) {
+			super(name, custom);
 			if (! _allValues) {
 				_allValues = new Dictionary();
 			}
@@ -91,5 +92,6 @@ package org.flowplayer.model {
 		public function get playlistIsEventTarget():Boolean {
 			return this == PLAYLIST_REPLACE;
 		}
-	}
+
+    }
 }

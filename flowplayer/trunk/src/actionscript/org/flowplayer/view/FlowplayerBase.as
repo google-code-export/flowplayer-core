@@ -28,9 +28,11 @@ import org.flowplayer.config.Config;
 	import org.flowplayer.model.Clip;
 import org.flowplayer.model.ClipEvent;
 import org.flowplayer.model.ClipEventType;
+import org.flowplayer.model.Cuepoint;
 import org.flowplayer.model.DisplayPluginModel;
 	import org.flowplayer.model.DisplayProperties;
-	import org.flowplayer.model.EventDispatcher;
+import org.flowplayer.model.DynamicCuepoint;
+import org.flowplayer.model.EventDispatcher;
 	import org.flowplayer.model.Loadable;
 	import org.flowplayer.model.PlayButtonOverlay;
 	import org.flowplayer.model.PlayerError;
@@ -581,10 +583,23 @@ import org.flowplayer.model.DisplayPluginModel;
 
         private function createCallbackListener(type:ClipEventType, name:String):Function {
             return function(infoObj:Object):void {
-                log.debug("received callback " + name + " forwarding it");
-//                for (var name:String in infoObj) {
-//                    log.debug(name + ": " + infoObj[name]);
-//                }
+                log.debug("received callback " + type.name + " forwarding it " + (typeof infoObj));
+                if (name == "onCuePoint") {
+                    var cuepoint:Cuepoint = Cuepoint.createDynamic(infoObj["time"], "embedded");
+                    for (var prop:String in infoObj) {
+                        log.debug(prop + ": " + infoObj[prop]);
+                        if (prop == "parameters") {
+                            for (var param:String in infoObj.parameters) {
+                                log.debug(param + ": " + infoObj.parameters[param]);
+                                cuepoint.addParameter(param, infoObj.parameters[param]);
+                            }
+                        } else {
+                            cuepoint[prop] = infoObj[prop];
+                        }
+                    }
+                    playlist.current.dispatch(ClipEventType.forName(name), cuepoint);
+                    return;
+                }
 //                for (var param:String in infoObj.parameters) {
 //                    log.debug(param + ": " + infoObj.parameters[param]);
 //                }

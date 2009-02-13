@@ -715,7 +715,7 @@ import org.flowplayer.model.DisplayPluginModel;
             if (! callbacks) return;
             for (var i:int = 0; i < callbacks.length; i++) {
                 log.debug("creating custom event type " + callbacks[i]);
-                new ClipEventType(callbacks[i]);
+                new ClipEventType(callbacks[i], true);
             }
         }
 	}
