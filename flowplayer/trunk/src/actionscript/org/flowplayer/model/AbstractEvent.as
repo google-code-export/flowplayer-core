@@ -95,6 +95,7 @@ import org.flowplayer.flow_internal;
 		}
 		
 		private function convert(objToConvert:Object):Object {
+            if (_eventType.custom) return objToConvert;
 			return new ObjectConverter(objToConvert).convert();
 		}
 

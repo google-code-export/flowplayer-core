@@ -37,7 +37,6 @@ import flash.utils.getQualifiedClassName;
 		}
 		
 		private function convertObject(o:Object):Object {
-            if (getQualifiedClassName(o) == "Object") return o;
 			var obj:Object = new Object();
 			var classInfo:XML = describeType(o);
 			
