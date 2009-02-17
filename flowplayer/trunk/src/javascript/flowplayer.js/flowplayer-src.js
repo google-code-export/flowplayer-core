@@ -1,5 +1,5 @@
 /** 
- * flowplayer.js [3.0.5]. The Flowplayer API
+ * flowplayer.js [3.0.6]. The Flowplayer API
  * 
  * Copyright 2009 Flowplayer Oy
  * 
@@ -405,9 +405,12 @@
 				return name;	
 			},
 			
+			getPlayer: function() {
+				return player;	
+			},
 			
 			// internal method not meant to be used by clients
-         _fireEvent: function(evt, arg) {
+         _fireEvent: function(evt, arg, arg2) {
 				
             // update plugins properties & methods
             if (evt == 'onUpdate') {
@@ -435,8 +438,7 @@
             var fn = listeners[evt];
 
 				if (fn) {
-					
-					fn.call(self, arg);
+					fn.apply(self, arg);
 					
 					// "one-shot" callback
 					if (evt.substring(0, 1) == "_") {
@@ -647,7 +649,7 @@ function Player(wrapper, params, conf) {
 		},
 		
 		getVersion: function() {
-			var js = "flowplayer.js 3.0.5";
+			var js = "flowplayer.js 3.0.6";
 			if (api) {
 				var ver = api.fp_getVersion();
 				ver.push(js);
@@ -720,10 +722,15 @@ function Player(wrapper, params, conf) {
 
 // {{{ public method: _fireEvent
 		
-	self._fireEvent = function(evt, arg0, arg1, arg2) {		
-				
+	self._fireEvent = function(a) {		
+		
+		var evt = a[0];
+		var arg0 = a[1];
+		var arg1 = a[2];
+		var arg2 = a[3]; 
+		
 		if (conf.debug) {
-			log(arguments);		
+			log(a);		
 		}				
 		
 		// internal onLoad
@@ -768,8 +775,8 @@ function Player(wrapper, params, conf) {
 			var p = plugins[name];
 
 			if (p) {
-				p._fireEvent("onUpdate", arg0);		
-				p._fireEvent(arg1);		
+				p._fireEvent("onUpdate", arg0);
+				p._fireEvent(arg1, a.slice(3));		
 			}
 			return;
 		}		
@@ -882,17 +889,18 @@ function Player(wrapper, params, conf) {
 
 			var clip = this;
 			
+			// sometimes clip is given as array. this is not accepted.
 			if (typeof clip == 'object' && clip.length) {
 				clip = "" + clip;	
 			}
-			
+
 			if (typeof clip == 'string') {				
 				clip = {url: clip};				
 			} 
 			
 			// populate common clip properties to each clip
 			each(conf.clip, function(key, val) {
-				if (conf.clip[key] !== undefined && typeof val != 'function') {
+				if (conf.clip[key] !== undefined && clip[key] === undefined && typeof val != 'function') {
 					clip[key] = val;	
 				}
 			});	
@@ -1098,9 +1106,10 @@ window.flowplayer = window.$f = function() {
 extend(window.$f, {
 
 	// called by Flash External Interface 		
-	fireEvent: function(id, evt, a0, a1, a2) {
-		var p = $f(id);		
-		return p ? p._fireEvent(evt, a0, a1, a2) : null;
+	fireEvent: function() {
+		var a = [].slice.call(arguments);
+		var p = $f(a[0]);		
+		return p ? p._fireEvent(a.slice(1)) : null;
 	},
 	
 	
