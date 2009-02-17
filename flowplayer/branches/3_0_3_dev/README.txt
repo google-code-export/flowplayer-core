@@ -1,5 +1,9 @@
 Version history:
 
+3.0.5
+-----
+- fix for entering fullscreen for Flash versions that don't support the hardware scaled fullscreen-mode
+
 3.0.4
 -----
 - The "play" pseudo-plugin now supports fadeIn(), fadeOut(), showPlugin(), hidePlugin() and
