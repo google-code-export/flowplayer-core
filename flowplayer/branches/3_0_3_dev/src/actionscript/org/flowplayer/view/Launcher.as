@@ -68,26 +68,31 @@ package org.flowplayer.view {
 	import flash.text.TextFieldAutoSize;
 	import flash.ui.Keyboard;
 	import flash.utils.Dictionary;
-	import flash.utils.Timer;		
+	import flash.utils.Timer;	
+	
 	use namespace flow_internal;
 
 	public class Launcher extends StyleableSprite implements ErrorHandler {
-		private var _panel:Panel;
+
+		private var _panel:Panel;
 		private var _screen:Screen;
 		private var _config:Config;
 		private var _flowplayer:Flowplayer;
 		private var _pluginRegistry:PluginRegistry;
 		private var _animationEngine:AnimationEngine;
 		private var _playButtonOverlay:PlayButtonOverlay;
-		private var _controlsModel:DisplayPluginModel;		private var _providers:Dictionary = new Dictionary();
+		private var _controlsModel:DisplayPluginModel;
+		private var _providers:Dictionary = new Dictionary();
 		private var _fullscreenManager:FullscreenManager;
 		private var _canvasLogo:Sprite;
 		private var _pluginLoader:PluginLoader;
 		private var _error:TextField;
 		private var _pluginsInitialized:Number = 0;
 		private var _numLoadablePlugins:int = -1;
-		private var _enteringFullscreen:Boolean;		private var _copyrightNotice:TextField;
-		[Frame(factoryClass="org.flowplayer.view.Preloader")]
+		private var _enteringFullscreen:Boolean;
+		private var _copyrightNotice:TextField;
+
+		[Frame(factoryClass="org.flowplayer.view.Preloader")]
 		public function Launcher() {
 			super("#canvas", this);
 			addEventListener(Event.ADDED_TO_STAGE, initPhase1);
@@ -325,7 +330,9 @@ package org.flowplayer.view {
 			addChild(_error);
 			
 			createErrorMessageHideTimer();
-		}				private function createErrorMessageHideTimer():void {
+		}
+		
+		private function createErrorMessageHideTimer():void {
 			var errorHideTimer:Timer = new Timer(4000, 1);
 			errorHideTimer.addEventListener(TimerEvent.TIMER_COMPLETE, hideErrorMessage);
 			errorHideTimer.start();
@@ -571,11 +578,13 @@ package org.flowplayer.view {
 		
 		private function onMouseOut(event:MouseEvent):void {
 			_flowplayer.dispatchEvent(PlayerEvent.mouseOut());
-		}
+		}
+
 		private function onMouseOver(event:MouseEvent):void {
 			_flowplayer.dispatchEvent(PlayerEvent.mouseOver());
 		}
-		private function createPanel():void {
+
+		private function createPanel():void {
 			_panel = new Panel();
 			addChild(_panel);
 		}

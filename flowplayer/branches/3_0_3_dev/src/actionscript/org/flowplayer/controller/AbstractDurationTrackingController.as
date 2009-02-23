@@ -29,7 +29,8 @@ package org.flowplayer.controller {
 	import org.flowplayer.model.Status;
 	import org.flowplayer.util.Log;
 	
-	import flash.events.TimerEvent;		
+	import flash.events.TimerEvent;	
+	
 	use namespace flow_internal;
 	/**
 	 * @author anssi
@@ -121,9 +122,15 @@ package org.flowplayer.controller {
 
 		private function load(event:ClipEvent, clip:Clip, pauseAfterStart:Boolean = false):void {
 			clip.onPause(onPause);
-			createDurationTracker(clip);
+            clip.onBufferFull(onFufferFull);
+            log.debug("calling doLoad");
 			doLoad(event, clip, pauseAfterStart);
 		}
+
+        private function onFufferFull(event:ClipEvent):void {
+            log.debug("buffer is full, creating and starting duration tracker");
+            createDurationTracker(clip);
+        }
 
 		private function onPause(event:ClipEvent):void {
 			durationTracker.stop();
