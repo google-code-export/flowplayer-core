@@ -136,6 +136,7 @@ package org.flowplayer.view {
 		}
 		
 		internal function removePlugin(plugin:PluginModel):void {
+            if (! plugin) return;
 			delete _plugins[plugin.name];
 			delete _originalProps[plugin.name];
 			delete _providers[plugin.name];

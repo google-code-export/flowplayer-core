@@ -143,6 +143,7 @@ package org.flowplayer.view {
 		}
 
 		private function initPhase2(pluginsLoadedEvent:Event = null):void {
+            log.info("initPhase2, all plugins loaded");
 			_pluginLoader.removeEventListener(Event.COMPLETE, this.initPhase2);
 			
 			log.debug("creating PlayListController");
@@ -177,7 +178,8 @@ package org.flowplayer.view {
 		}
 
 		private function initPhase3(event:Event = null):void {
-			
+            log.info("initPhase3, all plugins initialized");
+
 			log.debug("Adding visible plugins to panel");
 			addPluginsToPanel(_pluginRegistry);
 			
@@ -260,14 +262,15 @@ package org.flowplayer.view {
 				log.info("all plugins initialized");
 				initPhase3();
 			}
-			log.info(_pluginsInitialized + " out of " + numPlugins + " plugins initialized");
+			log.info(_pluginsInitialized + " out of " + numPlugins + " plugins initialized (or have failed to load completely)");
 		}
 		
 		private function getLoadablePluginCount():int {
-			if (_numLoadablePlugins == -1) {
-				_numLoadablePlugins = countLoadablePlugins();
-			}
-			return _numLoadablePlugins;
+            return countLoadablePlugins();
+//			if (_numLoadablePlugins == -1) {
+//				_numLoadablePlugins = countLoadablePlugins();
+//			}
+//			return _numLoadablePlugins;
 		}
 		
 		private function countLoadablePlugins():int {
@@ -279,7 +282,13 @@ package org.flowplayer.view {
 				var isNonAdHocPlugin:Boolean = (plugin is DisplayPluginModel && DisplayPluginModel(plugin).getDisplayObject() is Plugin) ||
 					plugin is ProviderModel && ProviderModel(plugin).getProviderObject() is Plugin;
 
-				if (isNonAdHocPlugin) {
+                if (Loadable(loadables[i]).loadFailed) {
+                    log.debug("load failed for " + loadables[i]);
+                    count++;
+                } else if (! plugin) {
+                    log.debug("this plugin is not loaded yet");
+                    count++;
+                } else if (isNonAdHocPlugin) {
 					log.debug("will wait for onLoad from plugin " + plugin);
 					count++;
 				} else {
