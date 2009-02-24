@@ -797,7 +797,6 @@ function Player(wrapper, params, conf) {
 			
 			activeIndex = arg0;
 			var clip = playlist[arg0];			
-			
 			if (clip) {
 				ret = clip._fireEvent(evt, arg1, arg2);	
 			} 
