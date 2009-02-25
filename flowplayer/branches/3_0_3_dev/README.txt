@@ -2,6 +2,7 @@ Version history:
 
 3.0.6
 -----
+- added possibility to associate a linkUrl and linkWindow to the canvas
 Fixes:
 - fix for entering fullscreen for Flash versions that don't support the hardware scaled fullscreen-mode
 - when showing images the duration tracking starts only after the image has been completely loaded: http://flowplayer.org/forum/2/15301

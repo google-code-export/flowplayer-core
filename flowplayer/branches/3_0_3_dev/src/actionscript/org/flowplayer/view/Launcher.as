@@ -17,7 +17,8 @@
  *    along with Flowplayer.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.flowplayer.view {
-	import org.flowplayer.model.Loadable;	
+    import org.flowplayer.model.Canvas;
+import org.flowplayer.model.Loadable;
 	import org.flowplayer.model.ProviderModel;	
 	import org.flowplayer.config.Config;
 	import org.flowplayer.config.ConfigLoader;
@@ -110,7 +111,7 @@ package org.flowplayer.view {
 
 			loader = createNewLoader(); 
 
-			rootStyle = _config.canvasStyle;
+			rootStyle = _config.canvas.style;
 			stage.addEventListener(Event.RESIZE, onStageResize);
 			setSize(stage.stageWidth, stage.stageHeight);
 
@@ -575,6 +576,7 @@ package org.flowplayer.view {
 		}
 		
 		private function addListeners():void {
+            this.addEventListener(MouseEvent.CLICK, onViewClicked);
 			_screen.addEventListener(MouseEvent.CLICK, onViewClicked);
 			addEventListener(MouseEvent.ROLL_OVER, onMouseOver);
 			addEventListener(MouseEvent.ROLL_OUT, onMouseOut);
@@ -644,21 +646,29 @@ package org.flowplayer.view {
 		private function onViewClicked(event:MouseEvent):void {
 			if (_enteringFullscreen) return;
 			log.debug("onViewClicked, target " + event.target + ", current target " + event.currentTarget);
-			if (_playButtonOverlay && isParent(DisplayObject(event.target), _playButtonOverlay.getDisplayObject())) {
+
+            if (event.target == this) {
+                var canvas:Canvas = _config.canvas;
+                if (canvas.linkUrl) {
+                    navigateToURL(new URLRequest(canvas.linkUrl), canvas.linkWindow);
+                }
+
+            } else if (_playButtonOverlay && isParent(DisplayObject(event.target), _playButtonOverlay.getDisplayObject())) {
 				_flowplayer.toggle();
-				return;
-			}
-			
-			var clip:Clip = _flowplayer.playlist.current; 
-			if (clip.linkUrl) {
-				_flowplayer.pause();
-				navigateToURL(new URLRequest(clip.linkUrl), clip.linkWindow);
-				return;
-			}
-			
-			if (isParent(DisplayObject(event.target), _screen)) {
+
+			} else if (isParent(DisplayObject(event.target), _screen)) {
+                log.debug("screen clicked");
+                var clip:Clip = _flowplayer.playlist.current; 
+                if (clip.linkUrl) {
+                    log.debug("opening linked page");
+                    _flowplayer.pause();
+                    navigateToURL(new URLRequest(clip.linkUrl), clip.linkWindow);
+                    return;
+                }
+
 				_flowplayer.toggle();
 			}
+            event.stopPropagation();
 		}
 		
 		private function isParent(child:DisplayObject, parent:DisplayObject):Boolean {
