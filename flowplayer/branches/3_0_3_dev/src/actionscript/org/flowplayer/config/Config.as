@@ -21,7 +21,8 @@ package org.flowplayer.config {
 	import org.flowplayer.config.PluginBuilder;
 	import org.flowplayer.controller.NetStreamControllingStreamProvider;
 	import org.flowplayer.flow_internal;
-	import org.flowplayer.model.Clip;
+    import org.flowplayer.model.Canvas;
+import org.flowplayer.model.Clip;
 	import org.flowplayer.model.DisplayProperties;
 	import org.flowplayer.model.Loadable;
 	import org.flowplayer.model.Logo;
@@ -51,6 +52,7 @@ package org.flowplayer.config {
 		private var _controlsVersion:String;
 		private var _audioVersion:String;
 		private var _loadables:Array;
+        private var _canvas:Canvas;
 
 		public function Config(config:Object, playerSwfName:String, controlsVersion:String, audioVersion:String) {
 			Assert.notNull(config, "No configuration provided.");
@@ -138,18 +140,25 @@ package org.flowplayer.config {
 			return config.key;
 		}
 		
-		public function get canvasStyle():Object {
-			var style:Object = getObject("canvas");
-			if (! style) {
-				style = new Object();
-			}
-			setProperty("backgroundGradient", style, [ 0.3, 0 ]);
-			setProperty("border", style, "0px");
-			setProperty("backgroundColor", style, "transparent");
-			setProperty("borderRadius", style, "0");
-			return style;
+		public function get canvas():Canvas {
+            if (! _canvas) {
+			    var style:Object = getObject("canvas");
+                if (! style) {
+                    style = new Object();
+                }
+                setProperty("backgroundGradient", style, [ 0.3, 0 ]);
+                setProperty("border", style, "0px");
+                setProperty("backgroundColor", style, "transparent");
+                setProperty("borderRadius", style, "0");
+
+                var result:Canvas = new Canvas();
+                result.style = style;
+
+                _canvas = new PropertyBinder(result).copyProperties(style) as Canvas;
+            }
+            return _canvas;
 		}
-		
+
 		private function setProperty(prop:String, style:Object, value:Object):void {
 			if (! style[prop]) {
 				style[prop] = value;
@@ -159,7 +168,8 @@ package org.flowplayer.config {
 		public function get contextMenu():Array {
 			return getObject("contextMenu") as Array;
 		}
-				public function getPlugin(disp:DisplayObject, name:String, config:Object):PluginModel {
+		
+		public function getPlugin(disp:DisplayObject, name:String, config:Object):PluginModel {
 			return viewObjectBuilder.getPlugin(disp, name, config);
 		}
 		
@@ -171,7 +181,9 @@ package org.flowplayer.config {
 		private function get useBufferingAnimation():Boolean {
 			if (! config.hasOwnProperty("buffering")) return true;
 			return config["buffering"];
-		}				public function getHttpProvider():ProviderModel {
+		}
+		
+		public function getHttpProvider():ProviderModel {
 			var provider:NetStreamControllingStreamProvider =  new NetStreamControllingStreamProvider();
 			
 			var model:ProviderModel = new ProviderModel(provider, "http");
@@ -181,6 +193,7 @@ package org.flowplayer.config {
 			if (conf) {
 				new PropertyBinder(model).copyProperties(conf.config);
 			}
-			return model;		}
+			return model;
+		}
 	}
 }
