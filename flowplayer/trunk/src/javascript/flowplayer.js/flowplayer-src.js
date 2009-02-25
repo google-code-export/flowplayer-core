@@ -533,27 +533,32 @@ function Player(wrapper, params, conf) {
 			
 			return self;	
 		},
-
-		unload: function() {  
+		
+		unload: function() {
 			
-			// if player is dead, do nothing
-			try {
-				if (api && api.fp_isFullscreen()) { }
+			try{
+				if (!api || api.fp_isFullscreen()) { return self; }
+				
 			} catch (error) {
-				return;
+				return self;
 			}
-			
-			
-         if (api && html.replace(/\s/g, '') !== '' && !api.fp_isFullscreen() &&  self._fireEvent("onBeforeUnload") !== false) { 
-				api.fp_close();
-				wrapper.innerHTML = html; 
-				self._fireEvent("onUnload");
-				api = null;
+		
+			if (self._fireEvent("onBeforeUnload") === false) {
+				return false;
 			}
-			
-			return self;
-		},
 
+			api.fp_close();
+			api = null;
+			
+			if (html.replace(/\s/g,'') !== '') {
+				wrapper.innerHTML = html;
+			}
+			
+			self._fireEvent("onUnload");
+			return self;
+		
+		},
+		
 		getClip: function(index) {
 			if (index === undefined) {
 				index = activeIndex;	
@@ -724,14 +729,15 @@ function Player(wrapper, params, conf) {
 		
 	self._fireEvent = function(a) {		
 		
+		if (typeof a == 'string') { a = [a]; }
+		
 		var evt = a[0];
 		var arg0 = a[1];
 		var arg1 = a[2];
 		var arg2 = a[3]; 
 		
-		if (conf.debug) {
-			log(a);		
-		}				
+		
+		if (conf.debug) { log(a); }				
 		
 		// internal onLoad
 		if (!api && evt == 'onLoad' && arg0 == 'player') {
