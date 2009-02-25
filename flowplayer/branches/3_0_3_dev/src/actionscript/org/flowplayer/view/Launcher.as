@@ -307,7 +307,7 @@ package org.flowplayer.view {
 
 		private function validateLicenseKey():Boolean {
 			try {
-				return LicenseKey.validate(useExternalInterfade() ? null: root.loaderInfo.url, _flowplayer.version, _config.licenseKey);
+				return LicenseKey.validate(root.loaderInfo.url, _flowplayer.version, _config.licenseKey, useExternalInterfade());
 			} catch (e:Error) {
 				log.warn("License key not accepted, will show flowplayer logo");
 			}
