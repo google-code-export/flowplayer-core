@@ -576,7 +576,6 @@ import org.flowplayer.model.Loadable;
 		}
 		
 		private function addListeners():void {
-            this.addEventListener(MouseEvent.CLICK, onViewClicked);
 			_screen.addEventListener(MouseEvent.CLICK, onViewClicked);
 			addEventListener(MouseEvent.ROLL_OVER, onMouseOver);
 			addEventListener(MouseEvent.ROLL_OUT, onMouseOut);
@@ -647,13 +646,7 @@ import org.flowplayer.model.Loadable;
 			if (_enteringFullscreen) return;
 			log.debug("onViewClicked, target " + event.target + ", current target " + event.currentTarget);
 
-            if (event.target == this) {
-                var canvas:Canvas = _config.canvas;
-                if (canvas.linkUrl) {
-                    navigateToURL(new URLRequest(canvas.linkUrl), canvas.linkWindow);
-                }
-
-            } else if (_playButtonOverlay && isParent(DisplayObject(event.target), _playButtonOverlay.getDisplayObject())) {
+            if (_playButtonOverlay && isParent(DisplayObject(event.target), _playButtonOverlay.getDisplayObject())) {
 				_flowplayer.toggle();
 
 			} else if (isParent(DisplayObject(event.target), _screen)) {
@@ -665,9 +658,10 @@ import org.flowplayer.model.Loadable;
                     navigateToURL(new URLRequest(clip.linkUrl), clip.linkWindow);
                     return;
                 }
-
 				_flowplayer.toggle();
+
 			}
+
             event.stopPropagation();
 		}
 		
