@@ -109,7 +109,9 @@ package org.flowplayer.controller {
 
 		private final function durationReached(event:TimerEvent):void {
 			log.info("durationReached()");
-			durationTracker.removeEventListener(TimerEvent.TIMER_COMPLETE, durationReached);
+            if (durationTracker) {
+			    durationTracker.removeEventListener(TimerEvent.TIMER_COMPLETE, durationReached);
+            }
 			onDurationReached();
 			if (clip.duration > 0) {
 				log.debug("dispatching FINISH from durationTracking");
@@ -133,20 +135,24 @@ package org.flowplayer.controller {
         }
 
 		private function onPause(event:ClipEvent):void {
+            if (! durationTracker) return; 
 			durationTracker.stop();
 		}
 
 		private function pause(event:ClipEvent):void {
+            if (! durationTracker) return;
 			durationTracker.stop();
 			doPause(event);
 		}
 
 		private function resume(event:ClipEvent):void {
-			if (durationTracker && durationTracker.durationReached) {
-				log.debug("resume(): duration has been reached");
-				return;
-			}
-			durationTracker.start();
+            if (durationTracker) {
+                if (durationTracker.durationReached) {
+                    log.debug("resume(): duration has been reached");
+                    return;
+                }
+                durationTracker.start();
+            }
 			doResume(event);
 		}
 
@@ -161,6 +167,7 @@ package org.flowplayer.controller {
 
 		private function seekTo(event:ClipEvent, seconds:Number):void {
 			doSeekTo(event, seconds);
+            if (! durationTracker) return;
 			durationTracker.time = seconds;
 		}
 		
