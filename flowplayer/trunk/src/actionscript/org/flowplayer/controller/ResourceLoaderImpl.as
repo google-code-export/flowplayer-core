@@ -36,13 +36,15 @@ package org.flowplayer.controller {
 	 * @author api
 	 */
 	public class ResourceLoaderImpl implements ResourceLoader {
-		private var log:Log = new Log(this);
+
+		private var log:Log = new Log(this);
 		private var _loaders:Object = new Object();
 		private var _errorHandler:ErrorHandler;
 		private var _urls:Array = new Array();
 		private var _loadedCount:Number;
 		private var _completeListener:Function;
 		private var _baseUrl:String;
+        private var _loadCompete:Boolean;
 
 		public function ResourceLoaderImpl(baseURL:String, errorHandler:ErrorHandler = null) {
 			_baseUrl = baseURL;
@@ -96,6 +98,7 @@ package org.flowplayer.controller {
 
 		private function startLoading():void {
 			_loadedCount = 0;
+            _loadCompete = false;
 			for (var url:String in _loaders) {
 				log.debug("startLoading() " + URLUtil.addBaseURL(_baseUrl, url));
 				_loaders[url].load(new URLRequest(URLUtil.addBaseURL(_baseUrl, url)));
@@ -122,6 +125,7 @@ package org.flowplayer.controller {
 		private function onLoadComplete(event:Event):void {
 			log.debug("onLoadComplete, loaded " + (_loadedCount + 1) + " resources out of " + _urls.length);
 			if (++_loadedCount == _urls.length) {
+                _loadCompete = true;
 				log.debug("onLoadComplete, all resources were loaded");
 				if (_completeListener != null) {
 					log.debug("calling complete listener function");
@@ -152,9 +156,15 @@ package org.flowplayer.controller {
 		 */		
 		public function set errorHandler(errorHandler:ErrorHandler):void {
 			_errorHandler = errorHandler;
-		}				public function clear():void {
+		}
+		
+		public function clear():void {
 			_urls = new Array();
 			_loaders = new Array();
 		}
-	}
+
+        public function get loadComplete():Boolean {
+            return _loadCompete;
+        }
+    }
 }

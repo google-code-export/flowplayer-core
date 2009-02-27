@@ -39,7 +39,8 @@ package org.flowplayer.config {
 		private var _pluginObjects:Object;
 		private var _skinObjects:Object;
 		private var _config:Config;
-		private var _playerSwfName:String;		private var _controlsVersion:String;
+		private var _playerSwfName:String;
+		private var _controlsVersion:String;
 		private var _audioVersion:String;
 
 		public function PluginBuilder(playerSwfName:String, controlsVersion:String, audioVersion:String, config:Config, pluginObjects:Object, skinObjects:Object) {
@@ -75,7 +76,8 @@ package org.flowplayer.config {
 			return pluginObj == null;
 		}
 		
-		private function createLoadable(name:String, plugins:Array, version:String):void {			if (isObjectDisabled(name, _pluginObjects)) {
+		private function createLoadable(name:String, plugins:Array, version:String):void {
+			if (isObjectDisabled(name, _pluginObjects)) {
 				log.debug(name + " is disabled");
 				return;
 			}
@@ -90,15 +92,20 @@ package org.flowplayer.config {
 			
 			if (! loadable.url) {
 				loadable.url = getLoadableUrl(name, version);
-			}		}		
+			}
+		}
+		
 		private function findLoadable(name:String, plugins:Array):Loadable {
 			for (var i:Number = 0; i < plugins.length; i++) {
 				var plugin:Loadable = plugins[i];
 				if (plugin.name == name) {
 					return plugin;
 				}
-			}			return null;		}
-		private function getLoadableUrl(name:String, version:String):String {
+			}
+			return null;
+		}
+
+		private function getLoadableUrl(name:String, version:String):String {
 			var playerVersion:String = getPlayerVersion();
 			if (playerVersion) {
 				return "flowplayer." + name + "-" + version + ".swf";

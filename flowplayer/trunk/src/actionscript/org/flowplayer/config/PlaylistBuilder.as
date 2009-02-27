@@ -26,7 +26,7 @@ package org.flowplayer.config {
 	import org.flowplayer.util.Log;
 	import org.flowplayer.util.PropertyBinder;
 	import org.flowplayer.util.URLUtil;	
-	
+
 	use namespace flow_internal;
 
 	/**
@@ -34,16 +34,53 @@ package org.flowplayer.config {
 	 */
 	internal class PlaylistBuilder {
 		private var log:Log = new Log(this);
-		private var clipObjects:Array;
+		private var _clipObjects:Array;
 		private var _commonClip:Object;
 		private var _playerId:String;
+        private var _playlistFeed:String;
 
-		
-		public function PlaylistBuilder(playerId:String, clipObjects:Array, commonClip:Object) {
+
+        /**
+         * Creates a new PlayListBuilder
+         * @param playerId
+         * @param playlist
+         * @param commonClip
+         */
+		public function PlaylistBuilder(playerId:String, playlist:Object, commonClip:Object) {
 			_playerId = playerId;
-			this.clipObjects = clipObjects || [];
 			_commonClip = commonClip;
+            if (playlist is Array) {
+                _clipObjects = playlist as Array;
+            }
 		}
+
+        /**
+         * Sets a playlist feed to be used to create the playlist.
+         * @param feed
+         * @return
+         */
+        public function set playlistFeed(feed:String):void {
+            _playlistFeed = feed;            
+        }
+
+
+        public function createPlaylist():Playlist {
+            var commonClip:Clip;
+            if (_commonClip) {
+                commonClip = createClip(_commonClip);
+            }
+            var playList:Playlist = new Playlist(commonClip);
+
+            if (_playlistFeed) {
+                parse(_playlistFeed, playList);
+            } else if (_clipObjects && _clipObjects.length > 0) {
+                playList.setClips(createClips(_clipObjects));
+            } else if (_commonClip) {
+                playList.addClip(createClip(_commonClip));
+            }
+
+            return playList;
+        }
 
 		public function createClips(clipObjects:Array):Array {
 			var clips:Array = new Array();
@@ -57,20 +94,33 @@ package org.flowplayer.config {
 			return clips;
 		}
 
-		public function createPlaylist():Playlist {
-			var commonClip:Clip;
-			if (_commonClip) {
-				commonClip = createClip(_commonClip);
-			}
-			var playList:Playlist = new Playlist(commonClip);
-			if (clipObjects && clipObjects.length > 0) {
-				playList.setClips(createClips(clipObjects));
-			} else if (_commonClip) {
-				playList.addClip(createClip(_commonClip));
-			}
-			
-			return playList;
-		}
+        public function createClip(clipObj:Object):Clip {
+            if (! clipObj) return null;
+            if (clipObj is String) {
+                clipObj = { url: clipObj };
+            }
+            setDefaults(clipObj);
+            var url:String = clipObj.url;
+            var baseUrl:String = clipObj.baseUrl;
+            var fileName:String = url;
+            if (URLUtil.isCompleteURLWithProtocol(url)) {
+                var lastSlashIndex:Number = url.lastIndexOf("/");
+                baseUrl = url.substring(0, lastSlashIndex);
+                fileName = url.substring(lastSlashIndex + 1);
+            }
+            var clip:Clip = Clip.create(fileName, baseUrl);
+            return new PropertyBinder(clip, "customProperties").copyProperties(clipObj) as Clip;
+        }
+
+        public function createCuepointGroup(cuepoints:Array, callbackId:String, timeMultiplier:Number):Array {
+            var cues:Array = new Array();
+            for (var i:Number = 0; i < cuepoints.length; i++) {
+                var cueObj:Object = cuepoints[i];
+                var cue:Object = createCuepoint(cueObj, callbackId, timeMultiplier);
+                cues.push(cue);
+            }
+            return cues;
+        }
 		
 		private function setDefaults(clipObj:Object):void {
 			if (clipObj == _commonClip) return;
@@ -80,34 +130,6 @@ package org.flowplayer.config {
 					clipObj[prop] = _commonClip[prop];
 				}
 			}
-		}
-
-		public function createClip(clipObj:Object):Clip {
-			if (! clipObj) return null;
-			if (clipObj is String) {
-				clipObj = { url: clipObj };
-			}
-			setDefaults(clipObj);
-			var url:String = clipObj.url;
-			var baseUrl:String = clipObj.baseUrl;
-			var fileName:String = url;
-			if (URLUtil.isCompleteURLWithProtocol(url)) {
-				var lastSlashIndex:Number = url.lastIndexOf("/");
-				baseUrl = url.substring(0, lastSlashIndex);
-				fileName = url.substring(lastSlashIndex + 1);
-			}
-			var clip:Clip = Clip.create(fileName, baseUrl);
-			return new PropertyBinder(clip, "customProperties").copyProperties(clipObj) as Clip;
-		}
-		
-		public function createCuepointGroup(cuepoints:Array, callbackId:String, timeMultiplier:Number):Array {
-			var cues:Array = new Array();
-			for (var i:Number = 0; i < cuepoints.length; i++) {
-				var cueObj:Object = cuepoints[i];
-				var cue:Object = createCuepoint(cueObj, callbackId, timeMultiplier);
-				cues.push(cue);
-			}
-			return cues;
 		}
 
 		private function createCuepoint(cueObj:Object, callbackId:String, timeMultiplier:Number):Object {
@@ -126,5 +148,13 @@ package org.flowplayer.config {
 		private function roundTime(time:int, timeMultiplier:Number):int {
 			return Math.round(time * timeMultiplier / 100) * 100;
 		}
-	}
+
+        private function parse(document:String, playlist:Playlist):void {
+            new RSSPlaylistParser().parse(document, playlist);
+        }
+
+        public function get playlistFeed():String {
+            return _playlistFeed;
+        }
+    }
 }
