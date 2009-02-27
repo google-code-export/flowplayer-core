@@ -284,7 +284,7 @@ import org.flowplayer.model.DisplayPluginModel;
 		}
 		
 		private function checkPluginsInitialized():void {
-			var numPlugins:int = getLoadablePluginCount();
+			var numPlugins:int = countLoadablePlugins();
 			
 			if (++_pluginsInitialized == numPlugins) {
 				log.info("all plugins initialized");
@@ -292,14 +292,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			}
 			log.info(_pluginsInitialized + " out of " + numPlugins + " plugins initialized");
 		}
-		
-		private function getLoadablePluginCount():int {
-			if (_numLoadablePlugins == -1) {
-				_numLoadablePlugins = countLoadablePlugins();
-			}
-			return _numLoadablePlugins;
-		}
-		
+
 		private function countLoadablePlugins():int {
 			var count:Number = 0;
 			var loadables:Array = _config.getLoadables();
@@ -309,7 +302,13 @@ import org.flowplayer.model.DisplayPluginModel;
 				var isNonAdHocPlugin:Boolean = (plugin is DisplayPluginModel && DisplayPluginModel(plugin).getDisplayObject() is Plugin) ||
 					plugin is ProviderModel && ProviderModel(plugin).pluginObject is Plugin;
 
-				if (isNonAdHocPlugin) {
+                if (Loadable(loadables[i]).loadFailed) {
+                    log.debug("load failed for " + loadables[i]);
+                    count++;
+                } else if (! plugin) {
+                    log.debug("this plugin is not loaded yet");
+                    count++;
+                } else if (isNonAdHocPlugin) {
 					log.debug("will wait for onLoad from plugin " + plugin);
 					count++;
 				} else {
