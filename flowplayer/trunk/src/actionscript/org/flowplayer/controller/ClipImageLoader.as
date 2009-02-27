@@ -61,5 +61,9 @@ package org.flowplayer.controller {
 		public function clear():void {
 			_loader.clear();
 		}
-	}
+
+        public function get loadComplete():Boolean {
+            return _loader.loadComplete;
+        }
+    }
 }

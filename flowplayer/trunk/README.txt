@@ -10,6 +10,15 @@ New features:
 
 Bug fixes:
 
+3.0.6
+-----
+- added possibility to associate a linkUrl and linkWindow to the canvas
+Fixes:
+- fix for entering fullscreen for Flash versions that don't support the hardware scaled fullscreen-mode
+- when showing images the duration tracking starts only after the image has been completely loaded: http://flowplayer.org/forum/2/15301
+- fix for verifying license keys for domains that have more than 4 labels in them
+- if plugin loading failis because of a IO error, the plugin will be discarded and the player initialization continues:
+
 3.0.4
 -----
 - The "play" pseudo-plugin now supports fadeIn(), fadeOut(), showPlugin(), hidePlugin() and

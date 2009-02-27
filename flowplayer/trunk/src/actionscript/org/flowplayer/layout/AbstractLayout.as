@@ -42,13 +42,11 @@ package org.flowplayer.layout {
 		
 		public function AbstractLayout(container:DisplayObjectContainer) {
 			this._container = container;
-			trace("adding 'render' event listener to container " + container);
 			if (container is Stage)
 				container.addEventListener(Event.RESIZE, onContainerResize);
 		}
 		
 		private function onContainerResize(event:Event):void {
-			trace("onContainerRender");
 			draw();
 		}
 				
@@ -66,7 +64,6 @@ package org.flowplayer.layout {
 		
 
 		public function addConstraint(constraint:Constraint, listenerFunc:Function = null):void {
-			trace("AbstractLayout.addConstraint");
 			_constraints[constraint.getConstrainedView()] = constraint;
 			if (listenerFunc != null) {
 				_listeners[constraint.getConstrainedView()] = listenerFunc;

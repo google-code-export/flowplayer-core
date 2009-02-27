@@ -37,7 +37,7 @@ package org.flowplayer.model {
 		private var _playlist:Playlist;
 		private var _cuepoints:Dictionary;
 		private var _cuepointsInNegative:Array;
-		private var _previousPositives:Array;
+//		private var _previousPositives:Array;
 		private var _baseUrl:String;
 		private var _url:String;
 		private var _type:ClipType;
@@ -68,7 +68,6 @@ package org.flowplayer.model {
 		public function Clip() {
 			_cuepoints = new Dictionary();
 			_cuepointsInNegative = new Array();
-			_previousPositives = new Array();
 			_start = 0;
 			_bufferLength = 3;
 			_scaling = MediaSize.FILLED_TO_AVAILABLE_SPACE;
@@ -107,6 +106,7 @@ package org.flowplayer.model {
 		
 		[Value]
 		public function get isCommon():Boolean {
+            if (! _playlist) return false;
 			return this == _playlist.commonClip;
 		}
 
@@ -119,7 +119,7 @@ package org.flowplayer.model {
 		public function addCuepoint(cue:Cuepoint):void {
 			if (! cue) return;
 			if (cue.time >= 0) {
-				log.debug("adding cuepoint to time " + cue.time)
+				log.info(this + ": adding cuepoint to time " + cue.time)
 				if (!_cuepoints[cue.time]) {
 					_cuepoints[cue.time] = new Array();
 				}
@@ -128,12 +128,14 @@ package org.flowplayer.model {
 				
 				(_cuepoints[cue.time] as Array).push(cue);
 			} else {
-				log.debug("adding negative cuepoint");
-				if (duration > 0) {
-					convertToPositive(cue);
-				} else {
-					_cuepointsInNegative.push(cue);
-				}
+				log.info("storing negative cuepoint " + (this == commonClip ? "to common clip" : ""));
+                _cuepointsInNegative.push(cue);
+//				if (duration > 0) {
+//					convertToPositive(cue);
+//				} else {
+//                    log.info("duration not available yet, storing negative cuepoint to be used when duration is set")
+//					_cuepointsInNegative.push(cue);
+//				}
 			}
 		}
 		
@@ -147,33 +149,50 @@ package org.flowplayer.model {
 			}
 		}
 
-		public function getCuepoints(time:int):Array {
-			if (this == commonClip) return _cuepoints[time];
+		public function getCuepoints(time:int, dur:Number = -1):Array {
 			var result:Array = new Array();
 			result = ArrayUtil.concat(result, _cuepoints[time]);
-			result = ArrayUtil.concat(result, commonClip.getCuepoints(time));
+            result = ArrayUtil.concat(result, getNegativeCuepoints(time, this == commonClip ? dur : this.duration));
+            if (this == commonClip) return result;
+
+			result = ArrayUtil.concat(result, commonClip.getCuepoints(time, this.duration));
+            if (result.length > 0) {
+                log.info("found " + result.length + " cuepoints for time " + time);
+            }
 			return result;
 		}
+
+		private function getNegativeCuepoints(time:int, dur:Number):Array {
+            if (dur <= 0) return [];
+            var result:Array = new Array();
+            for (var i:int = 0; i < _cuepointsInNegative.length; i++) {
+                var positive:Cuepoint = convertToPositive(_cuepointsInNegative[i], dur);
+                if (positive.time == time) {
+                    log.info("found negative cuepoint corresponding to time " + time);
+                    result.push(positive);
+                }
+            }
+            return result;
+        }
+//
+//		private function setNegativeCuepointTimes(duration:int):void {
+//			log.debug("setNegativeCuepointTimes, transferring " + _cuepointsInNegative.length + " to timeline duration " + duration);
+//			_previousPositives.forEach(
+//				function(cue:*, index:int, array:Array):void {
+//					removeCuepoint(cue as Cuepoint);
+//				});
+//			_previousPositives = new Array();
+//
+//			_cuepointsInNegative.forEach(
+//				function(cue:*, index:int, array:Array):void {
+//					convertToPositive(cue);
+//				});
+//		}
 		
-		private function setNegativeCuepointTimes(duration:int):void {
-			log.debug("setNegativeCuepointTimes, transferring " + _cuepointsInNegative.length + " to timeline duration " + duration);
-			_previousPositives.forEach(
-				function(cue:*, index:int, array:Array):void {
-					removeCuepoint(cue as Cuepoint);
-				});
-			_previousPositives = new Array();
-			
-			_cuepointsInNegative.forEach(
-				function(cue:*, index:int, array:Array):void {
-					convertToPositive(cue);
-				});
-		}
-		
-		private function convertToPositive(cue:Cuepoint):void {
+		private function convertToPositive(cue:Cuepoint, dur:Number):Cuepoint {
 			var positive:Cuepoint = cue.clone() as Cuepoint; 
-			positive.time = duration * 1000 - Math.abs(Cuepoint(cue).time); 
-			addCuepoint(positive);
-			_previousPositives.push(positive);
+			positive.time = Math.round((dur * 1000 - Math.abs(Cuepoint(cue).time))/100) * 100;
+			return positive;
 		}
 
 		[Value]
@@ -238,22 +257,22 @@ package org.flowplayer.model {
 		public function set duration(value:Number):void {
 			this._duration = value;
 			log.info("clip duration set to " + value);
-			if (! isCommon) {
-				if (duration >= 0) {
-					setNegativeCuepointTimes(value);
-				}
-				addCommonClipNegativeCuepoints();
-			}
+//			if (! isCommon) {
+//				if (duration >= 0) {
+//					setNegativeCuepointTimes(value);
+//				}
+//				addCommonClipNegativeCuepoints();
+//			}
 		}
 		
-		private function addCommonClipNegativeCuepoints():void {
-			if (commonClip) {
-				log.debug("adding negative cuepoints from commponClip");
-				addCuepoints(commonClip.cuepointsInNegative);
-			} else {
-				log.debug("there is no commonClip");
-			}
-		}
+//		private function addCommonClipNegativeCuepoints():void {
+//			if (commonClip) {
+//				log.debug("adding negative cuepoints from commponClip");
+//				addCuepoints(commonClip.cuepointsInNegative);
+//			} else {
+//				log.error("there is no commonClip");
+//			}
+//		}
 
 		public function get durationFromMetadata():Number {
 			if (_metaData)
@@ -287,10 +306,10 @@ package org.flowplayer.model {
 		
 		public function set metaData(metaData:Object):void {
 			this._metaData = metaData;
-			if (! (_duration >= 0) && metaData && metaData.duration) {
-				setNegativeCuepointTimes(metaData.duration);
-				addCommonClipNegativeCuepoints();
-			}
+//			if (! (_duration >= 0) && metaData && metaData.duration) {
+//				setNegativeCuepointTimes(metaData.duration);
+//				addCommonClipNegativeCuepoints();
+//			}
 		}
 		
 		[Value]
@@ -485,6 +504,7 @@ package org.flowplayer.model {
 		}
 		
 		private function get commonClip():Clip {
+            if (! _playlist) return null;
 			return _playlist.commonClip;
 		}
 		

@@ -21,6 +21,7 @@ package org.flowplayer.config {
 	import org.flowplayer.config.PluginBuilder;
 	import org.flowplayer.controller.NetStreamControllingStreamProvider;
 	import org.flowplayer.flow_internal;
+    import org.flowplayer.model.Canvas;
 	import org.flowplayer.model.Clip;
 	import org.flowplayer.model.DisplayProperties;
 	import org.flowplayer.model.Loadable;
@@ -51,6 +52,7 @@ package org.flowplayer.config {
 		private var _controlsVersion:String;
 		private var _audioVersion:String;
 		private var _loadables:Array;
+        private var _canvas:Canvas;
 
 		public function Config(config:Object, playerSwfName:String, controlsVersion:String, audioVersion:String) {
 			Assert.notNull(config, "No configuration provided.");
@@ -60,6 +62,10 @@ package org.flowplayer.config {
 			_controlsVersion = controlsVersion;
 			_audioVersion = audioVersion;
 		}
+
+        flow_internal function set playlistDocument(docObj:String):void {
+            _playlistBuilder.playlistFeed = docObj;
+        }
 
 		public function get playerId():String {
 			return this.config.playerId;
@@ -78,6 +84,9 @@ package org.flowplayer.config {
 		}
 
 		public function getPlaylist():Playlist {
+            if (config.playlist is String && ! _playlistBuilder.playlistFeed) {
+                throw new Error("playlist queried but the playlist feed file has not been received yet");
+            }
 			if (! playList) {
 				playList = _playlistBuilder.createPlaylist();
 			}
@@ -138,7 +147,8 @@ package org.flowplayer.config {
 			return config.key;
 		}
 		
-		public function get canvasStyle():Object {
+		public function get canvas():Canvas {
+            if (! _canvas) {
 			var style:Object = getObject("canvas");
 			if (! style) {
 				style = new Object();
@@ -147,9 +157,15 @@ package org.flowplayer.config {
 			setProperty("border", style, "0px");
 			setProperty("backgroundColor", style, "transparent");
 			setProperty("borderRadius", style, "0");
-			return style;
+
+                var result:Canvas = new Canvas();
+                result.style = style;
+
+                _canvas = new PropertyBinder(result).copyProperties(style) as Canvas;
 		}
-		
+            return _canvas;
+		}
+
 		private function setProperty(prop:String, style:Object, value:Object):void {
 			if (! style[prop]) {
 				style[prop] = value;
@@ -193,6 +209,10 @@ package org.flowplayer.config {
 
         public function get connectionCallbacks():Array {
             return config["connectionCallbacks"];
+        }
+
+        public function get playlistFeed():String {
+            return config.playlist is String ? config.playlist : null;
         }
 	}
 }

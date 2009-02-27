@@ -24,6 +24,30 @@ package org.flowplayer.model {
 		public static const AUDIO:ClipType = new ClipType("audio");
 		public static const IMAGE:ClipType = new ClipType("image");
 
+        private static var MIME_TYPE_MAPPING:Object = {
+            'application/x-fcs': VIDEO,
+            'application/x-shockwave-flash': IMAGE,
+            'audio/aac': VIDEO,
+            'audio/m4a': VIDEO,
+            'audio/mp4': VIDEO,
+            'audio/mp3': AUDIO,
+            'audio/mpeg': AUDIO,
+            'audio/x-3gpp': VIDEO,
+            'audio/x-m4a': VIDEO,
+            'image/gif': IMAGE,
+            'image/jpeg': IMAGE,
+            'image/jpg': IMAGE,
+            'image/png': IMAGE,
+            'video/flv':VIDEO,
+            'video/3gpp':VIDEO,
+            'video/h264':VIDEO,
+            'video/mp4':VIDEO,
+            'video/x-3gpp':VIDEO,
+            'video/x-flv':VIDEO,
+            'video/x-m4v':VIDEO,
+            'video/x-mp4':VIDEO
+        };
+
 		private static var enumCreated:Boolean;
 		{ enumCreated = true; }
 
@@ -38,7 +62,11 @@ package org.flowplayer.model {
 		public function get type():String {
 			return _type;
 		}
-		
+
+        public static function fromMimeType(mime:String):ClipType {
+            return MIME_TYPE_MAPPING[mime];
+        }
+
 		public static function fromFileExtension(name:String):ClipType {
 			var dotPos:Number = name.lastIndexOf(".");
 			var lcName:String = name.toLowerCase();

@@ -58,18 +58,16 @@ package org.flowplayer.view {
 		
 		public function Flowplayer(
 			stage:Stage, 
-			control:PlayListController, 
 			pluginRegistry:PluginRegistry, 
 			panel:Panel, 
 			animationEngine:AnimationEngine, 
 			canvas:StyleableSprite, 
 			errorHandler:ErrorHandler, 
 			config:Config, 
-			fullscreenManager:FullscreenManager,
 			pluginLoader:PluginLoader,
 			playerSWFBaseURl:String) {
 				
-			super(stage, control, pluginRegistry, panel, animationEngine, errorHandler, config, fullscreenManager, pluginLoader, playerSWFBaseURl);
+			super(stage, pluginRegistry, panel, animationEngine, errorHandler, config, pluginLoader, playerSWFBaseURl);
 			_canvas = canvas;
 		}
 

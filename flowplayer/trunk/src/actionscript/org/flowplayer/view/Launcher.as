@@ -92,6 +92,7 @@ import org.flowplayer.model.DisplayPluginModel;
 		private var _numLoadablePlugins:int = -1;
 		private var _enteringFullscreen:Boolean;
 		private var _copyrightNotice:TextField;
+        private var _playlistLoader:ResourceLoader;
 
 		[Frame(factoryClass="org.flowplayer.view.Preloader")]
 		public function Launcher() {
@@ -108,12 +109,10 @@ import org.flowplayer.model.DisplayPluginModel;
 			if (_config.playerId) {
 				Security.allowDomain(URLUtil.pageUrl);
 			}
-			
-			_config.getPlaylist().onBeforeBegin(function(event:ClipEvent):void { hideErrorMessage(); });
 
 			loader = createNewLoader(); 
 
-			rootStyle = _config.canvasStyle;
+			rootStyle = _config.canvas;
 			stage.addEventListener(Event.RESIZE, onStageResize);
 			setSize(stage.stageWidth, stage.stageHeight);
 
@@ -138,25 +137,35 @@ import org.flowplayer.model.DisplayPluginModel;
 			
 			log.debug("creating play button overlay");
 			createPlayButtonOverlay();
+
+            log.debug("creating Flowplayer API");
+            createFlowplayer();
 			
-			log.debug("creating screen");
-			createScreen();
-			
-			loadPluginsIfConfigured();
+            loadPlaylistFeed();
 		}
 
-		private function initPhase2(pluginsLoadedEvent:Event = null):void {
-			_pluginLoader.removeEventListener(Event.COMPLETE, this.initPhase2);
-			
+        private function initPhase2(event:Event = null):void {
+            log.info("initPhase2, all plugins loaded");
+            loadPlugins();
+        }
+
+		private function initPhase3(event:Event = null):void {
+            log.debug("initPhase3");
+            createScreen();
+
+			_pluginLoader.removeEventListener(Event.COMPLETE, this.initPhase3);
+
+            _config.getPlaylist().onBeforeBegin(function(event:ClipEvent):void { hideErrorMessage(); });
+            if (_playButtonOverlay) {
+                PlayButtonOverlayView(_playButtonOverlay.getDisplayObject()).playlist = _config.getPlaylist();
+            }
+ 
 			log.debug("creating PlayListController");
 			_providers = _pluginLoader.providers;
 			var playListController:PlayListController = createPlayListController();
 			
 			addPlayListListeners();
 			createFullscreenManager(playListController.playlist);
-			
-			log.debug("creating Flowplayer API");
-			createFlowplayer(playListController);
 
 			addScreenToPanel();
 
@@ -179,8 +188,9 @@ import org.flowplayer.model.DisplayPluginModel;
 			_pluginRegistry.onLoad(_flowplayer);
 		}
 
-		private function initPhase3(event:Event = null):void {
-			
+		private function initPhase4(event:Event = null):void {
+            log.info("initPhase4, all plugins initialized");
+
 			log.debug("Adding visible plugins to panel");
 			addPluginsToPanel(_pluginRegistry);
 			
@@ -224,22 +234,39 @@ import org.flowplayer.model.DisplayPluginModel;
 			_copyrightNotice.y  = _canvasLogo.y + _canvasLogo.height;
 		}
 
-		private function loadPluginsIfConfigured():void {
+		private function loadPlugins():void {
 			var plugins:Array = _config.getLoadables();
 			log.info("will load following plugins: ");
 			for (var i:Number = 0; i < plugins.length; i++) {
 				log.info("" + plugins[i]);
 			}
 			_pluginLoader = new PluginLoader(URLUtil.playerBaseUrl(loaderInfo), _pluginRegistry, this, useExternalInterfade(), onPluginLoad, onPluginLoadError);
-			_pluginLoader.addEventListener(Event.COMPLETE, initPhase2);
+			_pluginLoader.addEventListener(Event.COMPLETE, initPhase3);
 			if (plugins.length == 0) {
 				log.debug("configuration has no plugins");
-				initPhase2();
+				initPhase3();
 			} else {
 				log.debug("loading plugins and providers");
 				_pluginLoader.load(plugins);
 			}
 		}
+
+		private function loadPlaylistFeed():void {
+            var playlistFeed:String = _config.playlistFeed;
+            if (! playlistFeed) {
+                initPhase2();
+                return;
+            }
+            log.info("loading playlist from " + playlistFeed);
+            _playlistLoader = _flowplayer.createLoader();
+            _playlistLoader.addTextResourceUrl(playlistFeed);
+            _playlistLoader.load(null,
+                    function(loader:ResourceLoader):void {
+                        log.info("received playlist feed");
+                        _config.playlistDocument = loader.getContent() as String;
+                        initPhase2();
+                    });
+        }
 		
 		private function onPluginLoad(event:PluginEvent):void {
 			var plugin:PluginModel = event.target as PluginModel;
@@ -261,7 +288,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			
 			if (++_pluginsInitialized == numPlugins) {
 				log.info("all plugins initialized");
-				initPhase3();
+				initPhase4();
 			}
 			log.info(_pluginsInitialized + " out of " + numPlugins + " plugins initialized");
 		}
@@ -301,7 +328,7 @@ import org.flowplayer.model.DisplayPluginModel;
 
 		private function validateLicenseKey():Boolean {
 			try {
-				return LicenseKey.validate(useExternalInterfade() ? null: root.loaderInfo.url, _flowplayer.version, _config.licenseKey);
+				return LicenseKey.validate(root.loaderInfo.url, _flowplayer.version, _config.licenseKey, useExternalInterfade());
 			} catch (e:Error) {
 				log.warn("License key not accepted, will show flowplayer logo");
 			}
@@ -310,6 +337,7 @@ import org.flowplayer.model.DisplayPluginModel;
 
 		private function createFullscreenManager(playlist:Playlist):void {
 			_fullscreenManager = new FullscreenManager(stage, playlist, _panel, _pluginRegistry, _animationEngine);
+            _flowplayer.fullscreenManager = _fullscreenManager;
 		}
 
 		public function showError(message:String):void {
@@ -474,11 +502,10 @@ import org.flowplayer.model.DisplayPluginModel;
 			return  _controlsModel.config.autoHide == 'always';
 		}
 
-		private function createFlowplayer(playListController:PlayListController):void {
-			_flowplayer = new Flowplayer(stage, playListController, _pluginRegistry, _panel, 
-				_animationEngine, this, this, _config, _fullscreenManager, _pluginLoader, URLUtil.playerBaseUrl(loaderInfo));
-			playListController.playerEventDispatcher = _flowplayer;
-			
+		private function createFlowplayer():void {
+			_flowplayer = new Flowplayer(stage, _pluginRegistry, _panel, 
+				_animationEngine, this, this, _config, _pluginLoader, URLUtil.playerBaseUrl(loaderInfo));
+
 			_flowplayer.onBeforeFullscreen(onFullscreen);
 //			_flowplayer.onFullscreenExit(onFullscreen);
 		}
@@ -515,7 +542,10 @@ import org.flowplayer.model.DisplayPluginModel;
 			_providers["http"] = httpProvider.pluginObject;
 			_pluginRegistry.registerProvider(httpProvider);
 			
-			return new PlayListController(_config.getPlaylist(), _providers, _config, createNewLoader());
+			var playListController:PlayListController = new PlayListController(_config.getPlaylist(), _providers, _config, createNewLoader());
+            playListController.playerEventDispatcher = _flowplayer;
+            _flowplayer.playlistController = playListController;
+            return playListController;
 		}
 		
 		private function createScreen():void {
@@ -535,8 +565,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			_playButtonOverlay.onLoad(onPluginLoad);
 			_playButtonOverlay.onError(onPluginLoadError);
 
-			log.debug("playlist has clips? " + hasClip);
-			var overlay:PlayButtonOverlayView = new PlayButtonOverlayView(! playButtonOverlayWidthDefined(), _playButtonOverlay, _pluginRegistry, _config.getPlaylist());
+			var overlay:PlayButtonOverlayView = new PlayButtonOverlayView(! playButtonOverlayWidthDefined(), _playButtonOverlay, _pluginRegistry);
 			initView(overlay, _playButtonOverlay, null, false);
 		}
 		
@@ -636,26 +665,29 @@ import org.flowplayer.model.DisplayPluginModel;
 			doHandleError(event.info + ", " + event.info2 + ", " + event.info3 + ", clip: '" + Clip(event.target) + "'");
 		}
 
-		private function onViewClicked(event:MouseEvent):void {
-			if (_enteringFullscreen) return;
-			log.debug("onViewClicked, target " + event.target + ", current target " + event.currentTarget);
-			if (_playButtonOverlay && isParent(DisplayObject(event.target), _playButtonOverlay.getDisplayObject())) {
-				_flowplayer.toggle();
-				return;
-			}
-			
-			var clip:Clip = _flowplayer.playlist.current; 
-			if (clip.linkUrl) {
-				_flowplayer.pause();
-				navigateToURL(new URLRequest(clip.linkUrl), clip.linkWindow);
-				return;
-			}
-			
-			if (isParent(DisplayObject(event.target), _screen)) {
-				_flowplayer.toggle();
-			}
-		}
-		
+        private function onViewClicked(event:MouseEvent):void {
+            if (_enteringFullscreen) return;
+            log.debug("onViewClicked, target " + event.target + ", current target " + event.currentTarget);
+
+            if (_playButtonOverlay && isParent(DisplayObject(event.target), _playButtonOverlay.getDisplayObject())) {
+                _flowplayer.toggle();
+
+            } else if (isParent(DisplayObject(event.target), _screen)) {
+                log.debug("screen clicked");
+                var clip:Clip = _flowplayer.playlist.current;
+                if (clip.linkUrl) {
+                    log.debug("opening linked page");
+                    _flowplayer.pause();
+                    navigateToURL(new URLRequest(clip.linkUrl), clip.linkWindow);
+                    return;
+                }
+                _flowplayer.toggle();
+
+            }
+
+            event.stopPropagation();
+        }
+
 		private function isParent(child:DisplayObject, parent:DisplayObject):Boolean {
 			if (DisplayObject(child).parent == parent) return true;
 			if (! (parent is DisplayObjectContainer)) return false;

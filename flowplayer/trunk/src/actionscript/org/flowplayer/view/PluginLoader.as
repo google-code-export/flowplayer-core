@@ -30,6 +30,7 @@ package org.flowplayer.view {
 	import org.flowplayer.model.FontProvider;
 	import org.flowplayer.model.Loadable;
 	import org.flowplayer.model.PlayerError;
+    import org.flowplayer.model.PluginError;
 	import org.flowplayer.model.PluginModel;
 	import org.flowplayer.model.ProviderModel;
 	import org.flowplayer.util.Log;
@@ -67,6 +68,7 @@ package org.flowplayer.view {
 		private var _useExternalInterface:Boolean;
 		private var _loadErrorListener:Function;
 		private var _loadListener:Function;
+        private var _loadComplete:Boolean;
 
 		public function PluginLoader(baseUrl:String, pluginRegistry:PluginRegistry, errorHandler:ErrorHandler, useExternalInterface:Boolean, loadListener:Function, loadErrorListener:Function) {
 			_baseUrl = baseUrl;
@@ -109,34 +111,50 @@ package org.flowplayer.view {
 				log.info("Not loading any plugins.");
 				return;
 			}
+
 			_loadedPlugins = new Dictionary();
 			_loadedCount = 0;
+
 			var loaderContext:LoaderContext = new LoaderContext();
 			loaderContext.applicationDomain = ApplicationDomain.currentDomain;
 			if (!URLUtil.localDomain(_baseUrl)) {
 				loaderContext.securityDomain = SecurityDomain.currentDomain;
 			}
-			var urls:Dictionary = new Dictionary();
-			
-			for (var i:Number = 0; i < _swiffsToLoad.length; i++) {
+
+            for (var i:Number = 0; i < _loadables.length; i++) {
+                Loadable(_loadables[i]).onError(_loadErrorListener);
+            }
+
+			for (i = 0; i < _swiffsToLoad.length; i++) {
 				var loader:Loader = new Loader();
 				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loaded);
 				var url:String = _swiffsToLoad[i];
-				urls[loader.contentLoaderInfo] = url;
-				loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, function(event:IOErrorEvent):void { onIoError(event, urls); });
+
+				loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, createIOErrorListener(url));
 				loader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, onProgress);
 				log.debug("starting to load plugin from url " + _swiffsToLoad[i]);
 				loader.load(new URLRequest(url), loaderContext);				
 			}
 		}
 		
+        private function createIOErrorListener(url:String):Function {
+            return function(event:IOErrorEvent):void {
+                log.error("onIoError " + url);
+                _loadables.forEach(function(loadable:Loadable, index:int, array:Array):void {
+                    if (! loadable.loadFailed && hasSwiff(url, loadable.url)) {
+                        log.debug("onIoError: this is the swf for loadable " + loadable);
+                        loadable.loadFailed = true;
+                        loadable.dispatchError(PluginError.INIT_FAILED);
+                        incrementLoadedCountAndFireEventIfNeeded();
+                    }
+                });
+            };
+        }
+
 		private function onProgress(event:ProgressEvent):void {
 			log.debug("load in progress");
 		}
 
-		private function onIoError(event:IOErrorEvent, pluginUrls:Dictionary):void {
-			_errorHandler.handleError(PlayerError.PLUGIN_LOAD_FAILED, "Unable to load plugin using url '" + pluginUrls[LoaderInfo(event.target)] + "': " + event.text);
-		}
 
 		public function get plugins():Dictionary {
 			return _loadedPlugins;
@@ -161,15 +179,21 @@ package org.flowplayer.view {
 					}
 				}
 			});
-			if (++_loadedCount == _swiffsToLoad.length) {
-				log.debug("all plugin SWFs loaded. loaded total " + loadedCount + " plugins");
-				setConfigPlugins();
-				dispatchEvent(new Event(Event.COMPLETE, true, false));
-			}
+            incrementLoadedCountAndFireEventIfNeeded();
 			if (_callback != null) {
 				_callback();
 			}
-		}				private function initializeClassLibrary(loadable:Loadable, info:LoaderInfo):void {
+		}
+
+        private function incrementLoadedCountAndFireEventIfNeeded():void {
+            if (++_loadedCount == _swiffsToLoad.length) {
+                log.debug("all plugin SWFs loaded. loaded total " + loadedCount + " plugins");
+                setConfigPlugins();
+                dispatchEvent(new Event(Event.COMPLETE, true, false));
+            }
+        }
+
+		private function initializeClassLibrary(loadable:Loadable, info:LoaderInfo):void {
 			_pluginRegistry.registerGenericPlugin(loadable.createPlugin(info.applicationDomain));
 		}
 
@@ -219,16 +243,18 @@ package org.flowplayer.view {
 		
 		public function setConfigPlugins():void {
 			_loadables.forEach(function(loadable:Loadable, index:int, array:Array):void {
-				var pluginInstance:Object = plugins[loadable];
-				log.info(index + ": setting config to " + pluginInstance + ", " + loadable);
-				if (pluginInstance is NetStreamControllingStreamProvider) {
-					log.debug("NetStreamControllingStreamProvider(pluginInstance).config = " +loadable.plugin);
-					NetStreamControllingStreamProvider(pluginInstance).config = loadable.plugin as ProviderModel;
-				} else {
-					if (pluginInstance.hasOwnProperty("onConfig")) {
-						pluginInstance.onConfig(loadable.plugin);
-					}
-				}
+                if (! loadable.loadFailed) {
+                    var pluginInstance:Object = plugins[loadable];
+                    log.info(index + ": setting config to " + pluginInstance + ", " + loadable);
+                    if (pluginInstance is NetStreamControllingStreamProvider) {
+                        log.debug("NetStreamControllingStreamProvider(pluginInstance).config = " +loadable.plugin);
+                            NetStreamControllingStreamProvider(pluginInstance).config = ProviderModel(loadable.plugin);
+                    } else {
+                        if (pluginInstance.hasOwnProperty("onConfig")) {
+                            pluginInstance.onConfig(loadable.plugin);
+                        }
+                    }
+                }
 			});
 		}
 
@@ -245,5 +271,9 @@ package org.flowplayer.view {
 		public function get loadedCount():int {
 			return _loadedCount;
 		}
-	}
+        
+        public function get loadComplete():Boolean {
+            return _loadComplete;
+        }
+    }
 }

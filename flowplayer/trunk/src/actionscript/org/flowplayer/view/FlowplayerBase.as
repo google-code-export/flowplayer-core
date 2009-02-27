@@ -77,13 +77,11 @@ import org.flowplayer.model.EventDispatcher;
 
 		public function FlowplayerBase(
 			stage:Stage, 
-			control:PlayListController, 
-			pluginRegistry:PluginRegistry, 
+			pluginRegistry:PluginRegistry,
 			panel:Panel, 
 			animationEngine:AnimationEngine, 
 			errorHandler:ErrorHandler, 
 			config:Config, 
-			fullscreenManager:FullscreenManager,
 			pluginLoader:PluginLoader,
 			playerSWFBaseURL:String) {
 
@@ -102,21 +100,27 @@ import org.flowplayer.model.EventDispatcher;
 				throw new Error("Flowplayer already instantiated");
 			}
 			_stage = stage;
-			this._playListController = control;
 //			registerCallbacks();
 			_pluginRegistry = pluginRegistry;
 			_panel = panel;
 			_animationEngine = animationEngine;
 			_errorHandler = errorHandler;
 			_config = config;
-			_fullscreenManager = fullscreenManager;
-			fullscreenManager.playerEventDispatcher = this;
 			_pluginLoader = pluginLoader;
 			_playerSWFBaseURL = playerSWFBaseURL;
 			_instance = this;
 
-            addStreamAndConnectionCallbacks();
 		}
+
+        internal function set playlistController(control:PlayListController):void {
+            _playListController = control;
+            addStreamAndConnectionCallbacks();
+        }
+
+        internal function set fullscreenManager(value:FullscreenManager):void {
+            _fullscreenManager = value;
+            _fullscreenManager.playerEventDispatcher = this;            
+        }
 		
 		/**
 		 * Plays the current clip in playList or the specified clip.
