@@ -18,7 +18,9 @@
  */
 
 package org.flowplayer.model {
-	import org.flowplayer.flow_internal;
+    import org.flowplayer.controller.ClipURLResolver;
+    import org.flowplayer.controller.ConnectionProvider;
+import org.flowplayer.flow_internal;
 	import org.flowplayer.model.ClipEvent;
 	import org.flowplayer.util.ArrayUtil;
 	import org.flowplayer.util.Log;
@@ -64,8 +66,10 @@ package org.flowplayer.model {
 		private var _linkWindow:String;
 		private var _image:Boolean;
 		private var _cuepointMultiplier:Number;
+        private var _urlResolver:String;
+        private var _connectionProvider:String;
 
-		public function Clip() {
+        public function Clip() {
 			_cuepoints = new Dictionary();
 			_cuepointsInNegative = new Array();
 			_start = 0;
@@ -624,5 +628,20 @@ package org.flowplayer.model {
 			dispatch(ClipEventType.NETSTREAM_EVENT, name, infoObject);
 		}
 
+        public function get connectionProvider():String {
+            return _connectionProvider;
+        }
+
+        public function set connectionProvider(val:String):void {
+            _connectionProvider = val;
+        }
+
+        public function get urlResolver():String {
+            return _urlResolver;
+        }
+
+        public function set urlResolver(val:String):void {
+            _urlResolver = val;
+        }
     }
 }

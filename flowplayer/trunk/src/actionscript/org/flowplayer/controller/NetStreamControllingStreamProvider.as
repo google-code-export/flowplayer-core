@@ -88,7 +88,7 @@ import org.flowplayer.model.PluginModel;
 		 */
 		public function set player(player:Flowplayer):void {
 			_player = player;
-			createConnectionProvider();
+            createConnectionProvider();
 			createClipUrlResolver();
 			onLoad(player);
 		}
@@ -293,8 +293,8 @@ import org.flowplayer.model.PluginModel;
 				_connection = null;
 			}
             _connectionClient.clip = clip;
-			_connectionProvider.connectionClient = _connectionClient;
-			_connectionProvider.connect(clip, onConnectionSuccess, rest);
+			connectionProvider.connectionClient = _connectionClient;
+			connectionProvider.connect(clip, onConnectionSuccess, rest);
 		}
 
 		/**
@@ -476,7 +476,7 @@ import org.flowplayer.model.PluginModel;
 		 * Resolves the url for the specified clip.
 		 */		
 		protected final function resolveClipUrl(clip:Clip, successListener:Function):void {
-			_clipUrlResolver.resolve(clip, _connection, successListener);
+			clipURLResolver.resolve(clip, _connection, successListener);
 		}
 
 		/**
@@ -520,6 +520,7 @@ import org.flowplayer.model.PluginModel;
          * @return
          */
         protected function netStreamPlay(url:String):void {
+            log.debug("starting playback with resolved url " + url);
             _netStream.play(url);
         }
 
@@ -527,8 +528,8 @@ import org.flowplayer.model.PluginModel;
 		/* -------------------------- */
 		
 		private function createClipUrlResolver():void {
-			if (_model.clipURLResolver) {
-				_clipUrlResolver = _player.pluginRegistry.getPlugin(_model.clipURLResolver) as ClipURLResolver;
+			if (_model.urlResolver) {
+				_clipUrlResolver = PluginModel(_player.pluginRegistry.getPlugin(_model.urlResolver)).pluginObject as ClipURLResolver;
 			} else {
 				_clipUrlResolver = getDefaultClipURLResolver();
 			}
@@ -684,5 +685,27 @@ import org.flowplayer.model.PluginModel;
 //				_netStream.seek(0);
 			}
 		}
+
+        private function get clipURLResolver():ClipURLResolver {
+            log.debug("get clipURLResolver,  clip.urlResolver = " + clip.urlResolver + ", _clipUrlResolver = " + _clipUrlResolver);
+            if (! clip) return _clipUrlResolver;
+            if (! clip.urlResolver) return _clipUrlResolver;
+            log.info("using URLResolver defined in clip: " + clip.urlResolver);
+            var resolver:ClipURLResolver = PluginModel(_player.pluginRegistry.getPlugin(clip.urlResolver)).pluginObject as ClipURLResolver;
+            if (! resolver) {
+                throw new Error("clipURLResolver " + clip.urlResolver + " not loaded");
+            }
+            return resolver;
+        }
+
+        private function get connectionProvider():ConnectionProvider {
+            if (! clip) return _connectionProvider;
+            if (! clip.connectionProvider) return _connectionProvider;
+            var provider:ConnectionProvider = PluginModel(_player.pluginRegistry.getPlugin(clip.connectionProvider)).pluginObject as ConnectionProvider;
+            if (! provider) {
+                throw new Error("connectionProvider " + clip.connectionProvider + " not loaded");                
+            }
+            return provider;
+        }
 	}
 }
