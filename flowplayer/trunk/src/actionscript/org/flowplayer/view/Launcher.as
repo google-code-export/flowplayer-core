@@ -661,6 +661,7 @@ import org.flowplayer.model.DisplayPluginModel;
 		}
 		
 		private function onClipError(event:ClipEvent):void {
+            if (event.isDefaultPrevented()) return;
 			doHandleError(event.info + ", " + event.info2 + ", " + event.info3 + ", clip: '" + Clip(event.target) + "'");
 		}
 
