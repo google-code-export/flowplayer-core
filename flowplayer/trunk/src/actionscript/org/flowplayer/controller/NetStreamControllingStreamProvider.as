@@ -554,7 +554,17 @@ import org.flowplayer.model.PluginModel;
 
 		private function _onNetStatus(event:NetStatusEvent):void {
 			log.info("_onNetStatus, code: ", event.info.code);
-			
+
+            if (! clipURLResolver.handeNetStatusEvent(event)) {
+                log.debug("clipURLResolver.handeNetStatusEvent returned false, ignoring this event");
+                return;
+            }
+
+            if (! connectionProvider.handeNetStatusEvent(event)) {
+                log.debug("connectionProvider.handeNetStatusEvent returned false, ignoring this event");
+                return;
+            }
+
 			if (_stopping) {
 				log.info("_onNetStatus(), _stopping == true and will not process the event any further");
 				return;
