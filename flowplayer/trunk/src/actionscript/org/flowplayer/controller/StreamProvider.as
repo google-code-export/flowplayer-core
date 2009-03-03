@@ -18,7 +18,9 @@
  */
 
 package org.flowplayer.controller {
-	import org.flowplayer.model.Clip;
+    import flash.net.NetConnection;
+import flash.net.NetStream;
+import org.flowplayer.model.Clip;
 	import org.flowplayer.model.ClipEvent;
 	import org.flowplayer.model.Playlist;
 	
@@ -157,5 +159,17 @@ package org.flowplayer.controller {
          * @see ClipEventType.NETSTREAM_EVENT
          */
         function addStreamCallback(name:String, listener:Function):void;
+
+        /**
+         * Gets the underlying NetStream object.
+         * @return the netStream currently in use, or null if this provider has not started streaming yet
+         */
+        function get netStream():NetStream;
+
+        /**
+         * Gets the underlying netConnection object.
+         * @return the netConnection currently in use, or null if this provider has not started streaming yet
+         */
+        function get netConnection():NetConnection;
     }
 }

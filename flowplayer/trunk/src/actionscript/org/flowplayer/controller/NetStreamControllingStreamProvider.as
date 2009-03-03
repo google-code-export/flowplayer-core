@@ -273,6 +273,21 @@ import org.flowplayer.model.PluginModel;
             _streamCallbacks[name] = listener;
         }
 
+        /**
+         * @inheritDoc
+         */
+        public final function get netStream():NetStream {
+            return _netStream;
+        }
+
+        /**
+         * @inheritDoc
+         *
+         */
+		public function get netConnection():NetConnection {
+			return _connection;
+		}
+
 		/* ---- Methods that can be overridden ----- */
 		/* ----------------------------------------- */
 
@@ -294,7 +309,7 @@ import org.flowplayer.model.PluginModel;
 			}
             _connectionClient.clip = clip;
 			connectionProvider.connectionClient = _connectionClient;
-			connectionProvider.connect(clip, onConnectionSuccess, rest);
+			connectionProvider.connect(this, clip, onConnectionSuccess, rest);
 		}
 
 		/**
@@ -424,13 +439,6 @@ import org.flowplayer.model.PluginModel;
 		protected function getCurrentPlayheadTime(netStream:NetStream):Number {
 			return netStream.time;
 		}
-		
-		/**
-		 * The NetStream instance used by this provider.
-		 */
-		protected final function get netStream():NetStream {
-			return _netStream;
-		}
 
 		/**
 		 * The current clip in the playlist.
@@ -457,14 +465,7 @@ import org.flowplayer.model.PluginModel;
 		protected function currentClipStarted():Boolean {
 			return _startedClip == clip;
 		}
-		
-		/**
-		 * The NetConnection object.
-		 */
-		protected function get netConnection():NetConnection {
-			return _connection;
-		}
-		
+
 		/**
 		 * Have we already received a NetStream.Play.Start from the NetStream
 		 */
@@ -476,7 +477,7 @@ import org.flowplayer.model.PluginModel;
 		 * Resolves the url for the specified clip.
 		 */		
 		protected final function resolveClipUrl(clip:Clip, successListener:Function):void {
-			clipURLResolver.resolve(clip, _connection, successListener);
+			clipURLResolver.resolve(this, clip, successListener);
 		}
 
 		/**
