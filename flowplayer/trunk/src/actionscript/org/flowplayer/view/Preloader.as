@@ -6,14 +6,17 @@ package org.flowplayer.view {
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.events.ProgressEvent;
-	import flash.text.TextField;
+    import flash.events.TimerEvent;
+import flash.text.TextField;
 	import flash.text.TextFormat;
-	import flash.utils.getDefinitionByName;		
+    import flash.utils.Timer;
+import flash.utils.getDefinitionByName;
 
 	public class Preloader extends MovieClip {
 
 		private var _app:DisplayObject;
 		private var _percent:TextField;
+        private var _initTimer:Timer;
 
 		public function Preloader() {
             stop();
@@ -44,14 +47,24 @@ package org.flowplayer.view {
    		}
        
         private function init(event:Event = null):void {
+            if (_initTimer) {
+                _initTimer.stop();
+            }
         	if (_percent) {
         		removeChild(_percent);
         	}
         	nextFrame();
         	prepareStage();
-			var mainClass:Class = Class(getDefinitionByName("org.flowplayer.view.Launcher"));
-            _app = new mainClass() as DisplayObject;
-			addChild(_app as DisplayObject);
+            try {
+			    var mainClass:Class = Class(getDefinitionByName("org.flowplayer.view.Launcher"));
+                _app = new mainClass() as DisplayObject;
+			    addChild(_app as DisplayObject);
+            } catch (e:Error) {
+                trace("starting init timer");
+                _initTimer = new Timer(300);
+                _initTimer.addEventListener(TimerEvent.TIMER, function(e:TimerEvent):void { init(); });
+                _initTimer.start();
+            }
         }
 
 		private function prepareStage():void {
