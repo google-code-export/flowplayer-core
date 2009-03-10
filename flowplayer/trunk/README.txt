@@ -10,6 +10,7 @@ New features:
 - Added Security.allowDomain() to allow loaded plugins to script the player
 
 Bug fixes:
+- The preloader sometimes failed to initialize the player
 
 3.0.6
 -----
