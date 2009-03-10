@@ -26,23 +26,23 @@ package org.flowplayer.model {
 	public class PluginEvent extends AbstractEvent {
 
 		public static const PLUGIN_EVENT:String = "onPluginEvent";
-		private var _id:Object;
+        private var _id:Object;
 
-		public function PluginEvent(eventType:PluginEventType, pluginName:String, id:Object = null, info:Object = null, info2:Object = null) {
-			super(eventType, pluginName, info, info2);
-			_id = id;
+		public function PluginEvent(eventType:PluginEventType, pluginName:String, id:Object = null, info:Object = null, info2:Object = null, info3:Object = null) {
+            super(eventType, pluginName, info, info2, info3);
+            _id = id;
 		}
 
 		override public function hasError(error:ErrorCode):Boolean {
-			return _id == error.code;
+			return info == error.code;
 		}
-
-		public override function clone():Event {
-			return new PluginEvent(eventType as PluginEventType, info.toString(), _id, info2);
-		}
+//
+//		public override function clone():Event {
+//			return new PluginEvent(eventType as PluginEventType, info.toString(), _id, info2);
+//		}
 
 		public override function toString():String {
-			return formatToString("PluginEvent", "id", "info", "info2");
+			return formatToString("PluginEvent", "id", "info", "info2", "info3", "info4", "info5");
 		}
 		
 		/**
@@ -53,19 +53,23 @@ package org.flowplayer.model {
 		}
 
 		protected override function get externalEventArgument():Object {
-			return info;
-		}
+            return info;
+        }
 
-		protected override function get externalEventArgument2():Object {
-			return _id;
+        protected override function get externalEventArgument2():Object {
+            return _id;
 		}
 
 		protected override function get externalEventArgument3():Object {
 			return info2;
 		}
 
-		protected override function get externalEventArgument4():Object {
-			return info3;
-		}
+        protected override function get externalEventArgument4():Object {
+            return info3;
+        }
+
+        protected override function get externalEventArgument5():Object {
+            return info4;
+        }
 	}
 }

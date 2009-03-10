@@ -18,8 +18,10 @@
  */
 
 package org.flowplayer.model {
-	import org.flowplayer.model.Callable;	import org.flowplayer.model.Cloneable;	
-	/**
+	import org.flowplayer.model.Callable;
+	import org.flowplayer.model.Cloneable;	
+
+	/**
 	 * @author api
 	 */
 	public interface PluginModel extends Identifiable, Callable, Cloneable {
@@ -28,7 +30,7 @@ package org.flowplayer.model {
 		
 		function dispatchError(code:PluginError, info:Object = null):void;
 			
-		function dispatch(eventType:PluginEventType, eventId:Object = null, info:Object = null, info2:Object = null):void;
+		function dispatch(eventType:PluginEventType, eventId:Object = null, info:Object = null, info2:Object = null, info3:Object = null):void;
 		
 		function dispatchEvent(event:PluginEvent):void;
 

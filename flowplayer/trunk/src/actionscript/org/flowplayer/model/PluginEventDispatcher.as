@@ -18,8 +18,9 @@ package org.flowplayer.model {
 		 * @param info2 optional info object, will be passed to JavaScript
 		 * @see PluginEvent#id
 		 */
-		public function dispatch(eventType:PluginEventType, eventId:Object = null, info:Object = null, info2:Object = null):void {
-			doDispatchEvent(new PluginEvent(eventType, name, eventId, info, info2), true);
+		public function dispatch(eventType:PluginEventType, eventId:Object = null, info:Object = null, info2:Object = null, info3:Object = null):void {
+			log.debug(info2 + " " + info3);
+            doDispatchEvent(new PluginEvent(eventType, name, eventId, info, info2, info3), true);
 		}
 		
 		/**
