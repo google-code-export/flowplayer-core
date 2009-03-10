@@ -7,6 +7,7 @@ New features:
   When these events get fired on the connection or stream object, corresponding Clip events will be fired by the player.
   This can be used for example when firing custom events from RTMP server apps
 - Added new clip event types: 'onConnectionEvent' and 'onStreamEvent' these get fired when the predefined events happen on the connection and stream objects.
+- Added Security.allowDomain() to allow loaded plugins to script the player
 
 Bug fixes:
 

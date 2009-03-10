@@ -262,7 +262,7 @@
 	</target>
 	
 	<macrodef name="iterate-plugins">
-        <attribute name="target"/>
+        <attribute name="target" />
         <sequential>
             <subant target="@{target}">
                 <fileset dir="${plugins.dir}" includes="${plugin.buildfiles}"/>

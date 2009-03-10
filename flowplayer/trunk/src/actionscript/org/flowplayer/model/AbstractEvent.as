@@ -4,7 +4,8 @@ package org.flowplayer.model {
 	
 import flash.utils.getQualifiedClassName;
 import org.flowplayer.flow_internal;
-	import org.flowplayer.util.ObjectConverter;		
+    import org.flowplayer.util.Log;
+import org.flowplayer.util.ObjectConverter;
 	
 		
 	
@@ -21,22 +22,27 @@ import org.flowplayer.flow_internal;
 	 * @author anssi
 	 */
 	public class AbstractEvent extends Event {
-
+        protected var log:Log = new Log(this);
 		private var _info:Object;
 		private var _info2:Object;
-		private var _info3:Object;
+        private var _info3:Object;
+        private var _info4:Object;
+        private var _info5:Object;
 		private var _eventType:EventType;
 		private var _target:Object;
 		private var _propagationStopped:Boolean;
 		private var _isDefaultPrevented:Boolean;
 
-		public function AbstractEvent(eventType:EventType, info:Object = null, info2:Object = null, info3:Object = null) {
+		public function AbstractEvent(eventType:EventType, info:Object = null, info2:Object = null, info3:Object = null, info4:Object = null, info5:Object = null) {
 			super(eventType.name);
 			this._eventType = eventType;
 			this._info = info;
 			this._info2 = info2;
-			this._info3 = info3;
+            this._info3 = info3;
+            this._info4 = info4;
+            this._info5 = info5;
 			_target = target;
+            log.debug(_info + ", " + _info2 + ", " + _info3 + ", " + _info4 + ", " + _info5);
 		}
 
 		public function hasError(error:ErrorCode):Boolean {
@@ -52,7 +58,7 @@ import org.flowplayer.flow_internal;
 		}
 
 		public override function toString():String {
-			return formatToString("AbstractEvent", "type", "target");
+			return formatToString("AbstractEvent", "type", "target", "info", "info2", "info3", "info4", "info5");
 		}
 		
 		public function get info():Object {
@@ -85,11 +91,12 @@ import org.flowplayer.flow_internal;
 		}
 		
 		flow_internal function fireExternal(playerId:String, beforePhase:Boolean = false):Boolean {
+            log.debug("fireExternal " + eventType.name + ", " + externalEventArgument + ", " + externalEventArgument2 + ", " + externalEventArgument3 + "," + externalEventArgument4 + ", " + externalEventArgument5);
 			if (!ExternalInterface.available) return true;
 			// NOTE: externalEventArgument3 is not converted!
 			var returnVal:Object = ExternalInterface.call(
 				"flowplayer.fireEvent",
-				playerId || ExternalInterface.objectID, getExternalName(eventType.name, beforePhase), convert(externalEventArgument), convert(externalEventArgument2), externalEventArgument3, externalEventArgument4);
+				playerId || ExternalInterface.objectID, getExternalName(eventType.name, beforePhase), convert(externalEventArgument), convert(externalEventArgument2), externalEventArgument3, externalEventArgument4, externalEventArgument5);
 			if (returnVal + "" == "false") return false;
 			return true;
 		}
@@ -121,11 +128,15 @@ import org.flowplayer.flow_internal;
 		protected function get externalEventArgument3():Object {
 			return _info2;
 		}
-		
-		protected function get externalEventArgument4():Object {
-			return _info3;
-		}
-		
+
+        protected function get externalEventArgument4():Object {
+            return _info3;
+        }
+
+        protected function get externalEventArgument5():Object {
+            return _info4;
+        }
+
 		override public function isDefaultPrevented():Boolean {
 			return _isDefaultPrevented;
 		}
@@ -133,13 +144,21 @@ import org.flowplayer.flow_internal;
 		override public function preventDefault():void {
 			_isDefaultPrevented = true;
 		}
-		
-		public function get info2():Object {
-			return _info2;
-		}
-		
-		public function get info3():Object {
-			return _info3;
-		}
+
+        public function get info2():Object {
+            return _info2;
+        }
+
+        public function get info3():Object {
+            return _info3;
+        }
+
+        public function get info4():Object {
+            return _info4;
+        }
+
+        public function get info5():Object {
+            return _info5;
+        }
 	}
 }

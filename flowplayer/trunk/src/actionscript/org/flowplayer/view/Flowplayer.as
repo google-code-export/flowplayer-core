@@ -303,7 +303,8 @@ package org.flowplayer.view {
 					plugin.invokeMethod(methodName, args is Array ? args as Array : [ args ]);
 				}
 			} catch (e:Error) {
-				handleError(PlayerError.PLUGIN_INVOKE_FAILED, "Error when invoking method '" + methodName + "', on plugin '" + pluginName + "'");
+                throw e;
+//				handleError(PlayerError.PLUGIN_INVOKE_FAILED, "Error when invoking method '" + methodName + "', on plugin '" + pluginName + "'");
 			}
 			return "undefined";
 		}
