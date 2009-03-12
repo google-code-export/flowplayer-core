@@ -166,10 +166,10 @@ package org.flowplayer.controller {
 		}
 
 		private function seekTo(event:ClipEvent, seconds:Number):void {
-			doSeekTo(event, seconds);
-            if (! durationTracker) return;
-			durationTracker.time = seconds;
-		}
+            if (! durationTracker) createDurationTracker(clip);
+            doSeekTo(event, seconds);
+            durationTracker.time = seconds;
+        }
 		
 		protected function get clip():Clip {
 			return _playlist.current;

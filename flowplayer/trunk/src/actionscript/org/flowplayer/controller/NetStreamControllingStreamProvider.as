@@ -309,7 +309,8 @@ import org.flowplayer.model.PluginModel;
 			}
             _connectionClient.clip = clip;
 			connectionProvider.connectionClient = _connectionClient;
-			connectionProvider.connect(this, clip, onConnectionSuccess, rest);
+            log.debug("about to call connectionProvider.connect, objectEncoding " + _model.objectEncoding);
+			connectionProvider.connect(this, clip, onConnectionSuccess, _model.objectEncoding, rest);
 		}
 
 		/**
