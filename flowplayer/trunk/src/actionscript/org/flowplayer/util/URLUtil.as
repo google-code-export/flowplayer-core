@@ -18,14 +18,18 @@
  */
 
 package org.flowplayer.util {
-	import flash.display.LoaderInfo;	
+    import com.adobe.utils.StringUtil;
+import flash.display.LoaderInfo;
 	import flash.external.ExternalInterface;		
 
 	/**
 	 * @author anssi
 	 */
 	public class URLUtil {
-				public static function completeURL(baseURL:String, fileName:String):String {			return addBaseURL(baseURL || pageUrl, fileName);
+
+		
+		public static function completeURL(baseURL:String, fileName:String):String {
+			return addBaseURL(baseURL || pageUrl, fileName);
 		}
 
 		public static function addBaseURL(baseURL:String, fileName:String):String {
@@ -45,6 +49,11 @@ package org.flowplayer.util {
 			return fileName;
 		}
 
+        public static function appendToPath(base:String, postFix:String):String {
+            if (StringUtil.endsWith(base, "/")) return base + postFix;
+            return base + "/" + postFix;
+        }
+
 		public static function isCompleteURLWithProtocol(fileName:String):Boolean {
 			if (! fileName) return false;
 			return fileName.indexOf("://") > 0;
@@ -54,17 +63,21 @@ package org.flowplayer.util {
 			if (!ExternalInterface.available) return null;
 			try {
 				var href:String = ExternalInterface.call("self.location.href.toString");
-				var endPos:int = href.indexOf("?");
-				if (endPos > 0) {
-					endPos = href.substring(0, endPos).lastIndexOf("/");
-				} else {
-					endPos = href.lastIndexOf("/");
-				}
-				return href.substring(0, endPos);
+                return baseUrlAndRest(href)[0];
 			} catch (e:Error) {
-			}
-			return null;
-		}
+            }
+            return null;
+        }
+
+        public static function baseUrlAndRest(url:String):Array {
+            var endPos:int = url.indexOf("?");
+            if (endPos > 0) {
+                endPos = url.substring(0, endPos).lastIndexOf("/");
+            } else {
+                endPos = url.lastIndexOf("/");
+            }
+            return [url.substring(0, endPos), url.substring(endPos + 1)];
+        }
 		
 		public static function playerBaseUrl(loaderInfo:LoaderInfo):String {
 			var url:String = loaderInfo.url;

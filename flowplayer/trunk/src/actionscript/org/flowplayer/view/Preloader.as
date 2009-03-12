@@ -60,10 +60,12 @@ import flash.utils.getDefinitionByName;
                 _app = new mainClass() as DisplayObject;
 			    addChild(_app as DisplayObject);
             } catch (e:Error) {
-                trace("starting init timer");
-                _initTimer = new Timer(300);
-                _initTimer.addEventListener(TimerEvent.TIMER, function(e:TimerEvent):void { init(); });
-                _initTimer.start();
+                if (! _initTimer) {
+                    trace("starting init timer");
+                    _initTimer = new Timer(300);
+                    _initTimer.addEventListener(TimerEvent.TIMER, function(e:TimerEvent):void { init(); });
+                    _initTimer.start();
+                }
             }
         }
 

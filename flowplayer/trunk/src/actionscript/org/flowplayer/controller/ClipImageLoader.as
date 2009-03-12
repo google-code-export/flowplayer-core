@@ -40,8 +40,8 @@ package org.flowplayer.controller {
 			_loader.addBinaryResourceUrl(url);
 		}
 		
-		public function load(url:String = null, completeListener:Function = null):void {
-			_loader.load(url, completeListener);
+		public function load(url:String = null, completeListener:Function = null, ignored:Boolean = false):void {
+			_loader.load(url, completeListener, false);
 		}
 
 		public function set completeListener(listener:Function):void {
