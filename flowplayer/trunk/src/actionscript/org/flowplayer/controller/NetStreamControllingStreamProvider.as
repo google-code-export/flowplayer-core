@@ -323,7 +323,7 @@ import org.flowplayer.model.PluginModel;
 		 */
 		protected function doLoad(event:ClipEvent, netStream:NetStream, clip:Clip):void {
 			netStream.client = new NetStreamClient(clip, _player.config, _streamCallbacks);
-			resolveClipUrl(clip, netStreamPlay);
+			resolveClipUrl(clip, onClipUrlResolved);
 //			netStream.play(getClipUrl(clip));
 		}
 		
@@ -477,6 +477,7 @@ import org.flowplayer.model.PluginModel;
 		 * Resolves the url for the specified clip.
 		 */		
 		protected final function resolveClipUrl(clip:Clip, successListener:Function):void {
+            clip.resolvedUrl = null;
 			clipURLResolver.resolve(this, clip, successListener);
 		}
 
@@ -525,9 +526,14 @@ import org.flowplayer.model.PluginModel;
             _netStream.play(url);
         }
 
-		/* ---- Private methods ----- */
-		/* -------------------------- */
-		
+        protected function onClipUrlResolved(clip:Clip):void {
+            log.debug("starting playback with resolved url " + clip.url);
+            netStreamPlay(clip.completeUrl);
+        }
+        
+        /* ---- Private methods ----- */
+        /* -------------------------- */
+
 		private function createClipUrlResolver():void {
 			if (_model.urlResolver) {
 				_clipUrlResolver = PluginModel(_player.pluginRegistry.getPlugin(_model.urlResolver)).pluginObject as ClipURLResolver;
@@ -698,13 +704,14 @@ import org.flowplayer.model.PluginModel;
 		}
 
         private function get clipURLResolver():ClipURLResolver {
-            log.debug("get clipURLResolver,  clip.urlResolver = " + clip.urlResolver + ", _clipUrlResolver = " + _clipUrlResolver);
+            log.debug("get clipURLResolver,  clip.urlResolver = " + clip.urlResolvers + ", _clipUrlResolver = " + _clipUrlResolver);
             if (! clip) return _clipUrlResolver;
-            if (! clip.urlResolver) return _clipUrlResolver;
-            log.info("using URLResolver defined in clip: " + clip.urlResolver);
-            var resolver:ClipURLResolver = PluginModel(_player.pluginRegistry.getPlugin(clip.urlResolver)).pluginObject as ClipURLResolver;
+            if (! clip.urlResolvers) return _clipUrlResolver;
+            
+            log.info("using URLResolver defined in clip: " + clip.urlResolvers);
+            var resolver:ClipURLResolver = PluginModel(_player.pluginRegistry.getPlugin(clip.urlResolvers[0])).pluginObject as ClipURLResolver;
             if (! resolver) {
-                throw new Error("clipURLResolver " + clip.urlResolver + " not loaded");
+                throw new Error("clipURLResolver " + clip.urlResolvers + " not loaded");
             }
             return resolver;
         }

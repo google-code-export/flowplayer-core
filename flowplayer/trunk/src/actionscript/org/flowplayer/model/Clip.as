@@ -42,6 +42,7 @@ import org.flowplayer.flow_internal;
 //		private var _previousPositives:Array;
 		private var _baseUrl:String;
 		private var _url:String;
+        private var _resolvedUrl:String;
 		private var _type:ClipType;
 		private var _start:Number;
 		private var _duration:Number;
@@ -66,7 +67,7 @@ import org.flowplayer.flow_internal;
 		private var _linkWindow:String;
 		private var _image:Boolean;
 		private var _cuepointMultiplier:Number;
-        private var _urlResolver:String;
+        private var _urlResolvers:Array;
         private var _connectionProvider:String;
 
         public function Clip() {
@@ -207,12 +208,17 @@ import org.flowplayer.flow_internal;
 		public function set baseUrl(baseURL:String):void {
 			this._baseUrl = baseURL;
 		}
-		
-		[Value]
-		public function get url():String {
-			return _url;
-		}
-		
+
+        [Value]
+        public function get url():String {
+            return _resolvedUrl || _url;
+        }
+
+        [Value]
+        public function get originalUrl():String {
+            return _url;
+        }
+
 		public function set url(url:String):void {
 			if (_url != url) {
 				_metaData = null;
@@ -221,14 +227,18 @@ import org.flowplayer.flow_internal;
 			this._url = url;
 		}
 
+        public function set resolvedUrl(val:String):void {
+            _resolvedUrl = val;
+        }
+
 		[Value]
 		public function get completeUrl():String {
-			return URLUtil.completeURL(_baseUrl, _url);
+			return URLUtil.completeURL(_baseUrl, url);
 		}
 		
 		public function get type():ClipType {
 			if (! _type && _url) {
-				_type = ClipType.fromFileExtension(_url);
+				_type = ClipType.fromFileExtension(url);
 			}
 			if (! _type) {
 				return ClipType.VIDEO;
@@ -636,12 +646,12 @@ import org.flowplayer.flow_internal;
             _connectionProvider = val;
         }
 
-        public function get urlResolver():String {
-            return _urlResolver;
+        public function get urlResolvers():Array {
+            return _urlResolvers;
         }
 
-        public function set urlResolver(val:String):void {
-            _urlResolver = val;
+        public function setUrlResolvers(val:Object):void {
+            _urlResolvers = val is Array ? val as Array : [val];
         }
     }
 }

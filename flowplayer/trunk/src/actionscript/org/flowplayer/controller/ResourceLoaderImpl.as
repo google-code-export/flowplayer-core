@@ -71,13 +71,19 @@ package org.flowplayer.controller {
 		 * @see #addTextResourceUrl()
 		 * @see #addBinaryResourceUrl()
 		 */
-		public function load(url:String = null, completeListener:Function = null):void {
+		public function load(url:String = null, completeListener:Function = null, isTextResource:Boolean = false):void {
 			if (completeListener != null) {
 				_completeListener = completeListener;
 			}
 			if (url) {
 				clear();
-				addBinaryResourceUrl(url);
+                if (isTextResource) {
+                    log.debug("loading text resource from " + url);
+                    addTextResourceUrl(url);
+                } else {
+                    log.debug("loading binary resource from " + url);
+				    addBinaryResourceUrl(url);
+                }
 			}
 			if (! _urls || _urls.length == 0) {
 				log.debug("nothing to load");
