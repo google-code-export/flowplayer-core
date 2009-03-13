@@ -3,6 +3,7 @@ Version history:
 3.1.0
 -----
 New features:
+- clip's can have urlResolvers and connectionProviders
 - Added new configuration options 'connectionCallbacks' and 'streamCallbacks'. Both accept an Array of event names as a value.
   When these events get fired on the connection or stream object, corresponding Clip events will be fired by the player.
   This can be used for example when firing custom events from RTMP server apps
@@ -11,6 +12,7 @@ New features:
 
 Bug fixes:
 - The preloader sometimes failed to initialize the player
+- Allow seeking while in buffering state: http://flowplayer.org/forum/8/16505
 
 3.0.6
 -----

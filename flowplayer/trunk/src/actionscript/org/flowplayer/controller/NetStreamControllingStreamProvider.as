@@ -60,7 +60,8 @@ import org.flowplayer.model.PluginModel;
 		private var _seekTarget:Number;
 		private var _model:ProviderModel;
 		private var _connectionProvider:ConnectionProvider;
-		private var _clipUrlResolver:ClipURLResolver;
+        private var _defaultClipUrlResolver:ClipURLResolver;
+        private var _clipUrlResolver:ClipURLResolver;
 		private var _player:Flowplayer;
 		
 			// state variables
@@ -537,9 +538,9 @@ import org.flowplayer.model.PluginModel;
 
 		private function createClipUrlResolver():void {
 			if (_model.urlResolver) {
-				_clipUrlResolver = PluginModel(_player.pluginRegistry.getPlugin(_model.urlResolver)).pluginObject as ClipURLResolver;
+				_defaultClipUrlResolver = PluginModel(_player.pluginRegistry.getPlugin(_model.urlResolver)).pluginObject as ClipURLResolver;
 			} else {
-				_clipUrlResolver = getDefaultClipURLResolver();
+				_defaultClipUrlResolver = getDefaultClipURLResolver();
 			}
 		}
 
@@ -705,16 +706,13 @@ import org.flowplayer.model.PluginModel;
 		}
 
         private function get clipURLResolver():ClipURLResolver {
-            log.debug("get clipURLResolver,  clip.urlResolver = " + clip.urlResolvers + ", _clipUrlResolver = " + _clipUrlResolver);
-            if (! clip) return _clipUrlResolver;
-            if (! clip.urlResolvers) return _clipUrlResolver;
-            
-            log.info("using URLResolver defined in clip: " + clip.urlResolvers);
-            var resolver:ClipURLResolver = PluginModel(_player.pluginRegistry.getPlugin(clip.urlResolvers[0])).pluginObject as ClipURLResolver;
-            if (! resolver) {
-                throw new Error("clipURLResolver " + clip.urlResolvers + " not loaded");
+            log.debug("get clipURLResolver,  clip.urlResolver = " + clip.urlResolvers + ", _clipUrlResolver = " + _defaultClipUrlResolver);
+            if (! clip) return _defaultClipUrlResolver;
+            if (! clip.urlResolvers) return _defaultClipUrlResolver;
+            if (! _clipUrlResolver) {
+                _clipUrlResolver = CompositeClipUrlResolver.createResolver(clip.urlResolvers, _player.pluginRegistry);
             }
-            return resolver;
+            return _clipUrlResolver;
         }
 
         private function get connectionProvider():ConnectionProvider {
