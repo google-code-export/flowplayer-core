@@ -299,6 +299,9 @@ import org.flowplayer.model.DisplayPluginModel;
 			for (var i:Number = 0; i < loadables.length; i++) {
 
 				var plugin:PluginModel = Loadable(loadables[i]).plugin;
+                if (! plugin) {
+                    throw new Error("Plugin " + loadables[i] + " not available");
+                }
                 var isNonAdHocPlugin:Boolean = plugin.pluginObject is Plugin;
 //                var isNonAdHocPlugin:Boolean = (plugin is DisplayPluginModel && DisplayPluginModel(plugin).getDisplayObject() is Plugin) ||
 //                    plugin is ProviderModel && ProviderModel(plugin).pluginObject is Plugin;

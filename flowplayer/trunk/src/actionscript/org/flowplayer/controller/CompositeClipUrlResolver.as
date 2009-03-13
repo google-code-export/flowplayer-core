@@ -26,13 +26,19 @@ import org.flowplayer.view.PluginRegistry;
     public class CompositeClipUrlResolver implements ClipURLResolver {
         private static var log:Log = new Log("org.flowplayer.controller::CompositeClipUrlResolver");
         private var _resolvers:Array;
+        private var _current:int = 0;
+        private var _successListener:Function;
+        private var _clip:Clip;
+        private var _provider:StreamProvider;
 
         public function CompositeClipUrlResolver(resolvers:Array) {
             _resolvers = resolvers;
         }
 
-        public static function createResolver(names:Array, pluginRegistry:PluginRegistry, fallbackResolver:String):ClipURLResolver {
-            if (! names || names.length == 0) return getResolver(fallbackResolver, pluginRegistry);
+        public static function createResolver(names:Array, pluginRegistry:PluginRegistry):ClipURLResolver {
+            if (! names || names.length == 0) {
+                throw new Error("resolver name not supplied");
+            }
             if (names.length == 1) return getResolver(names[0], pluginRegistry);
 
             log.debug("creating composite resolver with " + names.length + " resolvers");
@@ -44,10 +50,33 @@ import org.flowplayer.view.PluginRegistry;
         }
 
         private static function getResolver(name:String, pluginRegistry:PluginRegistry):ClipURLResolver {
-            return PluginModel(pluginRegistry.getPlugin(name)).pluginObject as ClipURLResolver;
+            var resolver:ClipURLResolver = PluginModel(pluginRegistry.getPlugin(name)).pluginObject as ClipURLResolver;
+            if (! resolver) {
+                throw new Error("clipURLResolver '" + name + "' not loaded");
+            }
+            return resolver;
         }
 
         public function resolve(provider:StreamProvider, clip:Clip, successListener:Function):void {
+            log.debug("resolving with " + _resolvers.length + " resolvers");
+            _provider = provider;
+            _clip = clip;
+            _successListener = successListener;
+            resolveNext();
+        }
+
+        private function resolveNext():void {
+            if (_current == _resolvers.length) {
+                log.debug("all resolvers done, calling the successListener");
+                _successListener(_clip);
+                return;
+            }
+            var resolver:ClipURLResolver = _resolvers[_current++];
+            log.debug("resolving with " + resolver);
+            resolver.resolve(_provider, _clip, function(clip:Clip):void {
+                log.debug("resolver "+ resolver +" done, url is now " + clip.url);
+                resolveNext();
+            });
         }
 
         public function set onFailure(listener:Function):void {
