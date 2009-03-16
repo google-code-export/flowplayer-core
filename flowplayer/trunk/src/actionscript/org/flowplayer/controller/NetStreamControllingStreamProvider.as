@@ -77,12 +77,20 @@ import org.flowplayer.model.PluginModel;
         }
 
 		/**
-		 * Sets the plugin model.
+		 * Sets the provider model.
 		 */
-		public function set config(model:ProviderModel):void {
+		public function set model(model:ProviderModel):void {
 			_model = model;
 			onConfig(model);
-		} 
+		}
+
+        /**
+         * Gets the provider model.
+         * @return
+         */
+        public function get model():ProviderModel {
+            return _model;
+        }
 
 		/**
 		 * Sets the player instance.
@@ -711,6 +719,9 @@ import org.flowplayer.model.PluginModel;
             if (! clip.urlResolvers) return _defaultClipUrlResolver;
             if (! _clipUrlResolver) {
                 _clipUrlResolver = CompositeClipUrlResolver.createResolver(clip.urlResolvers, _player.pluginRegistry);
+                _clipUrlResolver.onFailure = function(message:String = null):void {
+                    clip.dispatchError(ClipError.STREAM_LOAD_FAILED, "failed to resolve clip url" + (message ? ": " + message : ""));
+                };
             }
             return _clipUrlResolver;
         }
@@ -722,6 +733,9 @@ import org.flowplayer.model.PluginModel;
             if (! provider) {
                 throw new Error("connectionProvider " + clip.connectionProvider + " not loaded");                
             }
+            provider.onFailure = function(message:String = null):void {
+                clip.dispatchError(ClipError.STREAM_LOAD_FAILED, "connection failed" + (message ? ": " + message : ""));
+            };
             return provider;
         }
 	}
