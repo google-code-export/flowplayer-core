@@ -249,7 +249,7 @@ import org.flowplayer.model.Plugin;
                     log.info(index + ": setting config to " + pluginInstance + ", " + loadable);
                     if (pluginInstance is NetStreamControllingStreamProvider) {
                         log.debug("NetStreamControllingStreamProvider(pluginInstance).config = " +loadable.plugin);
-                            NetStreamControllingStreamProvider(pluginInstance).config = ProviderModel(loadable.plugin);
+                            NetStreamControllingStreamProvider(pluginInstance).model = ProviderModel(loadable.plugin);
                     } else {
                         if (pluginInstance.hasOwnProperty("onConfig")) {
                             pluginInstance.onConfig(loadable.plugin);

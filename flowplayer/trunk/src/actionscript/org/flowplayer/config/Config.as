@@ -194,7 +194,7 @@ package org.flowplayer.config {
 			var provider:NetStreamControllingStreamProvider =  new NetStreamControllingStreamProvider();
 			
 			var model:ProviderModel = new ProviderModel(provider, "http");
-			provider.config = model;
+			provider.model = model;
 			
 //			var conf:Loadable = config.http;
 //			if (conf) {
