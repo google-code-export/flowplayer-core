@@ -18,7 +18,8 @@
  */
 
 package org.flowplayer.view {
-	import org.flowplayer.model.Plugin;
+    import flash.system.Security;
+import org.flowplayer.model.Plugin;
 	import org.flowplayer.controller.NetStreamControllingStreamProvider;	
 	
 	import com.adobe.utils.StringUtil;
@@ -163,7 +164,7 @@ import org.flowplayer.model.PluginModel;
 			var info:LoaderInfo = event.target as LoaderInfo;
 			log.debug("loaded class name " + getQualifiedClassName(info.content));
 			
-//			Security.allowDomain(info.url);
+			Security.allowDomain(info.url);
 			
 			var instanceUsed:Boolean = false;
 			_loadables.forEach(function(loadable:Loadable, index:int, array:Array):void {
