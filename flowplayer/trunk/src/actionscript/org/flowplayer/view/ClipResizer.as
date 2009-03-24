@@ -90,10 +90,11 @@ package org.flowplayer.view {
 		private function addListeners(eventSupport:ClipEventSupport):void {
 			eventSupport.onStart(onResize);
 			eventSupport.onBufferFull(onResize);
-			eventSupport.onPlaylistReplace(onPlaylistReplace);
-		} 
+            eventSupport.onPlaylistReplace(onPlaylistChange);
+            eventSupport.onClipAdd(onPlaylistChange);
+		}
 		
-		private function onPlaylistReplace(event:ClipEvent):void {
+		private function onPlaylistChange(event:ClipEvent):void {
 			log.info("Received onPlaylistChanged");
 			createResizers(ClipEventSupport(event.target).clips);
 		}

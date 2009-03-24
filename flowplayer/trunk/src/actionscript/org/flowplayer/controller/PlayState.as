@@ -79,7 +79,8 @@ package org.flowplayer.controller {
 		public function PlayState(stateCode:State, playList:Playlist, playListController:PlayListController, providers:Dictionary) {
 			this._stateCode = stateCode;
 			this.playList = playList;
-			playList.onPlaylistReplace(onPlaylistChanged);
+            playList.onPlaylistReplace(onPlaylistChanged);
+            playList.onClipAdd(onClipAdded);
 			this.playListController = playListController;
 		}
 
@@ -217,14 +218,20 @@ package org.flowplayer.controller {
 				}
 			}
 		}
-		
-		private function onPlaylistChanged(event:ClipEvent):void {
-			setEventListeners(ClipEventSupport(event.info), false);
-			if (_active) {
-				setEventListeners(ClipEventSupport(event.target));
-			}
-		}
-		
+
+        private function onPlaylistChanged(event:ClipEvent):void {
+            setEventListeners(ClipEventSupport(event.info), false);
+            if (_active) {
+                setEventListeners(ClipEventSupport(event.target));
+            }
+        }
+
+        private function onClipAdded(event:ClipEvent):void {
+            if (_active) {
+                setEventListeners(ClipEventSupport(event.target));
+            }
+        }
+
 		protected function get playListReady():Boolean {
 			if (! playList.current || playList.current.isNullClip) {
 				log.debug("playlist has nos clips to play, returning");

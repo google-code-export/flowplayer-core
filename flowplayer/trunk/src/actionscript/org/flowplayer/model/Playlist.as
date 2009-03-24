@@ -51,7 +51,7 @@ package org.flowplayer.model {
 			_clips = new Array();
 			if (newClips) {
 				for (var i:Number = 0; i < newClips.length; i++) {
-					addClip(newClips[i]);
+					doAddClip(newClips[i]);
 				}
 			}
 			super.setClips(_clips);
@@ -76,19 +76,50 @@ package org.flowplayer.model {
 
 		override flow_internal function setClips(clips:Array):void {
 			for (var i:Number = 0; i < clips.length; i++) {
-				addClip(clips[i]);
+				doAddClip(clips[i]);
 			}
 			super.setClips(clips);
 		}
 		
-		private function doReplace(newClips:Array):void {
+		private function doReplace(newClips:Array, silent:Boolean = false):void {
 			var oldClipsEventHelper:ClipEventSupport = new ClipEventSupport(_commonClip, _clips);
-			initialize(newClips);			
-			doDispatchEvent(new ClipEvent(ClipEventType.PLAYLIST_REPLACE, oldClipsEventHelper), true);
+			initialize(newClips);
+            if (! silent) {
+                doDispatchEvent(new ClipEvent(ClipEventType.PLAYLIST_REPLACE, oldClipsEventHelper), true);
+            }
 		}
 
-		public function addClip(clip:Clip):void {
-			_clips.push(clip);
+
+        /**
+         * Adds a new clip into the playlist. Insertion of clips does not change the current clip.
+         * @param clip
+         * @param index optional insertion point, if not given the clip is added to the end of the list.
+         */
+        public function addClip(clip:Clip, index:int = -1):void {
+            log.debug("current clip " + current);
+            if (current.isNullClip || current == commonClip) {
+                log.debug("replacing common/null clip");
+                // we only have the common clip or a common clip, perform a playlist replace!
+                doReplace([clip], true);
+            } else {
+                doAddClip(clip, index);
+                if (index >= 0 && index <= currentPos && hasNext()) {
+                    log.debug("moving current pos one up");
+                    currentPos++;
+                }
+                super.setClips(_clips);
+            }
+            doDispatchEvent(new ClipEvent(ClipEventType.CLIP_ADD, index >= 0 ? index : _clips.length - 1), true);
+        }
+
+		private function doAddClip(clip:Clip, index:int = -1):void {
+            log.debug("addClip " + clip);
+            if (index == -1) {
+                _clips.push(clip);
+            } else {
+                _clips.splice(index, 0, clip);
+            }
+            log.debug("clips now " + _clips);
 			clip.setPlaylist(this);
 			if (clip != _commonClip) {
 				clip.onAll(_commonClip.onClipEvent);

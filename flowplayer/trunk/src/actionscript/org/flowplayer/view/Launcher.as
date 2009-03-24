@@ -602,7 +602,10 @@ import org.flowplayer.model.DisplayPluginModel;
 		}
 		
 		private function addListeners():void {
-			_screen.addEventListener(MouseEvent.CLICK, onViewClicked);
+            _screen.addEventListener(MouseEvent.CLICK, onViewClicked);
+            if (_playButtonOverlay) {
+                _playButtonOverlay.getDisplayObject().addEventListener(MouseEvent.CLICK, onViewClicked);
+            }
 			addEventListener(MouseEvent.ROLL_OVER, onMouseOver);
 			addEventListener(MouseEvent.ROLL_OUT, onMouseOut);
 			
