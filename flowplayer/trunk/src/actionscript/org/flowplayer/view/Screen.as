@@ -35,7 +35,8 @@ package org.flowplayer.view {
 	import flash.events.Event;
 	import flash.events.FullScreenEvent;
 	import flash.geom.Rectangle;
-	import flash.utils.Dictionary;			
+	import flash.utils.Dictionary;		
+	
 	use namespace flow_internal;
 
 	internal class Screen extends AbstractSprite {
@@ -120,7 +121,8 @@ package org.flowplayer.view {
 		// resized is called when the clip has been resized
 		internal function resized(clip:Clip):void {
 			var disp:DisplayObject = _displays[clip];
-			disp.width = clip.width;
+            log.debug("resized " + clip + ", display " + disp);
+            disp.width = clip.width;
 			disp.height = clip.height;
 			if (clip.accelerated && _fullscreenManaer.isFullscreen) {
 				log.debug("in hardware accelerated fullscreen, will not center the clip");
@@ -165,6 +167,7 @@ package org.flowplayer.view {
 			display.height = this.height;
 			display.visible = false;
 			addChild(display);
+            log.debug("created display " + display);
 			_displays[clip] = display;
 		}
 
@@ -197,13 +200,21 @@ package org.flowplayer.view {
 			}
 		}
 
-		private function onPlaylistChanged(event:ClipEvent):void {
-			log.info("onPlaylistChanged()");
-			_prevClip = null;
-			removeDisplays(ClipEventSupport(event.info).clips);
-			createDisplays(Playlist(event.target));
-		}
-		
+        private function onPlaylistChanged(event:ClipEvent):void {
+            log.info("onPlaylistChanged()");
+            _prevClip = null;
+            removeDisplays(ClipEventSupport(event.info).clips);
+            createDisplays(Playlist(event.target));
+        }
+
+        private function onClipAdded(event:ClipEvent):void {
+            log.info("onClipAdded(): " + event.info);
+            log.debug("onClipAdded(): playlist now " + ClipEventSupport(event.target).clips);
+            var clip:Clip = ClipEventSupport(event.target).clips[event.info] as Clip;
+            log.debug("added clip " + clip);
+            createDisplay(clip);
+        }
+
 		private function removeDisplays(clips:Array):void {
 			for (var i:Number = 0; i < clips.length; i++) {
 				removeChild(_displays[clips[i]]);
@@ -211,7 +222,8 @@ package org.flowplayer.view {
 		}
 
 		private function addListeners(eventSupport:ClipEventSupport):void {
-			eventSupport.onPlaylistReplace(onPlaylistChanged);
+            eventSupport.onPlaylistReplace(onPlaylistChanged);
+            eventSupport.onClipAdd(onClipAdded);
 			eventSupport.onBufferFull(onBufferFull);
 			
 // if this is enabled, the video will show first as a small rectangle 
@@ -304,5 +316,6 @@ package org.flowplayer.view {
 			arrangePlay();
 			log.debug("play bounds: " + Arrange.describeBounds(playView));
 			log.debug("play parent: " + playView.parent);
-		}	}		
+		}
+	}		
 }

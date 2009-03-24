@@ -137,9 +137,13 @@ package org.flowplayer.model {
 			setListener(ClipEventType.ERROR, listener, clipFilter, false, addToFront);
 		}
 
-		public function onPlaylistReplace(listener:Function, addToFront:Boolean = false):void {
-			setListener(ClipEventType.PLAYLIST_REPLACE, listener, null, false, addToFront);
-		}
+        public function onPlaylistReplace(listener:Function, addToFront:Boolean = false):void {
+            setListener(ClipEventType.PLAYLIST_REPLACE, listener, null, false, addToFront);
+        }
+
+        public function onClipAdd(listener:Function, addToFront:Boolean = false):void {
+            setListener(ClipEventType.CLIP_ADD, listener, null, false, addToFront);
+        }
 
 		override protected function get cancellableEvents():Dictionary {
 			return ClipEventType.cancellable;

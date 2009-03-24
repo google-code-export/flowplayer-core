@@ -76,7 +76,7 @@ package org.flowplayer.config {
             } else if (_clipObjects && _clipObjects.length > 0) {
                 playList.setClips(createClips(_clipObjects));
             } else if (_commonClip) {
-                playList.addClip(createClip(_commonClip));
+                playList.addClip(commonClip);
             }
 
             return playList;
@@ -95,6 +95,7 @@ package org.flowplayer.config {
 		}
 
         public function createClip(clipObj:Object):Clip {
+            log.debug("createClip, from ", clipObj);
             if (! clipObj) return null;
             if (clipObj is String) {
                 clipObj = { url: clipObj };

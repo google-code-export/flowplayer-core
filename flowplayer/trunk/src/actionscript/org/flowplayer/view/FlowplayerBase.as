@@ -532,11 +532,30 @@ import org.flowplayer.model.EventDispatcher;
 		}
 
 		/**
-		 * Resource loader.
+		 * Creates a new resource loader.
 		 */		
 		public function createLoader():ResourceLoader {
 			return new ResourceLoaderImpl(_config.playerId ? null : _playerSWFBaseURL, this);
 		}
+
+        /**
+         * Sets a new playlist.
+         * @param playlist an array of Clip instances
+         * @see ClipEventType#PLAYLIST_REPLACE
+         */
+        public function setPlaylist(playlist:Array):void {
+            _playListController.setPlaylist(playlist);
+            var clip:Clip = _playListController.playlist.current;
+        }
+
+        /**
+         * Adds a new clip into the playlist. Insertion of clips does not change the current clip.
+         * @param clip
+         * @param index optional insertion point, if not given the clip is added to the end of the list.
+         */
+        public function addClip(clip:Clip, index:int = -1):void {
+            _playListController.playlist.addClip(clip, index);
+        }
 
 		private function resetPlugin(pluginName:String, speed:Number = 500):void {
 			var props:DisplayProperties = _pluginRegistry.getOriginalProperties(pluginName) as DisplayProperties;

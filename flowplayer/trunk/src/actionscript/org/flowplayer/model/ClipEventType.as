@@ -45,7 +45,8 @@ import org.flowplayer.flow_internal;
 		public static const NETSTREAM_EVENT:ClipEventType = new ClipEventType("onNetStreamEvent");
 		public static const CONNECTION_EVENT:ClipEventType = new ClipEventType("onConnectionEvent");
 
-		public static const PLAYLIST_REPLACE:ClipEventType = new ClipEventType("onPlaylistReplace");
+        public static const PLAYLIST_REPLACE:ClipEventType = new ClipEventType("onPlaylistReplace");
+        public static const CLIP_ADD:ClipEventType = new ClipEventType("onClipAdd");
 
 		private static var _allValues:Dictionary;
 		private static var _cancellable:Dictionary = new Dictionary();
@@ -90,7 +91,7 @@ import org.flowplayer.flow_internal;
 		}
 		
 		public function get playlistIsEventTarget():Boolean {
-			return this == PLAYLIST_REPLACE;
+			return this == PLAYLIST_REPLACE || this == CLIP_ADD;
 		}
 
     }

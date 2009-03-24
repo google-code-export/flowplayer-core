@@ -19,7 +19,8 @@
 
 package org.flowplayer.model {
 	import flash.events.Event;	
-	/**
+
+	/**
 	 * @author anssi
 	 */
 	public class ClipEvent extends AbstractEvent  {
@@ -37,9 +38,9 @@ package org.flowplayer.model {
 		}
 				
 		protected override function get externalEventArgument():Object {
-			if (eventType == ClipEventType.PLAYLIST_REPLACE) {
-				return (target as ClipEventSupport).clips;
-			} 
+            if (eventType == ClipEventType.PLAYLIST_REPLACE || eventType == ClipEventType.CLIP_ADD) {
+                return (target as ClipEventSupport).clips;
+            }
 			if (target is Clip) {
 				return Clip(target).index;
 			}

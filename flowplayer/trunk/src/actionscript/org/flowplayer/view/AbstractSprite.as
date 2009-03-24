@@ -23,7 +23,8 @@ package org.flowplayer.view {
 	
 	import org.flowplayer.layout.LayoutEvent;
 	import org.flowplayer.util.Log;
-	/**
+
+	/**
 	 * @author api
 	 */
 	public class AbstractSprite extends Sprite {
@@ -47,6 +48,7 @@ package org.flowplayer.view {
 		}
 		
 		public override function get width():Number {
+            if (scaleX != 1) return _width * scaleX;
 			return _width || super.width;
 		}
 		
@@ -55,13 +57,21 @@ package org.flowplayer.view {
 		}
 
 		public override function get height():Number {
+            if (scaleX != 1) return _height * scaleY;
 			return _height || super.height;
 		}
 		
 		public override function set height(value:Number):void {
 			setSize(width, value);
 		}
-		
+
+        // TODO: make it possible to resize using scaleX and scaleY
+//        public override function set scaleX(value:Number):void {
+//        }
+//
+//        public override function set scaleY(value:Number):void {
+//        }
+
 		protected function get managedWidth():Number {
 			return _width;
 		}

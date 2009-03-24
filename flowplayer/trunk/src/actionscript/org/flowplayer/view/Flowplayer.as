@@ -105,7 +105,8 @@ package org.flowplayer.view {
 				addCallback("getCurrentClip", function():Object { 
 					return new ObjectConverter(currentClip).convert(); });
 				addCallback("getClip", function(index:Number):Object { return convert(playlist.getClip(index)); });
-				addCallback("setPlaylist", function(clipObjects:Array):void { setPlaylist(_config.createClips(clipObjects)); });
+                addCallback("setPlaylist", function(clipObjects:Array):void { setPlaylist(_config.createClips(clipObjects)); });
+                addCallback("addClip", function(clip:Object, index:int = -1):void { addClip(_config.createClip(clip), index); });
 				addCallback("showError", showError);
 
 				addCallback("loadPlugin", pluginLoad);
@@ -307,11 +308,6 @@ package org.flowplayer.view {
 //				handleError(PlayerError.PLUGIN_INVOKE_FAILED, "Error when invoking method '" + methodName + "', on plugin '" + pluginName + "'");
 			}
 			return "undefined";
-		}
-
-		private function setPlaylist(playlist:Array):void {
-			_playListController.setPlaylist(playlist);
-			var clip:Clip = _playListController.playlist.current;
 		}
 
 		private function addCuepoints(cuepoints:Array, clipIndex:int, callbackId:String):void {
