@@ -112,7 +112,7 @@ import org.flowplayer.model.DisplayPluginModel;
 
 			loader = createNewLoader(); 
 
-			rootStyle = _config.canvas;
+			rootStyle = _config.canvas.style;
 			stage.addEventListener(Event.RESIZE, onStageResize);
 			setSize(stage.stageWidth, stage.stageHeight);
 

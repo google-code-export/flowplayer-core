@@ -158,10 +158,10 @@ package org.flowplayer.config {
 			setProperty("backgroundColor", style, "transparent");
 			setProperty("borderRadius", style, "0");
 
-                var result:Canvas = new Canvas();
-                result.style = style;
+            var result:Canvas = new Canvas();
+            result.style = style;
 
-                _canvas = new PropertyBinder(result).copyProperties(style) as Canvas;
+            _canvas = new PropertyBinder(result, "style").copyProperties(style) as Canvas;
 		}
             return _canvas;
 		}
