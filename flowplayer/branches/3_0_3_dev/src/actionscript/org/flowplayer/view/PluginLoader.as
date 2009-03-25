@@ -112,6 +112,8 @@ import org.flowplayer.model.PluginModel;
 				return;
 			}
 
+            Security.allowDomain("*");
+
             _loadedPlugins = new Dictionary();
 			_loadedCount = 0;
             
@@ -163,8 +165,6 @@ import org.flowplayer.model.PluginModel;
 		private function loaded(event:Event):void {
 			var info:LoaderInfo = event.target as LoaderInfo;
 			log.debug("loaded class name " + getQualifiedClassName(info.content));
-			
-			Security.allowDomain(info.url);
 			
 			var instanceUsed:Boolean = false;
 			_loadables.forEach(function(loadable:Loadable, index:int, array:Array):void {
