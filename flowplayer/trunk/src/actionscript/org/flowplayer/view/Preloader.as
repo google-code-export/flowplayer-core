@@ -50,10 +50,12 @@ import flash.utils.getDefinitionByName;
             if (checkLoaded()) return;
   			var percent:Number = Math.floor((event.bytesLoaded*100) / event.bytesTotal);
             graphics.clear();
-        	_percent.text = (percent + "%");
-            trace("percent " + _percent);
-            _percent.x = stage.stageWidth / 2 - _percent.textWidth / 2;
-            _percent.y = stage.stageHeight / 2 - _percent.textHeight / 2;
+            trace("percent " + percent);
+            if (_percent) {
+                _percent.text = (percent + "%");
+                _percent.x = stage.stageWidth / 2 - _percent.textWidth / 2;
+                _percent.y = stage.stageHeight / 2 - _percent.textHeight / 2;
+            }
    		}
        
         private function init(event:Event = null):void {
@@ -73,9 +75,12 @@ import flash.utils.getDefinitionByName;
                 var mainClass:Class = Class(getDefinitionByName("org.flowplayer.view.Launcher"));
                 _app = new mainClass() as DisplayObject;
                 addChild(_app as DisplayObject);
+                trace("Launcher instantiated and added to frame " + currentFrame);
             } catch (e:Error) {
+                trace("error instantiating Launcher " + e + ": " + e.message);
                 if (! _initTimer) {
                     trace("starting init timer");
+                    _app = null;
                     prevFrame();
                     _initTimer = new Timer(300);
                     _initTimer.addEventListener(TimerEvent.TIMER, function(e:TimerEvent):void { init(); });
