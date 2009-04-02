@@ -20,48 +20,63 @@ import flash.utils.getDefinitionByName;
 
 		public function Preloader() {
             stop();
-            if (loaderInfo.bytesLoaded == loaderInfo.bytesTotal) {
-            	init();
-            	return;
-            }
+            if (checkLoaded()) return;
+            
             _percent = new TextField();
-			var format:TextFormat = new TextFormat();
-			format.font = "Lucida Grande, Lucida Sans Unicode, Bitstream Vera, Verdana, Arial, _sans, _serif";
-			_percent.defaultTextFormat = format;
-			_percent.text = "Loading...";
+            var format:TextFormat = new TextFormat();
+            format.font = "Lucida Grande, Lucida Sans Unicode, Bitstream Vera, Verdana, Arial, _sans, _serif";
+            _percent.defaultTextFormat = format;
+            _percent.text = "Loading...";
             addChild(_percent);
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-		}
+        }
+
+        private function checkLoaded():Boolean {
+            if (loaderInfo.bytesLoaded == loaderInfo.bytesTotal) {
+                init();
+                return true;
+            }
+            return false;
+        }
 		
 		private function onAddedToStage(event:Event):void {
+            trace("added to stage");
+            if (checkLoaded()) return;
             loaderInfo.addEventListener(ProgressEvent.PROGRESS, onLoadProgress);
             loaderInfo.addEventListener(Event.COMPLETE, init);
 		}
 
 		private function onLoadProgress(event:ProgressEvent):void {
+            if (checkLoaded()) return;
   			var percent:Number = Math.floor((event.bytesLoaded*100) / event.bytesTotal);
             graphics.clear();
-        	_percent.text = (percent + "%"); 
+        	_percent.text = (percent + "%");
+            trace("percent " + _percent);
             _percent.x = stage.stageWidth / 2 - _percent.textWidth / 2;
             _percent.y = stage.stageHeight / 2 - _percent.textHeight / 2;
    		}
        
         private function init(event:Event = null):void {
+            trace("init");
             if (_initTimer) {
                 _initTimer.stop();
             }
+            if (_app) return;
+            
         	if (_percent) {
         		removeChild(_percent);
-        	}
-        	nextFrame();
+                _percent = null;
+            }
         	prepareStage();
+            nextFrame();
             try {
-			    var mainClass:Class = Class(getDefinitionByName("org.flowplayer.view.Launcher"));
+                var mainClass:Class = Class(getDefinitionByName("org.flowplayer.view.Launcher"));
                 _app = new mainClass() as DisplayObject;
-			    addChild(_app as DisplayObject);
+                addChild(_app as DisplayObject);
             } catch (e:Error) {
                 if (! _initTimer) {
                     trace("starting init timer");
+                    prevFrame();
                     _initTimer = new Timer(300);
                     _initTimer.addEventListener(TimerEvent.TIMER, function(e:TimerEvent):void { init(); });
                     _initTimer.start();
