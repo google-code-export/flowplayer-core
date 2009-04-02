@@ -84,8 +84,8 @@ import flash.utils.getDefinitionByName;
                     prevFrame();
                     _initTimer = new Timer(300);
                     _initTimer.addEventListener(TimerEvent.TIMER, function(e:TimerEvent):void { init(); });
-                    _initTimer.start();
                 }
+                _initTimer.start();
             }
         }
 
