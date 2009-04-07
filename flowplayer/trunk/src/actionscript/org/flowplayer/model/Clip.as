@@ -214,6 +214,11 @@ import org.flowplayer.flow_internal;
             return _resolvedUrl || _url;
         }
 
+        public function get fileName():String {
+            var parts:Array = URLUtil.baseUrlAndRest(_url);
+            return parts[1];
+        }
+
         [Value]
         public function get originalUrl():String {
             return _url;

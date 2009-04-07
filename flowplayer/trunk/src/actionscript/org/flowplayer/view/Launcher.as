@@ -145,12 +145,12 @@ import org.flowplayer.model.DisplayPluginModel;
 		}
 
         private function initPhase2(event:Event = null):void {
-            log.info("initPhase2, all plugins loaded");
+            log.info("initPhase2");
             loadPlugins();
         }
 
 		private function initPhase3(event:Event = null):void {
-            log.debug("initPhase3");
+            log.debug("initPhase3, all plugins loaded");
             createScreen();
 
 			_pluginLoader.removeEventListener(Event.COMPLETE, this.initPhase3);
@@ -696,15 +696,19 @@ import org.flowplayer.model.DisplayPluginModel;
         }
 
 		private function isParent(child:DisplayObject, parent:DisplayObject):Boolean {
-			if (DisplayObject(child).parent == parent) return true;
-			if (! (parent is DisplayObjectContainer)) return false;
-			for (var i:Number = 0;i < DisplayObjectContainer(parent).numChildren; i++) {
-				var curChild:DisplayObject = DisplayObjectContainer(parent).getChildAt(i);
-				if (isParent(child, curChild)) { 
-					return true;
-				}
-			}
-			return false;
+			try {
+                if (DisplayObject(child).parent == parent) return true;
+                if (! (parent is DisplayObjectContainer)) return false;
+                for (var i:Number = 0;i < DisplayObjectContainer(parent).numChildren; i++) {
+                    var curChild:DisplayObject = DisplayObjectContainer(parent).getChildAt(i);
+                    if (isParent(child, curChild)) {
+                        return true;
+                    }
+                }
+            } catch (e:SecurityError) {
+                return true;
+            }
+            return false;
 		}
 
 		private function onKeyDown(event:KeyboardEvent):void {

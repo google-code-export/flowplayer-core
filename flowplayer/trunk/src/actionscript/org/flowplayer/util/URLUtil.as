@@ -76,7 +76,11 @@ import flash.display.LoaderInfo;
             } else {
                 endPos = url.lastIndexOf("/");
             }
-            return [url.substring(0, endPos), url.substring(endPos + 1)];
+            if (endPos > 0) {
+                return [url.substring(0, endPos), url.substring(endPos + 1)];
+            } else {
+                return [null, url];
+            }
         }
 		
 		public static function playerBaseUrl(loaderInfo:LoaderInfo):String {
