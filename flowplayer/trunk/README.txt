@@ -14,6 +14,8 @@ New features:
 Bug fixes:
 - The preloader sometimes failed to initialize the player
 - Allow seeking while in buffering state: http://flowplayer.org/forum/8/16505
+- Replay of a RTMP stream was failing after the connection had expired
+- Security error when clicking on the screen if there is an image in the playlist loaded from a foreign domain
 
 3.0.6
 -----

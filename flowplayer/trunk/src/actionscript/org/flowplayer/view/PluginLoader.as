@@ -195,6 +195,8 @@ import org.flowplayer.model.Plugin;
         }
 
 		private function initializeClassLibrary(loadable:Loadable, info:LoaderInfo):void {
+            log.debug("initializing class library " + info.applicationDomain);
+            _loadedPlugins[loadable] = info.applicationDomain;
 			_pluginRegistry.registerGenericPlugin(loadable.createPlugin(info.applicationDomain));
 		}
 

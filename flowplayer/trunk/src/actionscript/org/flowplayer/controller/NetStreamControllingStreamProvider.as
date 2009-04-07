@@ -121,15 +121,28 @@ import org.flowplayer.model.PluginModel;
 			if (_startedClip && _startedClip == clip && _connection) {
 				log.info("playing previous clip again, reusing existing connection and resuming");
 				_started = false;
-				netStream.resume();
-				start(null, _startedClip, _pauseAfterStart);
+                errorSafeLoad(clip);
 			} else {
-				log.debug("will create a new connection");
-				_startedClip = clip;
-				
-				connect(clip);
-			}
-		}
+                log.debug("will create a new connection");
+                _startedClip = clip;
+
+                connect(clip);
+            }
+        }
+
+        private function errorSafeLoad(clip:Clip):void {
+            try {
+                netStream.resume();
+                start(null, _startedClip, _pauseAfterStart);
+            } catch (e:Error) {
+                if (e.errorID == 2154) {
+                    log.debug("error when reusing existing netStream " + e);
+                    connect(clip);
+                } else {
+                    throw e;
+                }
+            }
+        }
 
 		/**
 		 * @inheritDoc
