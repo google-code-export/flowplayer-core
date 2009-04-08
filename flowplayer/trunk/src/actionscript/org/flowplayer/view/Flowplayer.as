@@ -64,10 +64,9 @@ package org.flowplayer.view {
 			canvas:StyleableSprite, 
 			errorHandler:ErrorHandler, 
 			config:Config, 
-			pluginLoader:PluginLoader,
 			playerSWFBaseURl:String) {
 				
-			super(stage, pluginRegistry, panel, animationEngine, errorHandler, config, pluginLoader, playerSWFBaseURl);
+			super(stage, pluginRegistry, panel, animationEngine, errorHandler, config, playerSWFBaseURl);
 			_canvas = canvas;
 		}
 

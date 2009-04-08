@@ -242,6 +242,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			}
 			_pluginLoader = new PluginLoader(URLUtil.playerBaseUrl(loaderInfo), _pluginRegistry, this, useExternalInterfade(), onPluginLoad, onPluginLoadError);
 			_pluginLoader.addEventListener(Event.COMPLETE, initPhase3);
+            _flowplayer.pluginLoader = _pluginLoader;
 			if (plugins.length == 0) {
 				log.debug("configuration has no plugins");
 				initPhase3();
@@ -507,7 +508,7 @@ import org.flowplayer.model.DisplayPluginModel;
 
 		private function createFlowplayer():void {
 			_flowplayer = new Flowplayer(stage, _pluginRegistry, _panel, 
-				_animationEngine, this, this, _config, _pluginLoader, URLUtil.playerBaseUrl(loaderInfo));
+				_animationEngine, this, this, _config, URLUtil.playerBaseUrl(loaderInfo));
 
 			_flowplayer.onBeforeFullscreen(onFullscreen);
 //			_flowplayer.onFullscreenExit(onFullscreen);
