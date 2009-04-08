@@ -10,6 +10,7 @@ New features:
 - Added new clip event types: 'onConnectionEvent' and 'onStreamEvent' these get fired when the predefined events happen on the connection and stream objects.
 - Added Security.allowDomain() to allow loaded plugins to script the player
 - Added addClip(clip, index) to the API, index is optional
+- Possibility to view videos without metadata, using clip.metaData: false
 
 Bug fixes:
 - The preloader sometimes failed to initialize the player

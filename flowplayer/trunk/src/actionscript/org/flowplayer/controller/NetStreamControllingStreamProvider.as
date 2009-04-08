@@ -608,7 +608,7 @@ import org.flowplayer.model.PluginModel;
 			else if (event.info.code == "NetStream.Play.Start") {
 				if (! _paused && canDispatchBegin()) {
 					log.debug("dispatching onBegin");
-					clip.dispatchEvent(new ClipEvent(ClipEventType.BEGIN));
+					clip.dispatchEvent(new ClipEvent(ClipEventType.BEGIN, _pauseAfterStart));
 				}
 			}
 			else if (event.info.code == "NetStream.Play.Stop") {

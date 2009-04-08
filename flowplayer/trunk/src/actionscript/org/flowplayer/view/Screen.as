@@ -30,13 +30,13 @@ package org.flowplayer.view {
 	import org.flowplayer.util.Arrange;
 	import org.flowplayer.util.Log;
 	import org.flowplayer.view.MediaDisplay;
-	
+
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.events.FullScreenEvent;
 	import flash.geom.Rectangle;
-	import flash.utils.Dictionary;		
-	
+	import flash.utils.Dictionary;
+
 	use namespace flow_internal;
 
 	internal class Screen extends AbstractSprite {
@@ -83,7 +83,7 @@ package org.flowplayer.view {
 			resizeClip(_playList.current);
 			arrangePlay();
 		}
-		
+
 		private function get play():DisplayProperties {
 			return DisplayProperties(_pluginRegistry.getPlugin("play"));
 		}
@@ -110,7 +110,7 @@ package org.flowplayer.view {
 			}
 			if (clip && clip.getContent()) {
 				if (_fullscreenManaer.isFullscreen) {
-					var nonHwScaled:MediaSize = clip.scaling == MediaSize.ORIGINAL ? MediaSize.FITTED_PRESERVING_ASPECT_RATIO : clip.scaling; 
+					var nonHwScaled:MediaSize = clip.scaling == MediaSize.ORIGINAL ? MediaSize.FITTED_PRESERVING_ASPECT_RATIO : clip.scaling;
 					_resizer.resizeClipTo(clip, clip.accelerated ? MediaSize.ORIGINAL : nonHwScaled);
 				} else {
 					_resizer.resizeClipTo(clip, clip.scaling);
@@ -156,7 +156,7 @@ package org.flowplayer.view {
 				return fallbackDisplayBounds();
 			}
 		}
-		
+
 		private function fallbackDisplayBounds():Rectangle {
 			return new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
 		}
@@ -173,7 +173,7 @@ package org.flowplayer.view {
 
 		public function set mediaController(controller:MediaController):void {
 		}
-		
+
 		private function showDisplay(event:ClipEvent):void {
 			log.info("showDisplay()");
 			var clipNow:Clip = event.target as Clip;
@@ -225,43 +225,53 @@ package org.flowplayer.view {
             eventSupport.onPlaylistReplace(onPlaylistChanged);
             eventSupport.onClipAdd(onClipAdded);
 			eventSupport.onBufferFull(onBufferFull);
-			
-// if this is enabled, the video will show first as a small rectangle 
-//			eventSupport.onBegin(showDisplayIfNotBufferingOnSplash);
 
+			eventSupport.onBegin(onBegin);
 			eventSupport.onStart(onStart);
 		}
 
+        private function onBegin(event:ClipEvent):void {
+            var clip:Clip = event.target as Clip;
+            if (clip.metaData == false) {
+                log.info("onBegin: clip.metaData == false, showing it");
+                handleStart(clip, event.info as Boolean);
+            }
+        }
+
 		private function onStart(event:ClipEvent):void {
 			var clip:Clip = event.target as Clip;
-			if (clip.isNullClip) return;
-			
-			var pauseAfterStart:Boolean = event.info as Boolean;
-			if (pauseAfterStart && _playList.previousClip && _playList.previousClip.type == ClipType.IMAGE) {
-				log.debug("autoBuffering next clip on a splash image, will not show next display");
-				setDisplayVisibleIfHidden(_playList.previousClip);
-				if (clip.type == ClipType.AUDIO && clip.image) return;
-				
-				clip.onResume(onFirstFrameResume);
-				return;
-			}
-			
-			if (_playList.previousClip && clip.type == ClipType.AUDIO) {
-				log.debug("this is an audio clip, will check if previous clip was an image that should stay visible");
-				if (_playList.previousClip.type == ClipType.IMAGE && clip.image) {
-					log.debug("previous image stays visible");
-					setDisplayVisibleIfHidden(_playList.previousClip);
-				} else {
-					log.debug("hiding all displays for this audio clip");
-					hideAllDisplays();
-				}
-				_prevClip = clip;
-				return;
-			}
-			
-			setDisplayVisibleIfHidden(clip);
+            if (clip.metaData == false) return;
+            handleStart(clip, event.info as Boolean);
 		}
-		
+
+        private function handleStart(clip:Clip, pauseAfterStart:Boolean):void {
+            if (clip.isNullClip) return;
+
+            if (pauseAfterStart && _playList.previousClip && _playList.previousClip.type == ClipType.IMAGE) {
+                log.debug("autoBuffering next clip on a splash image, will not show next display");
+                setDisplayVisibleIfHidden(_playList.previousClip);
+                if (clip.type == ClipType.AUDIO && clip.image) return;
+
+                clip.onResume(onFirstFrameResume);
+                return;
+            }
+
+            if (_playList.previousClip && clip.type == ClipType.AUDIO) {
+                log.debug("this is an audio clip, will check if previous clip was an image that should stay visible");
+                if (_playList.previousClip.type == ClipType.IMAGE && clip.image) {
+                    log.debug("previous image stays visible");
+                    setDisplayVisibleIfHidden(_playList.previousClip);
+                } else {
+                    log.debug("hiding all displays for this audio clip");
+                    hideAllDisplays();
+                }
+                _prevClip = clip;
+                return;
+            }
+
+            setDisplayVisibleIfHidden(clip);
+        }
+
 		private function setDisplayVisibleIfHidden(clip:Clip):void {
 			var disp:DisplayObject = _displays[clip];
 			if (disp.alpha < 1 || ! disp.visible) {
@@ -282,7 +292,7 @@ package org.flowplayer.view {
 
 		private function onFirstFrameResume(event:ClipEvent):void {
 			var clip:Clip = event.target as Clip;
-			clip.unbind(onFirstFrameResume);						
+			clip.unbind(onFirstFrameResume);
 			showDisplay(event);
 		}
 
@@ -294,28 +304,28 @@ package org.flowplayer.view {
 			if (clipNow.type == ClipType.VIDEO) {
 				var disp:MediaDisplay = _displays[clipNow];
 				disp.init(clipNow);
-				
+
 				if (clipNow.live) {
 					showDisplay(event);
 				}
 			}
 		}
-		
+
 		internal function hidePlay():void {
 			if (playView.parent == this) {
 				removeChild(playView);
 			}
 		}
-		
+
 		internal function showPlay():void {
 			log.debug("showPlay");
 			addChild(playView);
 			playView.visible = true;
 			playView.alpha = play.alpha;
-			
+
 			arrangePlay();
 			log.debug("play bounds: " + Arrange.describeBounds(playView));
 			log.debug("play parent: " + playView.parent);
 		}
-	}		
+	}
 }
