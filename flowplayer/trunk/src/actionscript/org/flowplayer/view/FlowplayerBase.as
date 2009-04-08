@@ -82,7 +82,6 @@ import org.flowplayer.model.EventDispatcher;
 			animationEngine:AnimationEngine, 
 			errorHandler:ErrorHandler, 
 			config:Config, 
-			pluginLoader:PluginLoader,
 			playerSWFBaseURL:String) {
 
 			// dummy references to get stuff included in the lib
@@ -106,7 +105,6 @@ import org.flowplayer.model.EventDispatcher;
 			_animationEngine = animationEngine;
 			_errorHandler = errorHandler;
 			_config = config;
-			_pluginLoader = pluginLoader;
 			_playerSWFBaseURL = playerSWFBaseURL;
 			_instance = this;
 
@@ -629,5 +627,9 @@ import org.flowplayer.model.EventDispatcher;
                 playlist.current.dispatch(ClipEventType.forName(name), infoObj);
             };
         }
-	}
+
+        public function set pluginLoader(val:PluginLoader):void {
+            _pluginLoader = val;
+        }
+    }
 }
