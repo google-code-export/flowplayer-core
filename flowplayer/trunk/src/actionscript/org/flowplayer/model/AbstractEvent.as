@@ -104,13 +104,7 @@ import org.flowplayer.util.ObjectConverter;
 		
 		private function convert(objToConvert:Object):Object {
             if (_eventType.custom) return objToConvert;
-			var result:Object = new ObjectConverter(objToConvert).convert();
-
-            // copy customProperties to the result
-            if (objToConvert is Clip) {
-                return ObjectConverter.copyProps(Clip(objToConvert).customProperties, result);
-            }
-            return result;
+			return new ObjectConverter(objToConvert).convert();
 		}
 
 //		private function jsonize(externalEventArgument:Object):String {

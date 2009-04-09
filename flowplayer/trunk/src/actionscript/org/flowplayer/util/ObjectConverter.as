@@ -1,6 +1,7 @@
 package org.flowplayer.util {
 	import flash.utils.describeType;
 import flash.utils.getQualifiedClassName;
+    import org.flowplayer.model.Clip;
 	
 	public class ObjectConverter {
 		private var _input:Object;
@@ -62,6 +63,9 @@ import flash.utils.getQualifiedClassName;
 						obj[key2] = process(o[v.@name]);
 					}
 				}
+                if (o is Clip) {
+                    copyProps(Clip(o).customProperties, obj);
+                }
 			}
 			return obj;
 		}
