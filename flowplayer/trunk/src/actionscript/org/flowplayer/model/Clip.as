@@ -527,7 +527,6 @@ import org.flowplayer.flow_internal;
 			return _playlist.commonClip;
 		}
 		
-		[Value]		
 		public function get customProperties():Object {
 			return _customProperties;
 		}
