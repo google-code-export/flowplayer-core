@@ -14,6 +14,7 @@ New features:
 - Now the player's preloader uses the rotating animation instead of a percent text to indicate the progress
   of loading the player SWF. You can disable the aninamtion by setting buffering: false
 - calling close() now does not send the onStop event
+- Clip's custom properties are now present in the root of the clip argument in all clip events that are sent to JS.
 
 Bug fixes:
 - The preloader sometimes failed to initialize the player

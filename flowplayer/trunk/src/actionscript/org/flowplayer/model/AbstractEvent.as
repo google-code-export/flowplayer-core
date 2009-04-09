@@ -3,6 +3,7 @@ package org.flowplayer.model {
 	import flash.external.ExternalInterface;
 	
 import flash.utils.getQualifiedClassName;
+    import mx.utils.object_proxy;
 import org.flowplayer.flow_internal;
     import org.flowplayer.util.Log;
 import org.flowplayer.util.ObjectConverter;
@@ -103,7 +104,13 @@ import org.flowplayer.util.ObjectConverter;
 		
 		private function convert(objToConvert:Object):Object {
             if (_eventType.custom) return objToConvert;
-			return new ObjectConverter(objToConvert).convert();
+			var result:Object = new ObjectConverter(objToConvert).convert();
+
+            // copy customProperties to the result
+            if (objToConvert is Clip) {
+                return ObjectConverter.copyProps(Clip(objToConvert).customProperties, result);
+            }
+            return result;
 		}
 
 //		private function jsonize(externalEventArgument:Object):String {

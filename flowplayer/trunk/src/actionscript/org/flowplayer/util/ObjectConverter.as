@@ -12,6 +12,17 @@ import flash.utils.getQualifiedClassName;
 		public function convert():Object {
 			return process(_input);
 		}
+
+        public static function copyProps(source:Object, target:Object):Object {
+            var value:Object;
+            for (var key:String in source) {
+                value = source[key];
+                if (value != null && !(value is Function)) {
+                    target[key] = value;
+                }
+            }
+            return target;
+        }
 		
 		private function process(value:*):Object {
 			if (value is String) {
@@ -41,13 +52,7 @@ import flash.utils.getQualifiedClassName;
 			var classInfo:XML = describeType(o);
 			
 			if (classInfo.@name.toString() == "Object") {
-				var value:Object;
-				for (var key:String in o) {
-					value = o[key];
-					if (value != null && !(value is Function)) {
-						obj[key] = value;
-					}
-				}
+                copyProps(o, obj);
 			} else { // o is a class instance
 				// Loop over all of the *annotated* variables and accessors in the class and convert
 				var exposed:XMLList = classInfo.*.(hasOwnProperty("metadata") && metadata.@name=="Value");
@@ -57,7 +62,6 @@ import flash.utils.getQualifiedClassName;
 						obj[key2] = process(o[v.@name]);
 					}
 				}
-				
 			}
 			return obj;
 		}
