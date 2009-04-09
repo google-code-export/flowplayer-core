@@ -127,7 +127,7 @@ package org.flowplayer.controller {
 		}
 		
 		internal function close():void {
-			if (onEvent(ClipEventType.STOP, getMediaController(), [true])) {
+			if (onEvent(ClipEventType.STOP, getMediaController(), [true, true])) {
 				changeState(waitingState);
 			}
 		}
