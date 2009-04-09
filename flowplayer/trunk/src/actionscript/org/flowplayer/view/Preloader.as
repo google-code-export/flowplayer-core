@@ -81,6 +81,7 @@ package org.flowplayer.view {
        
         private function init(event:Event = null):void {
             trace("init");
+            prepareStage();
             if (_initTimer) {
                 _initTimer.stop();
             }
