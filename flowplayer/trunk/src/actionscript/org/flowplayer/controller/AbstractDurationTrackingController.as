@@ -50,17 +50,15 @@ package org.flowplayer.controller {
 		public final function onEvent(event:ClipEventType, params:Array = null):void {
 			if (event == ClipEventType.BEGIN) {
 				load(new ClipEvent(event), clip, params ? params[0] : false);
-			} else {
-				if (event == ClipEventType.PAUSE) {
-					pause(new ClipEvent(event));
-				} else if (event == ClipEventType.RESUME) {
-					resume(new ClipEvent(event));
-				} else if (event == ClipEventType.STOP) {
-					stop(event ? new ClipEvent(event) : null, params[0]);
-				} else if (event == ClipEventType.SEEK) {
-					seekTo(new ClipEvent(event), params[0]);
-				}
-			}
+            } else if (event == ClipEventType.PAUSE) {
+                pause(new ClipEvent(event));
+            } else if (event == ClipEventType.RESUME) {
+                resume(new ClipEvent(event));
+            } else if (event == ClipEventType.STOP) {
+                stop(new ClipEvent(event), params[0], params[1]);
+            } else if (event == ClipEventType.SEEK) {
+                seekTo(new ClipEvent(event), params[0]);
+            }
 		}
 
 		public final function stopBuffering():void {
@@ -156,13 +154,13 @@ package org.flowplayer.controller {
 			doResume(event);
 		}
 
-		private function stop(event:ClipEvent, closeStream:Boolean):void {
+		private function stop(event:ClipEvent, closeStream:Boolean, silent:Boolean = false):void {
 			log.debug("stop " + durationTracker);
 			if (durationTracker) {
 				durationTracker.stop();
 				durationTracker.time = 0;
 			}
-			doStop(event, closeStream);
+			doStop(silent ? null : event, closeStream);
 		}
 
 		private function seekTo(event:ClipEvent, seconds:Number):void {

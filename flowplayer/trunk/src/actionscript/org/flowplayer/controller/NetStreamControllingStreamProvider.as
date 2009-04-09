@@ -460,7 +460,11 @@ import org.flowplayer.model.PluginModel;
 		 * is not equl to netStream.time
 		 */
 		protected function getCurrentPlayheadTime(netStream:NetStream):Number {
-			return netStream.time;
+            var time:Number = netStream.time;
+//            if (Math.round(time % 5) == 0) {
+//                log.debug("getCurrentPlayheadTime: " + time)
+//            }
+			return time;
 		}
 
 		/**

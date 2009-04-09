@@ -13,6 +13,7 @@ New features:
 - Possibility to view videos without metadata, using clip.metaData: false
 - Now the player's preloader uses the rotating animation instead of a percent text to indicate the progress
   of loading the player SWF. You can disable the aninamtion by setting buffering: false
+- calling close() now does not send the onStop event
 
 Bug fixes:
 - The preloader sometimes failed to initialize the player
