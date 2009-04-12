@@ -25,6 +25,9 @@ Bug fixes:
 - now fullscreen works with Flash versions older than 9.0.115, in versions that do not support hardware scaling
 - replaying a RTMP stream with an image in front of the stream in the playlist was not working (video stayed hidden). Happened
   because the server does not send metadata if replaying the same stream.
+- the scrubber is disabled if the clip is not seekable in the first frame: http://flowplayer.org/forum/8/16526
+  By default if the clip has one of following extensions (the typical flash video extensions) it is seekable
+  in the first frame: 'f4b', 'f4p', 'f4v', 'flv'. Added new clip property seekableOnBegin can be used to override the default.  
 
 3.0.6
 -----
