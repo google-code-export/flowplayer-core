@@ -27,7 +27,7 @@ Bug fixes:
   because the server does not send metadata if replaying the same stream.
 - the scrubber is disabled if the clip is not seekable in the first frame: http://flowplayer.org/forum/8/16526
   By default if the clip has one of following extensions (the typical flash video extensions) it is seekable
-  in the first frame: 'f4b', 'f4p', 'f4v', 'flv'. Added new clip property seekableOnBegin can be used to override the default.  
+  in the first frame: 'f4b', 'f4p', 'f4v', 'flv'. Added new clip property seekableOnBegin that can be used to override the default.  
 
 3.0.6
 -----

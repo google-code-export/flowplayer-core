@@ -31,6 +31,7 @@ import org.flowplayer.model.ClipEventType;
 import org.flowplayer.model.Cuepoint;
 import org.flowplayer.model.DisplayPluginModel;
 	import org.flowplayer.model.DisplayProperties;
+    import org.flowplayer.model.DisplayPropertiesImpl;
 import org.flowplayer.model.DynamicCuepoint;
 import org.flowplayer.model.EventDispatcher;
 	import org.flowplayer.model.Loadable;
@@ -46,7 +47,8 @@ import org.flowplayer.model.EventDispatcher;
 	import org.flowplayer.util.Assert;
 	import org.flowplayer.util.Log;
 	import org.flowplayer.util.LogConfiguration;
-	import org.flowplayer.util.TextUtil;
+    import org.flowplayer.util.PropertyBinder;
+import org.flowplayer.util.TextUtil;
 	import org.flowplayer.util.URLUtil;
 	import org.flowplayer.view.Panel;
 	
@@ -279,13 +281,35 @@ import org.flowplayer.model.EventDispatcher;
 			log.debug("get volume");
 			return _playListController.volume;
 		}
-		
-		/**
-		 * Shows the specified plugin display object on the panel.
-		 * @param disp the display object to show
-		 * @param props the DisplayProperties to be used
-		 */
-		public function showPlugin(disp:DisplayObject, props:DisplayProperties = null):void {
+
+        public function hidePlugin(pluginName:String):void {
+            var plugin:Object = _pluginRegistry.getPlugin(pluginName);
+            checkPlugin(plugin, pluginName, DisplayProperties);
+            doHidePlugin(DisplayProperties(plugin).getDisplayObject());
+        }
+
+        public function showPlugin(pluginName:String, props:Object = null):void {
+            pluginPanelOp(doShowPlugin, pluginName, props);
+        }
+
+        public function togglePlugin(pluginName:String, props:Object = null):Boolean {
+            return pluginPanelOp(doTogglePlugin, pluginName, props) as Boolean;
+        }
+
+        private function pluginPanelOp(func:Function, pluginName:String, props:Object = null):Object {
+            var plugin:Object = _pluginRegistry.getPlugin(pluginName);
+            checkPlugin(plugin, pluginName, DisplayProperties);
+            return func(DisplayProperties(plugin).getDisplayObject(),
+                (props ? new PropertyBinder(new DisplayPropertiesImpl(), null).copyProperties(props) : plugin) as DisplayProperties) ;
+        }
+
+		protected function doShowPlugin(disp:DisplayObject, displayProps:Object):void {
+            var props:DisplayProperties;
+            if (! (displayProps is DisplayProperties)) {
+                props = new PropertyBinder(new DisplayPropertiesImpl(), null).copyProperties(displayProps) as DisplayProperties;
+            } else {
+                props = displayProps as DisplayProperties;
+            }
 			disp.alpha = props ? props.alpha : 1;
 			disp.visible = true;
 			props.display = "block";
@@ -298,41 +322,31 @@ import org.flowplayer.model.EventDispatcher;
 			} else {
 				_panel.addView(disp, null, props);
 			}
-			_pluginRegistry.updateDisplayProperties(props);
+            var pluginProps:DisplayProperties = _pluginRegistry.getPluginByDisplay(disp);
+            if (pluginProps) {
+                _pluginRegistry.updateDisplayProperties(props);
+            }
 		}
 
-		/**
-		 * Removes the specified plguin display object from the panel.
-		 * @param view the display object to remove
-		 * @param props the {@link DisplayProperties display properties} to be used
-		 */
-		public function hidePlugin(disp:DisplayObject):void {
+		private function doHidePlugin(disp:DisplayObject):void {
 			if (disp.parent == screen && disp == playButtonOverlay.getDisplayObject()) {
 				playButtonOverlay.getDisplayObject()["hideButton"]();
 			} else {
 				disp.parent.removeChild(disp);
 			}
-			var props:DisplayProperties = _pluginRegistry.getPluginByDisplay(disp);
-			if (props) {
-				props.display = "none";
-				_pluginRegistry.updateDisplayProperties(props);
-			}
+            var props:DisplayProperties = _pluginRegistry.getPluginByDisplay(disp);
+            if (props) {
+                props.display = "none";
+                _pluginRegistry.updateDisplayProperties(props);
+            }
 		}
 
-		/**
-		 * Shows or hides the specied display object to/from the panel.
-		 * @param the display objet to be shown/hidden
-		 * @param props the DisplayProperties to be used if the plugin will be shown
-		 * @return <code>true</code> if the display object was shown, <code>false</code> if it went hidden
-		 * @see #showPlugin
-		 * @see #hidePlugin
-		 */
-		public function togglePlugin(disp:DisplayObject, props:DisplayProperties = null):Boolean {
+		public function doTogglePlugin(disp:DisplayObject, props:DisplayProperties = null):Boolean {
 			if (disp.parent == _panel) {
-				hidePlugin(disp);
+				doHidePlugin(disp);
 				return false;
 			} else {
-				showPlugin(disp, props);
+				doShowPlugin(disp, props);
 				return true;
 			}
 		}
@@ -455,6 +469,15 @@ import org.flowplayer.model.EventDispatcher;
 			}
 			return TextUtil.createTextField(false, null, fontSize, bold);
 		}
+
+        /**
+         * Adds the specified display object to the panel.
+         * @param displayObject
+         * @param props
+         */
+        public function addToPanel(displayObject:DisplayObject, props:Object, resizeListener:Function = null):void {
+            _panel.addView(displayObject, resizeListener, new PropertyBinder(new DisplayPropertiesImpl(), null).copyProperties(props) as DisplayProperties);
+        }
 
 		protected function loadPluginLoadable(loadable:Loadable, callback:Function = null):void {
 			var loaderCallback:Function = function():void {
