@@ -113,7 +113,7 @@ package org.flowplayer.util {
 		}
 		
 		protected static function getStageDimension(stage:Stage, dimensionName:String):Number {
-			if (stage.displayState == StageDisplayState.FULL_SCREEN && stage.fullScreenSourceRect) {
+			if (stage.displayState == StageDisplayState.FULL_SCREEN && stage.hasOwnProperty("fullScreenSourceRect") && stage.fullScreenSourceRect) {
 				return stage.fullScreenSourceRect[dimensionName];
 			}
 			return dimensionName == "height" ? stage.stageHeight : stage.stageWidth;

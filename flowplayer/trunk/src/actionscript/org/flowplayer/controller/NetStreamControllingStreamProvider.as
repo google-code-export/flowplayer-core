@@ -122,7 +122,7 @@ import org.flowplayer.model.PluginModel;
 				log.info("playing previous clip again, reusing existing connection and resuming");
 				_started = false;
                 errorSafeLoad(clip);
-			} else {
+            } else {
                 log.debug("will create a new connection");
                 _startedClip = clip;
 
