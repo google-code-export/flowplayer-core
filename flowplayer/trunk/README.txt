@@ -22,6 +22,9 @@ Bug fixes:
 - Replay of a RTMP stream was failing after the connection had expired
 - Security error when clicking on the screen if there is an image in the playlist loaded from a foreign domain
 - loadPlugin() was not working
+- now fullscreen works with Flash versions older than 9.0.115, in versions that do not support hardware scaling
+- replaying a RTMP stream with an image in front of the stream in the playlist was not working (video stayed hidden). Happened
+  because the server does not send metadata if replaying the same stream.
 
 3.0.6
 -----

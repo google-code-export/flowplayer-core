@@ -236,6 +236,9 @@ package org.flowplayer.view {
                 log.info("onBegin: clip.metaData == false, showing it");
                 handleStart(clip, event.info as Boolean);
             }
+            if (clip.metaData) {
+                handleStart(clip, event.info as Boolean );
+            }
         }
 
 		private function onStart(event:ClipEvent):void {
