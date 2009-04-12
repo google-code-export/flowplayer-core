@@ -18,8 +18,11 @@
  */
 
 package org.flowplayer.model {
+    import org.flowplayer.util.URLUtil;
 
 	public class ClipType {
+
+        private static const FLASH_VIDEO_EXTENSIONS:Array = ['f4b', 'f4p', 'f4v', 'flv'];
 		public static const VIDEO:ClipType = new ClipType("video");
 		public static const AUDIO:ClipType = new ClipType("audio");
 		public static const IMAGE:ClipType = new ClipType("image");
@@ -67,15 +70,25 @@ package org.flowplayer.model {
             return MIME_TYPE_MAPPING[mime];
         }
 
+        public static function getExtension(name:String):String {
+            var parts:Array = URLUtil.baseUrlAndRest(name);
+            var filename:String = parts[1];
+
+            var queryStart:int = filename.indexOf("?");
+            if (queryStart > 0) {
+                filename = filename.substr(0, queryStart);
+            }
+            var dotPos:Number = filename.lastIndexOf(".");
+            var lcName:String = filename.toLowerCase();
+            return lcName.substring(dotPos + 1, lcName.length);
+        }
+
 		public static function fromFileExtension(name:String):ClipType {
-			var dotPos:Number = name.lastIndexOf(".");
-			var lcName:String = name.toLowerCase();
-			var extension:String = lcName.substring(dotPos + 1, lcName.length);
-			return resolveType(extension);
+			return resolveType(getExtension(name));
 		}
 		
 		public static function resolveType(type:String):ClipType {
-			if (['3g2', '3gp', 'aac', 'f4b', 'f4p', 'f4v', 'flv', 'm4a', 'm4v', 'mov', 'mp4', 'vp6', 'mpeg4', 'video'].indexOf(type) >= 0)
+			if (['3g2', '3gp', 'aac', 'm4a', 'm4v', 'mov', 'mp4', 'vp6', 'mpeg4', 'video'].concat(FLASH_VIDEO_EXTENSIONS).indexOf(type) >= 0)
 				return ClipType.VIDEO;
 			if (['png', 'jpg', 'jpeg', 'gif', 'swf', 'image'].indexOf(type) >= 0)
 				return ClipType.IMAGE;
@@ -84,7 +97,11 @@ package org.flowplayer.model {
 			
 			return ClipType.VIDEO;
 		}
-		
+
+        public static function isFlashVideo(name:String):Boolean {
+            return FLASH_VIDEO_EXTENSIONS.indexOf(getExtension(name)) >= 0;
+        }
+
 		public function toString():String {
 			return "ClipType: '" + _type + "'";
 		}

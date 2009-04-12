@@ -69,6 +69,7 @@ import org.flowplayer.flow_internal;
 		private var _cuepointMultiplier:Number;
         private var _urlResolvers:Array;
         private var _connectionProvider:String;
+        private var _seekableOnBegin:Object;
 
         public function Clip() {
 			_cuepoints = new Dictionary();
@@ -83,6 +84,7 @@ import org.flowplayer.flow_internal;
 			_linkWindow = "_self";
 			_image = true;
 			_cuepointMultiplier = 1000;
+            _seekableOnBegin = null;
 		}
 
 		public static function create(url:String, baseUrl:String = null):Clip {
@@ -250,6 +252,15 @@ import org.flowplayer.flow_internal;
 			}
 			return _type;
 		}
+
+        public function get isFlashVideo():Boolean {
+            return ClipType.isFlashVideo(_url);
+        }
+
+        [Value]
+        public function get extension():String {
+            return ClipType.getExtension(_url);
+        }
 		
 		[Value(name="type")]
 		public function get typeStr():String {
@@ -656,6 +667,17 @@ import org.flowplayer.flow_internal;
 
         public function setUrlResolvers(val:Object):void {
             _urlResolvers = val is Array ? val as Array : [val];
+        }
+
+        public function get seekableOnBegin():Boolean {
+            if (_seekableOnBegin == null) {
+                return isFlashVideo;
+            }
+            return _seekableOnBegin as Boolean;
+        }
+
+        public function set seekableOnBegin(val:Boolean):void {
+            _seekableOnBegin = val;
         }
     }
 }
