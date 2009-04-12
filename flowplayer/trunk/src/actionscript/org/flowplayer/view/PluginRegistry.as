@@ -131,7 +131,7 @@ package org.flowplayer.view {
 			_fonts.push(fontFamily);
 		} 
 
-		internal function registerDisplayPlugin(plugin:DisplayProperties, view:DisplayObject):void {
+		public function registerDisplayPlugin(plugin:DisplayProperties, view:DisplayObject):void {
 			plugin.setDisplayObject(view);
 			_plugins[plugin.name] = plugin;
 			_originalProps[plugin.name] = plugin.clone();

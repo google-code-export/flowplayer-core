@@ -20,7 +20,8 @@
 package org.flowplayer.util {
 	import flash.display.DisplayObject;
 	import flash.display.Stage;
-	import flash.display.StageDisplayState;	
+	import flash.display.StageDisplayState;
+    import org.flowplayer.model.DisplayProperties;
 
 	/**
 	 * @author api
@@ -118,5 +119,18 @@ package org.flowplayer.util {
 			}
 			return dimensionName == "height" ? stage.stageHeight : stage.stageWidth;
 		}
+
+        public static function fixPositionSettings(props:DisplayProperties, defaults:Object):void {
+            clearOpposite("bottom", "top", props, defaults);
+            clearOpposite("left", "right", props, defaults);
+        }
+
+        private static function clearOpposite(prop1:String, prop2:String, props:DisplayProperties, defaults:Object):void {
+            if (props.position[prop1].hasValue() && defaults.hasOwnProperty(prop2)) {
+                delete defaults[prop2];
+            } else if (props.position[prop2].hasValue() && defaults.hasOwnProperty(prop1)) {
+                delete defaults[prop1];
+            }
+        }
 	}
 }

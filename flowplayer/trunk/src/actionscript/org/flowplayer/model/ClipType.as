@@ -71,6 +71,7 @@ package org.flowplayer.model {
         }
 
         public static function getExtension(name:String):String {
+            if (! name) return null;
             var parts:Array = URLUtil.baseUrlAndRest(name);
             var filename:String = parts[1];
 
@@ -99,6 +100,7 @@ package org.flowplayer.model {
 		}
 
         public static function isFlashVideo(name:String):Boolean {
+            if (! name) return true;
             return FLASH_VIDEO_EXTENSIONS.indexOf(getExtension(name)) >= 0;
         }
 

@@ -109,9 +109,9 @@ package org.flowplayer.view {
 				addCallback("showError", showError);
 
 				addCallback("loadPlugin", pluginLoad);
-				addCallback("showPlugin", pluginShow);
-				addCallback("hidePlugin", pluginHide);
-				addCallback("togglePlugin", pluginToggle);
+				addCallback("showPlugin", showPlugin);
+				addCallback("hidePlugin", hidePlugin);
+				addCallback("togglePlugin", togglePlugin);
 				addCallback("animate", animate);
 				addCallback("css", css);
 //				return;
@@ -133,27 +133,6 @@ package org.flowplayer.view {
 			} catch (e:Error) {
 				handleError(PlayerError.INIT_FAILED, "Unable to add callback to ExternalInterface");
 			}
-		}
-
-		private function pluginHide(pluginName:String):void {
-			var plugin:Object = _pluginRegistry.getPlugin(pluginName);
-			checkPlugin(plugin, pluginName, DisplayProperties);
-			hidePlugin(DisplayProperties(plugin).getDisplayObject());
-		}
-
-		private function pluginShow(pluginName:String, props:Object = null):void {
-			pluginPanelOp(showPlugin, pluginName, props);			
-		}
-
-		private function pluginToggle(pluginName:String, props:Object = null):Boolean {
-			return pluginPanelOp(togglePlugin, pluginName, props) as Boolean;			
-		}
-
-		private function pluginPanelOp(func:Function, pluginName:String, props:Object = null):Object {
-			var plugin:Object = _pluginRegistry.getPlugin(pluginName);
-			checkPlugin(plugin, pluginName, DisplayProperties);
-			return func(DisplayProperties(plugin).getDisplayObject(), 
-				(props ? new PropertyBinder(new DisplayPropertiesImpl(), null).copyProperties(props) : plugin) as DisplayProperties) ;			
 		}
 
 		private function pluginLoad(name:String, url:String, properties:Object = null, callbackId:String = null):void {
@@ -285,7 +264,7 @@ package org.flowplayer.view {
 				if (! props.getDisplayObject().parent || props.getDisplayObject().parent != _panel) {
 					props.alpha = 0;
 				} 
-				showPlugin(props.getDisplayObject(), props);
+				doShowPlugin(props.getDisplayObject(), props);
 			}
 			return plugin as DisplayProperties;
 		}
