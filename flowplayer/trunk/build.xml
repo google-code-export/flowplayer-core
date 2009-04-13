@@ -136,7 +136,7 @@
         <attribute name="debug" />
         <sequential>
         	<echo message="Building binary @{binary}" />
-    		<exec executable="${mxmlc_bin}">
+    		<exec executable="${mxmlc_bin}" failonerror="true">
     			<arg line="-define=CONFIG::commercialVersion,'@{commercial}'" />
     			<arg line="-define+=CONFIG::freeVersion,'@{free}'" />
     			<arg line="-define+=CONFIG::version1,'${version-1-quoted}'" />
@@ -168,7 +168,7 @@
 	</target>
 	
     <target name="compile-lib">
-		<exec executable="${compc_bin}">
+		<exec executable="${compc_bin}" failonerror="true">
 			<arg line="-source-path ${src-as} ${src-as-commercial} ${classpath}" />
 			<!-- arg line="-include-classes ${classes-for-lib}" -->
 			<arg line="-compute-digest=false" />
@@ -193,7 +193,7 @@
 	</target>
 	
 	<target name="test" description="build testrunner">
-		<exec executable="${mxmlc_bin}">
+		<exec executable="${mxmlc_bin}" failonerror="true">
 			<arg line="-source-path ${src-as} ${src-test} ${classpath} -library-path ${libs-path} ${lib-dir}/flexunit -default-frame-rate=${framerate} -default-background-color=${bgcolor} -strict=true '${src-test}/org/flowplayer/css/CssTest.as' -output '${build-dir}/Test.swf'"/>
 		</exec>
 	</target>
@@ -275,7 +275,7 @@
     </macrodef>
 	
 	<target name="doc" description="generates the apidocs">
-		<exec executable="${asdoc_bin}">
+		<exec executable="${asdoc_bin}" failonerror="true">
 			<arg line="-source-path ${src-as} ${classpath}" />
 			<arg line="-library-path ${libs-path}" />
 			<arg line="-doc-classes ${doc-classes}" />
