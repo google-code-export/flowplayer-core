@@ -1,5 +1,5 @@
-/** 
- * flowplayer.js [3.0.6]. The Flowplayer API
+/*! 
+ * flowplayer.js @VERSION. The Flowplayer API
  * 
  * Copyright 2009 Flowplayer Oy
  * 
@@ -18,7 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with Flowplayer.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Version: @VERSION - $Date
+ * Date: @DATE
+ * Revision: @REVISION 
  */
 (function() {
  
@@ -87,6 +88,8 @@
 	
 	// used extensively. a very simple implementation. 
 	function extend(to, from, skipFuncs) {
+		if (typeof from != 'object') { return to; }
+		
 		if (to && from) {			
 			each(from, function(name, value) {
 				if (!skipFuncs || typeof value != 'function') {
@@ -94,6 +97,8 @@
 				}
 			});
 		}
+		
+		return to;
 	}
 	
 	// var arr = select("elem.className"); 
@@ -322,6 +327,7 @@
 		// core plugin methods		
 		extend(this, {
   
+			// speed and fn are optional
 			animate: function(props, speed, fn) { 
 				if (!props) {
 					return self;	
@@ -372,6 +378,7 @@
 				return self;
 			},
 			
+			// toggle between visible / hidden state
 			toggle: function() {
 				this.display = player._api().fp_togglePlugin(name);
 				return self;
@@ -409,7 +416,7 @@
 				return player;	
 			},
 			
-			// internal method not meant to be used by clients
+			// internal method. should be made private some day
          _fireEvent: function(evt, arg, arg2) {
 				
             // update plugins properties & methods
@@ -521,10 +528,17 @@ function Player(wrapper, params, conf) {
 					this.unload();		
 				});
 				
-				html = wrapper.innerHTML; 
+				html = wrapper.innerHTML;
+				
+				// do not use splash as alternate content for flashembed
+				if (html && !flashembed.isSupported([9, 0])) {
+					wrappper.innerHTML = "";	
+				}
+				
+				// install Flash object inside given container
 				flashembed(wrapper, params, {config: conf});
 				
-				// function argument
+				// onLoad listener given as argument
 				if (fn) {
 					fn.cached = true;
 					bind(listeners, "onLoad", fn);	
@@ -654,7 +668,7 @@ function Player(wrapper, params, conf) {
 		},
 		
 		getVersion: function() {
-			var js = "flowplayer.js 3.0.6";
+			var js = "flowplayer.js 3.1.0";
 			if (api) {
 				var ver = api.fp_getVersion();
 				ver.push(js);
@@ -665,17 +679,14 @@ function Player(wrapper, params, conf) {
 		
 		_api: function() {
 			if (!api) {
-				throw "Flowplayer " +self.id()+ " not loaded. Try moving your call to player's onLoad event";
+				throw "Flowplayer " +self.id()+ " not loaded when calling an API method";
 			}
 			return api;				
 		},
 		
-		_dump: function() {
-			console.log(listeners);
-		},
-		
 		setClip: function(clip) {
 			self.setPlaylist([clip]);
+			return self;
 		},
 		
 		getIndex: function() {
@@ -890,27 +901,24 @@ function Player(wrapper, params, conf) {
 		conf.playlist = conf.playlist || [conf.clip]; 
 		
 		var index = 0;
+		
 		each(conf.playlist, function() {
-
-			var clip = this;
 			
-			// sometimes clip is given as array. this is not accepted.
+			var clip = this;			
+			
+			/* sometimes clip is given as array. this is not accepted. */
 			if (typeof clip == 'object' && clip.length) {
-				clip = "" + clip;	
-			}
-
-			if (typeof clip == 'string') {				
-				clip = {url: clip};				
-			} 
+				clip = {url: "" + clip};	
+			}			
 			
 			// populate common clip properties to each clip
 			each(conf.clip, function(key, val) {
-				if (conf.clip[key] !== undefined && clip[key] === undefined && typeof val != 'function') {
+				if (val !== undefined && clip[key] === undefined && typeof val != 'function') {
 					clip[key] = val;	
 				}
 			});	
 			
-			// modify configuration playlist
+			// modify playlist in configuration
 			conf.playlist[index] = clip;			
 			
 			// populate playlist array
@@ -940,7 +948,11 @@ function Player(wrapper, params, conf) {
 		// setup controlbar plugin if not explicitly defined
 		if (!conf.plugins || conf.plugins.controls === undefined) {
 			plugins.controls = new Plugin("controls", null, self);	
-		} 
+		}
+		
+		// setup canvas as plugin
+		plugins.canvas = new Plugin("canvas", null, self);
+		
 		
 		// Flowplayer uses black background by default
 		params.bgcolor = params.bgcolor || "#000000";
@@ -949,6 +961,7 @@ function Player(wrapper, params, conf) {
 		// setup default settings for express install
 		params.version = params.version || [9, 0];		
 		params.expressInstall = 'http://www.flowplayer.org/swf/expressinstall.swf';
+		
 		
 		// click function
 		function doClick(e) { 
@@ -972,7 +985,7 @@ function Player(wrapper, params, conf) {
 		// player is loaded upon page load 
 		} else {
 			
-			// prevent default action from wrapper (safari problem) loaded
+			// prevent default action from wrapper. (fixes safari problems)
 			if (wrapper.addEventListener) {
 				wrapper.addEventListener("click", stopEvent, false);	
 			}
