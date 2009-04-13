@@ -18,7 +18,8 @@
  */
 
 package org.flowplayer.view {
-    import flash.system.Security;
+    import flash.display.AVM1Movie;
+import flash.system.Security;
 import org.flowplayer.model.Plugin;
 	import org.flowplayer.controller.NetStreamControllingStreamProvider;	
 	
@@ -174,7 +175,8 @@ import org.flowplayer.model.Plugin;
 					if (loadable.type == "classLibrary") {
 						initializeClassLibrary(loadable, info);
 					} else {
-						initializePlugin(loadable, createPluginInstance(instanceUsed, info.content));
+                        var plugin:Object = info.content is AVM1Movie ? info.loader : createPluginInstance(instanceUsed, info.content);
+						initializePlugin(loadable, plugin);
 						//initializePlugin(loadable, instanceUsed, info);
 						instanceUsed = true;
 					}
