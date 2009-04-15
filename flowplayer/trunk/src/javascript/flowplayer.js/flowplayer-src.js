@@ -550,25 +550,25 @@ function Player(wrapper, params, conf) {
 		
 		unload: function() {
 			
-			try{
-				if (!api || api.fp_isFullscreen()) { return self; }
-				
+			// check that API is sane
+			try {
+				if (!api || api.fp_isFullscreen()) { return self; }				
 			} catch (error) {
 				return self;
 			}
-		
-			if (self._fireEvent("onBeforeUnload") === false) {
-				return false;
-			}
-
-			api.fp_close();
-			api = null;
 			
+			// unload only if in splash state
 			if (html.replace(/\s/g,'') !== '') {
-				wrapper.innerHTML = html;
-			}
+				
+				if (self._fireEvent("onBeforeUnload") === false) {
+					return false;
+				}	
+				api.fp_close();
+				api = null;				
+				wrapper.innerHTML = html;				
+				self._fireEvent("onUnload");
+			} 
 			
-			self._fireEvent("onUnload");
 			return self;
 		
 		},
