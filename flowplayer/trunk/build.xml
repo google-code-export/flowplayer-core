@@ -4,10 +4,10 @@
 	<property name="version-1" value="3" />
 	<property name="version-2" value="1" />
 	<property name="version-3" value="0" />	
-	<property name="version-status" value="dev3" />
-	<property name="controls-version-info" value="3.1.0-dev" />
-	<property name="audio-version-info" value="3.0.5" />
-	<property name="flowplayer-js-version-info" value="3.1.0-dev1" />
+	<property name="version-status" value="" />
+	<property name="controls-version-info" value="3.1.0" />
+	<property name="audio-version-info" value="3.1.0" />
+	<property name="flowplayer-js-version-info" value="3.1.0" />
 	<property name ="source-dist-root-folder" value="flowplayer" />
 	
 	<property name="version-status-quoted" value="&quot;${version-status}&quot;" />
@@ -35,7 +35,7 @@
 	<property name="locale" value="en_US" />
 	<property name="libs-path" value="${flex3libsdir} ${lib-dir}/thunderbolt"/>
 	<property name="classes-for-lib" value="org.flowplayer.view.Flowplayer org.flowplayer.util.PropertyBinder org.flowplayer.util.Arrange org.flowplayer.util.Assert org.flowplayer.model.PluginEvent org.flowplayer.util.TextUtil org.flowplayer.view.AbstractSprite org.flowplayer.view.AnimationEngine org.flowplayer.controller.NetStreamControllingStreamProvider" />
-	<property name="doc-classes" value="${classes-for-lib} org.flowplayer.view.FlowplayerBase org.flowplayer.view.StyleableSprite org.flowplayer.model.Plugin org.flowplayer.model.PluginModel org.flowplayer.model.DisplayPluginModel org.flowplayer.model.ProviderModel org.flowplayer.model.Cloneable org.flowplayer.model.DisplayProperties org.flowplayer.model.Identifiable org.flowplayer.model.Callable org.flowplayer.model.Clip org.flowplayer.model.Playlist org.flowplayer.model.AbstractEvent org.flowplayer.model.ClipEvent org.flowplayer.model.PlayerEvent org.flowplayer.model.PluginEvent org.flowplayer.model.ClipEventDispatcher org.flowplayer.model.ClipEventSupport org.flowplayer.model.EventType org.flowplayer.model.ClipEventType org.flowplayer.model.PlayerEventType org.flowplayer.model.PluginEventType org.flowplayer.view.Styleable org.flowplayer.controller.StreamProvider org.flowplayer.model.PluginFactory" />
+	<property name="doc-classes" value="${classes-for-lib} org.flowplayer.view.FlowplayerBase org.flowplayer.view.StyleableSprite org.flowplayer.model.Plugin org.flowplayer.model.PluginModel org.flowplayer.model.DisplayPluginModel org.flowplayer.model.ProviderModel org.flowplayer.model.Cloneable org.flowplayer.model.DisplayProperties org.flowplayer.model.Identifiable org.flowplayer.model.Callable org.flowplayer.model.Clip org.flowplayer.model.Playlist org.flowplayer.model.AbstractEvent org.flowplayer.model.ClipEvent org.flowplayer.model.PlayerEvent org.flowplayer.model.PluginEvent org.flowplayer.model.ClipEventDispatcher org.flowplayer.model.ClipEventSupport org.flowplayer.model.EventType org.flowplayer.model.ClipEventType org.flowplayer.model.PlayerEventType org.flowplayer.model.PluginEventType org.flowplayer.view.Styleable org.flowplayer.controller.StreamProvider org.flowplayer.model.PluginFactory org.flowplayer.controller.ClipURLResolver org.flowplayer.controller.ConnectionProvider" />
 	<property name="classpath" value="${lib-dir}/corelib/src ${lib-dir}/goasp/src_go" />
 	
 	<property name="library-binary" value="flowplayer.swc" />
@@ -81,7 +81,7 @@
 	<target name="zip-bundled">
 		<antcall target="prepare" />
 
-		<compile-player binary="${bundled-basename}.swf" commercial="true" free="false" license-lib="${bundled-license-lib}" />
+		<compile-player binary="${bundled-basename}.swf" commercial="true" free="false" license-lib="${bundled-license-lib}" debug="false" />
     	<copy file="${build-dir}/${bundled-basename}.swf" tofile="${build-dir}/${bundled-basename}-${version-info}.swf" />
 		<example player-swf="${bundled-basename}-${version-info}.swf" example-dir="examble-bundled"/>
 		<zip-player license="LICENSE_BUNDLED.txt" player-swf="${bundled-basename}-${version-info}.swf" player-swf-dir="${build-dir}" zip-name="${bundled-basename}-${version-info}.zip" example-dir="examble-bundled" />
@@ -277,7 +277,7 @@
 	<target name="doc" description="generates the apidocs">
 		<exec executable="${asdoc_bin}" failonerror="true">
 			<arg line="-source-path ${src-as} ${classpath}" />
-			<arg line="-library-path ${libs-path}" />
+			<arg line="-library-path ${libs-path} ${src-flash}" />
 			<arg line="-doc-classes ${doc-classes}" />
 			<arg line="-exclude-dependencies" />
 			<arg line="-output ${apidoc-dir}" />
