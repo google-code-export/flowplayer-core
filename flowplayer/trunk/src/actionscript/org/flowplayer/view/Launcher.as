@@ -127,6 +127,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			log.debug("security sandbox type: " + Security.sandboxType);
 			
 			log.info(VersionInfo.versionInfo());
+            trace(VersionInfo.versionInfo());
 			log.debug("creating Panel");
 
 			createPanel();
@@ -301,7 +302,8 @@ import org.flowplayer.model.DisplayPluginModel;
 
 				var plugin:PluginModel = Loadable(loadables[i]).plugin;
                 if (! plugin) {
-                    throw new Error("Plugin " + loadables[i] + " not available");
+                    handleError(PlayerError.PLUGIN_LOAD_FAILED, "Unable to load plugin " + Loadable(loadables[i]).url);
+//                    throw new Error("Plugin " + loadables[i] + " not available");
                 }
                 var isNonAdHocPlugin:Boolean = plugin.pluginObject is Plugin;
 //                var isNonAdHocPlugin:Boolean = (plugin is DisplayPluginModel && DisplayPluginModel(plugin).getDisplayObject() is Plugin) ||
