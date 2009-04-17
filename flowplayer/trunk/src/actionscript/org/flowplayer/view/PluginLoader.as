@@ -106,6 +106,9 @@ import org.flowplayer.model.Plugin;
 
 		public function load(plugins:Array):void {
 			log.debug("load()");
+
+            Security.allowDomain("*");
+
 			_providers = new Dictionary();
 			_loadables = plugins;
 			_swiffsToLoad = getPluginSwiffUrls(plugins);
@@ -165,9 +168,7 @@ import org.flowplayer.model.Plugin;
 		private function loaded(event:Event):void {
 			var info:LoaderInfo = event.target as LoaderInfo;
 			log.debug("loaded class name " + getQualifiedClassName(info.content));
-			
-			Security.allowDomain(info.url);
-			
+
 			var instanceUsed:Boolean = false;
 			_loadables.forEach(function(loadable:Loadable, index:int, array:Array):void {
 				if (! loadable.plugin && hasSwiff(info.url, loadable.url)) {
