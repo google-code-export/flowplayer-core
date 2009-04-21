@@ -1,5 +1,10 @@
 Version history:
 
+3.1.1
+-----
+Fixes:
+- The screen size was initially too small on Firefox (Mac)
+
 3.1.0
 -----
 New features:
