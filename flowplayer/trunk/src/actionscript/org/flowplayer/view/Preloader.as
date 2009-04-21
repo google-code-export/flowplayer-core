@@ -34,6 +34,8 @@ package org.flowplayer.view {
         private var _app:DisplayObject;
         private var _initTimer:Timer;
         private var _rotation:RotatingAnimation;
+        private static var _stageHeight:int = 0;
+        private static var _stageWidth:int = 0;
 
         public function Preloader() {
             stop();
@@ -57,17 +59,17 @@ package org.flowplayer.view {
         }
 		
 		private function onAddedToStage(event:Event):void {
-            trace("added to stage");
             prepareStage();
+            trace("Preloader added to stage, stage size " + stageWidth + " x " + stageHeight);
             if (rotationEnabled) {
                 _rotation = new RotatingAnimation();
                 addChild(_rotation);
-                _rotation.setSize(stage.stageWidth * 0.22, stage.stageHeight * 0.22);
-                Arrange.center(_rotation, stage.stageWidth, stage.stageHeight);
+                _rotation.setSize(stageWidth * 0.22, stageWidth * 0.22);
+                Arrange.center(_rotation, stageWidth, stageHeight);
                 _rotation.start();
             }
 
-            if (checkLoaded()) return;
+//            if (checkLoaded()) return;
             loaderInfo.addEventListener(ProgressEvent.PROGRESS, onLoadProgress);
             loaderInfo.addEventListener(Event.COMPLETE, init);
 		}
@@ -75,28 +77,31 @@ package org.flowplayer.view {
 		private function onLoadProgress(event:ProgressEvent):void {
             if (checkLoaded()) return;
   			var percent:Number = Math.floor((event.bytesLoaded*100) / event.bytesTotal);
-            graphics.clear();
             trace("percent " + percent);
+            if (_rotation) {
+                Arrange.center(_rotation, stageWidth, stageHeight);
+            }
    		}
        
         private function init(event:Event = null):void {
             trace("init");
-            prepareStage();
             if (_initTimer) {
                 _initTimer.stop();
             }
             if (_app) return;
-            
-            nextFrame();
+
             if (_rotation) {
                 _rotation.stop();
                 removeChild(_rotation);
             }
+            nextFrame();
+            prepareStage();
             try {
                 var mainClass:Class = Class(getDefinitionByName("org.flowplayer.view.Launcher"));
                 _app = new mainClass() as DisplayObject;
                 addChild(_app as DisplayObject);
                 trace("Launcher instantiated and added to frame " + currentFrame);
+                trace("stage size " + stageWidth + " x " + stageHeight);
             } catch (e:Error) {
                 trace("error instantiating Launcher " + e + ": " + e.message);
                 if (! _initTimer) {
@@ -115,8 +120,28 @@ package org.flowplayer.view {
         }
 
 		private function prepareStage():void {
-			stage.align = StageAlign.TOP_LEFT;
-			stage.scaleMode = StageScaleMode.NO_SCALE;
-		}
+            stage.align = StageAlign.TOP_LEFT;
+            stage.scaleMode = StageScaleMode.NO_SCALE;
+            stageHeight = stage.stageHeight;
+            stageWidth = stage.stageWidth;
+        }
+
+        public static function get stageHeight():int {
+            return _stageHeight;
+        }
+
+        public static function set stageHeight(val:int):void {
+            if (val < _stageHeight) return;
+            _stageHeight = val;
+        }
+
+        public static function get stageWidth():int {
+            return _stageWidth;
+        }
+
+        public static function set stageWidth(val:int):void {
+            if (val < _stageWidth) return;
+            _stageWidth = val;
+        }
     }
 }

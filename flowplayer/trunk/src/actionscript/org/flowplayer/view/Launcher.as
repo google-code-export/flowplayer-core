@@ -101,6 +101,7 @@ import org.flowplayer.model.DisplayPluginModel;
 		}
 
 		private function initPhase1(event:Event):void {
+            trace("Launcher added to stage");
 			createFlashVarsConfig();
 			Log.configure(_config.getLogConfiguration());
 
@@ -114,7 +115,7 @@ import org.flowplayer.model.DisplayPluginModel;
 
 			rootStyle = _config.canvas.style;
 			stage.addEventListener(Event.RESIZE, onStageResize);
-			setSize(stage.stageWidth, stage.stageHeight);
+			setSize(Preloader.stageWidth, Preloader.stageHeight);
 
 			if (! VersionInfo.commercial) {
 				log.debug("Adding logo to canvas");
@@ -456,7 +457,7 @@ import org.flowplayer.model.DisplayPluginModel;
 						heightPct = 100 - Math.abs(50 - (screen.position.top.pct >= 0 ? screen.position.top.pct : screen.position.bottom.pct))*2; 
 						setScreenBottomAndHeight(screen, heightPct, controlsHeight);
 					} else {
-						heightPct = ((stage.stageHeight - occupiedHeight) / stage.stageHeight) * 100;
+						heightPct = ((Preloader.stageHeight - occupiedHeight) / Preloader.stageHeight) * 100;
 						setScreenBottomAndHeight(screen, heightPct, controlsHeight);
 					}
 				}
@@ -471,8 +472,8 @@ import org.flowplayer.model.DisplayPluginModel;
 		
 		private function getScreenTopOrBottomPx(screen:DisplayProperties):Number {
 			var screenConf:Object = _config.getObject("screen");
-			if (screenConf.hasOwnProperty("top")) return screen.position.top.toPx(stage.stageHeight);
-			if (screenConf.hasOwnProperty("bottom")) return screen.position.bottom.toPx(stage.stageHeight);
+			if (screenConf.hasOwnProperty("top")) return screen.position.top.toPx(Preloader.stageHeight);
+			if (screenConf.hasOwnProperty("bottom")) return screen.position.bottom.toPx(Preloader.stageHeight);
 			return 0;
 		}
 

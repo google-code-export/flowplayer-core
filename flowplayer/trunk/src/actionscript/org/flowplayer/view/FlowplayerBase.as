@@ -566,7 +566,7 @@ import org.flowplayer.util.TextUtil;
          */
         public function setPlaylist(playlist:Array):void {
             _playListController.setPlaylist(playlist);
-            var clip:Clip = _playListController.playlist.current;
+            log.debug("setPlaylist, currentIndex is " + this.playlist.currentIndex);
         }
 
         /**
