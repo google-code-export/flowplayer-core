@@ -36,13 +36,16 @@ package org.flowplayer.view {
 		private var log:Log = new Log(this);
 		private var resizers:Dictionary;
 		private var screen:Screen;
+        private var _playlist:Playlist;
 
-		public function ClipResizer(playList:Playlist, screen:Screen) {
-			this.screen = screen;
-			createResizers(playList.clips);
-			addListeners(playList);			
-		}
-		
+        public function ClipResizer(playList:Playlist, screen:Screen) {
+            _playlist = playList;
+            this.screen = screen;
+            createResizers(playList.clips);
+            addListeners(playList);
+        }
+
+
 		private function createResizers(clips:Array):void {
 			resizers = new Dictionary();
 			clips.forEach(function(clip:Clip, index:int, clips:Array):void {
@@ -52,9 +55,11 @@ package org.flowplayer.view {
 		}
 
 		public function setMaxSize(width:int, height:int):void {
+            log.debug("setMaxSize: " + width + " x " + height);
 			for each (var resizer:MediaResizer in resizers) {
 				resizer.setMaxSize(width, height);
 			}
+            resizeClip(_playlist.current);
 		}
 		
 		public function resizeClip(clip:Clip, force:Boolean = false):void {
@@ -78,13 +83,14 @@ package org.flowplayer.view {
 			throw new Error(errorMsg);
 		}
 		
-		private function onResize(event:ClipEvent):void {
+		private function onResize(event:ClipEvent = null):void {
 			log.debug("received event " + event.target);
-			if (Clip(event.target).type == ClipType.IMAGE && Clip(event.target).getContent() == null) {
-				log.warn("image content not available yet, will not resize: " + event.target);
+            var clip:Clip = Clip(event.target);
+			if (clip.type == ClipType.IMAGE && clip.getContent() == null) {
+				log.warn("image content not available yet, will not resize: " + clip);
 				return;
 			}
-			resizeClip(event.target as Clip);
+			resizeClip(clip);
 		}
 		
 		private function addListeners(eventSupport:ClipEventSupport):void {

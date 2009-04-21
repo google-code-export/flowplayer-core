@@ -76,7 +76,7 @@ package org.flowplayer.view {
 		}
 
 		protected override function onResize():void {
-			log.debug("arranged to " + Arrange.describeBounds(this));
+			log.debug("onResize " + Arrange.describeBounds(this));
 			_resizer.setMaxSize(width, height);
 			// we need to resize the previous clip because it might be the stopped image that we are currently showing
 			resizeClip(_playList.previousClip);
@@ -131,7 +131,7 @@ package org.flowplayer.view {
 				return;
 			}
 			Arrange.center(disp, width, height);
-			log.debug("screen arranged to " + Arrange.describeBounds(this));
+			log.debug("resized() " + Arrange.describeBounds(this));
 			log.info("display of clip " +clip+ " arranged to  " + Arrange.describeBounds(disp));
 		}
 
@@ -271,7 +271,6 @@ package org.flowplayer.view {
                 _prevClip = clip;
                 return;
             }
-
             setDisplayVisibleIfHidden(clip);
         }
 
