@@ -84,8 +84,6 @@ import org.flowplayer.model.DisplayPluginModel;
 		private var _playButtonOverlay:PlayButtonOverlay;
 		private var _controlsModel:DisplayPluginModel;
         private var _providers:Dictionary = new Dictionary();
-        private var _instreamProviders:Dictionary = new Dictionary();
-		private var _fullscreenManager:FullscreenManager;
 		private var _canvasLogo:Sprite;
 		private var _pluginLoader:PluginLoader;
 		private var _error:TextField;
@@ -94,6 +92,7 @@ import org.flowplayer.model.DisplayPluginModel;
 		private var _enteringFullscreen:Boolean;
 		private var _copyrightNotice:TextField;
         private var _playlistLoader:ResourceLoader;
+        private var _fullscreenManager:FullscreenManager;
 
 		[Frame(factoryClass="org.flowplayer.view.Preloader")]
 		public function Launcher() {
@@ -545,7 +544,7 @@ import org.flowplayer.model.DisplayPluginModel;
 		private function createPlayListController():PlayListController {
             createHttpProviders();
 
-            var playListController:PlayListController = new PlayListController(_config.getPlaylist(), _providers, _instreamProviders, _config, createNewLoader());
+            var playListController:PlayListController = new PlayListController(_config.getPlaylist(), _providers, _config, createNewLoader());
             playListController.playerEventDispatcher = _flowplayer;
             _flowplayer.playlistController = playListController;
             return playListController;
@@ -555,7 +554,7 @@ import org.flowplayer.model.DisplayPluginModel;
             _providers["http"] = createProvider("http");
 
             if (hasHttpChildClip) {
-                _instreamProviders["httpInstream"] = createProvider("httpInstream");
+                _providers["httpInstream"] = createProvider("httpInstream");
             }
         }
 

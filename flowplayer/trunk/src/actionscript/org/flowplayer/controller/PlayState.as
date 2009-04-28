@@ -65,7 +65,6 @@ package org.flowplayer.controller {
                 playList:Playlist,
                 playListController:PlayListController,
                 providers:Dictionary,
-                instreamProviders:Dictionary, 
                 playerEventDispatcher:PlayerEventDispatcher,
                 config:Config,
                 loader:ResourceLoader):void {
@@ -77,7 +76,7 @@ package org.flowplayer.controller {
 			bufferingState = new BufferingState(State.BUFFERING, playList, playListController,  providers);
 			playListController.setPlayState(waitingState);
 			if (!_controllerFactory)
-				_controllerFactory = new MediaControllerFactory(providers, instreamProviders, playerEventDispatcher, config, loader);
+				_controllerFactory = new MediaControllerFactory(providers, playerEventDispatcher, config, loader);
 		}
 		
 		internal static function addProvider(provider:ProviderModel):void {

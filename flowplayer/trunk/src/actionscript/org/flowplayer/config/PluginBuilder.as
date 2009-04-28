@@ -18,7 +18,8 @@
  */
 
 package org.flowplayer.config {
-	import org.flowplayer.model.ClipType;	
+    import org.flowplayer.model.Clip;
+import org.flowplayer.model.ClipType;
 	import org.flowplayer.model.Playlist;	
 	
 	import flash.display.DisplayObject;
@@ -57,18 +58,35 @@ package org.flowplayer.config {
 			for (var name:String in fromObjects) {
 				if (! isObjectDisabled(name, _pluginObjects)) {
 					log.debug("creating loadable for '" + name + "', " + fromObjects[name]);
-					var loadable:Loadable = new Loadable(name, _config);
-					new PropertyBinder(loadable, "config").copyProperties(fromObjects[name]);
-					pluginsToLoad.push(loadable);
-				}
-			}
-			createLoadable("controls", pluginsToLoad, _controlsVersion);
-			if (playlist.hasType(ClipType.AUDIO)) {
-				createLoadable("audio", pluginsToLoad, _audioVersion);
-			}
-//			createLoadable("controlbuttons", pluginsToLoad, _controlsVersion);
-			return pluginsToLoad;
-		}
+                    newLoadable(fromObjects, name);
+					pluginsToLoad.push(newLoadable(fromObjects, name));
+                }
+            }
+            createLoadable("controls", pluginsToLoad, _controlsVersion);
+            if (playlist.hasType(ClipType.AUDIO)) {
+                createLoadable("audio", pluginsToLoad, _audioVersion);
+            }
+            createInStreamProviders(fromObjects, playlist, pluginsToLoad);
+            return pluginsToLoad;
+        }
+
+        private function newLoadable(fromObjects:Object, name:String, nameInConf:String = null):Loadable {
+            return new PropertyBinder(new Loadable(name, _config), "config").copyProperties(fromObjects[nameInConf || name]) as Loadable;
+        }
+
+        private function createInStreamProviders(fromObjects:Object, playlist:Playlist, loadables:Array):void {
+            var children:Array = playlist.childClips;
+            for (var i:int = 0; i < children.length; i++) {
+                var clip:Clip = children[i];
+                if (clip.configuredProviderName != "http") {
+                    var loadable:Loadable = findLoadable(clip.configuredProviderName, loadables);
+                    if (loadable) {
+                        loadable = newLoadable(fromObjects, clip.provider, clip.configuredProviderName);
+                        loadables.push(loadable);
+                    }
+                }
+            }
+        }
 
 		private function isObjectDisabled(name:String, confObjects:Object):Boolean {
 			if (! confObjects.hasOwnProperty(name)) return false;
@@ -76,16 +94,16 @@ package org.flowplayer.config {
 			return pluginObj == null;
 		}
 		
-		private function createLoadable(name:String, plugins:Array, version:String):void {
+		private function createLoadable(name:String, loadables:Array, version:String):void {
 			if (isObjectDisabled(name, _pluginObjects)) {
 				log.debug(name + " is disabled");
 				return;
 			}
-			var loadable:Loadable = findLoadable(name, plugins);
+			var loadable:Loadable = findLoadable(name, loadables);
 
 			if (! loadable) { 
 				loadable = new Loadable(name, _config);
-				plugins.push(loadable);
+				loadables.push(loadable);
 			} else {
 				log.debug(name + " was found in configuration, will not automatically add it into loadables");
 			}
@@ -95,9 +113,9 @@ package org.flowplayer.config {
 			}
 		}
 		
-		private function findLoadable(name:String, plugins:Array):Loadable {
-			for (var i:Number = 0; i < plugins.length; i++) {
-				var plugin:Loadable = plugins[i];
+		private function findLoadable(name:String, loadables:Array):Loadable {
+			for (var i:Number = 0; i < loadables.length; i++) {
+				var plugin:Loadable = loadables[i];
 				if (plugin.name == name) {
 					return plugin;
 				}

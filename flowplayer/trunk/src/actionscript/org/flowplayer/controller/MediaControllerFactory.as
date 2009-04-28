@@ -44,16 +44,14 @@ package org.flowplayer.controller {
 		private static var _instance:MediaControllerFactory;
 		private var _volumeController:VolumeController;
         private var _providers:Dictionary;
-        private var _instreamProviders:Dictionary;
 		private var _playerEventDispatcher:PlayerEventDispatcher;
 		private var _config:Config;
 		private var _loader:ResourceLoader;
 
 		use namespace flow_internal;
 		
-		public function MediaControllerFactory(providers:Dictionary, instreamProviders:Dictionary, playerEventDispatcher:PlayerEventDispatcher, config:Config, loader:ResourceLoader) {
+		public function MediaControllerFactory(providers:Dictionary, playerEventDispatcher:PlayerEventDispatcher, config:Config, loader:ResourceLoader) {
             _providers = providers;
-            _instreamProviders = instreamProviders;
 			_instance = this;
 			_playerEventDispatcher = playerEventDispatcher;
 			_volumeController = new VolumeController(_playerEventDispatcher);
@@ -104,10 +102,10 @@ package org.flowplayer.controller {
 		}
 		
 		public function getProvider(clip:Clip):StreamProvider {
-			var provider:StreamProvider = clip.childIndex >= 0 ? _instreamProviders[clip.provider] : _providers[clip.provider];
+			var provider:StreamProvider = _providers[clip.provider];
 			if (! provider) {
-                for (var key:String in _instreamProviders) {
-                    log.debug("found instreamProvider " + key);
+                for (var key:String in _providers) {
+                    log.debug("found provider " + key);
                 }
 				clip.dispatchError(ClipError.PROVIDER_NOT_LOADED, "Provider '" + clip.provider + "'");
 				return null;

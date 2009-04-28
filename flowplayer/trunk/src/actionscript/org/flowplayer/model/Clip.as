@@ -517,9 +517,13 @@ import org.flowplayer.flow_internal;
 		[Value]
 		public function get provider():String {
 			if (type == ClipType.AUDIO) return "audio";
-            if (childIndex >= 0 && _provider == "http") return "httpInstream";
+            if (childIndex >= 0) return _provider + "Instream";
 			return _provider;
 		}
+
+        public function get configuredProviderName():String {
+            return _provider;
+        }
 		
 		public function set provider(provider:String):void {
 			_provider = provider;

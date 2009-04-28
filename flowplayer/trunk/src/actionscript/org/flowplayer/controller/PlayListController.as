@@ -46,21 +46,19 @@ package org.flowplayer.controller {
 		private var _playList:Playlist;
 		private var _state:PlayState;
         private var _providers:Dictionary;
-        private var _instreamProviders:Dictionary;
 		private var _config:Config;
 		private var _loader:ResourceLoader;
 
-		public function PlayListController(playList:Playlist, providers:Dictionary, instreamProviders:Dictionary, config:Config, loader:ResourceLoader) {
+		public function PlayListController(playList:Playlist, providers:Dictionary, config:Config, loader:ResourceLoader) {
 			log = new Log(this);
 			_playList = playList;
 			_providers = providers;
-            _instreamProviders = instreamProviders;
 			_config = config;
 			_loader = loader;
 		}
 
 		flow_internal function set playerEventDispatcher(playerEventDispatcher:PlayerEventDispatcher):void {
-			PlayState.initStates(_playList, this, _providers, _instreamProviders, playerEventDispatcher, _config, _loader);
+			PlayState.initStates(_playList, this, _providers, playerEventDispatcher, _config, _loader);
 		}
 
 		flow_internal function setPlaylist(clips:Array):void {
@@ -305,12 +303,7 @@ package org.flowplayer.controller {
         }
 
         private function addCallback(name:String, listener:Function, registerFuncName:String):void {
-            addCallbackTo(_providers, name, listener, registerFuncName);
-            addCallbackTo(_instreamProviders, name, listener, registerFuncName);
-        }
-
-        private function addCallbackTo(providers:Dictionary, name:String, listener:Function, registerFuncName:String):void {
-            for each (var obj:Object in providers) {
+            for each (var obj:Object in _providers) {
                 log.debug("provider" + obj);
                 var provider:StreamProvider = obj as StreamProvider;
                 provider[registerFuncName](name, listener);
