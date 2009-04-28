@@ -26,7 +26,8 @@ package org.flowplayer.controller {
 import org.flowplayer.model.ClipEvent;
 import org.flowplayer.model.ClipEventSupport;
 import org.flowplayer.model.ClipEventType;
-	import org.flowplayer.model.Playlist;
+    import org.flowplayer.model.EventType;
+import org.flowplayer.model.Playlist;
 	import org.flowplayer.model.State;
 	import org.flowplayer.model.Status;		
 	
@@ -72,7 +73,7 @@ import org.flowplayer.model.ClipEventType;
                 eventSupport.unbind(onPause);
                 eventSupport.unbind(onStop);
                 eventSupport.unbind(onFinish);
-                eventSupport.unbind(onClipDone);
+                eventSupport.unbind(onClipDone, ClipEventType.FINISH, true);
                 eventSupport.unbind(onSeek);
             }
         }
@@ -100,6 +101,7 @@ import org.flowplayer.model.ClipEventType;
 
         private function onSeek(event:ClipEvent):void {
             _inStreamTracker.reset();
+            _inStreamTracker.start();
         }
 
 
@@ -120,6 +122,7 @@ import org.flowplayer.model.ClipEventType;
 		}
 
         private function onClipStop(event:ClipEvent):void {
+            log.debug("onClipStop");
             if (event.isDefaultPrevented()) return;
 
             if (playList.current.childIndex >= 0) {

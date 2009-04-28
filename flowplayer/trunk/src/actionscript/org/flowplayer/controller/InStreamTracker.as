@@ -65,7 +65,7 @@ package org.flowplayer.controller {
 
         private function onTimer(event:TimerEvent):void {
             var time:Number = _controller.status.time;
-            log.debug("time " + Math.round(time));
+//            log.debug("time " + Math.round(time));
             var child:Clip = clip.childPlaylist.getClipAt(time);
             if (child && Math.round(time) > _prevStartTime) {
                 stop();
@@ -80,6 +80,7 @@ package org.flowplayer.controller {
         }
 
         public function reset():void {
+            log.debug("reset()");
             _prevStartTime = 0;
         }
     }
