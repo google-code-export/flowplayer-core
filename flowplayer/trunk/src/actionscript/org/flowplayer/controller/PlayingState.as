@@ -40,10 +40,13 @@ import org.flowplayer.model.ClipEventType;
         public function PlayingState(stateCode:State, playlist:Playlist, playlistController:PlayListController, providers:Dictionary) {
             super(stateCode, playlist, playlistController, providers);
             _inStreamTracker = new InStreamTracker(playlistController);
-            playList.onStart(onStart);
-            playList.onResume(onResume);
+            playList.onStart(onStart, hasChildClips);
+            playList.onResume(onResume, hasChildClips);
         }
 
+        private function hasChildClips(clip:Clip):Boolean {
+            return clip.childPlaylist.length > 0;
+        }
 
         internal override function play():void {
             log.debug("play()");
@@ -63,24 +66,24 @@ import org.flowplayer.model.ClipEventType;
                 eventSupport.onStop(onStop);
                 eventSupport.onFinish(onFinish);
                 eventSupport.onBeforeFinish(onClipDone);
+                eventSupport.onStop(onClipStop);
+                eventSupport.onSeek(onSeek, hasChildClips);
             } else {
-//                eventSupport.unbind(onStart);
                 eventSupport.unbind(onPause);
-//                eventSupport.unbind(onResume);
                 eventSupport.unbind(onStop);
                 eventSupport.unbind(onFinish);
-                eventSupport.unbind(onClipDone, ClipEventType.FINISH, true);
+                eventSupport.unbind(onClipDone);
+                eventSupport.unbind(onSeek);
             }
         }
 
         private function onStart(event:ClipEvent):void {
             log.debug("onStart");
-            startInStreamTracker(event.target as Clip);
+            _inStreamTracker.start();
         }
 
         private function onResume(event:ClipEvent):void {
-            startInStreamTracker(event.target as Clip);
-
+            _inStreamTracker.start();
         }
 
         private function onPause(event:ClipEvent):void {
@@ -95,12 +98,8 @@ import org.flowplayer.model.ClipEventType;
             _inStreamTracker.stop();
         }
 
-        private function startInStreamTracker(clip:Clip):void {
-            log.debug("child playlist length is " + clip.childPlaylist.length);
-            if (clip.childPlaylist.length > 0) {
-                log.debug("clip has child clips, starting InStreamTracker");
-                _inStreamTracker.start();
-            }
+        private function onSeek(event:ClipEvent):void {
+            _inStreamTracker.reset();
         }
 
 
@@ -120,5 +119,18 @@ import org.flowplayer.model.ClipEventType;
 			onEvent(ClipEventType.SEEK, [seconds]);
 		}
 
-	}
+        private function onClipStop(event:ClipEvent):void {
+            if (event.isDefaultPrevented()) return;
+
+            if (playList.current.childIndex >= 0) {
+                _inStreamTracker.stop();
+                _inStreamTracker.reset();
+                playList.setInStreamClip(null);
+                changeState(pausedState);
+                playListController.resume();
+            } else {
+                changeState(waitingState);
+            }
+        }
+    }
 }

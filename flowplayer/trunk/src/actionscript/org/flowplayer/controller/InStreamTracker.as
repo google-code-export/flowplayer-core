@@ -73,17 +73,14 @@ package org.flowplayer.controller {
                 _controller.playInstream(child);
                 _prevStartTime = child.childStart;
             }
-//            else {
-//                var children:Array = clip.childPlaylist.clips;
-//                for (var i:int = 0; i < children.length; i++) {
-//                    var clip:Clip = children[i] as Clip;
-//                    log.debug("child clip at " + clip.childStart + ": " + clip);
-//                }
-//            }
         }
 
         private function get clip():Clip {
             return _controller.playlist.current;
+        }
+
+        public function reset():void {
+            _prevStartTime = 0;
         }
     }
 

@@ -120,14 +120,24 @@ package org.flowplayer.controller {
 		
 		internal function stop(closeStreamAndConnection:Boolean = false, silent:Boolean = false):void {
 			log.debug("stop() called");
-			if (silent) {
-				getMediaController().onEvent(null, [closeStreamAndConnection]);
-				return;
-			}
-			if (onEvent(ClipEventType.STOP, [closeStreamAndConnection])) {
-				changeState(waitingState);
-			}
-		}
+
+            if (silent) {
+                getMediaController().onEvent(null, [closeStreamAndConnection]);
+                
+                if (closeStreamAndConnection && playList.current.childIndex >= 0) {
+                    playList.setInStreamClip(null);
+                    getMediaController().onEvent(null, [true]);
+                }
+
+            } else {
+                onEvent(ClipEventType.STOP, [closeStreamAndConnection]);
+
+                if (closeStreamAndConnection && playList.current.childIndex >= 0) {
+                    playList.setInStreamClip(null);
+                    onEvent(ClipEventType.STOP, [true]);
+                }
+            }
+         }
 		
 		internal function close():void {
 			if (onEvent(ClipEventType.STOP, [true, true])) {
@@ -199,7 +209,7 @@ package org.flowplayer.controller {
 			var myclip:Clip = playList.current;
 			return _controllerFactory.getMediaController(myclip, playList);
 		}
-				
+
 		protected function onClipDone(event:ClipEvent):void {
 			log.info(this + " onClipDone");
 			var defaultAction:Boolean = ! event.isDefaultPrevented();
@@ -224,7 +234,6 @@ package org.flowplayer.controller {
 					playListController.next(true, true);
 				} else {
 					stop(false, true);
-					changeState(waitingState);
 				}
 			} else {
 				if (defaultAction) {
