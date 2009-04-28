@@ -83,7 +83,8 @@ import org.flowplayer.model.DisplayPluginModel;
 		private var _animationEngine:AnimationEngine;
 		private var _playButtonOverlay:PlayButtonOverlay;
 		private var _controlsModel:DisplayPluginModel;
-		private var _providers:Dictionary = new Dictionary();
+        private var _providers:Dictionary = new Dictionary();
+        private var _instreamProviders:Dictionary = new Dictionary();
 		private var _fullscreenManager:FullscreenManager;
 		private var _canvasLogo:Sprite;
 		private var _pluginLoader:PluginLoader;
@@ -542,18 +543,40 @@ import org.flowplayer.model.DisplayPluginModel;
 		}
 
 		private function createPlayListController():PlayListController {
-			if (! _providers) {
-				_providers = new Dictionary();
-			}
-			var httpProvider:ProviderModel = _config.getHttpProvider();
-			_providers["http"] = httpProvider.pluginObject;
-			_pluginRegistry.registerProvider(httpProvider);
-			
-			var playListController:PlayListController = new PlayListController(_config.getPlaylist(), _providers, _config, createNewLoader());
+            createHttpProviders();
+
+            var playListController:PlayListController = new PlayListController(_config.getPlaylist(), _providers, _instreamProviders, _config, createNewLoader());
             playListController.playerEventDispatcher = _flowplayer;
             _flowplayer.playlistController = playListController;
             return playListController;
-		}
+        }
+
+        private function createHttpProviders():void {
+            _providers["http"] = createProvider("http");
+
+            if (hasHttpChildClip) {
+                _instreamProviders["httpInstream"] = createProvider("httpInstream");
+            }
+        }
+
+        private function createProvider(name:String):Object {
+            log.debug("creating provider with name " + name);
+            var httpProvider:ProviderModel = _config.createHttpProvider(name);
+            _pluginRegistry.registerProvider(httpProvider);
+            return httpProvider.pluginObject;
+        }
+
+        private function get hasHttpChildClip():Boolean {
+            var children:Array = _config.getPlaylist().childClips;
+//            log.debug("configuration has child clips", children);
+            for (var i:int = 0; i < children.length; i++) {
+                if (Clip(children[i]).provider == "httpInstream") {
+                    log.info("child clip with http provider found");
+                    return true;
+                }
+            }
+            return false;
+        }
 		
 		private function createScreen():void {
 			_screen = new Screen(_config.getPlaylist(), _animationEngine, _playButtonOverlay, _pluginRegistry);

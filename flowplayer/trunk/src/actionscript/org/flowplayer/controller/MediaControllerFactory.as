@@ -37,19 +37,23 @@ package org.flowplayer.controller {
 	 */
 	internal class MediaControllerFactory {
 
-		private var _videoController:MediaController;
+        private var log:Log = new Log(this);
+        private var _streamProviderController:MediaController;
+        private var _inStreamController:MediaController;
 		private var _imageController:ImageController;
 		private static var _instance:MediaControllerFactory;
 		private var _volumeController:VolumeController;
-		private var _streamProviders:Dictionary;
+        private var _providers:Dictionary;
+        private var _instreamProviders:Dictionary;
 		private var _playerEventDispatcher:PlayerEventDispatcher;
 		private var _config:Config;
 		private var _loader:ResourceLoader;
 
 		use namespace flow_internal;
 		
-		public function MediaControllerFactory(providers:Dictionary, playerEventDispatcher:PlayerEventDispatcher, config:Config, loader:ResourceLoader) {
-			_streamProviders = providers;
+		public function MediaControllerFactory(providers:Dictionary, instreamProviders:Dictionary, playerEventDispatcher:PlayerEventDispatcher, config:Config, loader:ResourceLoader) {
+            _providers = providers;
+            _instreamProviders = instreamProviders;
 			_instance = this;
 			_playerEventDispatcher = playerEventDispatcher;
 			_volumeController = new VolumeController(_playerEventDispatcher);
@@ -60,7 +64,7 @@ package org.flowplayer.controller {
 		flow_internal function getMediaController(clip:Clip, playlist:Playlist):MediaController {
 			var clipType:ClipType = clip.type;
 			if (clipType == ClipType.VIDEO || clipType == ClipType.AUDIO) {
-				return getStreamProviderController(playlist);
+				return getStreamProviderController(playlist, clip.parent != null);
 			}
 			if (clipType == ClipType.IMAGE) {
 				return getImageController(playlist);
@@ -73,11 +77,20 @@ package org.flowplayer.controller {
 			return _volumeController;
 		}
 		
-		private function getStreamProviderController(playlist:Playlist):MediaController {
-			if (!_videoController) {
-				_videoController = new StreamProviderController(this, getVolumeController(), _config, playlist);
-			}
-			return _videoController;
+		private function getStreamProviderController(playlist:Playlist, inStream:Boolean = false):MediaController {
+            if (inStream) {
+                if (! _inStreamController) {
+                    _inStreamController = new StreamProviderController(this, getVolumeController(), _config, playlist);
+                }
+//                log.debug("getStreamProviderController(): returning the inStreamCOntroller");
+                return _inStreamController;
+            }
+            
+			if (!_streamProviderController) {
+				_streamProviderController = new StreamProviderController(this, getVolumeController(), _config, playlist);
+            }
+//            log.debug("getStreamProviderController(): returning the _streamProviderController");
+            return _streamProviderController;
 		}
 		
 		private function getImageController(playlist:Playlist):MediaController {
@@ -85,15 +98,18 @@ package org.flowplayer.controller {
 				_imageController = new ImageController(_loader, getVolumeController(), playlist);
 			return _imageController;
 		}
-		
+
 		internal function addProvider(provider:ProviderModel):void {
-			_streamProviders[provider.name] = provider.pluginObject;
+			_providers[provider.name] = provider.pluginObject;
 		}
 		
 		public function getProvider(clip:Clip):StreamProvider {
-			var provider:StreamProvider = _streamProviders[clip.provider];
+			var provider:StreamProvider = clip.childIndex >= 0 ? _instreamProviders[clip.provider] : _providers[clip.provider];
 			if (! provider) {
-				clip.dispatchError(ClipError.PROVIDER_NOT_LOADED, "Provider '" + clip.provider);
+                for (var key:String in _instreamProviders) {
+                    log.debug("found instreamProvider " + key);
+                }
+				clip.dispatchError(ClipError.PROVIDER_NOT_LOADED, "Provider '" + clip.provider + "'");
 				return null;
 			}
 			provider.volumeController = getVolumeController();

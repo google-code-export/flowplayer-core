@@ -190,10 +190,10 @@ package org.flowplayer.config {
 			return config["buffering"];
 		}
 		
-		public function getHttpProvider():ProviderModel {
+		public function createHttpProvider(name:String):ProviderModel {
 			var provider:NetStreamControllingStreamProvider =  new NetStreamControllingStreamProvider();
 			
-			var model:ProviderModel = new ProviderModel(provider, "http");
+			var model:ProviderModel = new ProviderModel(provider, name);
 			provider.model = model;
 			
 //			var conf:Loadable = config.http;

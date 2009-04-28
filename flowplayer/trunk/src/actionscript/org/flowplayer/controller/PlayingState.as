@@ -22,7 +22,10 @@ package org.flowplayer.controller {
 	
 	import org.flowplayer.controller.PlayListController;
 	import org.flowplayer.flow_internal;
-	import org.flowplayer.model.ClipEventType;
+    import org.flowplayer.model.Clip;
+import org.flowplayer.model.ClipEvent;
+import org.flowplayer.model.ClipEventSupport;
+import org.flowplayer.model.ClipEventType;
 	import org.flowplayer.model.Playlist;
 	import org.flowplayer.model.State;
 	import org.flowplayer.model.Status;		
@@ -32,20 +35,74 @@ package org.flowplayer.controller {
 	 * @author api
 	 */
 	internal class PlayingState extends PlayState {
-		
-		public function PlayingState(stateCode:State, playList:Playlist, playListController:PlayListController, providers:Dictionary) {
-			super(stateCode, playList, playListController, providers);
-		}
-		
-		internal override function play():void {
-			log.debug("play()");
-			stop();
-			bufferingState.nextStateAfterBufferFull = playingState;
-			if (onEvent(ClipEventType.BEGIN, getMediaController(), [false])) {
-				changeState(bufferingState);
-				playList.current.played = true;
-			}
-		}
+        private var _inStreamTracker:InStreamTracker;
+
+        public function PlayingState(stateCode:State, playlist:Playlist, playlistController:PlayListController, providers:Dictionary) {
+            super(stateCode, playlist, playlistController, providers);
+            _inStreamTracker = new InStreamTracker(playlistController);
+            playList.onStart(onStart);
+            playList.onResume(onResume);
+        }
+
+
+        internal override function play():void {
+            log.debug("play()");
+            stop();
+            bufferingState.nextStateAfterBufferFull = playingState;
+
+            if (onEvent(ClipEventType.BEGIN, [false])) {
+                changeState(bufferingState);
+                playList.current.played = true;
+            }
+        }
+
+        override protected function setEventListeners(eventSupport:ClipEventSupport, add:Boolean = true):void {
+            if (add) {
+                log.debug("adding event listeners");
+                eventSupport.onPause(onPause);
+                eventSupport.onStop(onStop);
+                eventSupport.onFinish(onFinish);
+                eventSupport.onBeforeFinish(onClipDone);
+            } else {
+//                eventSupport.unbind(onStart);
+                eventSupport.unbind(onPause);
+//                eventSupport.unbind(onResume);
+                eventSupport.unbind(onStop);
+                eventSupport.unbind(onFinish);
+                eventSupport.unbind(onClipDone, ClipEventType.FINISH, true);
+            }
+        }
+
+        private function onStart(event:ClipEvent):void {
+            log.debug("onStart");
+            startInStreamTracker(event.target as Clip);
+        }
+
+        private function onResume(event:ClipEvent):void {
+            startInStreamTracker(event.target as Clip);
+
+        }
+
+        private function onPause(event:ClipEvent):void {
+            _inStreamTracker.stop();
+        }
+
+        private function onStop(event:ClipEvent):void {
+            _inStreamTracker.stop();
+        }
+
+        private function onFinish(event:ClipEvent):void {
+            _inStreamTracker.stop();
+        }
+
+        private function startInStreamTracker(clip:Clip):void {
+            log.debug("child playlist length is " + clip.childPlaylist.length);
+            if (clip.childPlaylist.length > 0) {
+                log.debug("clip has child clips, starting InStreamTracker");
+                _inStreamTracker.start();
+            }
+        }
+
 
 		internal override function stopBuffering():void {
 			log.debug("stopBuffering() called");
@@ -60,7 +117,7 @@ package org.flowplayer.controller {
 		}
 		
 		internal override function seekTo(seconds:Number):void {
-			onEvent(ClipEventType.SEEK, getMediaController(), [seconds]);
+			onEvent(ClipEventType.SEEK, [seconds]);
 		}
 
 	}

@@ -18,8 +18,21 @@
  */
 
 package org.flowplayer.controller {
-	import org.flowplayer.config.Config;	import org.flowplayer.controller.AbstractDurationTrackingController;	import org.flowplayer.controller.MediaController;	import org.flowplayer.controller.StreamProvider;	import org.flowplayer.model.Clip;	import org.flowplayer.model.ClipEvent;	import org.flowplayer.model.ClipEventType;	import org.flowplayer.model.ClipType;	import org.flowplayer.model.Playlist;	import org.flowplayer.util.Log;		import flash.display.DisplayObject;	import flash.media.Video;		
-	/**
+	import org.flowplayer.config.Config;
+	import org.flowplayer.controller.AbstractDurationTrackingController;
+	import org.flowplayer.controller.MediaController;
+	import org.flowplayer.controller.StreamProvider;
+	import org.flowplayer.model.Clip;
+	import org.flowplayer.model.ClipEvent;
+	import org.flowplayer.model.ClipEventType;
+	import org.flowplayer.model.ClipType;
+	import org.flowplayer.model.Playlist;
+	import org.flowplayer.util.Log;
+	
+	import flash.display.DisplayObject;
+	import flash.media.Video;		
+
+	/**
 	 * Video controller is responsible for loading and showing video.
 	 * It's also responsible for scaling and resizing the video screen.
 	 * It receives the cuePoints and metaData from the loaded video data.
@@ -117,5 +130,5 @@ package org.flowplayer.controller {
 			provider.playlist = playlist;
 			return provider;
 		}
-	}
+    }
 }

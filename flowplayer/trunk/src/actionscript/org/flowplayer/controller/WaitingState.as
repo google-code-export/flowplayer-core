@@ -40,7 +40,7 @@ package org.flowplayer.controller {
 			log.debug("play()");
 			if (! playListReady) return;
 			bufferingState.nextStateAfterBufferFull = playingState;
-			if (onEvent(ClipEventType.BEGIN, getMediaController(), [false])) {
+			if (onEvent(ClipEventType.BEGIN, [false])) {
 				playList.current.played = true;
 				changeState(bufferingState);
 			}
@@ -59,7 +59,7 @@ package org.flowplayer.controller {
 			if (! playListReady) return;
 			log.debug("startBuffering()");
 			bufferingState.nextStateAfterBufferFull = pausedState;
-			if (onEvent(ClipEventType.BEGIN, getMediaController(), [true])) {
+			if (onEvent(ClipEventType.BEGIN, [true])) {
 				changeState(bufferingState);
 			}
 		}

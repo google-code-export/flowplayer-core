@@ -45,20 +45,22 @@ package org.flowplayer.controller {
 		private var log:Log;
 		private var _playList:Playlist;
 		private var _state:PlayState;
-		private var _streamProviders:Dictionary;
+        private var _providers:Dictionary;
+        private var _instreamProviders:Dictionary;
 		private var _config:Config;
 		private var _loader:ResourceLoader;
 
-		public function PlayListController(playList:Playlist, streamProviders:Dictionary, config:Config, loader:ResourceLoader) {
+		public function PlayListController(playList:Playlist, providers:Dictionary, instreamProviders:Dictionary, config:Config, loader:ResourceLoader) {
 			log = new Log(this);
 			_playList = playList;
-			_streamProviders = streamProviders;
+			_providers = providers;
+            _instreamProviders = instreamProviders;
 			_config = config;
 			_loader = loader;
 		}
 
 		flow_internal function set playerEventDispatcher(playerEventDispatcher:PlayerEventDispatcher):void {
-			PlayState.initStates(_playList, this, _streamProviders, playerEventDispatcher, _config, _loader);
+			PlayState.initStates(_playList, this, _providers, _instreamProviders, playerEventDispatcher, _config, _loader);
 		}
 
 		flow_internal function setPlaylist(clips:Array):void {
@@ -103,8 +105,14 @@ package org.flowplayer.controller {
 
 		flow_internal function playClips(clips:Array):void {
 			replacePlaylistAndPlay(clips);
-			
 		}
+
+        flow_internal function playInstream(clip:Clip):void {
+            _state.pause();
+            playlist.setInStreamClip(clip);
+            setPlayState(PlayState.waitingState);            
+            _state.play();
+        }
 
 		flow_internal function play(clip:Clip = null, clipIndex:Number = -1):Clip {
 			log.debug("play() " + clip + ", " + clipIndex);
@@ -297,7 +305,12 @@ package org.flowplayer.controller {
         }
 
         private function addCallback(name:String, listener:Function, registerFuncName:String):void {
-            for each (var obj:Object in _streamProviders) {
+            addCallbackTo(_providers, name, listener, registerFuncName);
+            addCallbackTo(_instreamProviders, name, listener, registerFuncName);
+        }
+
+        private function addCallbackTo(providers:Dictionary, name:String, listener:Function, registerFuncName:String):void {
+            for each (var obj:Object in providers) {
                 log.debug("provider" + obj);
                 var provider:StreamProvider = obj as StreamProvider;
                 provider[registerFuncName](name, listener);

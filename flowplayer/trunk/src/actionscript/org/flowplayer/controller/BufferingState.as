@@ -28,7 +28,8 @@ package org.flowplayer.controller {
 	import org.flowplayer.model.ClipEventType;
 	import org.flowplayer.model.Playlist;
 	import org.flowplayer.model.State;
-	import org.flowplayer.model.Status;				
+	import org.flowplayer.model.Status;		
+		
 	use namespace flow_internal;
 	
 	/**
@@ -46,7 +47,7 @@ package org.flowplayer.controller {
 			log.debug("play()");
 			stop();
 			bufferingState.nextStateAfterBufferFull = playingState;
-			if (onEvent(ClipEventType.BEGIN, getMediaController(), [false])) {
+			if (onEvent(ClipEventType.BEGIN, [false])) {
 				playList.current.played = true;
 				changeState(bufferingState);
 			}
@@ -65,7 +66,7 @@ package org.flowplayer.controller {
 		}
 		
 		internal override function seekTo(seconds:Number):void {
-			onEvent(ClipEventType.SEEK, getMediaController(), [seconds]);
+			onEvent(ClipEventType.SEEK, [seconds]);
 		}
 
 		override protected function setEventListeners(eventSupport:ClipEventSupport, add:Boolean = true):void {

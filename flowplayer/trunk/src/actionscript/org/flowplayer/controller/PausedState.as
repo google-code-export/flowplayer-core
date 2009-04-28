@@ -36,7 +36,7 @@ package org.flowplayer.controller {
 		}
 		
 		internal override function play():void {
-			resume();
+            resume();
 		}
 		
 		internal override function resume():void {
@@ -53,7 +53,7 @@ package org.flowplayer.controller {
 		}
 
 		internal override function seekTo(seconds:Number):void {
-			onEvent(ClipEventType.SEEK, getMediaController(), [seconds]);
+			onEvent(ClipEventType.SEEK, [seconds]);
 		}
 	}
 }
