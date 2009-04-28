@@ -39,6 +39,7 @@ package org.flowplayer.view {
         private var _playlist:Playlist;
 
         public function ClipResizer(playList:Playlist, screen:Screen) {
+            resizers = new Dictionary();
             _playlist = playList;
             this.screen = screen;
             createResizers(playList.clips);
@@ -46,11 +47,13 @@ package org.flowplayer.view {
         }
 
 
-		private function createResizers(clips:Array):void {
-			resizers = new Dictionary();
+        private function createResizers(clips:Array):void {
 			clips.forEach(function(clip:Clip, index:int, clips:Array):void {
 				log.debug("creating resizer for clip " + clip);
 				resizers[clip] = new MediaResizer(clip, screen.width, screen.height);
+                if (clip.childPlaylist.length > 0) {
+                    createResizers(clip.childClips);
+                }
 			});
 		}
 

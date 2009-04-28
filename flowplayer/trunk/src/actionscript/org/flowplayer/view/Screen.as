@@ -51,25 +51,37 @@ package org.flowplayer.view {
 		private var _pluginRegistry:PluginRegistry;
 
 		public function Screen(playList:Playlist, animationEngine:AnimationEngine, play:PlayButtonOverlay, pluginRegistry:PluginRegistry) {
+            _displays = new Dictionary();
 			_displayFactory = new MediaDisplayFactory(playList);
 			_resizer = new ClipResizer(playList, this);
-			createDisplays(playList);
+			createDisplays(playList.clips);
 			addListeners(playList);
 			_playList = playList;
 			_animatioEngine = animationEngine;
 			_pluginRegistry = pluginRegistry;
 		}
 
-		private function createDisplays(playList:Playlist):void {
-			_displays = new Dictionary();
-			var clips:Array = playList.clips;
+		private function createDisplays(clips:Array):void {
 			for (var i:Number = 0; i < clips.length; i++) {
 				var clip:Clip = clips[i];
 				if (! clip.isNullClip) {
 					createDisplay(clip);
 				}
+                if (clip.childPlaylist.length > 0) {
+                    createDisplays(clip.childPlaylist.clips);
+                }
 			}
 		}
+
+        private function createDisplay(clip:Clip):void {
+            var display:DisplayObject = _displayFactory.createMediaDisplay(clip);
+            display.width = this.width;
+            display.height = this.height;
+            display.visible = false;
+            addChild(display);
+            log.debug("created display " + display);
+            _displays[clip] = display;
+        }
 
 		public function set fullscreenManager(manager:FullscreenManager):void {
 			_fullscreenManaer = manager;
@@ -161,16 +173,6 @@ package org.flowplayer.view {
 			return new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
 		}
 
-		private function createDisplay(clip:Clip):void {
-			var display:DisplayObject = _displayFactory.createMediaDisplay(clip);
-			display.width = this.width;
-			display.height = this.height;
-			display.visible = false;
-			addChild(display);
-            log.debug("created display " + display);
-			_displays[clip] = display;
-		}
-
 		public function set mediaController(controller:MediaController):void {
 		}
 
@@ -190,7 +192,6 @@ package org.flowplayer.view {
 				MediaDisplay(disp).init(clipNow);
 				disp.visible = true;
 				disp.alpha = 0;
-				hideAllDisplays(disp as MediaDisplay);
 				log.debug("starting fadeIn for " + disp);
 				_animatioEngine.animateProperty(disp, "alpha", 1, clipNow.fadeInSpeed);
 				Arrange.center(disp, width, height);
@@ -204,7 +205,7 @@ package org.flowplayer.view {
             log.info("onPlaylistChanged()");
             _prevClip = null;
             removeDisplays(ClipEventSupport(event.info).clips);
-            createDisplays(Playlist(event.target));
+            createDisplays(Playlist(event.target).clips);
         }
 
         private function onClipAdded(event:ClipEvent):void {
@@ -227,7 +228,8 @@ package org.flowplayer.view {
 			eventSupport.onBufferFull(onBufferFull);
 
 			eventSupport.onBegin(onBegin);
-			eventSupport.onStart(onStart);
+            eventSupport.onStart(onStart);
+            eventSupport.onResume(onResume);
 		}
 
         private function onBegin(event:ClipEvent):void {
@@ -241,11 +243,17 @@ package org.flowplayer.view {
             }
         }
 
-		private function onStart(event:ClipEvent):void {
-			var clip:Clip = event.target as Clip;
+        private function onStart(event:ClipEvent):void {
+            var clip:Clip = event.target as Clip;
             if (clip.metaData == false) return;
             handleStart(clip, event.info as Boolean);
-		}
+        }
+
+        private function onResume(event:ClipEvent):void {
+            var clip:Clip = event.target as Clip;
+            setDisplayVisibleIfHidden(clip);
+            hideAllDisplays(_displays[clip]);
+        }
 
         private function handleStart(clip:Clip, pauseAfterStart:Boolean):void {
             if (clip.isNullClip) return;
@@ -272,6 +280,7 @@ package org.flowplayer.view {
                 return;
             }
             setDisplayVisibleIfHidden(clip);
+            hideAllDisplays(_displays[clip]);
         }
 
 		private function setDisplayVisibleIfHidden(clip:Clip):void {
@@ -282,7 +291,7 @@ package org.flowplayer.view {
 		}
 
 		private function hideAllDisplays(except:MediaDisplay = null):void {
-			var clips:Array = _playList.clips;
+			var clips:Array = _playList.clips.concat(_playList.childClips);
 			for (var i:Number = 0; i < clips.length; i++) {
 				var clip:Clip = clips[i] as Clip;
 				var disp:MediaDisplay = _displays[clip];

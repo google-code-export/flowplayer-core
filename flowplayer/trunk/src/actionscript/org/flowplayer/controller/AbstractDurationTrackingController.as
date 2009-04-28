@@ -112,7 +112,7 @@ package org.flowplayer.controller {
             }
 			onDurationReached();
 			if (clip.duration > 0) {
-				log.debug("dispatching FINISH from durationTracking");
+				log.debug("dispatching FINISH from durationTracking, clip is " + clip);
 				clip.dispatchBeforeEvent(new ClipEvent(ClipEventType.FINISH));
 			}
 		}

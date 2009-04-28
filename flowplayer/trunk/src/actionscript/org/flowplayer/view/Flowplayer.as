@@ -147,7 +147,7 @@ package org.flowplayer.view {
 			ExternalInterfaceHelper.addCallback("fp_" + methodName, func);
 		}
 		
-		private function genericPlay(param:Object = null):void {
+		private function genericPlay(param:Object = null, instream:Boolean = false):void {
 			if (param == null) { 
 				play();
 				return;

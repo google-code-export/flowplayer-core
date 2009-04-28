@@ -33,11 +33,12 @@ package org.flowplayer.model {
 	 */
 	public class Playlist extends ClipEventSupport {
 
-		private var currentPos:Number;
+		private var _currentPos:Number;
+        private var _inStreamClip:Clip;
 		private var _commonClip:Clip;
 		private var _clips:Array;
 
-		public function Playlist(commonClip:Clip) {
+		public function Playlist(commonClip:Clip = null) {
 			if (commonClip == null) {
 				commonClip = new NullClip();
 			}
@@ -46,16 +47,26 @@ package org.flowplayer.model {
 			_commonClip.setPlaylist(this);
 			initialize();		
 		}
+
+        public function get childClips():Array {
+            var result:Array = new Array();
+            for (var i:int = 0; i < _clips.length; i++) {
+                result = result.concat(Clip(_clips[i]).childClips);
+            }
+            return result;
+        }
 		
 		private function initialize(newClips:Array = null):void {			
 			_clips = new Array();
+            _inStreamClip = null;
 			if (newClips) {
 				for (var i:Number = 0; i < newClips.length; i++) {
 					doAddClip(newClips[i]);
 				}
 			}
 			super.setClips(_clips);
-			currentPos = 0;
+			_currentPos = 0;
+            log.debug("initialized, current clip is " + current);
 		}
 
 		// doc: PlayEventType.PLAYLIST_CHANGED
@@ -103,9 +114,9 @@ package org.flowplayer.model {
                 doReplace([clip], true);
             } else {
                 doAddClip(clip, index);
-                if (index >= 0 && index <= currentPos && hasNext()) {
+                if (index >= 0 && index <= _currentPos && hasNext()) {
                     log.debug("moving current pos one up");
-                    currentPos++;
+                    _currentPos++;
                 }
                 super.setClips(_clips);
             }
@@ -120,13 +131,15 @@ package org.flowplayer.model {
                 _clips.splice(index, 0, clip);
             }
             log.debug("clips now " + _clips);
-			clip.setPlaylist(this);
+
+            clip.setPlaylist(this);
+
 			if (clip != _commonClip) {
-				clip.onAll(_commonClip.onClipEvent);
-				log.info("adding listener to all before events, common clip listens to other clips");
-				clip.onBeforeAll(_commonClip.onBeforeClipEvent);
-			}
-		}
+                clip.onAll(_commonClip.onClipEvent);
+                log.error("adding listener to all before events, common clip listens to other clips");
+                clip.onBeforeAll(_commonClip.onBeforeClipEvent);
+            }
+        }
 		
 		/**
 		 * Gets the clip with the specified index.
@@ -143,55 +156,65 @@ package org.flowplayer.model {
 		}
 				
 		public function hasNext():Boolean {
-			return currentPos < length - 1; 
+			return _currentPos < length - 1;
 		}
 		
 		public function hasPrevious():Boolean {
-			return currentPos > 0;
+			return _currentPos > 0;
 		}
 
 		public function get current():Clip {
+            if (_inStreamClip) return _inStreamClip;
+            if (_currentPos == -1) return null;
 			if (_clips.length == 0) return new NullClip();
-			return _clips[currentPos];
+			var current:Clip = _clips[_currentPos];
+            return current;
 		}
+
+        public function setInStreamClip(clip:Clip):void {
+            _inStreamClip = clip;
+        }
 	
 		public function set current(clip:Clip):void {
 			toIndex(indexOf(clip));
 		}
 	
 		public function get currentIndex():Number {
-			return currentPos;
+			return _currentPos;
 		}
 		
 		public function next():Clip {
-			trace("PlayList.next(), current index = " + currentPos);
-			if (currentPos == _clips.length -1) return null;
-			var clip:Clip = _clips[++currentPos];
+			trace("PlayList.next(), current index = " + _currentPos);
+			if (_currentPos == _clips.length -1) return null;
+			var clip:Clip = _clips[++_currentPos];
+            _inStreamClip = null;
 			return clip;
 		}
 
 		public function get nextClip():Clip {
-			if (currentPos == _clips.length -1) return null;
-			return _clips[currentPos + 1];
+			if (_currentPos == _clips.length -1) return null;
+			return _clips[_currentPos + 1];
 		}
 		
 		public function get previousClip():Clip {
-			if (currentPos == 0) return null;
-			return _clips[currentPos - 1];
+			if (_currentPos == 0) return null;
+			return _clips[_currentPos - 1];
 		}
 		
 		public function previous():Clip {
-			trace("PlayList.prev(), current index = " + currentPos);
-			if (currentPos == 0) return null;
-			return _clips[--currentPos];
+			trace("PlayList.prev(), current index = " + _currentPos);
+			if (_currentPos == 0) return null;
+            _inStreamClip = null;
+			return _clips[--_currentPos];
 		}
 
 		public function toIndex(index:Number):Clip {
 			if (index < 0) return null;
 			if (index >= _clips.length) return null;
 			var clip:Clip = _clips[index];
-			if (index == currentPos) return clip;
-			currentPos = index;
+			if (index == _currentPos) return clip;
+			_currentPos = index;
+            _inStreamClip = null;
 			return clip;
 		}
 		

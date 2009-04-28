@@ -110,7 +110,17 @@ package org.flowplayer.config {
                 fileName = url.substring(lastSlashIndex + 1);
             }
             var clip:Clip = Clip.create(fileName, baseUrl);
-            return new PropertyBinder(clip, "customProperties").copyProperties(clipObj) as Clip;
+            new PropertyBinder(clip, "customProperties").copyProperties(clipObj) as Clip;
+            if (clipObj.hasOwnProperty("childPlaylist")) {
+                addChildClips(clip, clipObj["childPlaylist"]);
+            }
+            return clip;
+        }
+
+        private function addChildClips(clip:Clip, children:Array):void {
+            for (var i:int = 0; i < children.length; i++) {
+                clip.addChild(createClip(children[i]));
+            }
         }
 
         public function createCuepointGroup(cuepoints:Array, callbackId:String, timeMultiplier:Number):Array {

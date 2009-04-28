@@ -61,7 +61,15 @@ package org.flowplayer.controller {
 		private var _stateCode:State;
 		private var _active:Boolean;
 
-		internal static function initStates(playList:Playlist, playListController:PlayListController, providers:Dictionary, playerEventDispatcher:PlayerEventDispatcher, config:Config, loader:ResourceLoader):void {
+		internal static function initStates(
+                playList:Playlist,
+                playListController:PlayListController,
+                providers:Dictionary,
+                instreamProviders:Dictionary, 
+                playerEventDispatcher:PlayerEventDispatcher,
+                config:Config,
+                loader:ResourceLoader):void {
+
 			waitingState = new WaitingState(State.WAITING, playList, playListController, providers);
 			endedState = new EndedState(State.ENDED, playList, playListController, providers);
 			playingState = new PlayingState(State.PLAYING, playList, playListController, providers);
@@ -69,7 +77,7 @@ package org.flowplayer.controller {
 			bufferingState = new BufferingState(State.BUFFERING, playList, playListController,  providers);
 			playListController.setPlayState(waitingState);
 			if (!_controllerFactory)
-				_controllerFactory = new MediaControllerFactory(providers, playerEventDispatcher, config, loader);
+				_controllerFactory = new MediaControllerFactory(providers, instreamProviders, playerEventDispatcher, config, loader);
 		}
 		
 		internal static function addProvider(provider:ProviderModel):void {
@@ -87,11 +95,6 @@ package org.flowplayer.controller {
 		internal final function set active(active:Boolean):void {
 			log.debug(" is active: " + active);
 			_active = active;
-			if (active) {
-				playList.onBeforeFinish(onClipDone);
-			} else {
-				playList.unbind(onClipDone, ClipEventType.FINISH, true);
-			}
 			setEventListeners(playList, active);			
 		}
 
@@ -121,13 +124,13 @@ package org.flowplayer.controller {
 				getMediaController().onEvent(null, [closeStreamAndConnection]);
 				return;
 			}
-			if (onEvent(ClipEventType.STOP, getMediaController(), [closeStreamAndConnection])) {
+			if (onEvent(ClipEventType.STOP, [closeStreamAndConnection])) {
 				changeState(waitingState);
 			}
 		}
 		
 		internal function close():void {
-			if (onEvent(ClipEventType.STOP, getMediaController(), [true, true])) {
+			if (onEvent(ClipEventType.STOP, [true, true])) {
 				changeState(waitingState);
 			}
 		}
@@ -165,7 +168,7 @@ package org.flowplayer.controller {
 			return status;
 		}
 
-		protected function onEvent(eventType:ClipEventType, mediaController:MediaController = null, params:Array = null):Boolean {
+		protected function onEvent(eventType:ClipEventType, params:Array = null):Boolean {
 			Assert.notNull(eventType, "eventType must be non-null");
 			if (playList.current.isNullClip) return false;
 			
@@ -175,8 +178,8 @@ package org.flowplayer.controller {
 					return false;
 				}
 			}
-			log.debug("calling onEvent(" + eventType + ") on media controller");
-			(mediaController || getMediaController()).onEvent(eventType, params);
+			log.debug("calling onEvent(" + eventType + ") on media controller ");
+			 getMediaController().onEvent(eventType, params);
 			return true;
 		}
 
@@ -200,7 +203,21 @@ package org.flowplayer.controller {
 		protected function onClipDone(event:ClipEvent):void {
 			log.info(this + " onClipDone");
 			var defaultAction:Boolean = ! event.isDefaultPrevented();
-			Clip(event.target).dispatchEvent(event);
+			var clip:Clip = event.target as Clip;
+            clip.dispatchEvent(event);
+
+
+            if (clip.parent) {
+                log.debug("inStream clip finished");
+                if (defaultAction) {
+                    stop(false, true);
+                    playList.setInStreamClip(null);
+                    changeState(pausedState);
+                    playListController.resume();
+                }
+                return;
+            }
+
 			if (playList.hasNext()) {
 				if (defaultAction) {
 					log.debug("onClipDone, moving to next clip");

@@ -115,7 +115,9 @@ import org.flowplayer.model.PluginModel;
 				log.info("this clip will pause after start");
 			}
 			_pauseAfterStart = pauseAfterStart;
-			clip.onMetaData(onMetaData, function(clip:Clip):Boolean { return clip.provider == (_model ? _model.name : 'http'); });
+			clip.onMetaData(onMetaData, function(clip:Clip):Boolean {
+                return clip.provider == (_model ? _model.name : (clip.childIndex >= 0 ? 'httpInstream' : 'http')); 
+            });
 			
 			log.debug("previously started clip " + _startedClip);
 			if (_startedClip && _startedClip == clip && _connection) {
@@ -554,7 +556,7 @@ import org.flowplayer.model.PluginModel;
         }
 
         protected function onClipUrlResolved(clip:Clip):void {
-            log.debug("starting playback with resolved url " + clip.url);
+            log.debug("starting playback with resolved url " + clip.completeUrl);
             netStreamPlay(clip.completeUrl);
         }
         

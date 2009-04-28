@@ -36,7 +36,12 @@ import org.flowplayer.flow_internal;
 	 * @inheritDoc
 	 */
 	public class Clip extends ClipEventDispatcher {
-		private var _playlist:Playlist;
+
+        // the main playlist where this clip belongs to
+        private var _playlist:Playlist;
+        private var _childPlaylist:TimedPlaylist;
+        private var _parent:Clip;
+
 		private var _cuepoints:Dictionary;
 		private var _cuepointsInNegative:Array;
 //		private var _previousPositives:Array;
@@ -45,6 +50,7 @@ import org.flowplayer.flow_internal;
         private var _resolvedUrl:String;
 		private var _type:ClipType;
 		private var _start:Number;
+        private var _childStart:Number;
 		private var _duration:Number;
         private var _metaData:Object = undefined;
 		private var _autoPlay:Boolean = true;
@@ -72,6 +78,8 @@ import org.flowplayer.flow_internal;
         private var _seekableOnBegin:Object;
 
         public function Clip() {
+            _childPlaylist = new TimedPlaylist();
+
 			_cuepoints = new Dictionary();
 			_cuepointsInNegative = new Array();
 			_start = 0;
@@ -91,26 +99,45 @@ import org.flowplayer.flow_internal;
 			return init(new Clip(), url, baseUrl);
 		}
 
-		private static function init(clip:Clip, url:String, baseUrl:String = null):Clip {
-			clip._url = url;
-			clip._baseUrl = baseUrl;
-			clip._autoPlay = true;
-			return clip;
+        public function addChild(clip:Clip):void {
+            clip.parent = this;
+            _childPlaylist.addClip(clip);
+        }
+
+        private static function init(clip:Clip, url:String, baseUrl:String = null):Clip {
+            clip._url = url;
+            clip._baseUrl = baseUrl;
+            clip._autoPlay = true;
+            return clip;
+        }
+
+        public function getPlaylist():Playlist {
+            return _playlist;
+        }
+
+        public function setPlaylist(playlist:Playlist):void {
+            _playlist = playlist;
+            var children:Array = _childPlaylist.clips;
+            for (var i:int = 0; i < children.length; i++) {
+                var clip:Clip = Clip(children[i]); 
+                clip.setPlaylist(playlist);
+
+                clip.onAll(playlist.commonClip.onClipEvent);
+                clip.onBeforeAll(playlist.commonClip.onBeforeClipEvent);
+            }
 		}
 
-		public function getPlaylist():Playlist {
-			return _playlist;
-		}
+        [Value]
+        public function get index():int {
+            return _playlist.indexOf(this);
+        }
 
-		public function setPlaylist(playlist:Playlist):void {
-			_playlist = playlist;
-		}
-				
-		[Value]
-		public function get index():int {
-			return _playlist.indexOf(this);
-		}
-		
+        [Value]
+        public function get childIndex():int {
+            if (! _parent) return -1;
+            return _parent.childPlaylist.indexOf(this);
+        }
+
 		[Value]
 		public function get isCommon():Boolean {
             if (! _playlist) return false;
@@ -161,7 +188,6 @@ import org.flowplayer.flow_internal;
 			result = ArrayUtil.concat(result, _cuepoints[time]);
             result = ArrayUtil.concat(result, getNegativeCuepoints(time, this == commonClip ? dur : this.duration));
             if (this == commonClip) return result;
-
 			result = ArrayUtil.concat(result, commonClip.getCuepoints(time, this.duration));
             if (result.length > 0) {
                 log.info("found " + result.length + " cuepoints for time " + time);
@@ -491,6 +517,7 @@ import org.flowplayer.flow_internal;
 		[Value]
 		public function get provider():String {
 			if (type == ClipType.AUDIO) return "audio";
+            if (childIndex >= 0 && _provider == "http") return "httpInstream";
 			return _provider;
 		}
 		
@@ -678,6 +705,34 @@ import org.flowplayer.flow_internal;
 
         public function set seekableOnBegin(val:Boolean):void {
             _seekableOnBegin = val;
+        }
+
+        public function get childPlaylist():TimedPlaylist {
+            return _childPlaylist;
+        }
+
+        public function get childClips():Array {
+            return _childPlaylist.clips;
+        }
+
+        public function set childPlaylist(val:TimedPlaylist):void {
+            _childPlaylist = val;
+        }
+
+        public function get parent():Clip {
+            return _parent;
+        }
+
+        public function set parent(val:Clip):void {
+            _parent = val;
+        }
+
+        public function get childStart():Number {
+            return _childStart;
+        }
+
+        public function set childStart(val:Number):void {
+            _childStart = val;
         }
     }
 }
