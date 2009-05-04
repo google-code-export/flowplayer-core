@@ -2,6 +2,8 @@ Version history:
 
 3.1.1
 -----
+- Instream playback
+- Added toggleFullscreen() the API
 Fixes:
 - The screen size was initially too small on Firefox (Mac)
 

@@ -209,9 +209,8 @@ package org.flowplayer.view {
         }
 
         private function onClipAdded(event:ClipEvent):void {
-            log.info("onClipAdded(): " + event.info);
-            log.debug("onClipAdded(): playlist now " + ClipEventSupport(event.target).clips);
-            var clip:Clip = ClipEventSupport(event.target).clips[event.info] as Clip;
+            log.info("onClipAdded(): " + event.info + ", " + event.info2);
+            var clip:Clip = event.info2 ? event.info2 as Clip : ClipEventSupport(event.target).clips[event.info] as Clip;
             log.debug("added clip " + clip);
             createDisplay(clip);
         }

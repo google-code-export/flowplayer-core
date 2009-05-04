@@ -552,10 +552,7 @@ import org.flowplayer.model.DisplayPluginModel;
 
         private function createHttpProviders():void {
             _providers["http"] = createProvider("http");
-
-            if (hasHttpChildClip) {
-                _providers["httpInstream"] = createProvider("httpInstream");
-            }
+            _providers["httpInstream"] = createProvider("httpInstream");
         }
 
         private function createProvider(name:String):Object {

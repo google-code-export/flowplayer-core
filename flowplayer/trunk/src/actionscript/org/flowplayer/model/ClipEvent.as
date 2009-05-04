@@ -18,7 +18,8 @@
  */
 
 package org.flowplayer.model {
-	import flash.events.Event;	
+	import flash.events.Event;
+    import org.flowplayer.util.ObjectConverter;
 
 	/**
 	 * @author anssi
@@ -58,6 +59,9 @@ package org.flowplayer.model {
 		}
 				
 		protected override function get externalEventArgument3():Object {
+            if (eventType == ClipEventType.CLIP_ADD && info2) {
+                return new ObjectConverter(info2).convert();
+            }
 			if (eventType == ClipEventType.CUEPOINT) {
 				return info is DynamicCuepoint ? info : Cuepoint(info).time;
 			}

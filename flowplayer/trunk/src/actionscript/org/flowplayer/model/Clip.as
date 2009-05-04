@@ -121,11 +121,14 @@ import org.flowplayer.flow_internal;
             for (var i:int = 0; i < children.length; i++) {
                 var clip:Clip = Clip(children[i]); 
                 clip.setPlaylist(playlist);
-
-                clip.onAll(playlist.commonClip.onClipEvent);
-                clip.onBeforeAll(playlist.commonClip.onBeforeClipEvent);
+                clip.setEventListeners(playlist);
             }
-		}
+        }
+
+        internal function setEventListeners(playlist:Playlist):void {
+            onAll(playlist.commonClip.onClipEvent);
+            onBeforeAll(playlist.commonClip.onBeforeClipEvent);
+        }
 
         [Value]
         public function get index():int {
@@ -429,7 +432,7 @@ import org.flowplayer.flow_internal;
 					return _metaData.width;
 				}
 				if (! _content) {
-					log.warn("Getting originalWidth from a clip that does not have content loaded yet, returning zero");
+//					log.warn("Getting originalWidth from a clip that does not have content loaded yet, returning zero");
 					return 0;
 				}
 				return _content is Video ? (_content as Video).videoWidth : _originalWidth;
@@ -447,7 +450,7 @@ import org.flowplayer.flow_internal;
 					return _metaData.height;
 				}
 				if (! _content) {
-					log.warn("Getting originalHeight from a clip that does not have content loaded yet, returning zero");
+//					log.warn("Getting originalHeight from a clip that does not have content loaded yet, returning zero");
 					return 0;
 				}
 				return _content is Video ? (_content as Video).videoHeight : _originalHeight;
@@ -470,7 +473,7 @@ import org.flowplayer.flow_internal;
 		
 		private function getWidth():int {
 			if (! _content) {
-				log.warn("Getting width from a clip that does not have content loaded yet, returning zero");
+//				log.warn("Getting width from a clip that does not have content loaded yet, returning zero");
 				return 0;
 			}
 			return _content.width;
@@ -491,7 +494,7 @@ import org.flowplayer.flow_internal;
 		
 		private function getHeight():int {
 			if (! _content) {
-				log.warn("Getting height from a clip that does not have content loaded yet, returning zero");
+//				log.warn("Getting height from a clip that does not have content loaded yet, returning zero");
 				return 0;
 			}
 			return _content.height;
