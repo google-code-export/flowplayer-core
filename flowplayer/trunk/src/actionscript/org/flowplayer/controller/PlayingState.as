@@ -69,12 +69,20 @@ import org.flowplayer.model.Playlist;
                 eventSupport.onBeforeFinish(onClipDone);
                 eventSupport.onStop(onClipStop);
                 eventSupport.onSeek(onSeek, hasChildClips);
+                eventSupport.onClipAdd(onClipAdd);
             } else {
                 eventSupport.unbind(onPause);
                 eventSupport.unbind(onStop);
                 eventSupport.unbind(onFinish);
                 eventSupport.unbind(onClipDone, ClipEventType.FINISH, true);
                 eventSupport.unbind(onSeek);
+                eventSupport.unbind(onClipAdd);
+            }
+        }
+
+        private function onClipAdd(event:ClipEvent):void {
+            if (playList.current.childClips.length > 0) {
+                _inStreamTracker.start();
             }
         }
 

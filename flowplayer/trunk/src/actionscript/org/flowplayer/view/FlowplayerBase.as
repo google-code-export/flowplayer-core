@@ -573,9 +573,10 @@ import org.flowplayer.util.TextUtil;
          * Adds a new clip into the playlist. Insertion of clips does not change the current clip.
          * @param clip
          * @param index optional insertion point, if not given the clip is added to the end of the list.
+         * @param addAsChild if true the clip is added as a child clip of the clip specified by the index parameter
          */
-        public function addClip(clip:Clip, index:int = -1):void {
-            _playListController.playlist.addClip(clip, index);
+        public function addClip(clip:Clip, index:int = -1, addAsChild:Boolean = false):void {
+                _playListController.playlist.addClip(clip, index, addAsChild);
         }
 
 		private function resetPlugin(pluginName:String, speed:Number = 500):void {

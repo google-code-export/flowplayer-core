@@ -80,8 +80,9 @@ package org.flowplayer.view {
 				addCallback("play", genericPlay);
 				addCallback("startBuffering", function():void { startBuffering(); });
 				addCallback("stopBuffering", function():void { stopBuffering(); } );
-				addCallback("isFullscreen", isFullscreen);
-				
+                addCallback("isFullscreen", isFullscreen);
+                addCallback("toggleFullscreen", function():void { toggleFullscreen(); });
+
 				addCallback("toggle", toggle);
 				addCallback("getState", function():Number { return state.code; });
 				addCallback("getStatus", function():Object { return convert(status); });
@@ -105,7 +106,7 @@ package org.flowplayer.view {
 					return new ObjectConverter(currentClip).convert(); });
 				addCallback("getClip", function(index:Number):Object { return convert(playlist.getClip(index)); });
                 addCallback("setPlaylist", function(clipObjects:Array):void { setPlaylist(_config.createClips(clipObjects)); });
-                addCallback("addClip", function(clip:Object, index:int = -1):void { addClip(_config.createClip(clip), index); });
+                addCallback("addClip", function(clip:Object, index:int = -1, addAsChild:Boolean = false):void { addClip(_config.createClip(clip), index, addAsChild); });
 				addCallback("showError", showError);
 
 				addCallback("loadPlugin", pluginLoad);
@@ -148,25 +149,37 @@ package org.flowplayer.view {
 		}
 		
 		private function genericPlay(param:Object = null, instream:Boolean = false):void {
-			if (param == null) { 
-				play();
-				return;
-			}
-			if (param is Number) {
-				_playListController.play(null, param as Number);
-				return;
-			}
-			if (param is Array) {
-				_playListController.playClips(_config.createClips(param as Array));
-				return;
-			}
-			var clip:Clip = _config.createClip(param);
-			if (! clip) {
-				showError("cannot convert " + param + " to a clip");
-				return;
-			}
-			play(clip);
+			if (param == null) {
+                play();
+                return;
+            }
+            if (param is Number) {
+                _playListController.play(null, param as Number);
+                return;
+            }
+            if (param is Array) {
+                _playListController.playClips(_config.createClips(param as Array));
+                return;
+            }
+            var clip:Clip = _config.createClip(param);
+            if (! clip) {
+                showError("cannot convert " + param + " to a clip");
+                return;
+            }
+            if (instream) {
+                playInstream(clip);
+                return;
+            }
+            play(clip);
 		}
+
+        private function playInstream(clip:Clip):void {
+            if (! isPlaying()) {
+                handleError(PlayerError.INSTREAM_PLAY_NOTPLAYING);
+            }
+            addClip(clip, playlist.currentIndex, true);
+            _playListController.playInstream(clip);
+        }
 		
 		private function genericSeek(target:Object):void {
 			var percentage:Number = target is String ? NumberUtil.decodePercentage(target as String) : NaN;

@@ -105,7 +105,7 @@ package org.flowplayer.view {
 		
 		private function onPlaylistChange(event:ClipEvent):void {
 			log.info("Received onPlaylistChanged");
-			createResizers(ClipEventSupport(event.target).clips);
+			createResizers(ClipEventSupport(event.target).clips.concat(ClipEventSupport(event.target).childClips));
 		}
 		
 	}

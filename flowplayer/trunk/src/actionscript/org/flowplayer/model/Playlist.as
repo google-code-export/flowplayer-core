@@ -19,7 +19,8 @@
 
 package org.flowplayer.model {
 	import org.flowplayer.flow_internal;
-	import org.flowplayer.model.ClipEvent;		
+	import org.flowplayer.model.ClipEvent;
+    import org.flowplayer.util.ObjectConverter;
 	
 			
 	
@@ -47,14 +48,6 @@ package org.flowplayer.model {
 			_commonClip.setPlaylist(this);
 			initialize();		
 		}
-
-        public function get childClips():Array {
-            var result:Array = new Array();
-            for (var i:int = 0; i < _clips.length; i++) {
-                result = result.concat(Clip(_clips[i]).childClips);
-            }
-            return result;
-        }
 		
 		private function initialize(newClips:Array = null):void {			
 			_clips = new Array();
@@ -106,7 +99,11 @@ package org.flowplayer.model {
          * @param clip
          * @param index optional insertion point, if not given the clip is added to the end of the list.
          */
-        public function addClip(clip:Clip, index:int = -1):void {
+        public function addClip(clip:Clip, index:int = -1, addAsChild:Boolean = false):void {
+            if (addAsChild) {
+                addChildClip(clip, index);
+                return;
+            }
             log.debug("current clip " + current);
             if (current.isNullClip || current == commonClip) {
                 log.debug("replacing common/null clip");
@@ -121,6 +118,17 @@ package org.flowplayer.model {
                 super.setClips(_clips);
             }
             doDispatchEvent(new ClipEvent(ClipEventType.CLIP_ADD, index >= 0 ? index : _clips.length - 1), true);
+        }
+
+        private function addChildClip(clip:Clip, index:int):void {
+            if (index == -1) {
+                throw new Error("parent index is not given");
+            }
+            var parent:Clip = getClip(index);
+            parent.addChild(clip);
+            clip.setPlaylist(this);
+            clip.setEventListeners(this);
+            doDispatchEvent(new ClipEvent(ClipEventType.CLIP_ADD, index, clip), true);
         }
 
 		private function doAddClip(clip:Clip, index:int = -1):void {
