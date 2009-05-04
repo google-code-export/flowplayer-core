@@ -579,6 +579,17 @@ import org.flowplayer.util.TextUtil;
                 _playListController.playlist.addClip(clip, index, addAsChild);
         }
 
+
+        /**
+         * Creates Clip objects from the specified array of objects
+         * @param clips
+         * @return
+         * @see Clip
+         */
+        public function createClips(clips:Array):Array {
+            return _config.createClips(clips);
+        }
+
 		private function resetPlugin(pluginName:String, speed:Number = 500):void {
 			var props:DisplayProperties = _pluginRegistry.getOriginalProperties(pluginName) as DisplayProperties;
 			if (props) {
