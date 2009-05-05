@@ -178,7 +178,7 @@ package org.flowplayer.controller {
 		}
 
 		protected function onEvent(eventType:ClipEventType, params:Array = null):Boolean {
-            log.debug("onEvent()" + eventType.name);
+            log.debug("onEvent() " + eventType.name);
 			Assert.notNull(eventType, "eventType must be non-null");
 			if (playList.current.isNullClip) return false;
 			

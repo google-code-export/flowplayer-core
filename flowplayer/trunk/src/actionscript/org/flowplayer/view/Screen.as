@@ -304,7 +304,7 @@ package org.flowplayer.view {
 			for (var i:Number = 0; i < clips.length; i++) {
 				var clip:Clip = clips[i] as Clip;
 				var disp:MediaDisplay = _displays[clip];
-				if (! except || disp != except) {
+				if (disp && (! except || disp != except)) {
 					setDisplayVisible(clips[i] as Clip, false);
 				}
 			}
