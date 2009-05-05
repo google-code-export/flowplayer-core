@@ -46,7 +46,7 @@ package org.flowplayer.controller {
             var children:Array = clip.childPlaylist.clips;
             for (var i:int = 0; i < children.length; i++) {
                 var clip:Clip = children[i] as Clip;
-                log.debug("start(): child clip at " + clip.childStart + ": " + clip);
+                log.debug("start(): child clip at " + clip.position + ": " + clip);
             }
 
             if (! _timer) {
@@ -71,7 +71,7 @@ package org.flowplayer.controller {
                 stop();
                 log.info("found child clip with start time " + time + ": " + child);
                 _controller.playInstream(child);
-                _prevStartTime = child.childStart;
+                _prevStartTime = child.position;
             }
         }
 

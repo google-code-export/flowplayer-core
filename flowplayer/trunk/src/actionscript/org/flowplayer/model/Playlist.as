@@ -120,6 +120,15 @@ package org.flowplayer.model {
             doDispatchEvent(new ClipEvent(ClipEventType.CLIP_ADD, index >= 0 ? index : _clips.length - 1), true);
         }
 
+        /**
+         * Removes the specified child clip.
+         * @param clip
+         * @return
+         */
+        public function removeChildClip(clip:Clip):void {
+            clip.parent.childPlaylist.removeClip(clip);
+        }
+
         private function addChildClip(clip:Clip, index:int):void {
             if (index == -1) {
                 throw new Error("parent index is not given");

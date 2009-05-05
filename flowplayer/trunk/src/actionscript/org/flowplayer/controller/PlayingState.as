@@ -105,6 +105,7 @@ import org.flowplayer.model.Playlist;
 
         private function onFinish(event:ClipEvent):void {
             _inStreamTracker.stop();
+            removeOneShotClip(event.target as Clip);
         }
 
         private function onSeek(event:ClipEvent):void {
@@ -112,6 +113,12 @@ import org.flowplayer.model.Playlist;
             _inStreamTracker.start();
         }
 
+        private function removeOneShotClip(clip:Clip):void {
+            if (clip.position == -1) {
+                log.debug("removing one shot child clip from the playlist");
+                playList.removeChildClip(clip);
+            }
+        }
 
 		internal override function stopBuffering():void {
 			log.debug("stopBuffering() called");
@@ -142,6 +149,7 @@ import org.flowplayer.model.Playlist;
             } else {
                 changeState(waitingState);
             }
+            removeOneShotClip(event.target as Clip);
         }
     }
 }

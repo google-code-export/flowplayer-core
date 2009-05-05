@@ -18,7 +18,8 @@
  */
 
 package org.flowplayer.model {
-    import flash.utils.Dictionary;
+    import flash.net.SharedObject;
+import flash.utils.Dictionary;
     import org.flowplayer.util.Assert;
 
     public class TimedPlaylist {
@@ -33,11 +34,11 @@ package org.flowplayer.model {
 
         public function addClip(clip:Clip):void {
             Assert.notNull(clip, "addClip(), clip cannot be null");
-            if (clip.childStart <= 0) {
-                throw new Error("clip's childStart time must be greater than zero!");
-            }
+//            if (clip.position <= 0) {
+//                throw new Error("clip's childStart time must be greater than zero!");
+//            }
             _clips.push(clip);
-            _clipsByTime[clip.childStart] = clip;
+            _clipsByTime[clip.position] = clip;
         }
 
         public function indexOf(clip:Clip):int {
@@ -54,6 +55,11 @@ package org.flowplayer.model {
 
         public function get clips():Array {
             return _clips;
+        }
+
+        public function removeClip(clip:Clip):void {
+            _clips.splice(_clips.indexOf(clip), 1);
+            delete _clipsByTime[clip.position];
         }
     }
 }

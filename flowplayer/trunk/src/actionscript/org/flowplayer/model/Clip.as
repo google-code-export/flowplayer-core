@@ -50,7 +50,7 @@ import org.flowplayer.flow_internal;
         private var _resolvedUrl:String;
 		private var _type:ClipType;
 		private var _start:Number;
-        private var _childStart:Number;
+        private var _position:Number;
 		private var _duration:Number;
         private var _metaData:Object = undefined;
 		private var _autoPlay:Boolean = true;
@@ -132,7 +132,7 @@ import org.flowplayer.flow_internal;
 
         [Value]
         public function get index():int {
-            return _playlist.indexOf(this);
+            return _playlist.indexOf(this._parent || this);
         }
 
         [Value]
@@ -721,10 +721,10 @@ import org.flowplayer.flow_internal;
         public function get childClips():Array {
             return _childPlaylist.clips;
         }
-
-        public function set childPlaylist(val:TimedPlaylist):void {
-            _childPlaylist = val;
-        }
+//
+//        public function set childPlaylist(val:TimedPlaylist):void {
+//            _childPlaylist = val;
+//        }
 
         public function get parent():Clip {
             return _parent;
@@ -734,12 +734,12 @@ import org.flowplayer.flow_internal;
             _parent = val;
         }
 
-        public function get childStart():Number {
-            return _childStart;
+        public function get position():Number {
+            return _position;
         }
 
-        public function set childStart(val:Number):void {
-            _childStart = val;
+        public function set position(val:Number):void {
+            _position = val;
         }
     }
 }

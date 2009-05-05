@@ -229,7 +229,17 @@ package org.flowplayer.view {
 			eventSupport.onBegin(onBegin);
             eventSupport.onStart(onStart);
             eventSupport.onResume(onResume);
+
+            var oneShot:Function = function(clip:Clip):Boolean { return clip.position == -1 };
+            eventSupport.onStop(removeOneShotDisplay, oneShot);
+            eventSupport.onFinish(removeOneShotDisplay, oneShot);
 		}
+
+        private function removeOneShotDisplay(event:ClipEvent):void {
+            log.debug("removing display of a one shot clip " + event.target);
+            removeChild(_displays[event.target]);
+            delete _displays[event.target];
+        }
 
         private function onBegin(event:ClipEvent):void {
             var clip:Clip = event.target as Clip;
