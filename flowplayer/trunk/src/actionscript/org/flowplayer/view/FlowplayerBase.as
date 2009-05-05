@@ -611,11 +611,11 @@ import org.flowplayer.util.TextUtil;
          * Gets the Screen.
          * @return
          */
-		public function get screen():Screen {
-			return DisplayProperties(_pluginRegistry.getPlugin("screen")).getDisplayObject() as Screen;
+		public function get screen():DisplayProperties {
+			return _pluginRegistry.getPlugin("screen") as DisplayProperties;
 		}
 
-		protected function get playButtonOverlay():DisplayProperties {
+		public function get playButtonOverlay():DisplayProperties {
 			return DisplayProperties(_pluginRegistry.getPlugin("play")) as DisplayProperties;
 		}
 		

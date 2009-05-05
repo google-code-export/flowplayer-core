@@ -259,7 +259,7 @@ import org.flowplayer.model.PlayerError;
 		private function fadeIn(pluginName:String, durationMillis:Number = 400, listenerId:String = null):void {
 			var props:DisplayProperties = prepareFade(pluginName, true);
 			if (pluginName == "play") {
-				screen.showPlay();
+				Screen(screen.getDisplayObject()).showPlay();
 			}
 			_animationEngine.fadeIn(props.getDisplayObject(), durationMillis, createCallback(listenerId, props), pluginName != "play");
 		}
@@ -267,7 +267,7 @@ import org.flowplayer.model.PlayerError;
 		private function fadeTo(pluginName:String, alpha:Number, durationMillis:Number = 400, listenerId:String = null):void {
 			var props:DisplayProperties = prepareFade(pluginName, true);
 			if (pluginName == "play") {
-				screen.showPlay();
+				Screen(screen.getDisplayObject()).showPlay();
 			}
 			_animationEngine.fadeTo(props.getDisplayObject(), alpha, durationMillis, createCallback(listenerId, props), pluginName != "play");
 		}
