@@ -19,8 +19,13 @@
 
 package org.flowplayer.view {
 	import org.flowplayer.util.Arrange;	
-	import org.flowplayer.model.Clip;	import org.flowplayer.view.MediaDisplay;		import flash.display.Sprite;	import flash.media.Video;	
-	/**
+	import org.flowplayer.model.Clip;
+	import org.flowplayer.view.MediaDisplay;
+	
+	import flash.display.Sprite;
+	import flash.media.Video;	
+
+	/**
 	 * @author api
 	 */
 	internal class VideoDisplay extends AbstractSprite implements MediaDisplay {
@@ -71,12 +76,14 @@ package org.flowplayer.view {
 			video.height = this.height;
 			addChild(video);
 			swapChildren(_overlay, video);
-		}				public function hasContent():Boolean {
+		}
+		
+		public function hasContent():Boolean {
 			return video != null;
 		}
 		
 		override public function toString():String {
 			return "[VideoDisplay] for clip " + _clip;
 		}
-	}
+    }
 }

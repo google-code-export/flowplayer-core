@@ -18,7 +18,8 @@
  */
 
 package org.flowplayer.view {
-	import org.flowplayer.model.PlayerError;	
+    import org.flowplayer.model.ClipEvent;
+import org.flowplayer.model.PlayerError;
 	import org.flowplayer.controller.ResourceLoader;	
 	import org.flowplayer.config.Config;
 	import org.flowplayer.config.ExternalInterfaceHelper;
@@ -177,10 +178,12 @@ package org.flowplayer.view {
             if (! isPlaying()) {
                 handleError(PlayerError.INSTREAM_PLAY_NOTPLAYING);
             }
+            // mark this clip to be "one shot" that will be removed once played
+            clip.position = -1;
             addClip(clip, playlist.currentIndex, true);
             _playListController.playInstream(clip);
         }
-		
+
 		private function genericSeek(target:Object):void {
 			var percentage:Number = target is String ? NumberUtil.decodePercentage(target as String) : NaN;
 			if (isNaN(percentage)) {

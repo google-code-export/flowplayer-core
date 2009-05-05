@@ -35,7 +35,8 @@ package org.flowplayer.config {
 	internal class PlaylistBuilder {
 		private var log:Log = new Log(this);
 		private var _clipObjects:Array;
-		private var _commonClip:Object;
+        private var _commonClipObject:Object;
+        private var _commonClip:Clip;
 		private var _playerId:String;
         private var _playlistFeed:String;
 
@@ -48,7 +49,7 @@ package org.flowplayer.config {
          */
 		public function PlaylistBuilder(playerId:String, playlist:Object, commonClip:Object) {
 			_playerId = playerId;
-			_commonClip = commonClip;
+			_commonClipObject = commonClip;
             if (playlist is Array) {
                 _clipObjects = playlist as Array;
             }
@@ -65,18 +66,17 @@ package org.flowplayer.config {
 
 
         public function createPlaylist():Playlist {
-            var commonClip:Clip;
-            if (_commonClip) {
-                commonClip = createClip(_commonClip);
+            if (_commonClipObject) {
+                _commonClip = createClip(_commonClipObject);
             }
-            var playList:Playlist = new Playlist(commonClip);
+            var playList:Playlist = new Playlist(_commonClip);
 
             if (_playlistFeed) {
                 parse(_playlistFeed, playList);
             } else if (_clipObjects && _clipObjects.length > 0) {
                 playList.setClips(createClips(_clipObjects));
             } else if (_commonClip) {
-                playList.addClip(commonClip);
+                playList.addClip(_commonClip);
             }
 
             return playList;
@@ -94,7 +94,7 @@ package org.flowplayer.config {
 			return clips;
 		}
 
-        public function createClip(clipObj:Object):Clip {
+        public function createClip(clipObj:Object, isChild:Boolean = false):Clip {
             log.debug("createClip, from ", clipObj);
             if (! clipObj) return null;
             if (clipObj is String) {
@@ -111,15 +111,21 @@ package org.flowplayer.config {
             }
             var clip:Clip = Clip.create(fileName, baseUrl);
             new PropertyBinder(clip, "customProperties").copyProperties(clipObj) as Clip;
+            if (isChild) {
+                return clip;
+            }
+
             if (clipObj.hasOwnProperty("childPlaylist")) {
                 addChildClips(clip, clipObj["childPlaylist"]);
+            } else if (_commonClipObject.hasOwnProperty("childPlaylist")) {
+                addChildClips(clip, _commonClipObject["childPlaylist"]);
             }
             return clip;
         }
 
         private function addChildClips(clip:Clip, children:Array):void {
             for (var i:int = 0; i < children.length; i++) {
-                clip.addChild(createClip(children[i]));
+                clip.addChild(createClip(children[i], true));
             }
         }
 
@@ -134,11 +140,11 @@ package org.flowplayer.config {
         }
 		
 		private function setDefaults(clipObj:Object):void {
-			if (clipObj == _commonClip) return;
+			if (clipObj == _commonClipObject) return;
 			
-			for (var prop:String in _commonClip) {
-				if (clipObj[prop] == undefined) {
-					clipObj[prop] = _commonClip[prop];
+			for (var prop:String in _commonClipObject) {
+				if (clipObj[prop] == undefined && prop != "childPlaylist") {
+					clipObj[prop] = _commonClipObject[prop];
 				}
 			}
 		}

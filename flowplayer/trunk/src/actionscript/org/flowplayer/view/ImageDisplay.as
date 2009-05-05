@@ -28,8 +28,10 @@ package org.flowplayer.view {
 	 */
 	internal class ImageDisplay extends AbstractSprite implements MediaDisplay {
 
-		private var image:DisplayObject;		private var _clip:Clip;
-		public function ImageDisplay(clip:Clip) {
+		private var image:DisplayObject;
+		private var _clip:Clip;
+
+		public function ImageDisplay(clip:Clip) {
 			_clip = clip;
 		}
 
@@ -49,5 +51,5 @@ package org.flowplayer.view {
 		override public function toString():String {
 			return "[ImageDisplay] for clip " + _clip;			
 		}
-	}
+    }
 }
