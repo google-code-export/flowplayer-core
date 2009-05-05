@@ -615,22 +615,6 @@ import org.flowplayer.util.TextUtil;
 			return DisplayProperties(_pluginRegistry.getPlugin("screen")).getDisplayObject() as Screen;
 		}
 
-        /**
-         * Gets the LogoView.
-         * @return
-         */
-		public function get logo():LogoView {
-			return DisplayProperties(_pluginRegistry.getPlugin("logo")).getDisplayObject() as LogoView;
-		}
-
-        /**
-         * Gets the LogoView.
-         * @return
-         */
-		public function get playButton():PlayButtonOverlayView {
-			return DisplayProperties(_pluginRegistry.getPlugin("play")).getDisplayObject() as PlayButtonOverlayView;
-		}
-
 		protected function get playButtonOverlay():DisplayProperties {
 			return DisplayProperties(_pluginRegistry.getPlugin("play")) as DisplayProperties;
 		}
