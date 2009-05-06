@@ -59,7 +59,6 @@ package org.flowplayer.model {
 			}
 			super.setClips(_clips);
 			_currentPos = 0;
-            _inStreamClip = null;
             log.debug("initialized, current clip is " + current);
 		}
 
@@ -174,6 +173,10 @@ package org.flowplayer.model {
 		}
 				
 		public function hasNext():Boolean {
+            log.debug("hasNext(): " + (_inStreamClip ? "currently in instream clip" : "currentPos " + _currentPos));
+            if (_inStreamClip && _inStreamClip.position == 0) {
+                return true;
+            }
 			return _currentPos < length - 1;
 		}
 		
@@ -185,11 +188,18 @@ package org.flowplayer.model {
             if (_inStreamClip) return _inStreamClip;
             if (_currentPos == -1) return null;
 			if (_clips.length == 0) return new NullClip();
-			var current:Clip = _clips[_currentPos];
-            return current;
+			return _clips[_currentPos];
 		}
 
+        public function get currentPreroll():Clip {
+            if (_currentPos == -1 ) return null;
+            if (_clips.length == 0) return null;
+            var parent:Clip = _clips[_currentPos];
+            return parent.childPlaylist.getClipAt(0);
+        }
+
         public function setInStreamClip(clip:Clip):void {
+            log.debug("setInstremClip to " + clip);
             _inStreamClip = clip;
         }
 	
@@ -202,27 +212,23 @@ package org.flowplayer.model {
 		}
 		
 		public function next():Clip {
-			trace("PlayList.next(), current index = " + _currentPos);
 			if (_currentPos == _clips.length -1) return null;
-			var clip:Clip = _clips[++_currentPos];
-            _inStreamClip = null;
-			return clip;
+            return _clips[++_currentPos];
 		}
 
 		public function get nextClip():Clip {
+            log.debug("nextClip()");
 			if (_currentPos == _clips.length -1) return null;
 			return _clips[_currentPos + 1];
 		}
 		
 		public function get previousClip():Clip {
 			if (_currentPos == 0) return null;
-			return _clips[_currentPos - 1];
+            return _clips[_currentPos + 1];
 		}
 		
 		public function previous():Clip {
-			trace("PlayList.prev(), current index = " + _currentPos);
 			if (_currentPos == 0) return null;
-            _inStreamClip = null;
 			return _clips[--_currentPos];
 		}
 
@@ -230,15 +236,16 @@ package org.flowplayer.model {
 			if (index < 0) return null;
 			if (index >= _clips.length) return null;
 			var clip:Clip = _clips[index];
-			if (index == _currentPos) return clip;
-			_currentPos = index;
             _inStreamClip = null;
-			return clip;
+            if (index == _currentPos) return clip;
+            _currentPos = index;
+            return _inStreamClip || clip;
 		}
 		
 		public function indexOf(clip:Clip):Number {
 			for (var i : Number = 0; i < _clips.length; i++) {
 				if (_clips[i] == clip) return i;
+                if (clip.parent == _clips[i]) return i;
 			}
 			return -1;
 		}
@@ -255,12 +262,13 @@ package org.flowplayer.model {
 		 * Does this playlist have a clip with the specified type?
 		 */
 		public function hasType(type:ClipType):Boolean {
-			for (var i:Number = 0; i < _clips.length; i++) {
-				if (Clip(_clips[i]).type == type) {
-					return true;
-				}
-			}
-			return false;
-		}
+            var clips:Array = _clips.concat(childClips);
+            for (var i:Number = 0; i < clips.length; i++) {
+                if (Clip(clips[i]).type == type) {
+                    return true;
+                }
+            }
+            return false
+        }
 	}
 }

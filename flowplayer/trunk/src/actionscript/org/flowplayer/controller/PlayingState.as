@@ -41,16 +41,23 @@ import org.flowplayer.model.Playlist;
         public function PlayingState(stateCode:State, playlist:Playlist, playlistController:PlayListController, providers:Dictionary) {
             super(stateCode, playlist, playlistController, providers);
             _inStreamTracker = new InStreamTracker(playlistController);
-            playList.onStart(onStart, hasChildClips);
-            playList.onResume(onResume, hasChildClips);
+            playList.onStart(onStart, hasMidstreamClips);
+            playList.onResume(onResume, hasMidstreamClips);
         }
 
-        private function hasChildClips(clip:Clip):Boolean {
-            return clip.childPlaylist.length > 0;
+        private function hasMidstreamClips(clip:Clip):Boolean {
+            var children:Array = clip.childClips;
+            if (children.length == 0) return false;
+            for (var i:int = 0; i < children.length; i++) {
+                if (Clip(children[i]).position > 0) {
+                    return true;
+                }
+            }
+            return false;
         }
 
-        internal override function play():void {
-            log.debug("play()");
+        internal override function doPlay():void {
+            log.debug("doPlay()");
             stop();
             bufferingState.nextStateAfterBufferFull = playingState;
 
@@ -68,7 +75,7 @@ import org.flowplayer.model.Playlist;
                 eventSupport.onFinish(onFinish);
                 eventSupport.onBeforeFinish(onClipDone);
                 eventSupport.onStop(onClipStop);
-                eventSupport.onSeek(onSeek, hasChildClips);
+                eventSupport.onSeek(onSeek, hasMidstreamClips);
                 eventSupport.onClipAdd(onClipAdd);
             } else {
                 eventSupport.unbind(onPause);
@@ -140,17 +147,24 @@ import org.flowplayer.model.Playlist;
         private function onClipStop(event:ClipEvent):void {
             log.debug("onClipStop");
             if (event.isDefaultPrevented()) return;
+            var clip:Clip = event.target as Clip;
 
-            if (playList.current.childIndex >= 0) {
+            if (isPreroll(clip)) {
+                stop(false, true);
+                playList.setInStreamClip(null);
+                doPlay();
+                
+            } else if (isMidStream(clip)) {
                 _inStreamTracker.stop();
                 _inStreamTracker.reset();
                 playList.setInStreamClip(null);
                 changeState(pausedState);
                 playListController.resume();
+                
             } else {
                 changeState(waitingState);
             }
-            removeOneShotClip(event.target as Clip);
+            removeOneShotClip(clip);
         }
     }
 }
