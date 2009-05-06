@@ -113,10 +113,18 @@ package org.flowplayer.controller {
 			log.debug("cannot stop buffering in this state");
 		}
 		
-		internal function play():void {
-			log.debug("cannot start playing in this state");
-		}
-		
+		internal final function play():void {
+            var preroll:Clip = playList.currentPreroll;
+            if (preroll) {
+                playList.setInStreamClip(preroll);
+            }
+            doPlay();
+        }
+
+        internal function doPlay():void {
+            log.debug("cannot start playing in this state");
+        }
+
 		internal function stop(closeStreamAndConnection:Boolean = false, silent:Boolean = false):void {
 			log.debug("stop() called");
 
@@ -217,19 +225,12 @@ package org.flowplayer.controller {
             clip.dispatchEvent(event);
 
             if (clip.parent) {
-                log.debug("inStream clip finished");
-                if (defaultAction) {
-                    //                    changeState(waitingState);
-                    stop(false, true);
-                    playList.setInStreamClip(null);
-                    changeState(pausedState);
-                    playListController.resume();
-                }
+                handleInStreamClipDone(clip);
                 return;
             }
 
-			if (playList.hasNext()) {
-				if (defaultAction) {
+            if (playList.hasNext()) {
+                if (defaultAction) {
 					log.debug("onClipDone, moving to next clip");
 					playListController.next(true, true);
 				} else {
@@ -244,6 +245,29 @@ package org.flowplayer.controller {
 				}
 			}
 		}
+
+        private function handleInStreamClipDone(clip:Clip):void {
+            if (isMidStream(clip)) {
+                log.debug("midStream clip finished");
+                stop(false, true);
+                playList.setInStreamClip(null);
+                changeState(pausedState);
+                playListController.resume();
+                
+            } else if (isPreroll(clip)) {
+                stop(false, true);
+                playList.setInStreamClip(null);
+                doPlay();
+            }            
+        }
+
+        protected function isMidStream(clip:Clip):Boolean {
+            return clip.parent && clip.position > 0 && clip.position != -1;
+        }
+
+        protected function isPreroll(clip:Clip):Boolean {
+            return clip.parent && clip.position == 0;
+        }
 
         private function onPlaylistChanged(event:ClipEvent):void {
             setEventListeners(ClipEventSupport(event.info), false);
