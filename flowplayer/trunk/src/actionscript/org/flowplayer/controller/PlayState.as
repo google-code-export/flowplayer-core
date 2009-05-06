@@ -178,7 +178,7 @@ package org.flowplayer.controller {
 		}
 
 		protected function onEvent(eventType:ClipEventType, params:Array = null):Boolean {
-            log.debug("onEvent() " + eventType.name);
+            log.debug("onEvent() " + eventType.name + ", current clip " + playList.current);
 			Assert.notNull(eventType, "eventType must be non-null");
 			if (playList.current.isNullClip) return false;
 			
@@ -216,11 +216,10 @@ package org.flowplayer.controller {
 			var clip:Clip = event.target as Clip;
             clip.dispatchEvent(event);
 
-
             if (clip.parent) {
                 log.debug("inStream clip finished");
                 if (defaultAction) {
-//                    changeState(waitingState);
+                    //                    changeState(waitingState);
                     stop(false, true);
                     playList.setInStreamClip(null);
                     changeState(pausedState);

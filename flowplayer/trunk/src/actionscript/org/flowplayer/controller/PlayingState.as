@@ -88,7 +88,7 @@ import org.flowplayer.model.Playlist;
 
         private function onStart(event:ClipEvent):void {
             log.debug("onStart");
-            _inStreamTracker.start();
+            _inStreamTracker.start(true);
         }
 
         private function onResume(event:ClipEvent):void {
@@ -101,6 +101,7 @@ import org.flowplayer.model.Playlist;
 
         private function onStop(event:ClipEvent):void {
             _inStreamTracker.stop();
+            playList.setInStreamClip(null);
         }
 
         private function onFinish(event:ClipEvent):void {
@@ -143,7 +144,6 @@ import org.flowplayer.model.Playlist;
             if (playList.current.childIndex >= 0) {
                 _inStreamTracker.stop();
                 _inStreamTracker.reset();
-                playList.setInStreamClip(null);
                 changeState(pausedState);
                 playListController.resume();
             } else {
