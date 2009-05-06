@@ -59,6 +59,7 @@ package org.flowplayer.model {
 			}
 			super.setClips(_clips);
 			_currentPos = 0;
+            _inStreamClip = null;
             log.debug("initialized, current clip is " + current);
 		}
 

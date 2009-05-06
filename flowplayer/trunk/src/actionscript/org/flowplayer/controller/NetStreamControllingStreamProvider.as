@@ -437,9 +437,9 @@ import org.flowplayer.model.PluginModel;
 		/**
 		 * Dispatches the specified event.
 		 */
-		protected final  function dispatchEvent(event:ClipEvent):void {
+		protected final function dispatchEvent(event:ClipEvent):void {
 			if (! event) return;
-			log.debug("dispatching " + event);
+			log.debug("dispatching " + event + " on clip " + clip);
 			clip.dispatchEvent(event);
 		}
 

@@ -67,6 +67,7 @@ package org.flowplayer.controller {
 		
 		protected final function dispatchPlayEvent(event:ClipEvent):void {
             if (! event) return;
+            log.debug("dispatching " + event + " on clip " + clip);
 			clip.dispatchEvent(event);
 		}
 

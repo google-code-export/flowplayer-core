@@ -115,6 +115,7 @@ package org.flowplayer.view {
 		}
 	
 		private function resize(newWidth:int, newHeight:int):void {
+            log.debug("resizing to " + newWidth + "x" + newHeight);
 			_clip.width = newWidth;
 			_clip.height = newHeight;			
 		}

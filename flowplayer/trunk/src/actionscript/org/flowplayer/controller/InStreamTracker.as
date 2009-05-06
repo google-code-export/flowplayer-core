@@ -37,10 +37,14 @@ package org.flowplayer.controller {
             _controller = controller;
         }
 
-        public function start():void {
+        public function start(doReset:Boolean = false):void {
             log.debug("start()");
             if (clip.childPlaylist.length == 0) {
                 throw new Error("this clip does not have child clips");
+            }
+
+            if (doReset) {
+                reset();
             }
 
             var children:Array = clip.childPlaylist.clips;
@@ -65,7 +69,7 @@ package org.flowplayer.controller {
 
         private function onTimer(event:TimerEvent):void {
             var time:Number = _controller.status.time;
-//            log.debug("time " + Math.round(time));
+            log.debug("time " + Math.round(time));
             var child:Clip = clip.childPlaylist.getClipAt(time);
             if (child && Math.round(time) > _prevStartTime) {
                 stop();
