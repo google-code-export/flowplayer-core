@@ -144,6 +144,7 @@ import org.flowplayer.model.Playlist;
             if (playList.current.childIndex >= 0) {
                 _inStreamTracker.stop();
                 _inStreamTracker.reset();
+                playList.setInStreamClip(null);
                 changeState(pausedState);
                 playListController.resume();
             } else {
