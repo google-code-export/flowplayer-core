@@ -111,16 +111,16 @@ import org.flowplayer.flow_internal;
             return clip;
         }
 
-        public function getPlaylist():Playlist {
+        public function getParentPlaylist():Playlist {
             return _playlist;
         }
 
-        public function setPlaylist(playlist:Playlist):void {
+        public function setParentPlaylist(playlist:Playlist):void {
             _playlist = playlist;
             var children:Array = _childPlaylist.clips;
             for (var i:int = 0; i < children.length; i++) {
                 var clip:Clip = Clip(children[i]); 
-                clip.setPlaylist(playlist);
+                clip.setParentPlaylist(playlist);
                 clip.setEventListeners(playlist);
             }
         }
@@ -138,7 +138,7 @@ import org.flowplayer.flow_internal;
         [Value]
         public function get childIndex():int {
             if (! _parent) return -1;
-            return _parent.childPlaylist.indexOf(this);
+            return _parent._childPlaylist.indexOf(this);
         }
 
 		[Value]
@@ -714,17 +714,42 @@ import org.flowplayer.flow_internal;
             _seekableOnBegin = val;
         }
 
-        public function get childPlaylist():TimedPlaylist {
-            return _childPlaylist;
+        public function get hasChildren():Boolean {
+            return _childPlaylist.length > 0;
         }
 
-        public function get childClips():Array {
+        [Value]
+        public function get playlist():Array {
             return _childPlaylist.clips;
         }
-//
-//        public function set childPlaylist(val:TimedPlaylist):void {
-//            _childPlaylist = val;
-//        }
+
+        public function removeChild(child:Clip):void {
+            _childPlaylist.removeClip(child);
+        }
+
+        public function getMidroll(time:int):Clip {
+            return _childPlaylist.getClipAt(time);
+        }
+
+        public function get preroll():Clip {
+            return _childPlaylist.getClipAt(0);
+        }
+
+        public function get postroll():Clip {
+            return _childPlaylist.getClipAt(-1);
+        }
+
+        public function get isMidStream():Boolean {
+            return _parent && _position > 0 && _position != -1;
+        }
+
+        public function get isPreroll():Boolean {
+            return _parent && _position == 0;
+        }
+
+        public function get isPostroll():Boolean {
+            return _parent && _position == 0;
+        }
 
         public function get parent():Clip {
             return _parent;

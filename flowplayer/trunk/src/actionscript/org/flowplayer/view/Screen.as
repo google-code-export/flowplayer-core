@@ -67,8 +67,8 @@ package org.flowplayer.view {
 				if (! clip.isNullClip) {
 					createDisplay(clip);
 				}
-                if (clip.childPlaylist.length > 0) {
-                    createDisplays(clip.childPlaylist.clips);
+                if (clip.hasChildren) {
+                    createDisplays(clip.playlist);
                 }
 			}
 		}

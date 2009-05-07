@@ -51,8 +51,8 @@ package org.flowplayer.view {
 			clips.forEach(function(clip:Clip, index:int, clips:Array):void {
 				log.debug("creating resizer for clip " + clip);
 				resizers[clip] = new MediaResizer(clip, screen.width, screen.height);
-                if (clip.childPlaylist.length > 0) {
-                    createResizers(clip.childClips);
+                if (clip.hasChildren) {
+                    createResizers(clip.playlist);
                 }
 			});
 		}

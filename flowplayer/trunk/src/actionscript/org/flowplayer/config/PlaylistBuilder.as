@@ -33,11 +33,12 @@ package org.flowplayer.config {
 	 * @author anssi
 	 */
 	internal class PlaylistBuilder {
-		private var log:Log = new Log(this);
-		private var _clipObjects:Array;
+        private static const NESTED_PLAYLIST:String = "playlist";
+        private var log:Log = new Log(this);
+        private var _clipObjects:Array;
         private var _commonClipObject:Object;
         private var _commonClip:Clip;
-		private var _playerId:String;
+        private var _playerId:String;
         private var _playlistFeed:String;
 
 
@@ -115,10 +116,10 @@ package org.flowplayer.config {
                 return clip;
             }
 
-            if (clipObj.hasOwnProperty("childPlaylist")) {
-                addChildClips(clip, clipObj["childPlaylist"]);
-            } else if (_commonClipObject.hasOwnProperty("childPlaylist")) {
-                addChildClips(clip, _commonClipObject["childPlaylist"]);
+            if (clipObj.hasOwnProperty(NESTED_PLAYLIST)) {
+                addChildClips(clip, clipObj[NESTED_PLAYLIST]);
+            } else if (_commonClipObject.hasOwnProperty(NESTED_PLAYLIST)) {
+                addChildClips(clip, _commonClipObject[NESTED_PLAYLIST]);
             }
             return clip;
         }
@@ -143,7 +144,7 @@ package org.flowplayer.config {
 			if (clipObj == _commonClipObject) return;
 			
 			for (var prop:String in _commonClipObject) {
-				if (clipObj[prop] == undefined && prop != "childPlaylist") {
+				if (clipObj[prop] == undefined && prop != NESTED_PLAYLIST) {
 					clipObj[prop] = _commonClipObject[prop];
 				}
 			}

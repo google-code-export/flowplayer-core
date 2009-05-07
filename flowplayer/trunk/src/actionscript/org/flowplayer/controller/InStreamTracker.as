@@ -39,7 +39,7 @@ package org.flowplayer.controller {
 
         public function start(doReset:Boolean = false):void {
             log.debug("start()");
-            if (clip.childPlaylist.length == 0) {
+            if (! clip.hasChildren) {
                 throw new Error("this clip does not have child clips");
             }
 
@@ -47,7 +47,7 @@ package org.flowplayer.controller {
                 reset();
             }
 
-            var children:Array = clip.childPlaylist.clips;
+            var children:Array = clip.playlist;
             for (var i:int = 0; i < children.length; i++) {
                 var clip:Clip = children[i] as Clip;
                 log.debug("start(): child clip at " + clip.position + ": " + clip);
@@ -70,8 +70,8 @@ package org.flowplayer.controller {
         private function onTimer(event:TimerEvent):void {
             var time:Number = _controller.status.time;
             log.debug("time " + Math.round(time));
-            var child:Clip = clip.childPlaylist.getClipAt(time);
-            if (child && Math.round(time) > _prevStartTime) {
+            var child:Clip = clip.getMidroll(time);
+            if (child && time - _prevStartTime > 2) {
                 stop();
                 log.info("found child clip with start time " + time + ": " + child);
                 _controller.playInstream(child);

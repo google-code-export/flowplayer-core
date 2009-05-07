@@ -55,7 +55,7 @@ package org.flowplayer.controller {
 			log.debug("cannot stop in waiting state ");
 		}
 		
-		internal override function startBuffering():void {
+		internal override function doStartBuffering():void {
 			if (! playListReady) return;
 			log.debug("startBuffering()");
 			bufferingState.nextStateAfterBufferFull = pausedState;
