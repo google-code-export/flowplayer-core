@@ -22,7 +22,7 @@ package org.flowplayer.model {
 import flash.utils.Dictionary;
     import org.flowplayer.util.Assert;
 
-    public class TimedPlaylist {
+    internal class TimedPlaylist {
         
         private var _clips:Array;
         private var _clipsByTime:Dictionary;

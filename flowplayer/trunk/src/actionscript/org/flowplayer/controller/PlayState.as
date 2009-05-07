@@ -104,21 +104,31 @@ package org.flowplayer.controller {
 		internal function get state():State {
 			return _stateCode;
 		}
-		
-		internal function startBuffering():void {
-			log.debug("cannot start buffering in this state");
-		}
-		
+
+        internal final function startBuffering():void {
+            setPreroll();
+            doStartBuffering();
+        }
+
+        internal function doStartBuffering():void {
+            log.debug("cannot start buffering in this state");
+        }
+
 		internal function stopBuffering():void {
 			log.debug("cannot stop buffering in this state");
 		}
 		
 		internal final function play():void {
+            setPreroll();
+            doPlay();
+        }
+
+        private function setPreroll():void {
             var preroll:Clip = playList.currentPreroll;
             if (preroll) {
+                log.debug("current clip has a preroll, playing that first");
                 playList.setInStreamClip(preroll);
             }
-            doPlay();
         }
 
         internal function doPlay():void {
@@ -247,26 +257,18 @@ package org.flowplayer.controller {
 		}
 
         private function handleInStreamClipDone(clip:Clip):void {
-            if (isMidStream(clip)) {
+            if (clip.isMidStream) {
                 log.debug("midStream clip finished");
                 stop(false, true);
                 playList.setInStreamClip(null);
                 changeState(pausedState);
                 playListController.resume();
                 
-            } else if (isPreroll(clip)) {
+            } else if (clip.isPreroll) {
                 stop(false, true);
                 playList.setInStreamClip(null);
                 doPlay();
             }            
-        }
-
-        protected function isMidStream(clip:Clip):Boolean {
-            return clip.parent && clip.position > 0 && clip.position != -1;
-        }
-
-        protected function isPreroll(clip:Clip):Boolean {
-            return clip.parent && clip.position == 0;
         }
 
         private function onPlaylistChanged(event:ClipEvent):void {

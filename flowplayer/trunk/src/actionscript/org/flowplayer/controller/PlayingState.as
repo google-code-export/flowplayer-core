@@ -46,7 +46,7 @@ import org.flowplayer.model.Playlist;
         }
 
         private function hasMidstreamClips(clip:Clip):Boolean {
-            var children:Array = clip.childClips;
+            var children:Array = clip.playlist;
             if (children.length == 0) return false;
             for (var i:int = 0; i < children.length; i++) {
                 if (Clip(children[i]).position > 0) {
@@ -88,7 +88,7 @@ import org.flowplayer.model.Playlist;
         }
 
         private function onClipAdd(event:ClipEvent):void {
-            if (playList.current.childClips.length > 0) {
+            if (playList.current.playlist.length > 0) {
                 _inStreamTracker.start();
             }
         }
@@ -149,12 +149,12 @@ import org.flowplayer.model.Playlist;
             if (event.isDefaultPrevented()) return;
             var clip:Clip = event.target as Clip;
 
-            if (isPreroll(clip)) {
+            if (clip.isPreroll) {
                 stop(false, true);
                 playList.setInStreamClip(null);
                 doPlay();
                 
-            } else if (isMidStream(clip)) {
+            } else if (clip.isMidStream) {
                 _inStreamTracker.stop();
                 _inStreamTracker.reset();
                 playList.setInStreamClip(null);

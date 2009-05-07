@@ -45,7 +45,7 @@ package org.flowplayer.model {
 			}
 			super(commonClip);
 			_commonClip = commonClip;
-			_commonClip.setPlaylist(this);
+			_commonClip.setParentPlaylist(this);
 			initialize();		
 		}
 		
@@ -126,7 +126,7 @@ package org.flowplayer.model {
          * @return
          */
         public function removeChildClip(clip:Clip):void {
-            clip.parent.childPlaylist.removeClip(clip);
+            clip.parent.removeChild(clip);
         }
 
         private function addChildClip(clip:Clip, index:int):void {
@@ -135,7 +135,7 @@ package org.flowplayer.model {
             }
             var parent:Clip = getClip(index);
             parent.addChild(clip);
-            clip.setPlaylist(this);
+            clip.setParentPlaylist(this);
             clip.setEventListeners(this);
             doDispatchEvent(new ClipEvent(ClipEventType.CLIP_ADD, index, clip), true);
         }
@@ -149,7 +149,7 @@ package org.flowplayer.model {
             }
             log.debug("clips now " + _clips);
 
-            clip.setPlaylist(this);
+            clip.setParentPlaylist(this);
 
 			if (clip != _commonClip) {
                 clip.onAll(_commonClip.onClipEvent);
@@ -195,7 +195,7 @@ package org.flowplayer.model {
             if (_currentPos == -1 ) return null;
             if (_clips.length == 0) return null;
             var parent:Clip = _clips[_currentPos];
-            return parent.childPlaylist.getClipAt(0);
+            return parent.preroll;
         }
 
         public function setInStreamClip(clip:Clip):void {
