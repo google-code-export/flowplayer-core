@@ -134,6 +134,9 @@ package org.flowplayer.model {
                 throw new Error("parent index is not given");
             }
             var parent:Clip = getClip(index);
+//            if (clip.position == 0) {
+//
+//            }
             parent.addChild(clip);
             clip.setParentPlaylist(this);
             clip.setEventListeners(this);
@@ -194,6 +197,7 @@ package org.flowplayer.model {
         public function get currentPreroll():Clip {
             if (_currentPos == -1 ) return null;
             if (_clips.length == 0) return null;
+            if (_inStreamClip) return null;
             var parent:Clip = _clips[_currentPos];
             return parent.preroll;
         }

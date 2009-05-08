@@ -179,7 +179,7 @@ import org.flowplayer.model.PlayerError;
                 handleError(PlayerError.INSTREAM_PLAY_NOTPLAYING);
             }
             // mark this clip to be "one shot" that will be removed once played
-            clip.position = -1;
+            clip.position = -2;
             addClip(clip, playlist.currentIndex, true);
             _playListController.playInstream(clip);
         }
