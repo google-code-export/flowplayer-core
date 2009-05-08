@@ -748,7 +748,7 @@ import org.flowplayer.flow_internal;
         }
 
         public function get isPostroll():Boolean {
-            return _parent && _position == 0;
+            return _parent && _position == -1;
         }
 
         public function get parent():Clip {
@@ -759,6 +759,7 @@ import org.flowplayer.flow_internal;
             _parent = val;
         }
 
+        [Value]
         public function get position():Number {
             return _position;
         }

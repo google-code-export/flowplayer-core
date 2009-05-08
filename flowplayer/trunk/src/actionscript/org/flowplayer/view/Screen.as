@@ -54,7 +54,7 @@ package org.flowplayer.view {
             _displays = new Dictionary();
 			_displayFactory = new MediaDisplayFactory(playList);
 			_resizer = new ClipResizer(playList, this);
-			createDisplays(playList.clips);
+			createDisplays(playList.clips.concat(playList.childClips));
 			addListeners(playList);
 			_playList = playList;
 			_animatioEngine = animationEngine;
@@ -67,9 +67,6 @@ package org.flowplayer.view {
 				if (! clip.isNullClip) {
 					createDisplay(clip);
 				}
-                if (clip.hasChildren) {
-                    createDisplays(clip.playlist);
-                }
 			}
 		}
 
@@ -230,7 +227,7 @@ package org.flowplayer.view {
             eventSupport.onStart(onStart);
             eventSupport.onResume(onResume);
 
-            var oneShot:Function = function(clip:Clip):Boolean { return clip.position == -1 };
+            var oneShot:Function = function(clip:Clip):Boolean { return clip.position == -2 };
             eventSupport.onStop(removeOneShotDisplay, oneShot);
             eventSupport.onFinish(removeOneShotDisplay, oneShot);
 		}

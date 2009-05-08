@@ -18,7 +18,8 @@
  */
 
 package org.flowplayer.controller {
-	import org.flowplayer.model.ClipEventType;	
+    import org.flowplayer.model.Clip;
+import org.flowplayer.model.ClipEventType;
 	
 	import flash.utils.Dictionary;
 	
@@ -46,12 +47,16 @@ package org.flowplayer.controller {
 			}
 		}
 
+        internal override function handleOnClipDone(clip:Clip, isFinish:Boolean, defaultAction:Boolean = true):void {
+            log.debug("handleOnClipDone()");
+        }
+
 		internal override function stopBuffering():void {
 			log.debug("stopBuffering() called");
 			getMediaController().stopBuffering();
 		}
 
-		internal override function stop(closeStream:Boolean = false, silent:Boolean = false):void {
+		internal override function doStop(closeStream:Boolean, silent:Boolean):void {
 			log.debug("cannot stop in waiting state ");
 		}
 		
@@ -62,10 +67,6 @@ package org.flowplayer.controller {
 			if (onEvent(ClipEventType.BEGIN, [true])) {
 				changeState(bufferingState);
 			}
-		}
-
-		override protected function onClipDone(event:ClipEvent):void {
-			log.warn("received onClipDone in waiting state??");
 		}
 	}
 }

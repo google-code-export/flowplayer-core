@@ -74,7 +74,7 @@ import org.flowplayer.model.Playlist;
                 eventSupport.onStop(onStop);
                 eventSupport.onFinish(onFinish);
                 eventSupport.onBeforeFinish(onClipDone);
-                eventSupport.onStop(onClipStop);
+//                eventSupport.onStop(onClipStop);
                 eventSupport.onSeek(onSeek, hasMidstreamClips);
                 eventSupport.onClipAdd(onClipAdd);
             } else {
@@ -108,7 +108,6 @@ import org.flowplayer.model.Playlist;
 
         private function onStop(event:ClipEvent):void {
             _inStreamTracker.stop();
-            playList.setInStreamClip(null);
         }
 
         private function onFinish(event:ClipEvent):void {
@@ -122,8 +121,8 @@ import org.flowplayer.model.Playlist;
         }
 
         private function removeOneShotClip(clip:Clip):void {
-            if (clip.position == -1) {
-                log.debug("removing one shot child clip from the playlist");
+            if (clip.position == -2) {
+                log.error("removing one shot child clip from the playlist");
                 playList.removeChildClip(clip);
             }
         }
@@ -144,27 +143,32 @@ import org.flowplayer.model.Playlist;
 			onEvent(ClipEventType.SEEK, [seconds]);
 		}
 
-        private function onClipStop(event:ClipEvent):void {
-            log.debug("onClipStop");
-            if (event.isDefaultPrevented()) return;
-            var clip:Clip = event.target as Clip;
-
-            if (clip.isPreroll) {
-                stop(false, true);
-                playList.setInStreamClip(null);
-                doPlay();
-                
-            } else if (clip.isMidStream) {
-                _inStreamTracker.stop();
-                _inStreamTracker.reset();
-                playList.setInStreamClip(null);
-                changeState(pausedState);
-                playListController.resume();
-                
-            } else {
-                changeState(waitingState);
-            }
-            removeOneShotClip(clip);
-        }
+//        private function onClipStop(event:ClipEvent):void {
+//            if (event.isDefaultPrevented()) return;
+//            var clip:Clip = event.target as Clip;
+//            log.debug("onClipStop(), clip " + clip);
+//
+//
+//            if (clip.isPostroll) {
+//                log.debug("onClipStop(): this is a postroll clip");
+//                changeState(waitingState);
+//
+//            } else if (clip.isPreroll) {
+//                stop(false, true);
+//                playList.setInStreamClip(null);
+//                doPlay();
+//
+//            } else if (clip.isMidStream) {
+//                _inStreamTracker.stop();
+//                _inStreamTracker.reset();
+//                playList.setInStreamClip(null);
+//                changeState(pausedState);
+//                playListController.resume();
+//
+//            } else {
+//                changeState(waitingState);
+//            }
+//            removeOneShotClip(clip);
+//        }
     }
 }
