@@ -56,8 +56,8 @@ import org.flowplayer.model.Playlist;
             return false;
         }
 
-        internal override function doPlay():void {
-            log.debug("doPlay()");
+        internal override function play():void {
+            log.debug("play()");
             stop();
             bufferingState.nextStateAfterBufferFull = playingState;
 

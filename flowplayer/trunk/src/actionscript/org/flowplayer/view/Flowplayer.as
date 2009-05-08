@@ -76,7 +76,8 @@ import org.flowplayer.model.PlayerError;
 				log.info("ExternalInteface is not available in this runtime. JavaScript access will be disabled.");
 			try {
 				addCallback("getVersion", function():Array { return version; });
-				addCallback("getPlaylist", function():Array { return convert(playlist.clips) as Array; });
+                addCallback("getPlaylist", function():Array { return convert(playlist.clips) as Array; });
+                addCallback("getRawPlaylist", function():Array { return convert(playlist.allClips) as Array; });
 				addCallback("getId", function():String { return id; });
 				addCallback("play", genericPlay);
 				addCallback("startBuffering", function():void { startBuffering(); });
