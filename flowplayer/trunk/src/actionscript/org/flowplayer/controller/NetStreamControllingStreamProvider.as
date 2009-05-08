@@ -116,7 +116,7 @@ import org.flowplayer.model.PluginModel;
 			}
 			_pauseAfterStart = pauseAfterStart;
 			clip.onMetaData(onMetaData, function(clip:Clip):Boolean {
-                return clip.provider == (_model ? _model.name : (clip.childIndex >= 0 ? 'httpInstream' : 'http')); 
+                return clip.provider == (_model ? _model.name : (clip.parent ? 'httpInstream' : 'http')); 
             });
 			
 			log.debug("previously started clip " + _startedClip);

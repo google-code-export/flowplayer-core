@@ -82,7 +82,7 @@ package org.flowplayer.model {
 			for (var i:Number = 0; i < clips.length; i++) {
 				doAddClip(clips[i]);
 			}
-			super.setClips(clips);
+			super.setClips(_clips);
 		}
 		
 		private function doReplace(newClips:Array, silent:Boolean = false):void {
@@ -131,13 +131,15 @@ package org.flowplayer.model {
 
         private function addChildClip(clip:Clip, index:int):void {
             if (index == -1) {
-                throw new Error("parent index is not given");
+                index = _clips.length - 1;
             }
             var parent:Clip = getClip(index);
-//            if (clip.position == 0) {
-//
-//            }
             parent.addChild(clip);
+            if (clip.position == 0) {
+                _clips.splice(index, 0, clip);
+            } else if (clip.position == -1) {
+                _clips.splice(index + 1, 0, clip);
+            }
             clip.setParentPlaylist(this);
             clip.setEventListeners(this);
             doDispatchEvent(new ClipEvent(ClipEventType.CLIP_ADD, index, clip), true);
@@ -145,14 +147,19 @@ package org.flowplayer.model {
 
 		private function doAddClip(clip:Clip, index:int = -1):void {
             log.debug("addClip " + clip);
+            clip.setParentPlaylist(this);
             if (index == -1) {
                 _clips.push(clip);
             } else {
                 _clips.splice(index, 0, clip);
             }
+            if (clip.preroll) {
+                addChildClip(clip.preroll, index);
+            }
+            if (clip.postroll) {
+                addChildClip(clip.postroll, index);
+            }
             log.debug("clips now " + _clips);
-
-            clip.setParentPlaylist(this);
 
 			if (clip != _commonClip) {
                 clip.onAll(_commonClip.onClipEvent);

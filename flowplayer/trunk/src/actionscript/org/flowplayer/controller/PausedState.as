@@ -35,7 +35,7 @@ package org.flowplayer.controller {
 			super(stateCode, playList, playListController, providers);
 		}
 		
-		internal override function doPlay():void {
+		internal override function play():void {
             resume();
 		}
 		

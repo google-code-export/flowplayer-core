@@ -43,8 +43,8 @@ package org.flowplayer.controller {
 			super(stateCode, playList, playListController, providers);
 		}
 		
-		internal override function doPlay():void {
-			log.debug("doPlay()");
+		internal override function play():void {
+			log.debug("play()");
 			stop();
 			bufferingState.nextStateAfterBufferFull = playingState;
 			if (onEvent(ClipEventType.BEGIN, [false])) {

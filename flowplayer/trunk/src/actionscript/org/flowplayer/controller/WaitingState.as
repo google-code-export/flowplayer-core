@@ -37,8 +37,8 @@ import org.flowplayer.model.ClipEventType;
 			super(stateCode, playList, playListController, providers);
 		}
 		
-		internal override function doPlay():void {
-			log.debug("doPlay()");
+		internal override function play():void {
+			log.debug("play()");
 			if (! playListReady) return;
 			bufferingState.nextStateAfterBufferFull = playingState;
 			if (onEvent(ClipEventType.BEGIN, [false])) {
@@ -48,7 +48,7 @@ import org.flowplayer.model.ClipEventType;
 		}
 
         internal override function handleOnClipDone(clip:Clip, isFinish:Boolean, defaultAction:Boolean = true):void {
-            log.debug("handleOnClipDone()");
+            log.debug("handleOnClipDone(), overridden null function");
         }
 
 		internal override function stopBuffering():void {

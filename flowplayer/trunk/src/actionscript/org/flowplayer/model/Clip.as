@@ -40,6 +40,8 @@ import org.flowplayer.flow_internal;
         // the main playlist where this clip belongs to
         private var _playlist:Playlist;
         private var _childPlaylist:TimedPlaylist;
+        private var _preroll:Clip;
+        private var _postroll:Clip;
         private var _parent:Clip;
 
 		private var _cuepoints:Dictionary;
@@ -101,7 +103,15 @@ import org.flowplayer.flow_internal;
 
         public function addChild(clip:Clip):void {
             clip.parent = this;
-            _childPlaylist.addClip(clip);
+            if (clip.isPreroll) {
+                _preroll = clip;
+            }
+            if (clip.isPostroll) {
+                _postroll = clip;
+            }
+            if (clip.isMidStream) {
+                _childPlaylist.addClip(clip);
+            }
         }
 
         private static function init(clip:Clip, url:String, baseUrl:String = null):Clip {
@@ -118,6 +128,12 @@ import org.flowplayer.flow_internal;
         public function setParentPlaylist(playlist:Playlist):void {
             _playlist = playlist;
             var children:Array = _childPlaylist.clips;
+            if (_preroll) {
+                children.push(_preroll);
+            }
+            if (_postroll) {
+                children.push(_postroll);
+            }
             for (var i:int = 0; i < children.length; i++) {
                 var clip:Clip = Clip(children[i]); 
                 clip.setParentPlaylist(playlist);
@@ -133,12 +149,6 @@ import org.flowplayer.flow_internal;
         [Value]
         public function get index():int {
             return _playlist.indexOf(this._parent || this);
-        }
-
-        [Value]
-        public function get childIndex():int {
-            if (! _parent) return -1;
-            return _parent._childPlaylist.indexOf(this);
         }
 
 		[Value]
@@ -520,7 +530,7 @@ import org.flowplayer.flow_internal;
 		[Value]
 		public function get provider():String {
 			if (type == ClipType.AUDIO) return "audio";
-            if (childIndex >= 0) return _provider + "Instream";
+            if (parent) return _provider + "Instream";
 			return _provider;
 		}
 
@@ -718,12 +728,23 @@ import org.flowplayer.flow_internal;
             return _childPlaylist.length > 0;
         }
 
-        [Value]
+//        [Value]
         public function get playlist():Array {
-            return _childPlaylist.clips;
+            var preAndPostRolls:Array = _playlist.allClips.filter(function (item:*, index:int, array:Array):Boolean {
+                return Clip(item).parent != null;
+            });
+            return _childPlaylist.clips.concat(preAndPostRolls);
         }
 
         public function removeChild(child:Clip):void {
+            if (child == _preroll) {
+                _preroll = null;
+                return;
+            }
+            if (child == _postroll) {
+                _postroll = null;
+                return;
+            }
             _childPlaylist.removeClip(child);
         }
 
@@ -732,11 +753,11 @@ import org.flowplayer.flow_internal;
         }
 
         public function get preroll():Clip {
-            return _childPlaylist.getClipAt(0);
+            return _preroll;
         }
 
         public function get postroll():Clip {
-            return _childPlaylist.getClipAt(-1);
+            return _postroll;
         }
 
         public function get isMidStream():Boolean {

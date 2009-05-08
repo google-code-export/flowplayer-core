@@ -123,9 +123,8 @@ package org.flowplayer.controller {
 			log.debug("cannot stop buffering in this state");
 		}
 		
-		internal final function play():void {
-            setPreroll();
-            doPlay();
+		internal function play():void {
+            log.debug("cannot start playing in this state");
         }
 
         private function setPreroll():void {
@@ -134,10 +133,6 @@ package org.flowplayer.controller {
                 log.debug("current clip has a preroll, playing that first");
                 playList.setInStreamClip(preroll);
             }
-        }
-
-        internal function doPlay():void {
-            log.debug("cannot start playing in this state");
         }
 
 		internal final function stop(closeStreamAndConnection:Boolean = false, silent:Boolean = false):void {
@@ -150,14 +145,14 @@ package org.flowplayer.controller {
             if (silent) {
                 getMediaController().onEvent(null, [closeStreamAndConnection]);
 
-                if (closeStreamAndConnection && playList.current.childIndex >= 0) {
+                if (closeStreamAndConnection && playList.current.parent != null) {
                     getMediaController().onEvent(null, [true]);
                 }
 
             } else {
                 onEvent(ClipEventType.STOP, [closeStreamAndConnection]);
 
-                if (closeStreamAndConnection && playList.current.childIndex >= 0) {
+                if (closeStreamAndConnection && playList.current.parent != null) {
                     onEvent(ClipEventType.STOP, [true]);
                 }
             }            
@@ -244,15 +239,15 @@ package org.flowplayer.controller {
         }
 
         internal function handleOnClipDone(clip:Clip, isFinish:Boolean, defaultAction:Boolean = true):void {
-            log.debug("handleOnClipDone");
+            log.debug("handleOnClipDone " + isFinish);
 
-            if (! clip.isPreroll && ! clip.isMidStream && clip.postroll) {
-                log.debug("onClipDone(): this clip has a postroll " + clip.postroll + ", playing that next");
-                handleStop(isFinish);
-                playList.setInStreamClip(clip.postroll);
-                activeState.doPlay();
-                return;
-            }
+//            if (! clip.isPreroll && ! clip.isMidStream && clip.postroll) {
+//                log.debug("onClipDone(): this clip has a postroll " + clip.postroll + ", playing that next");
+//                handleStop(isFinish);
+//                playList.setInStreamClip(clip.postroll);
+//                activeState.doPlay();
+//                return;
+//            }
 
             if (handleInStreamClipDone(clip, isFinish)) {
                 return;
@@ -260,9 +255,43 @@ package org.flowplayer.controller {
 
             if (isFinish) {
                 handleFinish(defaultAction);
+            } else {
+                changeState(waitingState);
             }
         }
 
+        private function handleInStreamClipDone(clip:Clip, isFinish:Boolean):Boolean {
+            log.debug("handleInStreamClipDone, " + clip + ", clip.parent " + clip.parent);
+            if (! clip.parent) return false;
+
+//            if (clip.isPostroll) {
+//                log.debug("postroll finished");
+//                doStop(false, true);
+//                playList.setInStreamClip(null);
+//                changeState(waitingState);
+//                handleFinish();
+//
+//            } else
+            if (clip.isMidStream) {
+                log.debug("midStream clip finished");
+                if (isFinish) {
+                    doStop(false, true);
+                }
+                playList.setInStreamClip(null);
+                changeState(pausedState);
+                playListController.resume();
+                true;
+
+            }
+//            else if (clip.isPreroll) {
+//                log.debug("preroll clip finished");
+//                handleStop(isFinish);
+//                playListController.next(true, true);
+//                return true;
+//            }
+            return false;
+        }
+   
         private function handleFinish(defaultAction:Boolean = true):void {
             if (playList.hasNext()) {
                 if (defaultAction) {
@@ -279,43 +308,6 @@ package org.flowplayer.controller {
                     playListController.rewind();
                 }
             }
-        }
-
-        private function handleInStreamClipDone(clip:Clip, isFinish:Boolean):Boolean {
-            log.debug("handleInStreamClipDone, " + clip + ", clip.parent " + clip.parent);
-            if (! clip.parent) return false;
-
-            if (clip.isPostroll) {
-                log.debug("postroll finished");
-//                handleStop(isFinish);
-                doStop(false, true);
-                playList.setInStreamClip(null);
-                changeState(waitingState);
-                handleFinish();
-                
-            } else if (clip.isMidStream) {
-                log.debug("midStream clip finished");
-                if (isFinish) {
-                    doStop(false, true);
-                }
-                playList.setInStreamClip(null);
-                changeState(pausedState);
-                playListController.resume();
-
-            } else if (clip.isPreroll) {
-                log.debug("preroll clip finished");
-                handleStop(isFinish);
-                playList.setInStreamClip(null);
-                activeState.doPlay();
-            }
-            return true;
-        }
-
-        private function handleStop(isFinish:Boolean):void {
-            if (isFinish) {
-                doStop(false, true);
-            }
-            changeState(waitingState);
         }
 
         private function onPlaylistChanged(event:ClipEvent):void {
