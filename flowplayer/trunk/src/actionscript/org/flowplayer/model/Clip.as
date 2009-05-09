@@ -110,6 +110,7 @@ import org.flowplayer.flow_internal;
                 _postroll = clip;
             }
             if (clip.isMidStream) {
+                log.info("adding midstream clip " + clip + ", position " + clip.position + " to parent clip " + this);
                 _childPlaylist.addClip(clip);
             }
         }
@@ -590,9 +591,12 @@ import org.flowplayer.flow_internal;
 			_customProperties = props;
 			
 			// workaraound to not allow setting cuepoints to custom properties
-			if (_customProperties && _customProperties["cuepoints"]) {
-				delete _customProperties["cuepoints"];
-			}
+            if (_customProperties && _customProperties["cuepoints"]) {
+                delete _customProperties["cuepoints"];
+            }
+            if (_customProperties && _customProperties["playlist"]) {
+                delete _customProperties["playlist"];
+            }
 		}
 		
 		public function get smoothing():Boolean {
@@ -609,6 +613,7 @@ import org.flowplayer.flow_internal;
 		}
 
 		public function setCustomProperty(property:String, value:Object):void {
+            if (property == "playlist") return;
 			if (!_customProperties) {
 				_customProperties = new Object();
 			}
@@ -728,12 +733,16 @@ import org.flowplayer.flow_internal;
             return _childPlaylist.length > 0;
         }
 
-//        [Value]
+        [Value]
         public function get playlist():Array {
-            var preAndPostRolls:Array = _playlist.allClips.filter(function (item:*, index:int, array:Array):Boolean {
-                return Clip(item).parent != null;
-            });
-            return _childPlaylist.clips.concat(preAndPostRolls);
+            var result:Array = _childPlaylist.clips;
+            if (_preroll) {
+                result = [_preroll].concat(result);
+            }
+            if (_postroll) {
+                result.push(_postroll);
+            }
+            return result;
         }
 
         public function removeChild(child:Clip):void {
@@ -761,7 +770,7 @@ import org.flowplayer.flow_internal;
         }
 
         public function get isMidStream():Boolean {
-            return _parent && _position > 0 && _position != -1;
+            return _parent && _position > 0;
         }
 
         public function get isPreroll():Boolean {
@@ -787,6 +796,10 @@ import org.flowplayer.flow_internal;
 
         public function set position(val:Number):void {
             _position = val;
+        }
+
+        public function get isOneShot():Boolean {
+            return _parent && position == -2;
         }
     }
 }

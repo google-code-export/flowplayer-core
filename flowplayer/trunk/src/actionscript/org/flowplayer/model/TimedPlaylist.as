@@ -34,9 +34,9 @@ import flash.utils.Dictionary;
 
         public function addClip(clip:Clip):void {
             Assert.notNull(clip, "addClip(), clip cannot be null");
-//            if (clip.position <= 0) {
-//                throw new Error("clip's childStart time must be greater than zero!");
-//            }
+            if (clip.position < 0 && ! clip.isOneShot) {
+                throw new Error("clip's childStart time must be greater than zero!");
+            }
             _clips.push(clip);
             _clipsByTime[clip.position] = clip;
         }
@@ -54,7 +54,11 @@ import flash.utils.Dictionary;
         }
 
         public function get clips():Array {
-            return _clips;
+            var result:Array = new Array();
+            for (var i:int = 0; i < _clips.length; i++) {
+                result.push(_clips[i]);
+            }
+            return result;
         }
 
         public function removeClip(clip:Clip):void {
