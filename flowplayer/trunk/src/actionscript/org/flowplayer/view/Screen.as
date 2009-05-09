@@ -227,7 +227,7 @@ package org.flowplayer.view {
             eventSupport.onStart(onStart);
             eventSupport.onResume(onResume);
 
-            var oneShot:Function = function(clip:Clip):Boolean { return clip.position == -2 };
+            var oneShot:Function = function(clip:Clip):Boolean { return clip.isOneShot; };
             eventSupport.onStop(removeOneShotDisplay, oneShot);
             eventSupport.onFinish(removeOneShotDisplay, oneShot);
 		}

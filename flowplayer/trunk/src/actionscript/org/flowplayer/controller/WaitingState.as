@@ -47,20 +47,16 @@ import org.flowplayer.model.ClipEventType;
 			}
 		}
 
-        internal override function handleOnClipDone(clip:Clip, isFinish:Boolean, defaultAction:Boolean = true):void {
-            log.debug("handleOnClipDone(), overridden null function");
-        }
-
 		internal override function stopBuffering():void {
 			log.debug("stopBuffering() called");
 			getMediaController().stopBuffering();
 		}
 
-		internal override function doStop(closeStream:Boolean, silent:Boolean):void {
+        override internal function stop(closeStreamAndConnection:Boolean = false, silent:Boolean = false):void {
 			log.debug("cannot stop in waiting state ");
 		}
 		
-		internal override function doStartBuffering():void {
+		internal override function startBuffering():void {
 			if (! playListReady) return;
 			log.debug("startBuffering()");
 			bufferingState.nextStateAfterBufferFull = pausedState;

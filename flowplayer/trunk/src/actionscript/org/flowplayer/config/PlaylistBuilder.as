@@ -115,7 +115,7 @@ package org.flowplayer.config {
             if (isChild) {
                 return clip;
             }
-
+                  
             if (clipObj.hasOwnProperty(NESTED_PLAYLIST)) {
                 addChildClips(clip, clipObj[NESTED_PLAYLIST]);
             } else if (_commonClipObject.hasOwnProperty(NESTED_PLAYLIST)) {

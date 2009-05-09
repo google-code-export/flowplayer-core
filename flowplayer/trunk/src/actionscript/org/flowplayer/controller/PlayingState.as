@@ -18,20 +18,17 @@
  */
 
 package org.flowplayer.controller {
-	import flash.utils.Dictionary;
-	
-	import org.flowplayer.controller.PlayListController;
-	import org.flowplayer.flow_internal;
+    import flash.utils.Dictionary;
+
+    import org.flowplayer.flow_internal;
     import org.flowplayer.model.Clip;
-import org.flowplayer.model.ClipEvent;
-import org.flowplayer.model.ClipEventSupport;
-import org.flowplayer.model.ClipEventType;
-    import org.flowplayer.model.EventType;
-import org.flowplayer.model.Playlist;
-	import org.flowplayer.model.State;
-	import org.flowplayer.model.Status;		
-	
-	use namespace flow_internal;
+    import org.flowplayer.model.ClipEvent;
+    import org.flowplayer.model.ClipEventSupport;
+    import org.flowplayer.model.ClipEventType;
+    import org.flowplayer.model.Playlist;
+    import org.flowplayer.model.State;
+
+    use namespace flow_internal;
 	/**
 	 * @author api
 	 */
@@ -49,7 +46,7 @@ import org.flowplayer.model.Playlist;
             var children:Array = clip.playlist;
             if (children.length == 0) return false;
             for (var i:int = 0; i < children.length; i++) {
-                if (Clip(children[i]).position > 0) {
+                if (Clip(children[i]).isMidStream) {
                     return true;
                 }
             }
@@ -74,7 +71,7 @@ import org.flowplayer.model.Playlist;
                 eventSupport.onStop(onStop);
                 eventSupport.onFinish(onFinish);
                 eventSupport.onBeforeFinish(onClipDone);
-//                eventSupport.onStop(onClipStop);
+                eventSupport.onStop(onClipStop);
                 eventSupport.onSeek(onSeek, hasMidstreamClips);
                 eventSupport.onClipAdd(onClipAdd);
             } else {
@@ -108,6 +105,7 @@ import org.flowplayer.model.Playlist;
 
         private function onStop(event:ClipEvent):void {
             _inStreamTracker.stop();
+            playList.setInStreamClip(null);
         }
 
         private function onFinish(event:ClipEvent):void {
@@ -121,8 +119,8 @@ import org.flowplayer.model.Playlist;
         }
 
         private function removeOneShotClip(clip:Clip):void {
-            if (clip.position == -2) {
-                log.error("removing one shot child clip from the playlist");
+            if (clip.isOneShot) {
+                log.debug("removing one shot child clip from the playlist");
                 playList.removeChildClip(clip);
             }
         }
@@ -143,32 +141,21 @@ import org.flowplayer.model.Playlist;
 			onEvent(ClipEventType.SEEK, [seconds]);
 		}
 
-//        private function onClipStop(event:ClipEvent):void {
-//            if (event.isDefaultPrevented()) return;
-//            var clip:Clip = event.target as Clip;
-//            log.debug("onClipStop(), clip " + clip);
-//
-//
-//            if (clip.isPostroll) {
-//                log.debug("onClipStop(): this is a postroll clip");
-//                changeState(waitingState);
-//
-//            } else if (clip.isPreroll) {
-//                stop(false, true);
-//                playList.setInStreamClip(null);
-//                doPlay();
-//
-//            } else if (clip.isMidStream) {
-//                _inStreamTracker.stop();
-//                _inStreamTracker.reset();
-//                playList.setInStreamClip(null);
-//                changeState(pausedState);
-//                playListController.resume();
-//
-//            } else {
-//                changeState(waitingState);
-//            }
-//            removeOneShotClip(clip);
-//        }
+        private function onClipStop(event:ClipEvent):void {
+            log.debug("onClipStop");
+            if (event.isDefaultPrevented()) return;
+
+            if (playList.current.isMidStream) {
+                log.debug("midstream clip finished");
+                _inStreamTracker.stop();
+                _inStreamTracker.reset();
+                playList.setInStreamClip(null);
+                changeState(pausedState);
+                playListController.resume();
+            } else {
+                changeState(waitingState);
+            }
+            removeOneShotClip(event.target as Clip);
+        }
     }
 }
