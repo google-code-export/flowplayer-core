@@ -28,7 +28,7 @@ import flash.utils.Dictionary;
         private var _clipsByTime:Dictionary;
 
         public function TimedPlaylist() {
-            _clips = new Array();
+            _clips = [];
             _clipsByTime = new Dictionary();
         }
 
@@ -54,11 +54,7 @@ import flash.utils.Dictionary;
         }
 
         public function get clips():Array {
-            var result:Array = new Array();
-            for (var i:int = 0; i < _clips.length; i++) {
-                result.push(_clips[i]);
-            }
-            return result;
+            return _clips.concat();
         }
 
         public function removeClip(clip:Clip):void {
