@@ -79,6 +79,7 @@ package org.flowplayer.controller {
                 eventSupport.unbind(onStop);
                 eventSupport.unbind(onFinish);
                 eventSupport.unbind(onClipDone, ClipEventType.FINISH, true);
+                eventSupport.unbind(onClipStop);
                 eventSupport.unbind(onSeek);
                 eventSupport.unbind(onClipAdd);
             }
@@ -118,13 +119,6 @@ package org.flowplayer.controller {
             _inStreamTracker.start();
         }
 
-        private function removeOneShotClip(clip:Clip):void {
-            if (clip.isOneShot) {
-                log.debug("removing one shot child clip from the playlist");
-                playList.removeChildClip(clip);
-            }
-        }
-
 		internal override function stopBuffering():void {
 			log.debug("stopBuffering() called");
 			stop();
@@ -141,21 +135,13 @@ package org.flowplayer.controller {
 			onEvent(ClipEventType.SEEK, [seconds]);
 		}
 
-        private function onClipStop(event:ClipEvent):void {
-            log.debug("onClipStop");
-            if (event.isDefaultPrevented()) return;
-
-            if (playList.current.isMidStream) {
-                log.debug("midstream clip finished");
+        override protected function onClipStop(event:ClipEvent):void {
+            super.onClipStop(event);
+            var clip:Clip = event.target as Clip;
+            if (clip.isMidStream) {
                 _inStreamTracker.stop();
                 _inStreamTracker.reset();
-                playList.setInStreamClip(null);
-                changeState(pausedState);
-                playListController.resume();
-            } else {
-                changeState(waitingState);
             }
-            removeOneShotClip(event.target as Clip);
         }
     }
 }

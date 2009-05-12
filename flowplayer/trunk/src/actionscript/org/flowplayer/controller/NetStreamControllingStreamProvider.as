@@ -699,7 +699,7 @@ import org.flowplayer.model.PluginModel;
 		}
 
 		protected function onMetaData(event:ClipEvent):void {
-			log.info("in NetStreamControllingStremProvider.onMetaData");
+			log.info("in NetStreamControllingStremProvider.onMetaData: " + event.target);
 			clip.dispatch(ClipEventType.START, _pauseAfterStart);
 			// some files require that we seek to the first frame only after receiving metadata
 			// otherwise we will never receive the metadata
