@@ -178,21 +178,20 @@ package org.flowplayer.model {
 			if (_clips.length == 0) return new NullClip();
 			return _clips[index];
 		}
-		
-		public function get length():Number {
-			return _clips.length;
-		}
+
+        public function get length():Number {
+            return clips.length;
+        }
 				
-		public function hasNext():Boolean {
-            log.debug("hasNext(): " + (_inStreamClip ? "currently in instream clip" : "currentPos " + _currentPos));
-            if (_inStreamClip && _inStreamClip.position == 0) {
-                return true;
+		public function hasNext(skipPreAndPostRolls:Boolean = true):Boolean {
+            if (skipPreAndPostRolls) {
+                return current.index < length - 1;
             }
-			return _currentPos < length - 1;
+            return _currentPos < _clips.length - 1;
 		}
 		
-		public function hasPrevious():Boolean {
-			return _currentPos > 0;
+		public function hasPrevious(skipPreAndPostRolls:Boolean = true):Boolean {
+			return (skipPreAndPostRolls ? current.index : _currentPos) > 0;
 		}
 
 		public function get current():Clip {
@@ -221,17 +220,25 @@ package org.flowplayer.model {
 		}
 	
 		public function get currentIndex():Number {
-			return _currentPos;
+			return current.index;
 		}
 		
-		public function next():Clip {
-			if (_currentPos == _clips.length -1) return null;
+		public function next(skipPreAndPostRolls:Boolean = true):Clip {
+            if (skipPreAndPostRolls) {
+                log.debug("skipping pre and post rolls");
+                var pos:int = current.index;
+                if (pos+1 > length) return null;
+                var clip:Clip = clips[pos+1];
+                _currentPos = _clips.indexOf(clip.preroll || clip);
+                return clip.preroll || clip;
+            }
+            if (_currentPos+1 >= _clips.length) return null;
             return _clips[++_currentPos];
 		}
 
 		public function get nextClip():Clip {
             log.debug("nextClip()");
-			if (_currentPos == _clips.length -1) return null;
+			if (_currentPos == _clips.length - 1) return null;
 			return _clips[_currentPos + 1];
 		}
 		
@@ -240,27 +247,31 @@ package org.flowplayer.model {
             return _clips[_currentPos + 1];
 		}
 		
-		public function previous():Clip {
-			if (_currentPos == 0) return null;
-			return _clips[--_currentPos];
+		public function previous(skipPreAndPostRolls:Boolean = true):Clip {
+            if (skipPreAndPostRolls) {
+                log.debug("skipping pre and post rolls");
+                var pos:int = current.index;
+                if (pos+1 < 0) return null;
+                var clip:Clip = clips[pos-1];
+                _currentPos = _clips.indexOf(clip.preroll || clip);
+                return clip.preroll || clip;
+            }
+            if (_currentPos - 1 < 0) return null;
+            return _clips[--_currentPos];
 		}
 
 		public function toIndex(index:Number):Clip {
 			if (index < 0) return null;
-			if (index >= _clips.length) return null;
-			var clip:Clip = _clips[index];
+            var parentClips:Array = clips;
+			if (index >= parentClips.length) return null;
+			var clip:Clip = parentClips[index];
             _inStreamClip = null;
-            if (index == _currentPos) return clip;
-            _currentPos = index;
-            return _inStreamClip || clip;
+            _currentPos = _clips.indexOf(clip.preroll || clip);
+            return clip.preroll || clip;
 		}
 		
 		public function indexOf(clip:Clip):Number {
-			for (var i : Number = 0; i < _clips.length; i++) {
-				if (_clips[i] == clip) return i;
-                if (clip.parent == _clips[i]) return i;
-			}
-			return -1;
+            return clips.indexOf(clip);
 		}
 
 		public function toString():String {

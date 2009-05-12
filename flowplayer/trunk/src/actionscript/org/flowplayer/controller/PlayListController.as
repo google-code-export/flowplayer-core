@@ -153,13 +153,13 @@ package org.flowplayer.controller {
 			return _playList.current;
 		}
 		
-		flow_internal function next(obeyClipPlaySettings:Boolean, silent:Boolean = false):Clip {
-			if (!_playList.hasNext()) return _playList.current;
-			return moveTo(_playList.next, obeyClipPlaySettings, silent);
+		flow_internal function next(obeyClipPlaySettings:Boolean, silent:Boolean = false, skipPreAndPostroll:Boolean = true):Clip {
+			if (!_playList.hasNext(skipPreAndPostroll)) return _playList.current;
+			return moveTo(_playList.next, obeyClipPlaySettings, silent, skipPreAndPostroll);
 		}
 
-		flow_internal function previous():Clip {
-			if (!_playList.hasPrevious()) return _playList.current;
+		flow_internal function previous(skipPreAndPostroll:Boolean = true):Clip {
+			if (!_playList.hasPrevious(skipPreAndPostroll)) return _playList.current;
 			
 			if (currentIsAudioWithSplash() && _playList.currentIndex >= 3) {
 				_state.stop();
@@ -168,7 +168,7 @@ package org.flowplayer.controller {
 				return _playList.current;
 			}
 			
-			return moveTo(_playList.previous, false, false);
+			return moveTo(_playList.previous, false, false, skipPreAndPostroll);
 		}
 		
 		private function currentIsAudioWithSplash():Boolean {
@@ -176,7 +176,7 @@ package org.flowplayer.controller {
 				&& _playList.previousClip && _playList.previousClip.type == ClipType.IMAGE;
 		}
 
-		flow_internal function moveTo(advanceFunction:Function, obeyClipPlaySettings:Boolean, silent:Boolean):Clip {
+		flow_internal function moveTo(advanceFunction:Function, obeyClipPlaySettings:Boolean, silent:Boolean, skipPreAndPostroll:Boolean = true):Clip {
 			var stateBeforeStopping:State = getState();
 			
 			log.debug("moveTo() current state is " + _state);
@@ -189,7 +189,7 @@ package org.flowplayer.controller {
 			}
 
 			// now we can move to next/previous in the playList
-			var clip:Clip = advanceFunction();
+			var clip:Clip = advanceFunction(skipPreAndPostroll) as Clip;
 			log.info("moved in playlist, current clip is " + _playList.current);
 			
 			log.debug("moved in playlist, next clip autoPlay " + clip.autoPlay + ", autoBuffering " + clip.autoBuffering);

@@ -157,6 +157,12 @@ import org.flowplayer.flow_internal;
             return _playlist.indexOf(this._parent || this);
         }
 
+        [Value]
+        public function get childIndex():int {
+            if (! _parent) return -1;
+            return parent.playlist.indexOf(this);
+        }
+
 		[Value]
 		public function get isCommon():Boolean {
             if (! _playlist) return false;

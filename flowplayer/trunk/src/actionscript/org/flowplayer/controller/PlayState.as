@@ -233,10 +233,10 @@ package org.flowplayer.controller {
                 return;
             }
    
-            if (playList.hasNext()) {
+            if (playList.hasNext(false)) {
                 if (defaultAction) {
                     log.debug("onClipDone, moving to next clip");
-                    playListController.next(true, true);
+                    playListController.next(true, true, false);
                 } else {
                     stop(false, true);
                 }
