@@ -210,6 +210,13 @@ package org.flowplayer.controller {
 			return _controllerFactory.getMediaController(myclip, playList);
 		}
 
+        protected function removeOneShotClip(clip:Clip):void {
+            if (clip.isOneShot) {
+                log.debug("removing one shot child clip from the playlist");
+                playList.removeChildClip(clip);
+            }
+        }
+
 		protected function onClipDone(event:ClipEvent):void {
 			log.info(this + " onClipDone");
             var defaultAction:Boolean = ! event.isDefaultPrevented();
@@ -222,6 +229,7 @@ package org.flowplayer.controller {
                 playList.setInStreamClip(null);
                 changeState(pausedState);
                 playListController.resume();
+                removeOneShotClip(clip);
                 return;
             }
    
@@ -240,6 +248,26 @@ package org.flowplayer.controller {
                     playListController.rewind();
                 }
             }
+        }
+
+        protected function onClipStop(event:ClipEvent):void {
+            log.debug("onClipStop");
+            if (event.isDefaultPrevented()) {
+                log.debug("default was prevented");
+                return;
+            }
+
+            var clip:Clip = Clip(event.target);
+
+            if (clip.isMidStream) {
+                log.debug("midstream clip finished");
+                playList.setInStreamClip(null);
+                changeState(pausedState);
+                playListController.resume();
+            } else {
+                changeState(waitingState);
+            }
+            removeOneShotClip(clip);
         }
 
         private function onPlaylistChanged(event:ClipEvent):void {

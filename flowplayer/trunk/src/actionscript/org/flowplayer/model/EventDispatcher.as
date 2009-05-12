@@ -126,19 +126,23 @@ package org.flowplayer.model {
 		private function _dispatchEvent(event:AbstractEvent, listenerDict:Dictionary):void {
 			log.info(this + " dispatchEvent(), event " + event);
 			var listeners:Array = listenerDict[event.eventType];
+            var notified:Array = [];
 			if (! listeners) {
 				log.debug(this + ": dispatchEvent(): no listeners for event " + event.eventType + (listenerDict == _beforeListeners ? " in before phase" : ""));
 				return;
 			}
 			for (var i : Number = 0; i < listeners.length; i++) {
 				var listener:EventListener = listeners[i];
-				if (listener == null) {
-					log.error("found null listener");
-				}
-				listener.notify(event);
-				if (event.isPropagationStopped()) {
-					return;
-				}
+                if (notified.indexOf(listener) < 0) {
+                    if (listener == null) {
+                        log.error("found null listener");
+                    }
+                    listener.notify(event);
+                    notified.push(listener);
+                    if (event.isPropagationStopped()) {
+                        return;
+                    }
+                }
 			}
 			return;			
 		}
@@ -185,7 +189,10 @@ package org.flowplayer.model {
 				}
 			}
 			return false;
-		}				public static function set playerId(playerId:String):void {
-			_playerId = playerId;		}
+		}
+		
+		public static function set playerId(playerId:String):void {
+			_playerId = playerId;
+		}
 	}
 }

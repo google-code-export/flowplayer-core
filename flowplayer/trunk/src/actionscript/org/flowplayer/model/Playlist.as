@@ -126,6 +126,7 @@ package org.flowplayer.model {
          * @return
          */
         public function removeChildClip(clip:Clip):void {
+            clip.unbindEventListeners();
             clip.parent.removeChild(clip);
         }
 
@@ -163,7 +164,7 @@ package org.flowplayer.model {
 
 			if (clip != _commonClip) {
                 clip.onAll(_commonClip.onClipEvent);
-                log.error("adding listener to all before events, common clip listens to other clips");
+                log.debug("adding listener to all before events, common clip listens to other clips");
                 clip.onBeforeAll(_commonClip.onBeforeClipEvent);
             }
         }
@@ -211,6 +212,7 @@ package org.flowplayer.model {
 
         public function setInStreamClip(clip:Clip):void {
             log.debug("setInstremClip to " + clip);
+            if (clip && _inStreamClip) throw new Error("Already playing an instream clip");
             _inStreamClip = clip;
         }
 	

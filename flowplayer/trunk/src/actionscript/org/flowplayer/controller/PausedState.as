@@ -21,7 +21,8 @@ package org.flowplayer.controller {
 	import flash.utils.Dictionary;
 	
 	import org.flowplayer.controller.PlayListController;
-	import org.flowplayer.model.ClipEventType;
+    import org.flowplayer.model.ClipEventSupport;
+import org.flowplayer.model.ClipEventType;
 	import org.flowplayer.model.Playlist;
 	import org.flowplayer.model.State;
 	import org.flowplayer.model.Status;	
@@ -34,7 +35,16 @@ package org.flowplayer.controller {
 		public function PausedState(stateCode:State, playList:Playlist, playListController:PlayListController, providers:Dictionary) {
 			super(stateCode, playList, playListController, providers);
 		}
-		
+
+        override protected function setEventListeners(eventSupport:ClipEventSupport, add:Boolean = true):void {
+            if (add) {
+                log.debug("adding event listeners");
+                eventSupport.onStop(onClipStop);
+            } else {
+                eventSupport.unbind(onClipStop);
+            }
+        }
+
 		internal override function play():void {
             resume();
 		}

@@ -147,6 +147,11 @@ import org.flowplayer.flow_internal;
             onBeforeAll(playlist.commonClip.onBeforeClipEvent);
         }
 
+        internal function unbindEventListeners():void {
+            unbind(_playlist.commonClip.onClipEvent);
+            unbind(_playlist.commonClip.onBeforeClipEvent, null, true);
+        }
+
         [Value]
         public function get index():int {
             return _playlist.indexOf(this._parent || this);
@@ -769,7 +774,9 @@ import org.flowplayer.flow_internal;
             return _postroll;
         }
 
+        [Value]
         public function get isMidStream():Boolean {
+            if (isOneShot) return true;
             return _parent && _position > 0;
         }
 
