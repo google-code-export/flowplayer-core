@@ -132,7 +132,7 @@ package org.flowplayer.controller {
 		}
 		
 		internal override function seekTo(seconds:Number):void {
-			onEvent(ClipEventType.SEEK, [seconds]);
+			onEvent(ClipEventType.SEEK, [seconds], seconds);
 		}
 
         override protected function onClipStop(event:ClipEvent):void {

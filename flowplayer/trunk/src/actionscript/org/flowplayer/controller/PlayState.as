@@ -177,13 +177,13 @@ package org.flowplayer.controller {
 			return status;
 		}
 
-		protected function onEvent(eventType:ClipEventType, params:Array = null):Boolean {
+		protected function onEvent(eventType:ClipEventType, params:Array = null, beforeEventInfo:Object = null):Boolean {
             log.debug("onEvent() " + eventType.name + ", current clip " + playList.current);
 			Assert.notNull(eventType, "eventType must be non-null");
 			if (playList.current.isNullClip) return false;
 			
 			if (eventType.isCancellable) {
-				if (! playList.current.dispatchBeforeEvent(new ClipEvent(eventType))) {
+				if (! playList.current.dispatchBeforeEvent(new ClipEvent(eventType, beforeEventInfo))) {
 					log.info("event default was prevented, will not execute a state change");
 					return false;
 				}
