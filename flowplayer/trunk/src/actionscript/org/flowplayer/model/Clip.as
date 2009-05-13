@@ -52,7 +52,7 @@ import org.flowplayer.flow_internal;
         private var _resolvedUrl:String;
 		private var _type:ClipType;
 		private var _start:Number;
-        private var _position:Number;
+        private var _position:Number = -100;
 		private var _duration:Number;
         private var _metaData:Object = undefined;
 		private var _autoPlay:Boolean = true;
@@ -155,12 +155,6 @@ import org.flowplayer.flow_internal;
         [Value]
         public function get index():int {
             return _playlist.indexOf(this._parent || this);
-        }
-
-        [Value]
-        public function get childIndex():int {
-            if (! _parent) return -1;
-            return parent.playlist.indexOf(this);
         }
 
 		[Value]
@@ -395,6 +389,9 @@ import org.flowplayer.flow_internal;
 		
 		[Value]
 		public function get autoPlay():Boolean {
+            if (isPreroll) return _autoPlay;
+            if (preroll) return true;
+            if (isPostroll) return true;
 			return _autoPlay;
 		}
 		
@@ -781,6 +778,10 @@ import org.flowplayer.flow_internal;
         }
 
         [Value]
+        public function get isInStream():Boolean {
+            return _parent != null;
+        }
+
         public function get isMidStream():Boolean {
             if (isOneShot) return true;
             return _parent && _position > 0;
@@ -796,6 +797,11 @@ import org.flowplayer.flow_internal;
 
         public function get parent():Clip {
             return _parent;
+        }
+
+        [Value]
+        public function get parentUrl():String {
+            return _parent ? _parent.url : null;
         }
 
         public function set parent(val:Clip):void {

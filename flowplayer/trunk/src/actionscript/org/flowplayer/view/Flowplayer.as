@@ -77,7 +77,6 @@ import org.flowplayer.model.PlayerError;
 			try {
 				addCallback("getVersion", function():Array { return version; });
                 addCallback("getPlaylist", function():Array { return convert(playlist.clips) as Array; });
-                addCallback("getRawPlaylist", function():Array { return convert(playlist.allClips) as Array; });
 				addCallback("getId", function():String { return id; });
 				addCallback("play", genericPlay);
 				addCallback("startBuffering", function():void { startBuffering(); });
@@ -108,7 +107,7 @@ import org.flowplayer.model.PlayerError;
 					return new ObjectConverter(currentClip).convert(); });
 				addCallback("getClip", function(index:Number):Object { return convert(playlist.getClip(index)); });
                 addCallback("setPlaylist", function(clipObjects:Array):void { setPlaylist(_config.createClips(clipObjects)); });
-                addCallback("addClip", function(clip:Object, index:int = -1, addAsChild:Boolean = false):void { addClip(_config.createClip(clip), index, addAsChild); });
+                addCallback("addClip", function(clip:Object, index:int = -1):void { addClip(_config.createClip(clip), index); });
 				addCallback("showError", showError);
 
 				addCallback("loadPlugin", pluginLoad);
@@ -174,16 +173,6 @@ import org.flowplayer.model.PlayerError;
             }
             play(clip);
 		}
-
-        private function playInstream(clip:Clip):void {
-            if (! isPlaying()) {
-                handleError(PlayerError.INSTREAM_PLAY_NOTPLAYING);
-            }
-            // mark this clip to be "one shot" that will be removed once played
-            clip.position = -2;
-            addClip(clip, playlist.currentIndex, true);
-            _playListController.playInstream(clip);
-        }
 
 		private function genericSeek(target:Object):void {
 			var percentage:Number = target is String ? NumberUtil.decodePercentage(target as String) : NaN;
