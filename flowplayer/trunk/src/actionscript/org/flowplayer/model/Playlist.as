@@ -18,17 +18,9 @@
  */
 
 package org.flowplayer.model {
-	import org.flowplayer.flow_internal;
-	import org.flowplayer.model.ClipEvent;
-    import org.flowplayer.util.ObjectConverter;
-	
-			
-	
-	
-	
-			
+    import org.flowplayer.flow_internal;
 
-	use namespace flow_internal;
+    use namespace flow_internal;
 	/**
 	 * @author anssi
 	 */
@@ -80,7 +72,7 @@ package org.flowplayer.model {
 
 		override flow_internal function setClips(clips:Array):void {
 			for (var i:Number = 0; i < clips.length; i++) {
-				doAddClip(clips[i]);
+				doAddClip(clips[i], -1, false);
 			}
 			super.setClips(_clips);
 		}
@@ -97,11 +89,12 @@ package org.flowplayer.model {
         /**
          * Adds a new clip into the playlist. Insertion of clips does not change the current clip.
          * @param clip
-         * @param index optional insertion point, if not given the clip is added to the end of the list.
+         * @param pos optional insertion point, if not given the clip is added to the end of the list.
          */
-        public function addClip(clip:Clip, index:int = -1, addAsChild:Boolean = false):void {
-            if (addAsChild) {
-                addChildClip(clip, index);
+        public function addClip(clip:Clip, pos:int = -1):void {
+            var index:Number = positionOf(pos);
+            if (clip.position >= 0 || clip.position == -1 || clip.position == -2) {
+                addChildClip(clip, pos);
                 return;
             }
             log.debug("current clip " + current);
@@ -110,14 +103,14 @@ package org.flowplayer.model {
                 // we only have the common clip or a common clip, perform a playlist replace!
                 doReplace([clip], true);
             } else {
-                doAddClip(clip, index);
-                if (index >= 0 && index <= _currentPos && hasNext()) {
-                    log.debug("moving current pos one up");
-                    _currentPos++;
+                doAddClip(clip, pos);
+                if (pos >= 0 && pos <= currentIndex && hasNext()) {
+                    log.debug("addClip(), moving to next clip");
+                    next();
                 }
                 super.setClips(_clips);
             }
-            doDispatchEvent(new ClipEvent(ClipEventType.CLIP_ADD, index >= 0 ? index : _clips.length - 1), true);
+            doDispatchEvent(new ClipEvent(ClipEventType.CLIP_ADD, pos >= 0 ? pos : clips.length - 1), true);
         }
 
         /**
@@ -130,36 +123,49 @@ package org.flowplayer.model {
             clip.parent.removeChild(clip);
         }
 
-        private function addChildClip(clip:Clip, index:int):void {
-            if (index == -1) {
-                index = _clips.length - 1;
+        private function addChildClip(clip:Clip, pos:int, dispatchEvent:Boolean = true):void {
+            log.debug("addChildClip " + clip + ", index " + pos + ", dispatchEvenbt " + dispatchEvent);
+            if (pos == -1) {
+                pos = clips.length - 1;
             }
-            var parent:Clip = getClip(index);
+            var parent:Clip = clips[pos];
             parent.addChild(clip);
             if (clip.position == 0) {
-                _clips.splice(index, 0, clip);
+                _clips.splice(_clips.indexOf(parent), 0, clip);
             } else if (clip.position == -1) {
-                _clips.splice(index + 1, 0, clip);
+                _clips.splice(_clips.indexOf(parent) + 1, 0, clip);
             }
             clip.setParentPlaylist(this);
             clip.setEventListeners(this);
-            doDispatchEvent(new ClipEvent(ClipEventType.CLIP_ADD, index, clip), true);
+            if (dispatchEvent) {
+                doDispatchEvent(new ClipEvent(ClipEventType.CLIP_ADD, pos, clip), true);
+            }
         }
 
-		private function doAddClip(clip:Clip, index:int = -1):void {
-            log.debug("addClip " + clip);
+		private function doAddClip(clip:Clip, pos:int = -1, dispatchEvents:Boolean = true):void {
+            log.debug("doAddClip() " + clip);
             clip.setParentPlaylist(this);
-            if (index == -1) {
+            var currentInPos:Clip;
+            if (pos == -1) {
                 _clips.push(clip);
             } else {
-                _clips.splice(index, 0, clip);
+                currentInPos = clips[pos];
+                _clips.splice(_clips.indexOf(currentInPos.preroll || currentInPos), 0, clip);
             }
-            if (clip.preroll) {
-                addChildClip(clip.preroll, index);
+//            if (clip.preroll) {
+//                log.debug("doAddClip(), clip has a preroll, adding that");
+//                addChildClip(clip.preroll, index, dispatchEvents);
+//            }
+//            if (clip.postroll) {
+//                log.debug("doAddClip(), clip has a postroll, adding that");
+//                addChildClip(clip.postroll, index, dispatchEvents);
+//            }
+            var nested:Array = clip.playlist;
+            for (var i:int = 0; i < nested.length; i++) {
+                var nestedClip:Clip = nested[i] as Clip;
+                addChildClip(nestedClip, pos, dispatchEvents);
             }
-            if (clip.postroll) {
-                addChildClip(clip.postroll, index);
-            }
+
             log.debug("clips now " + _clips);
 
 			if (clip != _commonClip) {
@@ -175,8 +181,8 @@ package org.flowplayer.model {
 		 */
 		public function getClip(index:Number):Clip {
 			if (index == -1) return _commonClip;
-			if (_clips.length == 0) return new NullClip();
-			return _clips[index];
+			if (clips.length == 0) return new NullClip();
+			return clips[index];
 		}
 
         public function get length():Number {
@@ -269,6 +275,12 @@ package org.flowplayer.model {
             _currentPos = _clips.indexOf(clip.preroll || clip);
             return clip.preroll || clip;
 		}
+
+        private function positionOf(index:Number):Number {
+            var parentClips:Array = clips;
+			var clip:Clip = parentClips[index];
+            return _clips.indexOf(clip.preroll || clip);            
+        }
 		
 		public function indexOf(clip:Clip):Number {
             return clips.indexOf(clip);

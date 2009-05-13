@@ -133,6 +133,24 @@ import org.flowplayer.util.TextUtil;
 			return this;
 		}
 
+        /**
+         * Starts playing the specified clip "in stream". The clip currently playing is paused
+         * and the specified clip is started. When the instream clip is finished the original clip
+         * is resumed.
+         * @param clip
+         * @return
+         */
+        public function playInstream(clip:Clip):void {
+            if (! (isPlaying() || isPaused())) {
+                handleError(PlayerError.INSTREAM_PLAY_NOTPLAYING);
+                return;
+            }
+            // mark this clip to be "one shot" that will be removed once played
+            clip.position = -2;
+            addClip(clip, playlist.currentIndex);
+            _playListController.playInstream(clip);
+        }
+
 		/**
 		 * Starts buffering the current clip in playList.
 		 */
@@ -571,12 +589,17 @@ import org.flowplayer.util.TextUtil;
 
         /**
          * Adds a new clip into the playlist. Insertion of clips does not change the current clip.
+         * You can also add instream clips like so:
+         * <ul>
+         * <li>position == 0, the clip is added as a preroll</li>
+         * <li>position == -1, the clip is added as a postroll</li>
+         * <li>position > 0, the clip is added as a midroll (linear instream)</li>
+         * <ul>
          * @param clip
          * @param index optional insertion point, if not given the clip is added to the end of the list.
-         * @param addAsChild if true the clip is added as a child clip of the clip specified by the index parameter
          */
-        public function addClip(clip:Clip, index:int = -1, addAsChild:Boolean = false):void {
-                _playListController.playlist.addClip(clip, index, addAsChild);
+        public function addClip(clip:Clip, index:int = -1):void {
+            _playListController.playlist.addClip(clip, index);
         }
 
 

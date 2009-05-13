@@ -205,10 +205,10 @@ import org.flowplayer.model.PluginModel;
 		 */
 		public function get time():Number {
 			if (! _netStream) return 0;
-			if (! currentClipStarted()) return 0;
-			if (! _started) {
-				return 0;
-			}
+//			if (! currentClipStarted()) return 0;
+//			if (! _started) {
+//				return 0;
+//			}
 			return getCurrentPlayheadTime(netStream);
 		}
 		

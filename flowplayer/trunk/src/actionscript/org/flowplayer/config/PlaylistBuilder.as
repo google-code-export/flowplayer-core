@@ -112,7 +112,7 @@ package org.flowplayer.config {
             }
             var clip:Clip = Clip.create(fileName, baseUrl);
             new PropertyBinder(clip, "customProperties").copyProperties(clipObj) as Clip;
-            if (isChild) {
+            if (isChild || clipObj.hasOwnProperty("position")) {
                 return clip;
             }
                   
@@ -126,7 +126,19 @@ package org.flowplayer.config {
 
         private function addChildClips(clip:Clip, children:Array):void {
             for (var i:int = 0; i < children.length; i++) {
-                clip.addChild(createClip(children[i], true));
+                var child:Object = children[i];
+                if (! child.hasOwnProperty("position")) {
+                    if (i == 0) {
+                        child["position"] = 0;
+                    }
+                    else if (i == children.length -1) {
+                        child["position"] == -1
+                    }
+                    else {
+                        throw new Error("position not defined in a nested clip");
+                    }
+                }
+                clip.addChild(createClip(child, true));
             }
         }
 
