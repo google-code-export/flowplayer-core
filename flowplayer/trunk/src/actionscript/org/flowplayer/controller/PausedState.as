@@ -63,7 +63,7 @@ import org.flowplayer.model.ClipEventType;
 		}
 
 		internal override function seekTo(seconds:Number):void {
-			onEvent(ClipEventType.SEEK, [seconds]);
+			onEvent(ClipEventType.SEEK, [seconds], seconds);
 		}
 	}
 }

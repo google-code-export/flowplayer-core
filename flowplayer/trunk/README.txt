@@ -6,6 +6,7 @@ Version history:
 - Added toggleFullscreen() the API
 Fixes:
 - The screen size was initially too small on Firefox (Mac)
+- Did not persist a zero volume value: http://www.flowplayer.org/forum/8/18413
 
 3.1.0
 -----
