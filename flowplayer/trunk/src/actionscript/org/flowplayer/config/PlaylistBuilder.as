@@ -118,7 +118,7 @@ package org.flowplayer.config {
                   
             if (clipObj.hasOwnProperty(NESTED_PLAYLIST)) {
                 addChildClips(clip, clipObj[NESTED_PLAYLIST]);
-            } else if (_commonClipObject.hasOwnProperty(NESTED_PLAYLIST)) {
+            } else if (_commonClipObject && _commonClipObject.hasOwnProperty(NESTED_PLAYLIST)) {
                 addChildClips(clip, _commonClipObject[NESTED_PLAYLIST]);
             }
             return clip;
@@ -132,7 +132,7 @@ package org.flowplayer.config {
                         child["position"] = 0;
                     }
                     else if (i == children.length -1) {
-                        child["position"] == -1
+                        child["position"] = -1;
                     }
                     else {
                         throw new Error("position not defined in a nested clip");

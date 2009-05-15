@@ -39,8 +39,11 @@ package org.flowplayer.model {
 		}
 				
 		protected override function get externalEventArgument():Object {
-            if (eventType == ClipEventType.PLAYLIST_REPLACE || eventType == ClipEventType.CLIP_ADD) {
+            if (eventType == ClipEventType.PLAYLIST_REPLACE) {
                 return (target as ClipEventSupport).clips;
+            }
+            if (eventType == ClipEventType.CLIP_ADD) {
+                return info2 || (target as ClipEventSupport).clips[info];
             }
 			if (target is Clip) {
 				return Clip(target).index;
@@ -59,8 +62,8 @@ package org.flowplayer.model {
 		}
 				
 		protected override function get externalEventArgument3():Object {
-            if (eventType == ClipEventType.CLIP_ADD && info2) {
-                return new ObjectConverter(info2).convert();
+            if (eventType == ClipEventType.CLIP_ADD ) {
+                return null;
             }
 			if (eventType == ClipEventType.CUEPOINT) {
 				return info is DynamicCuepoint ? info : Cuepoint(info).time;

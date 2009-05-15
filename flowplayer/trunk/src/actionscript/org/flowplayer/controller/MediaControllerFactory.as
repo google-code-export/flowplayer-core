@@ -40,7 +40,10 @@ package org.flowplayer.controller {
         private var log:Log = new Log(this);
         private var _streamProviderController:MediaController;
         private var _inStreamController:MediaController;
-		private var _imageController:ImageController;
+
+        private var _imageController:ImageController;
+        private var _inStreamImageController:ImageController;
+
 		private static var _instance:MediaControllerFactory;
 		private var _volumeController:VolumeController;
         private var _providers:Dictionary;
@@ -62,10 +65,10 @@ package org.flowplayer.controller {
 		flow_internal function getMediaController(clip:Clip, playlist:Playlist):MediaController {
 			var clipType:ClipType = clip.type;
 			if (clipType == ClipType.VIDEO || clipType == ClipType.AUDIO) {
-				return getStreamProviderController(playlist, clip.parent != null);
+				return getStreamProviderController(playlist, clip.isInStream);
 			}
 			if (clipType == ClipType.IMAGE) {
-				return getImageController(playlist);
+				return getImageController(playlist, clip.isInStream);
 			}
 			throw new Error("No media controller found for clip type " + clipType);
 			return null;
@@ -80,18 +83,23 @@ package org.flowplayer.controller {
                 if (! _inStreamController) {
                     _inStreamController = new StreamProviderController(this, getVolumeController(), _config, playlist);
                 }
-//                log.debug("getStreamProviderController(): returning the inStreamCOntroller");
                 return _inStreamController;
             }
             
 			if (!_streamProviderController) {
 				_streamProviderController = new StreamProviderController(this, getVolumeController(), _config, playlist);
             }
-//            log.debug("getStreamProviderController(): returning the _streamProviderController");
             return _streamProviderController;
 		}
 		
-		private function getImageController(playlist:Playlist):MediaController {
+		private function getImageController(playlist:Playlist, inStream:Boolean = false):MediaController {
+            if (inStream) {
+                if (! _inStreamImageController) {
+                    _inStreamImageController = new ImageController(_loader, getVolumeController(), playlist);
+                }
+                return _inStreamImageController;
+            }
+
 			if (!_imageController)
 				_imageController = new ImageController(_loader, getVolumeController(), playlist);
 			return _imageController;

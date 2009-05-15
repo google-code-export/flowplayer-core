@@ -104,6 +104,7 @@ import org.flowplayer.model.DisplayPluginModel;
             trace("Launcher added to stage");
 			createFlashVarsConfig();
 			Log.configure(_config.getLogConfiguration());
+            trace("created log configuration, tracing enabled? " + Log.traceEnabled)
 
             initCustomClipEvents();
 

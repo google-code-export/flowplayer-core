@@ -279,7 +279,7 @@ package org.flowplayer.model {
         private function positionOf(index:Number):Number {
             var parentClips:Array = clips;
 			var clip:Clip = parentClips[index];
-            return _clips.indexOf(clip.preroll || clip);            
+            return clip ? _clips.indexOf(clip.preroll || clip) : 0;            
         }
 		
 		public function indexOf(clip:Clip):Number {
