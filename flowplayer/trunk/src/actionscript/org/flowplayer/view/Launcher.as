@@ -97,12 +97,13 @@ import org.flowplayer.model.DisplayPluginModel;
 		[Frame(factoryClass="org.flowplayer.view.Preloader")]
 		public function Launcher() {
 			super("#canvas", this);
-			addEventListener(Event.ADDED_TO_STAGE, initPhase1);
-		}
+			addEventListener(Event.ADDED_TO_STAGE, function(e:Event):void {
+                trace("Launcher added to stage");
+                callAndHandleError(createFlashVarsConfig, PlayerError.INIT_FAILED);
+            });
+        }
 
-		private function initPhase1(event:Event):void {
-            trace("Launcher added to stage");
-			createFlashVarsConfig();
+        private function initPhase1():void {
 			Log.configure(_config.getLogConfiguration());
             trace("created log configuration, tracing enabled? " + Log.traceEnabled)
 
@@ -242,7 +243,7 @@ import org.flowplayer.model.DisplayPluginModel;
 				log.info("" + plugins[i]);
 			}
 			_pluginLoader = new PluginLoader(URLUtil.playerBaseUrl(loaderInfo), _pluginRegistry, this, useExternalInterfade(), onPluginLoad, onPluginLoadError);
-			_pluginLoader.addEventListener(Event.COMPLETE, initPhase3);
+			_pluginLoader.addEventListener(Event.COMPLETE, function():void { callAndHandleError(initPhase3, PlayerError.INIT_FAILED); });
             _flowplayer.pluginLoader = _pluginLoader;
 			if (plugins.length == 0) {
 				log.debug("configuration has no plugins");
@@ -256,7 +257,7 @@ import org.flowplayer.model.DisplayPluginModel;
 		private function loadPlaylistFeed():void {
             var playlistFeed:String = _config.playlistFeed;
             if (! playlistFeed) {
-                initPhase2();
+                callAndHandleError(initPhase2, PlayerError.INIT_FAILED);
                 return;
             }
             log.info("loading playlist from " + playlistFeed);
@@ -266,7 +267,7 @@ import org.flowplayer.model.DisplayPluginModel;
                     function(loader:ResourceLoader):void {
                         log.info("received playlist feed");
                         _config.playlistDocument = loader.getContent() as String;
-                        initPhase2();
+                        callAndHandleError(initPhase2, PlayerError.INIT_FAILED);
                     });
         }
 		
@@ -290,7 +291,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			
 			if (++_pluginsInitialized == numPlugins) {
 				log.info("all plugins initialized");
-				initPhase4();
+				callAndHandleError(initPhase4, PlayerError.INIT_FAILED);
 			}
 			log.info(_pluginsInitialized + " out of " + numPlugins + " plugins initialized");
 		}
@@ -532,14 +533,20 @@ import org.flowplayer.model.DisplayPluginModel;
 		}
 
 		private function createFlashVarsConfig():void {
-			for (var prop:String in stage.loaderInfo.parameters) {
-				log.debug(prop + ": " + (stage.loaderInfo.parameters[prop]));
-			}
 			if (! stage.loaderInfo.parameters) {
 				return;
 			}
-			
-			_config = ConfigLoader.flow_internal::parseConfig(stage.loaderInfo.parameters["config"], playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion); 
+            var configObj:Object = ConfigLoader.parse(stage.loaderInfo.parameters["config"]);
+            var configFile:String = configObj.url;
+			if (configFile) {
+                ConfigLoader.loadConfig(configFile, function(config:Config):void {
+                    _config = config;
+                    callAndHandleError(initPhase1, PlayerError.INIT_FAILED);
+                }, new ResourceLoaderImpl(null, this), playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion);
+            } else {
+			    _config = ConfigLoader.parseConfig(configObj, playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion);
+                callAndHandleError(initPhase1, PlayerError.INIT_FAILED);
+            }
 		}
 
 		private function createPlayListController():PlayListController {
@@ -792,6 +799,14 @@ import org.flowplayer.model.DisplayPluginModel;
 
         private function get stageHeight():Number {
             return Math.max(stage.stageHeight, Preloader.stageHeight);
+        }
+
+        private function callAndHandleError(func:Function, error:PlayerError):void {
+            try {
+                func();
+            } catch (e:Error) {
+                handleError(error, e);
+            }
         }
 	}
 }
