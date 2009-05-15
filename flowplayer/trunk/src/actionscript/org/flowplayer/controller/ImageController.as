@@ -78,6 +78,7 @@ package org.flowplayer.controller {
 			clip.originalHeight = loader.getContent().height;
 			clip.originalWidth = loader.getContent().width;
 			log.info("image loaded " + clip + ", content " + loader.getContent() + ", width " + clip.originalWidth + ", height " + clip.originalHeight);
+            clip.dispatch(ClipEventType.START);
 			clip.dispatch(ClipEventType.BUFFER_FULL);
 			if (clip.duration == 0) {
 				clip.dispatchBeforeEvent(new ClipEvent(ClipEventType.FINISH));

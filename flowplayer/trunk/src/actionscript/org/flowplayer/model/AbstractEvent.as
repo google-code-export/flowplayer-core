@@ -95,9 +95,13 @@ import org.flowplayer.util.ObjectConverter;
             log.debug("fireExternal " + eventType.name + ", " + externalEventArgument + ", " + externalEventArgument2 + ", " + externalEventArgument3 + "," + externalEventArgument4 + ", " + externalEventArgument5);
 			if (!ExternalInterface.available) return true;
 			// NOTE: externalEventArgument3 is not converted!
-			var returnVal:Object = ExternalInterface.call(
-				"flowplayer.fireEvent",
-				playerId || ExternalInterface.objectID, getExternalName(eventType.name, beforePhase), convert(externalEventArgument), convert(externalEventArgument2), externalEventArgument3, externalEventArgument4, externalEventArgument5);
+            try {
+                var returnVal:Object = ExternalInterface.call(
+                    "flowplayer.fireEvent",
+                    playerId || ExternalInterface.objectID, getExternalName(eventType.name, beforePhase), convert(externalEventArgument), convert(externalEventArgument2), externalEventArgument3, externalEventArgument4, externalEventArgument5);
+            } catch (e:Error) {
+                log.error("Error in fireExternal() " + e);                
+            }
 			if (returnVal + "" == "false") return false;
 			return true;
 		}

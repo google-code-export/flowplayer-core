@@ -82,7 +82,7 @@ import org.flowplayer.model.PlayerError;
 				addCallback("startBuffering", function():void { startBuffering(); });
 				addCallback("stopBuffering", function():void { stopBuffering(); } );
                 addCallback("isFullscreen", isFullscreen);
-                addCallback("toggleFullscreen", function():void { toggleFullscreen(); });
+                addCallback("toggleFullscreen", toggleFullscreen);
 
 				addCallback("toggle", toggle);
 				addCallback("getState", function():Number { return state.code; });

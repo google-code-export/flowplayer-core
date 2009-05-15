@@ -34,9 +34,11 @@ package org.flowplayer.util {
 		
 		private static var _level:int = LEVEL_ERROR;
 		private static var _filter:String = "*";
-		private static var _instances:Array = new Array();		
-		private var _owner:String;
-		private var _enabled:Boolean = true;
+		private static var _instances:Array = new Array();
+        public static var traceEnabled:Boolean = false;
+
+        private var _owner:String;
+        private var _enabled:Boolean = true;
 
 		public function Log(owner:Object) {
 			_owner = owner is String ? owner as String : getQualifiedClassName(owner);
@@ -46,7 +48,8 @@ package org.flowplayer.util {
 		
 		private function enable():void {
 			_enabled = checkFilterEnables(_owner);
-		}		
+		}
+		
 		private function checkFilterEnables(owner:String):Boolean {
 			if (_filter == "*") return true;
 			var className:String;
@@ -71,6 +74,7 @@ package org.flowplayer.util {
 		public static function configure(config:LogConfiguration):void {
 			level = config.level;
 			filter = config.filter;
+            traceEnabled = config.trace;
 			for (var i:Number = 0; i < _instances.length; i++) {
 				Log(_instances[i]).enable();
 			}
@@ -96,28 +100,31 @@ package org.flowplayer.util {
 		public function debug(msg:String = null, ...rest):void {
 			if (!_enabled) return;
 			if (_level <= LEVEL_DEBUG)
-				write(Logger.debug, msg, rest);
+				write(Logger.debug, msg, "DEBUG", rest);
 		}
 		
 		public function error(msg:String = null, ...rest):void {
 			if (!_enabled) return;
 			if (_level <= LEVEL_ERROR)
-				write(Logger.error, msg, rest);
+				write(Logger.error, msg, "ERROR", rest);
 		}
 		
 		public function info(msg:String = null, ...rest):void {
 			if (!_enabled) return;
 			if (_level <= LEVEL_INFO)
-				write(Logger.info, msg, rest);
+				write(Logger.info, msg, "INFO", rest);
 		}
 		
 		public function warn(msg:String = null, ...rest):void {
 			if (!_enabled) return;
 			if (_level <= LEVEL_WARN)
-				write(Logger.warn, msg, rest);
+				write(Logger.warn, msg, "WARN", rest);
 		}
 		
-		private function write(writeFunc:Function, msg:String, rest:Array):void {
+		private function write(writeFunc:Function, msg:String, levelStr:String, rest:Array):void {
+            if (traceEnabled) {
+                doTrace(msg, levelStr, rest);
+            }
 			try {
 				if (rest.length > 0)
 					writeFunc(_owner + " : " + msg, rest);
@@ -128,6 +135,10 @@ package org.flowplayer.util {
 				trace(e.message);
 			}
 		}
+
+        private function doTrace(msg:String, levelStr:String, rest:Array):void {
+            trace(_owner + ":: " + levelStr + ": " + msg);
+        }
 		
 		public function get enabled():Boolean {
 			return _enabled;

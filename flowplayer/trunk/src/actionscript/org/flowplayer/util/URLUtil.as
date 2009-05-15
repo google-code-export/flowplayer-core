@@ -26,6 +26,7 @@ import flash.display.LoaderInfo;
 	 * @author anssi
 	 */
 	public class URLUtil {
+        private static var _log:Log = new Log("org.flowplayer.util::URLUtil");
 
 		
 		public static function completeURL(baseURL:String, fileName:String):String {
@@ -65,6 +66,7 @@ import flash.display.LoaderInfo;
 				var href:String = ExternalInterface.call("self.location.href.toString");
                 return baseUrlAndRest(href)[0];
 			} catch (e:Error) {
+                _log.error("error in pageUrl(): " + e);
             }
             return null;
         }

@@ -4,6 +4,8 @@ Version history:
 -----
 - Instream playback
 - Added toggleFullscreen() the API
+- Possibility to specify controls configuration in clips
+- Seek target position is now sent in the onBeforeSeek event
 Fixes:
 - The screen size was initially too small on Firefox (Mac)
 - Did not persist a zero volume value: http://www.flowplayer.org/forum/8/18413

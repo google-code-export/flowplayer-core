@@ -261,12 +261,12 @@ import org.flowplayer.util.TextUtil;
 		/**
 		 * Toggles between the full-screen and normal display modeds.
 		 */
-		public function toggleFullscreen():FlowplayerBase {
+		public function toggleFullscreen():Boolean {
 			log.debug("toggleFullscreen");
 			if (dispatchBeforeEvent(PlayerEvent.fullscreen())) {
 				_fullscreenManager.toggleFullscreen();
 			}
-			return this;
+			return _fullscreenManager.isFullscreen;
 		}
 		
 		/**
