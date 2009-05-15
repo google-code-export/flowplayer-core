@@ -64,7 +64,7 @@ package org.flowplayer.view {
             if (rotationEnabled) {
                 _rotation = new RotatingAnimation();
                 addChild(_rotation);
-                _rotation.setSize(stageWidth * 0.22, stageWidth * 0.22);
+                _rotation.setSize(Math.min(stageWidth * 0.22, 60), Math.min(stageWidth * 0.22, 60));
                 Arrange.center(_rotation, stageWidth, stageHeight);
                 _rotation.start();
             }
@@ -100,7 +100,7 @@ package org.flowplayer.view {
                 var mainClass:Class = Class(getDefinitionByName("org.flowplayer.view.Launcher"));
                 _app = new mainClass() as DisplayObject;
                 addChild(_app as DisplayObject);
-                trace("Launcher instantiated and added to frame " + currentFrame);
+                trace("Launcher instantiated");
                 trace("stage size " + stageWidth + " x " + stageHeight);
             } catch (e:Error) {
                 trace("error instantiating Launcher " + e + ": " + e.message);
@@ -116,6 +116,7 @@ package org.flowplayer.view {
                     addChild(_rotation);
                     _rotation.start();
                 }
+                return;
             }
         }
 

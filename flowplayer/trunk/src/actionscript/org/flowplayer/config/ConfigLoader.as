@@ -18,10 +18,13 @@
  */
 
 package org.flowplayer.config {
-	import org.flowplayer.flow_internal;
+    import org.flowplayer.controller.ResourceLoader;
+import org.flowplayer.flow_internal;
 	import org.flowplayer.util.Log;
 	
-	import com.adobe.serialization.json.JSON;	
+	import com.adobe.serialization.json.JSON;
+
+    use namespace flow_internal;
 
 	/**
 	 * @author anssi
@@ -29,10 +32,21 @@ package org.flowplayer.config {
 	public class ConfigLoader {
 		private static var log:Log = new Log(ConfigLoader);
 
-		flow_internal static function parseConfig(config:Object, playerSwfName:String, controlsVersion:String, audioVersion:String):Config {
-			if (!config) return new Config({}, playerSwfName, controlsVersion, audioVersion);
-			var configObj:Object = config is String ? JSON.decode(config as String) : config;
-			return new Config(configObj, playerSwfName, controlsVersion, audioVersion);
-		}
+        flow_internal static function parse(config:String):Object {
+            return JSON.decode(config);
+        }
+
+        flow_internal static function parseConfig(config:Object, playerSwfName:String, controlsVersion:String, audioVersion:String):Config {
+            if (!config) return new Config({}, playerSwfName, controlsVersion, audioVersion);
+            var configObj:Object = config is String ? JSON.decode(config as String) : config;
+            return new Config(configObj, playerSwfName, controlsVersion, audioVersion);
+        }
+
+        flow_internal static function loadConfig(fileName:String, listener:Function, loader:ResourceLoader, playerSwfName:String, controlsVersion:String, audioVersion:String):void {
+            loader.load(fileName, function(loader:ResourceLoader):void {
+                trace(loader.getContent());
+                listener(parseConfig(loader.getContent(), playerSwfName, controlsVersion, audioVersion))
+            }, true);
+        }
 	}
 }
