@@ -251,7 +251,7 @@ package org.flowplayer.model {
 		
 		public function get previousClip():Clip {
 			if (_currentPos == 0) return null;
-            return _clips[_currentPos + 1];
+            return _clips[_currentPos - 1];
 		}
 		
 		public function previous(skipPreAndPostRolls:Boolean = true):Clip {

@@ -41,6 +41,7 @@ package org.flowplayer.view {
             stop();
             if (checkLoaded()) return;
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+            addEventListener(Event.RESIZE, arrange);
         }
 
         private function get rotationEnabled():Boolean {
@@ -57,19 +58,23 @@ package org.flowplayer.view {
             }
             return false;
         }
-		
-		private function onAddedToStage(event:Event):void {
-            prepareStage();
+
+        private function arrange(event:Event = null):void {
+            stageHeight = stage.stageHeight;
+            stageWidth = stage.stageWidth;
+            _rotation.setSize(stageWidth * 0.22, stageWidth * 0.22);
+            Arrange.center(_rotation, stage.width, stage.height);
+        }
+
+        private function onAddedToStage(event:Event):void {
             trace("Preloader added to stage, stage size " + stageWidth + " x " + stageHeight);
             if (rotationEnabled) {
                 _rotation = new RotatingAnimation();
                 addChild(_rotation);
-                _rotation.setSize(Math.min(stageWidth * 0.22, 60), Math.min(stageWidth * 0.22, 60));
-                Arrange.center(_rotation, stageWidth, stageHeight);
+                arrange();
                 _rotation.start();
             }
 
-//            if (checkLoaded()) return;
             loaderInfo.addEventListener(ProgressEvent.PROGRESS, onLoadProgress);
             loaderInfo.addEventListener(Event.COMPLETE, init);
 		}
@@ -92,7 +97,9 @@ package org.flowplayer.view {
 
             if (_rotation) {
                 _rotation.stop();
-                removeChild(_rotation);
+                if (_rotation.parent) {
+                    removeChild(_rotation);
+                }
             }
             nextFrame();
             prepareStage();
