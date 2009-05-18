@@ -267,6 +267,7 @@ import org.flowplayer.model.DisplayPluginModel;
                     function(loader:ResourceLoader):void {
                         log.info("received playlist feed");
                         _config.playlistDocument = loader.getContent() as String;
+                        _config.getPlaylist().dispatchPlaylistReplace();
                         callAndHandleError(initPhase2, PlayerError.INIT_FAILED);
                     });
         }

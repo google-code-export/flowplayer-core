@@ -78,20 +78,27 @@ package org.flowplayer.model {
 		}
 		
 		private function doReplace(newClips:Array, silent:Boolean = false):void {
-			var oldClipsEventHelper:ClipEventSupport = new ClipEventSupport(_commonClip, _clips);
+            var oldClips:Array = _clips.concat([]);
 			initialize(newClips);
             if (! silent) {
-                doDispatchEvent(new ClipEvent(ClipEventType.PLAYLIST_REPLACE, oldClipsEventHelper), true);
+                dispatchPlaylistReplace(oldClips);
             }
 		}
+
+        flow_internal function dispatchPlaylistReplace(oldClips:Array = null):void {
+            log.debug("dispatchPlaylistReplace");
+            var oldClipsEventHelper:ClipEventSupport = new ClipEventSupport(_commonClip, oldClips || []);        
+            doDispatchEvent(new ClipEvent(ClipEventType.PLAYLIST_REPLACE, oldClipsEventHelper), true);        }
 
 
         /**
          * Adds a new clip into the playlist. Insertion of clips does not change the current clip.
          * @param clip
          * @param pos optional insertion point, if not given the clip is added to the end of the list.
+         * @param silent if true does not dispatch the CLIP_ADD event
+         * @see ClipEventType#CLIP_ADD
          */
-        public function addClip(clip:Clip, pos:int = -1):void {
+        public function addClip(clip:Clip, pos:int = -1, silent:Boolean = false):void {
             var index:Number = positionOf(pos);
             if (clip.position >= 0 || clip.position == -1 || clip.position == -2) {
                 addChildClip(clip, pos);
@@ -110,7 +117,9 @@ package org.flowplayer.model {
                 }
                 super.setClips(_clips);
             }
-            doDispatchEvent(new ClipEvent(ClipEventType.CLIP_ADD, pos >= 0 ? pos : clips.length - 1), true);
+            if (! silent) {
+                doDispatchEvent(new ClipEvent(ClipEventType.CLIP_ADD, pos >= 0 ? pos : clips.length - 1), true);
+            }
         }
 
         /**
@@ -152,14 +161,6 @@ package org.flowplayer.model {
                 currentInPos = clips[pos];
                 _clips.splice(_clips.indexOf(currentInPos.preroll || currentInPos), 0, clip);
             }
-//            if (clip.preroll) {
-//                log.debug("doAddClip(), clip has a preroll, adding that");
-//                addChildClip(clip.preroll, index, dispatchEvents);
-//            }
-//            if (clip.postroll) {
-//                log.debug("doAddClip(), clip has a postroll, adding that");
-//                addChildClip(clip.postroll, index, dispatchEvents);
-//            }
             var nested:Array = clip.playlist;
             for (var i:int = 0; i < nested.length; i++) {
                 var nestedClip:Clip = nested[i] as Clip;

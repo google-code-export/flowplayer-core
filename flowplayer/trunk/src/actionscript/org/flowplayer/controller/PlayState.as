@@ -218,9 +218,9 @@ package org.flowplayer.controller {
         }
 
 		protected function onClipDone(event:ClipEvent):void {
-			log.info(this + " onClipDone");
             var defaultAction:Boolean = ! event.isDefaultPrevented();
             var clip:Clip = event.target as Clip;
+            log.info(this + " onClipDone " + clip);
             clip.dispatchEvent(event);
 
             if (clip.isMidStream) {
