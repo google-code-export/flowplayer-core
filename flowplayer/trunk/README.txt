@@ -2,6 +2,7 @@ Version history:
 
 3.1.1
 -----
+- External configuration files
 - Instream playback
 - Added toggleFullscreen() the API
 - Possibility to specify controls configuration in clips
