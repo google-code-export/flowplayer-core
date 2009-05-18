@@ -536,16 +536,18 @@ import org.flowplayer.model.DisplayPluginModel;
 			if (! stage.loaderInfo.parameters) {
 				return;
 			}
-            var configObj:Object = ConfigLoader.parse(stage.loaderInfo.parameters["config"]);
-            var configFile:String = configObj.url;
-			if (configFile) {
-                ConfigLoader.loadConfig(configFile, function(config:Config):void {
+            var configStr:String = stage.loaderInfo.parameters["config"];
+            var configObj:Object = configStr.indexOf("{") == 0 ? ConfigLoader.parse(configStr) : {};
+            
+            if (configStr.indexOf("{") == 0 && ! configObj.hasOwnProperty("url")) {
+                _config = ConfigLoader.parseConfig(configObj, playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion);
+                callAndHandleError(initPhase1, PlayerError.INIT_FAILED);
+
+            } else {
+                ConfigLoader.loadConfig(configObj.hasOwnProperty("url") ? String(configObj["url"]) : configStr, function(config:Config):void {
                     _config = config;
                     callAndHandleError(initPhase1, PlayerError.INIT_FAILED);
                 }, new ResourceLoaderImpl(null, this), playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion);
-            } else {
-			    _config = ConfigLoader.parseConfig(configObj, playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion);
-                callAndHandleError(initPhase1, PlayerError.INIT_FAILED);
             }
 		}
 
