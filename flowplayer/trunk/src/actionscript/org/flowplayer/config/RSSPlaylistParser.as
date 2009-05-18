@@ -28,9 +28,9 @@ import org.flowplayer.util.Log;
         }
         
         public function parseClip(item:XML, playlist:Playlist):void {
-            log.debug("parseClip");
             var clip:Clip =  new Clip();
-            playlist.addClip(clip);
+            log.debug("parseClip", clip);
+            playlist.addClip(clip, -1 , true);
             for each (var elem:XML in item.children()) {
                 log.debug(elem.localName() + ": " + elem.text().toString());
                 
@@ -74,9 +74,9 @@ import org.flowplayer.util.Log;
         }
 
         private function getCustomPropName(elem:XML):String {
-            if (! elem.namespace()) return elem.localName();
-            if (! elem.namespace().prefix) return elem.localName();
-            return elem.namespace().prefix + ":" + elem.localName(); 
+            if (! elem.namespace()) return elem.localName().toString();
+            if (! elem.namespace().prefix) return elem.localName().toString();
+            return "'" + elem.namespace().prefix + ":" + elem.localName().toString() + "'";
 //            return elem.namespace().prefix + elem.localName().charAt(0).toUpperCase() + elem.localName().substring(1);;
         }
         
@@ -90,11 +90,11 @@ import org.flowplayer.util.Log;
             }
             var result:Object = new Object();
             for each (var attr:XML in elem.attributes()) {
-                result[attr.localName()] = attr.toString();
+                result[attr.localName().toString()] = attr.toString();
             }
 
             for each (var child:XML in elem.children()) {
-                result[child.localName() || "text"] = parseCustomProperty(child);
+                result[child.localName() ? child.localName().toString() : "text"] = parseCustomProperty(child);
             }
             return result;
         }

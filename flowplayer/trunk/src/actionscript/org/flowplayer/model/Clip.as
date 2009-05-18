@@ -53,7 +53,7 @@ import org.flowplayer.flow_internal;
 		private var _type:ClipType;
 		private var _start:Number;
         private var _position:Number = -100;
-		private var _duration:Number;
+		private var _duration:Number = 0;
         private var _metaData:Object = undefined;
 		private var _autoPlay:Boolean = true;
 		private var _autoPlayNext:Boolean = false;
@@ -143,6 +143,7 @@ import org.flowplayer.flow_internal;
         }
 
         internal function setEventListeners(playlist:Playlist):void {
+            unbindEventListeners();
             onAll(playlist.commonClip.onClipEvent);
             onBeforeAll(playlist.commonClip.onBeforeClipEvent);
         }

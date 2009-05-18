@@ -40,6 +40,7 @@ package org.flowplayer.controller {
             _inStreamTracker = new InStreamTracker(playlistController);
             playList.onStart(onStart, hasMidstreamClips);
             playList.onResume(onResume, hasMidstreamClips);
+            playList.onBeforeFinish(onClipDone);
         }
 
         private function hasMidstreamClips(clip:Clip):Boolean {
@@ -70,7 +71,6 @@ package org.flowplayer.controller {
                 eventSupport.onPause(onPause);
                 eventSupport.onStop(onStop);
                 eventSupport.onFinish(onFinish);
-                eventSupport.onBeforeFinish(onClipDone);
                 eventSupport.onStop(onClipStop);
                 eventSupport.onSeek(onSeek, hasMidstreamClips);
                 eventSupport.onClipAdd(onClipAdd);
@@ -78,7 +78,7 @@ package org.flowplayer.controller {
                 eventSupport.unbind(onPause);
                 eventSupport.unbind(onStop);
                 eventSupport.unbind(onFinish);
-                eventSupport.unbind(onClipDone, ClipEventType.FINISH, true);
+//                eventSupport.unbind(onClipDone, ClipEventType.FINISH, true);
                 eventSupport.unbind(onClipStop);
                 eventSupport.unbind(onSeek);
                 eventSupport.unbind(onClipAdd);
