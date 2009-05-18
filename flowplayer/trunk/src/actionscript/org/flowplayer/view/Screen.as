@@ -263,7 +263,7 @@ package org.flowplayer.view {
 
         private function handleStart(clip:Clip, pauseAfterStart:Boolean):void {
             if (clip.isNullClip) return;
-
+            log.debug("handleStart(), previous clip " + _playList.previousClip);
             if (pauseAfterStart && _playList.previousClip && _playList.previousClip.type == ClipType.IMAGE) {
                 log.debug("autoBuffering next clip on a splash image, will not show next display");
                 setDisplayVisibleIfHidden(_playList.previousClip);

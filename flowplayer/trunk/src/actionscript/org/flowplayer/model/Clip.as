@@ -390,8 +390,8 @@ import org.flowplayer.flow_internal;
 		
 		[Value]
 		public function get autoPlay():Boolean {
-            if (isPreroll) return _autoPlay;
-            if (preroll) return true;
+            if (isPreroll) return _parent._autoPlay;
+            if (! _parent && preroll) return true;
             if (isPostroll) return true;
 			return _autoPlay;
 		}
