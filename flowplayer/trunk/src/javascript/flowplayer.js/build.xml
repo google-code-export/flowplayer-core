@@ -4,7 +4,7 @@
 	
 	<property name="BUILDER_HOME" value="../../../../builder"/>	
 	<import file="${BUILDER_HOME}/build.xml"/> 
-	<property name="version" value="${v.flowplayer}"/>
+	<property name="version" value="${v.js_core}"/>
 	<property name="flashembed-version" value="${v.flashembed}"/>
 	
 	<!-- concat -->
@@ -12,8 +12,8 @@
 		<concat destfile="flowplayer.js">
 			<fileset dir="${basedir}" includes="flowplayer-src.js"/>
 			
-			<fileset dir="/opt/flowplayer/releases/flashembed"
-				includes="flashembed-${flashembed-version}.js"/> 
+			<fileset dir="/opt/flowplayer/webapp/js/tools"
+				includes="tools.flashembed-${flashembed-version}.js"/> 
 		</concat>
 	</target>
 	

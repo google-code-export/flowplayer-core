@@ -26,11 +26,11 @@
 /* 
 	FEATURES 
 	--------
+	- $f() and flowplayer() functions	
 	- handling multiple instances 
 	- Flowplayer programming API 
 	- Flowplayer event model	
-	- player loading / unloading
-	- $f() function
+	- player loading / unloading	
 	- jQuery support
 */ 
  
@@ -257,7 +257,7 @@
 					}
 				}  
 	
-				if (evt == 'onStart' || evt == 'onUpdate') {
+				if (evt == 'onStart' || evt == 'onUpdate' || evt == 'onResume') {
 					
 					extend(target, arg1);					
 					
@@ -520,20 +520,20 @@ function Player(wrapper, params, conf) {
 		
 		
 		load: function(fn) { 
-			
+						
 			if (!api && self._fireEvent("onBeforeLoad") !== false) {
-				
+			
 				// unload all instances
 				each(players, function()  {
 					this.unload();		
 				});
-				
-				html = wrapper.innerHTML;
+							
+				html = wrapper.innerHTML;				
 				
 				// do not use splash as alternate content for flashembed
-				if (html && !flashembed.isSupported([9, 0])) {
-					wrappper.innerHTML = "";	
-				}
+				if (html && !flashembed.isSupported(params.version)) {
+					wrapper.innerHTML = "";					
+				}				  
 				
 				// install Flash object inside given container
 				flashembed(wrapper, params, {config: conf});
@@ -561,7 +561,7 @@ function Player(wrapper, params, conf) {
 			if (html.replace(/\s/g,'') !== '') {
 				
 				if (self._fireEvent("onBeforeUnload") === false) {
-					return false;
+					return self;
 				}	
 				api.fp_close();
 				api = null;				
@@ -645,11 +645,11 @@ function Player(wrapper, params, conf) {
 		},
 		
 		// "lazy" play
-		play: function(clip) {
+		play: function(clip, instream) {
 			
 			function play() {
 				if (clip !== undefined) {
-					self._api().fp_play(clip);
+					self._api().fp_play(clip, instream);
 				} else {
 					self._api().fp_play();	
 				}
@@ -668,7 +668,7 @@ function Player(wrapper, params, conf) {
 		},
 		
 		getVersion: function() {
-			var js = "flowplayer.js 3.1.0";
+			var js = "flowplayer.js @VERSION";
 			if (api) {
 				var ver = api.fp_getVersion();
 				ver.push(js);
@@ -697,7 +697,7 @@ function Player(wrapper, params, conf) {
 	
 	
 	// event handlers
-	each(("Click*,Load*,Unload*,Keypress*,Volume*,Mute*,Unmute*,PlaylistReplace,Fullscreen*,FullscreenExit,Error").split(","),
+	each(("Click*,Load*,Unload*,Keypress*,Volume*,Mute*,Unmute*,PlaylistReplace,ClipAdd,Fullscreen*,FullscreenExit,Error").split(","),
 		function() {		 
 			var name = "on" + this;
 			
@@ -721,13 +721,22 @@ function Player(wrapper, params, conf) {
 	
 	
 	// core API methods
-	each(("pause,resume,mute,unmute,stop,toggle,seek,getStatus,getVolume,setVolume,getTime,isPaused,isPlaying,startBuffering,stopBuffering,isFullscreen,reset,close,setPlaylist").split(","),		
+	each(("pause,resume,mute,unmute,stop,toggle,seek,getStatus,getVolume,setVolume,getTime,isPaused,isPlaying,startBuffering,stopBuffering,isFullscreen,toggleFullscreen,reset,close,setPlaylist,addClip").split(","),		
 		function() {		 
 			var name = this;
 			
-			self[name] = function(arg) {
+			self[name] = function(a1, a2) {
 				if (!api) { return self; }
-				var ret = (arg === undefined) ? api["fp_" + name]() : api["fp_" + name](arg);
+				var ret = null;
+				
+				// two arguments
+				if (a1 !== undefined && a2 !== undefined) { 
+					ret = api["fp_" + name](a1, a2);
+					
+				} else { 
+					ret = (a1 === undefined) ? api["fp_" + name]() : api["fp_" + name](a1);
+				}
+				
 				return ret == 'undefined' ? self : ret;
 			};			 
 		}
@@ -742,16 +751,12 @@ function Player(wrapper, params, conf) {
 		
 		if (typeof a == 'string') { a = [a]; }
 		
-		var evt = a[0];
-		var arg0 = a[1];
-		var arg1 = a[2];
-		var arg2 = a[3]; 
-		
+		var evt = a[0], arg0 = a[1], arg1 = a[2], arg2 = a[3], i = 0;  		
 		
 		if (conf.debug) { log(a); }				
 		
 		// internal onLoad
-		if (!api && evt == 'onLoad' && arg0 == 'player') {
+		if (!api && evt == 'onLoad' && arg0 == 'player') {						
 			
 			api = api || el(apiId); 
 			swfHeight = api.clientHeight;
@@ -798,7 +803,7 @@ function Player(wrapper, params, conf) {
 			return;
 		}		
 
-		// onPlaylistReplace
+		// replace whole playlist
 		if (evt == 'onPlaylistReplace') {
 			playlist = [];
 			var index = 0;
@@ -807,6 +812,23 @@ function Player(wrapper, params, conf) {
 			});		
 		}
 		
+		// insert new clip to the playlist. arg0 = clip, arg1 = index 
+		if (evt == 'onClipAdd') {
+			
+			// instream clip additions are ignored at this point
+			if (arg0.isInStream) { return; }
+			
+			// add new clip into playlist			
+			arg0 = new Clip(arg0, arg1, self);
+			playlist.splice(arg1, 0, arg0);
+			
+			// increment index variable for the rest of the clips on playlist 
+			for (i = arg1 + 1; i < playlist.length; i++) {
+				playlist[i].index++;	
+			}
+		}
+		
+		
 		var ret = true;
 		
 		// clip event
@@ -814,6 +836,7 @@ function Player(wrapper, params, conf) {
 			
 			activeIndex = arg0;
 			var clip = playlist[arg0];			
+
 			if (clip) {
 				ret = clip._fireEvent(evt, arg1, arg2);	
 			} 
@@ -825,8 +848,7 @@ function Player(wrapper, params, conf) {
 			}  
 		} 
 		
-		// player event	 
-		var i = 0;
+		// trigger player event
 		each(listeners[evt], function() {
 			ret = this.call(self, arg0, arg1);		
 			
@@ -925,8 +947,7 @@ function Player(wrapper, params, conf) {
 			clip = new Clip(clip, index, self);
 			playlist.push(clip);						
 			index++;			
-		});
-			
+		});				
 		
 		// event listeners
 		each(conf, function(key, val) {
@@ -993,7 +1014,6 @@ function Player(wrapper, params, conf) {
 			// load player
 			self.load();
 		}
-		
 	}
 
 	// possibly defer initialization until DOM get's loaded
@@ -1145,9 +1165,9 @@ extend(window.$f, {
 });
 
 
-// sometimes IE leaves sockets open
+/* sometimes IE leaves sockets open (href="javascript:..." links break this)
 if (document.all) {
-	window.onbeforeunload = function() {
+	window.onbeforeunload = function(e) { 
 		$f("*").each(function() {
 			if (this.isLoaded()) {
 				this.close();	
@@ -1155,7 +1175,7 @@ if (document.all) {
 		});
 	};	
 }
-
+*/
 
 	
 //}}}
