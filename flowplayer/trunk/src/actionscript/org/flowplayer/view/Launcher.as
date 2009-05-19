@@ -562,6 +562,9 @@ import org.flowplayer.model.DisplayPluginModel;
         }
 
         private function createHttpProviders():void {
+            if (! _providers) {
+                _providers = new Dictionary();
+            }
             _providers["http"] = createProvider("http");
             _providers["httpInstream"] = createProvider("httpInstream");
         }
@@ -808,7 +811,8 @@ import org.flowplayer.model.DisplayPluginModel;
             try {
                 func();
             } catch (e:Error) {
-                handleError(error, e);
+                handleError(error, e, false);
+                throw e;
             }
         }
 	}
