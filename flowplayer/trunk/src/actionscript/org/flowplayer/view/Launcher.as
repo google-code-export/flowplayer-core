@@ -225,7 +225,6 @@ import org.flowplayer.model.DisplayPluginModel;
 		private function onStageResize(event:Event = null):void {
 			setSize(stage.stageWidth, stage.stageHeight);
 			arrangeCanvasLogo();
-            arrangeScreen();
 		}
 
 		private function arrangeCanvasLogo():void {
@@ -468,7 +467,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			log.debug("arranging screen to pos " + screen.position);
 			screen.display = "block";
 			screen.getDisplayObject().visible = true;
-			_pluginRegistry.updateDisplayProperties(screen);
+			_pluginRegistry.updateDisplayProperties(screen, true);
 			_panel.update(screen.getDisplayObject(), screen);
 			_panel.draw(screen.getDisplayObject());
 		}
