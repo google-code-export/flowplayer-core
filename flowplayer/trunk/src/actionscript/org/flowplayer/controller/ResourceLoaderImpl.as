@@ -172,5 +172,9 @@ package org.flowplayer.controller {
         public function get loadComplete():Boolean {
             return _loadCompete;
         }
+
+        public function get baseUrl():String {
+            return _baseUrl;
+        }
     }
 }

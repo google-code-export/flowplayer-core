@@ -73,7 +73,7 @@ package org.flowplayer.config {
             var playList:Playlist = new Playlist(_commonClip);
 
             if (_playlistFeed) {
-                parse(_playlistFeed, playList);
+                parse(_playlistFeed, playList, _commonClipObject);
             } else if (_clipObjects && _clipObjects.length > 0) {
                 playList.setClips(createClips(_clipObjects));
             } else if (_commonClip) {
@@ -179,8 +179,8 @@ package org.flowplayer.config {
 			return Math.round(time * timeMultiplier / 100) * 100;
 		}
 
-        private function parse(document:String, playlist:Playlist):void {
-            new RSSPlaylistParser().parse(document, playlist);
+        private function parse(document:String, playlist:Playlist, commonClipObj:Object):void {
+            new RSSPlaylistParser().parse(document, playlist, commonClipObj);
         }
 
         public function get playlistFeed():String {

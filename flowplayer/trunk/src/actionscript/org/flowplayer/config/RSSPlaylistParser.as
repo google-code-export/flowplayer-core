@@ -4,13 +4,14 @@ import org.flowplayer.model.Clip;
 import org.flowplayer.model.ClipType;
     import org.flowplayer.model.Playlist;
 import org.flowplayer.util.Log;
+    import org.flowplayer.util.PropertyBinder;
 
 
     
     internal class RSSPlaylistParser {
         private var log:Log = new Log(this);
 
-        public function parse(rawRSS:String, playlist:Playlist):void {
+        public function parse(rawRSS:String, playlist:Playlist, commonClipObject:Object):void {
             log.info("parse");
             if(! XMLUtil.isValidXML(rawRSS)) {
                 throw new Error("Feed does not contain valid XML.");
@@ -20,15 +21,17 @@ import org.flowplayer.util.Log;
                 if (ch.localName() == 'channel') {
                     for each (var item:XML in ch.children()) {
                         if(item.name() == 'item') {
-                            parseClip(item, playlist);
+                            parseClip(item, playlist, commonClipObject);
                         }
                     }
                 }
             }
         }
         
-        public function parseClip(item:XML, playlist:Playlist):void {
+        public function parseClip(item:XML, playlist:Playlist, commonClipObject:Object):void {
             var clip:Clip =  new Clip();
+            new PropertyBinder(clip, "customProperties").copyProperties(commonClipObject) as Clip;
+            
             log.debug("parseClip", clip);
             playlist.addClip(clip, -1 , true);
             for each (var elem:XML in item.children()) {

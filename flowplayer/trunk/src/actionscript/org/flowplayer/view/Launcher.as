@@ -157,8 +157,6 @@ import org.flowplayer.model.DisplayPluginModel;
             log.debug("initPhase3, all plugins loaded");
             createScreen();
 
-			_pluginLoader.removeEventListener(Event.COMPLETE, this.initPhase3);
-
             _config.getPlaylist().onBeforeBegin(function(event:ClipEvent):void { hideErrorMessage(); });
             if (_playButtonOverlay) {
                 PlayButtonOverlayView(_playButtonOverlay.getDisplayObject()).playlist = _config.getPlaylist();
@@ -241,17 +239,22 @@ import org.flowplayer.model.DisplayPluginModel;
 			for (var i:Number = 0; i < plugins.length; i++) {
 				log.info("" + plugins[i]);
 			}
-			_pluginLoader = new PluginLoader(URLUtil.playerBaseUrl(loaderInfo), _pluginRegistry, this, useExternalInterfade(), onPluginLoad, onPluginLoadError);
-			_pluginLoader.addEventListener(Event.COMPLETE, function():void { callAndHandleError(initPhase3, PlayerError.INIT_FAILED); });
+			_pluginLoader = new PluginLoader(URLUtil.playerBaseUrl(loaderInfo), _pluginRegistry, this, useExternalInterfade());
+			_pluginLoader.addEventListener(Event.COMPLETE, pluginLoadListener);
             _flowplayer.pluginLoader = _pluginLoader;
 			if (plugins.length == 0) {
 				log.debug("configuration has no plugins");
 				initPhase3();
 			} else {
 				log.debug("loading plugins and providers");
-				_pluginLoader.load(plugins);
+				_pluginLoader.load(plugins, onPluginLoad, onPluginLoadError);
 			}
 		}
+
+        private function pluginLoadListener(event:Event = null):void {
+            _pluginLoader.removeEventListener(Event.COMPLETE, pluginLoadListener);
+            callAndHandleError(initPhase3, PlayerError.INIT_FAILED);
+        }
 
 		private function loadPlaylistFeed():void {
             var playlistFeed:String = _config.playlistFeed;

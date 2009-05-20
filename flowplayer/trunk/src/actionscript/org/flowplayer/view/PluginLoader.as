@@ -72,13 +72,11 @@ import org.flowplayer.model.Plugin;
 		private var _loadListener:Function;
         private var _loadComplete:Boolean;
 
-		public function PluginLoader(baseUrl:String, pluginRegistry:PluginRegistry, errorHandler:ErrorHandler, useExternalInterface:Boolean, loadListener:Function, loadErrorListener:Function) {
+		public function PluginLoader(baseUrl:String, pluginRegistry:PluginRegistry, errorHandler:ErrorHandler, useExternalInterface:Boolean) {
 			_baseUrl = baseUrl;
 			_pluginRegistry = pluginRegistry;
 			_errorHandler = errorHandler;
 			_useExternalInterface = useExternalInterface;
-			_loadListener = loadListener;
-			_loadErrorListener = loadErrorListener;
 			_loadedCount = 0;
 		}
 
@@ -101,11 +99,15 @@ import org.flowplayer.model.Plugin;
 
 		public function loadPlugin(model:Loadable, callback:Function = null):void {
 			_callback = callback;
-			load([model]);
+            _loadListener = null;
+            _loadErrorListener = null;
+			load([model], null, null);
 		}
 
-		public function load(plugins:Array):void {
+		public function load(plugins:Array, loadListener:Function, loadErrorListener:Function):void {
 			log.debug("load()");
+            _loadListener = loadListener;
+            _loadErrorListener = loadErrorListener;
 
             Security.allowDomain("*");
 
@@ -226,8 +228,12 @@ import org.flowplayer.model.Plugin;
 				_pluginRegistry.registerGenericPlugin(plugin);
 			}
 			if (pluginInstance is Plugin) {
-				plugin.onLoad(_loadListener);
-				plugin.onError(_loadErrorListener);
+                if (_loadListener != null) {
+                    plugin.onLoad(_loadListener);
+                }
+                if (_loadErrorListener != null) {
+                    plugin.onError(_loadErrorListener);
+                }
 			}
 			if (plugin is Callable && _useExternalInterface) {
 				ExternalInterfaceHelper.initializeInterface(plugin as Callable, pluginInstance);
