@@ -258,7 +258,12 @@ package org.flowplayer.view {
         private function onResume(event:ClipEvent):void {
             var clip:Clip = event.target as Clip;
             setDisplayVisibleIfHidden(clip);
-            hideAllDisplays(_displays[clip]);
+            
+            var shown:Array = [_displays[clip]];
+            if (onAudioWithRelatedImage(clip)) {
+                shown.push(_displays[_playList.previousClip]);
+            }
+            hideAllDisplays(shown);
         }
 
         private function handleStart(clip:Clip, pauseAfterStart:Boolean):void {
@@ -274,19 +279,23 @@ package org.flowplayer.view {
             }
 
             if (_playList.previousClip && clip.type == ClipType.AUDIO) {
-                log.debug("this is an audio clip, will check if previous clip was an image that should stay visible");
-                if (_playList.previousClip.type == ClipType.IMAGE && clip.image) {
-                    log.debug("previous image stays visible");
+                if (onAudioWithRelatedImage(clip)) {
                     setDisplayVisibleIfHidden(_playList.previousClip);
                 } else {
-                    log.debug("hiding all displays for this audio clip");
                     hideAllDisplays();
                 }
                 _prevClip = clip;
                 return;
             }
+            
             setDisplayVisibleIfHidden(clip);
-            hideAllDisplays(_displays[clip]);
+            hideAllDisplays([_displays[clip]]);
+        }
+
+        private function onAudioWithRelatedImage(clip:Clip):Boolean {
+            if (! _playList.previousClip) return false;
+            if (clip.type != ClipType.AUDIO) return false;
+            return _playList.previousClip.type == ClipType.IMAGE && _playList.previousClip.image;
         }
 
 		private function setDisplayVisibleIfHidden(clip:Clip):void {
@@ -296,12 +305,12 @@ package org.flowplayer.view {
 			}
 		}
 
-		private function hideAllDisplays(except:MediaDisplay = null):void {
+		private function hideAllDisplays(except:Array = null):void {
 			var clips:Array = _playList.clips.concat(_playList.childClips);
 			for (var i:Number = 0; i < clips.length; i++) {
 				var clip:Clip = clips[i] as Clip;
 				var disp:MediaDisplay = _displays[clip];
-				if (disp && (! except || disp != except)) {
+				if (disp && (! except || except.indexOf(disp) < 0)) {
 					setDisplayVisible(clips[i] as Clip, false);
 				}
 			}

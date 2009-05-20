@@ -44,7 +44,8 @@ package org.flowplayer.view {
 		public function Panel() {
 			addEventListener(Event.ADDED_TO_STAGE, createLayout);
 		}
-		public function addView(view:DisplayObject, resizeListener:Object = null, properties:DisplayProperties = null):void {
+
+		public function addView(view:DisplayObject, resizeListener:Object = null, properties:DisplayProperties = null):void {
 			if (!properties) {
 				properties = new DisplayPropertiesImpl();
 				properties.left = 0;

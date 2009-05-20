@@ -38,7 +38,8 @@ package org.flowplayer.view {
 	import flash.geom.Rectangle;
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
-	import flash.utils.Timer;	
+	import flash.utils.Timer;	
+
 	/**
 	 * @author api
 	 */
@@ -66,9 +67,6 @@ package org.flowplayer.view {
 				_copyrightNotice = LogoUtil.createCopyrightNotice(10);
 				addChild(_copyrightNotice);
 				createLogoImage(new FlowplayerLogo());
-//				var logoTimer:Timer = new Timer(1000);
-//				logoTimer.addEventListener(TimerEvent.TIMER, onLogoTimer);
-//				logoTimer.start();
 			}
 			
 		}
@@ -100,7 +98,8 @@ package org.flowplayer.view {
 
 				CONFIG::freeVersion {
 					_copyrightNotice.y = _image.height;
-					_copyrightNotice.width = width;
+                _copyrightNotice.visible = _copyrightNotice.textWidth < width;
+                _copyrightNotice.width = width;
 				}
 			}
 		}
@@ -127,7 +126,8 @@ package org.flowplayer.view {
 		private function loadLogoImage():void {
 			if (_model.url) {
 				log.debug("loading image from " + _model.url);
-				_player.createLoader().load(_model.url, onImageLoaded);
+                var loader:ResourceLoader = new ResourceLoaderImpl(URLUtil.playerBaseUrl(_panel.loaderInfo), _player);
+				loader.load(_model.url, onImageLoaded);
 			}
 		}
 
@@ -152,7 +152,8 @@ package org.flowplayer.view {
 				hide();
 			}
 		}
-		private function setEventListeners():void {
+
+		private function setEventListeners():void {
 			_panel.stage.addEventListener(FullScreenEvent.FULL_SCREEN, onFullscreen);
 			
 			if (_model.linkUrl) {
@@ -194,6 +195,7 @@ package org.flowplayer.view {
 		}
 
 		private function update():void {
+            if (! this.parent) return;
 			log.debug("updating " + _model.dimensions);
 			_panel.update(this, _model);
 			_panel.draw(this);
