@@ -46,7 +46,7 @@ package org.flowplayer.controller {
             var children:Array = clip.playlist;
             if (children.length == 0) return false;
             for (var i:int = 0; i < children.length; i++) {
-                if (Clip(children[i]).isMidStream) {
+                if (Clip(children[i]).isMidroll) {
                     return true;
                 }
             }
@@ -138,7 +138,7 @@ package org.flowplayer.controller {
         override protected function onClipStop(event:ClipEvent):void {
             super.onClipStop(event);
             var clip:Clip = event.target as Clip;
-            if (clip.isMidStream) {
+            if (clip.isMidroll) {
                 _inStreamTracker.stop();
                 _inStreamTracker.reset();
             }
