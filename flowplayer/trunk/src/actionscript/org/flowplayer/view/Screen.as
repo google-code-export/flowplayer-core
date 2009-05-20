@@ -51,6 +51,7 @@ package org.flowplayer.view {
 		private var _pluginRegistry:PluginRegistry;
 
 		public function Screen(playList:Playlist, animationEngine:AnimationEngine, play:PlayButtonOverlay, pluginRegistry:PluginRegistry) {
+            log.debug("in constructor");
             _displays = new Dictionary();
 			_displayFactory = new MediaDisplayFactory(playList);
 			_resizer = new ClipResizer(playList, this);
