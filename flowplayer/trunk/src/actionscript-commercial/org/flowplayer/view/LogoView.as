@@ -20,8 +20,8 @@
 package org.flowplayer.view {
 	import flash.text.TextField;	
 	
-	import org.flowplayer.controller.ResourceLoader;	
-	import org.flowplayer.util.URLUtil;	
+import org.flowplayer.controller.ResourceLoader;
+import org.flowplayer.util.URLUtil;
 	import org.flowplayer.controller.ResourceLoaderImpl;
 	import org.flowplayer.model.DisplayProperties;
 	import org.flowplayer.model.Logo;
@@ -127,7 +127,7 @@ package org.flowplayer.view {
 			if (_model.url) {
 				log.debug("loading image from " + _model.url);
                 var loader:ResourceLoader = new ResourceLoaderImpl(URLUtil.playerBaseUrl(_panel.loaderInfo), _player);
-				loader.load(_model.url, onImageLoaded);
+                loader.load(_model.url, onImageLoaded);
 			}
 		}
 
