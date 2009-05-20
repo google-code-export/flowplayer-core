@@ -223,8 +223,8 @@ package org.flowplayer.controller {
             log.info(this + " onClipDone " + clip);
             clip.dispatchEvent(event);
 
-            if (clip.isMidStream) {
-                log.debug("inStream clip finished");
+            if (clip.isMidroll) {
+                log.debug("midroll clip finished");
                 stop(false, true);
                 playList.setInStreamClip(null);
                 changeState(pausedState);
@@ -259,8 +259,8 @@ package org.flowplayer.controller {
 
             var clip:Clip = Clip(event.target);
 
-            if (clip.isMidStream) {
-                log.debug("midstream clip finished");
+            if (clip.isMidroll) {
+                log.debug("midroll clip finished");
                 playList.setInStreamClip(null);
                 changeState(pausedState);
                 playListController.resume();

@@ -109,7 +109,7 @@ import org.flowplayer.flow_internal;
             if (clip.isPostroll) {
                 _postroll = clip;
             }
-            if (clip.isMidStream) {
+            if (clip.isMidroll) {
                 log.info("adding midstream clip " + clip + ", position " + clip.position + " to parent clip " + this);
                 _childPlaylist.addClip(clip);
             }
@@ -783,7 +783,7 @@ import org.flowplayer.flow_internal;
             return _parent != null;
         }
 
-        public function get isMidStream():Boolean {
+        public function get isMidroll():Boolean {
             if (isOneShot) return true;
             return _parent && _position > 0;
         }
