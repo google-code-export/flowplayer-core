@@ -1,5 +1,8 @@
 Version history:
 
+3.1.2
+-----
+
 3.1.1
 -----
 - External configuration files

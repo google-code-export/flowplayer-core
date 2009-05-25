@@ -506,7 +506,6 @@ import org.flowplayer.model.PluginModel;
 		 * Resolves the url for the specified clip.
 		 */		
 		protected final function resolveClipUrl(clip:Clip, successListener:Function):void {
-            clip.resolvedUrl = null;
 			clipURLResolver.resolve(this, clip, successListener);
 		}
 

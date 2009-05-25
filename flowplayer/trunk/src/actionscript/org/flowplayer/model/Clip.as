@@ -284,6 +284,11 @@ import org.flowplayer.flow_internal;
             _resolvedUrl = val;
         }
 
+        [Value]
+        public function get resolvedUrl():String {
+            return _resolvedUrl;
+        }
+
 		[Value]
 		public function get completeUrl():String {
 			return URLUtil.completeURL(_baseUrl, url);
