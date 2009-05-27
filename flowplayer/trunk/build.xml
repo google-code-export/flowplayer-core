@@ -4,23 +4,20 @@
 	<property name="version-1" value="3" />
 	<property name="version-2" value="1" />
 	<property name="version-3" value="2" />
-	<property name="version-status" value="dev" />
+	<property name="version-status" value="prod" />
 	<property name="controls-version-info" value="3.1.1" />
 	<property name="audio-version-info" value="3.1.0" />
 	<property name="flowplayer-js-version-info" value="3.1.1" />
 	<property name ="source-dist-root-folder" value="flowplayer" />
 	
-	<property name="version-status-quoted" value="&quot;${version-status}&quot;" />
-	<property name="version-1-quoted" value="&quot;${version-1}&quot;" />
-	<property name="version-2-quoted" value="&quot;${version-2}&quot;" />
-	<property name="version-3-quoted" value="&quot;${version-3}&quot;" />
-	
+    <property name="version-status-quoted" value="&quot;&#39;${version-status}&#39;&quot;" />
 	<condition property="version-info" value="${version-1}.${version-2}.${version-3}" else="${version-1}.${version-2}.${version-3}-${version-status}">
 		<equals arg1="${version-status}" arg2="" />
 	</condition>
-	
-	<property name="controls-version-info-quoted" value="&quot;${controls-version-info}&quot;" />
-	<property name="audio-version-info-quoted" value="&quot;${audio-version-info}&quot;" />
+
+	<property name="controls-version-info-quoted" value="&quot;&#39;${controls-version-info}&#39;&quot;" />
+	<property name="audio-version-info-quoted" value="&quot;&#39;${audio-version-info}&#39;&quot;" />
+
 	<property name="src" value="src" />
 	<property name="src-as" value="${src}/actionscript" />
 	<property name="src-flash" value="${src}/flash" />
@@ -139,9 +136,9 @@
     		<exec executable="${mxmlc_bin}" failonerror="true">
     			<arg line="-define=CONFIG::commercialVersion,'@{commercial}'" />
     			<arg line="-define+=CONFIG::freeVersion,'@{free}'" />
-    			<arg line="-define+=CONFIG::version1,'${version-1-quoted}'" />
-    			<arg line="-define+=CONFIG::version2,'${version-2-quoted}'" />
-       			<arg line="-define+=CONFIG::version3,'${version-3-quoted}'" />
+    			<arg line="-define+=CONFIG::version1,'${version-1}'" />
+    			<arg line="-define+=CONFIG::version2,'${version-2}'" />
+       			<arg line="-define+=CONFIG::version3,'${version-3}'" />
        			<arg line="-define+=CONFIG::versionStatus,'${version-status-quoted}'" />
     			<arg line="-define+=CONFIG::controlsVersion,'${controls-version-info-quoted}'" />
     			<arg line="-define+=CONFIG::audioVersion,'${audio-version-info-quoted}'" />
