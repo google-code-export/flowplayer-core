@@ -139,9 +139,9 @@
     			<arg line="-define+=CONFIG::version1,'${version-1}'" />
     			<arg line="-define+=CONFIG::version2,'${version-2}'" />
        			<arg line="-define+=CONFIG::version3,'${version-3}'" />
-       			<arg line="-define+=CONFIG::versionStatus,'${version-status-quoted}'" />
-    			<arg line="-define+=CONFIG::controlsVersion,'${controls-version-info-quoted}'" />
-    			<arg line="-define+=CONFIG::audioVersion,'${audio-version-info-quoted}'" />
+       			<arg line="-define+=CONFIG::versionStatus,${version-status-quoted}" />
+    			<arg line="-define+=CONFIG::controlsVersion,${controls-version-info-quoted}" />
+    			<arg line="-define+=CONFIG::audioVersion,${audio-version-info-quoted}" />
     			<arg line="-keep-as3-metadata=Value,External" />
     			<arg line="-source-path ${src-as} ${src-as-commercial} ${classpath}" />
     			<arg line="-library-path ${libs-path} ${src-flash} @{license-lib}" />
