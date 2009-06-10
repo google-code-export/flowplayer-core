@@ -104,6 +104,12 @@ import org.flowplayer.model.DisplayPluginModel;
         }
 
         private function initPhase1():void {
+
+            if (_flowplayer) {
+                log.debug("already initialized, returning");
+                return;
+            }
+
 			Log.configure(_config.getLogConfiguration());
             trace("created log configuration, tracing enabled? " + Log.traceEnabled)
 

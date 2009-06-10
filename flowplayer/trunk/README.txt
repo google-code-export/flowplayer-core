@@ -2,6 +2,8 @@ Version history:
 
 3.1.2
 -----
+Fixes:
+- now possible to use RTMP for mp3 files
 
 3.1.1
 -----
