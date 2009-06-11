@@ -704,6 +704,7 @@ import org.flowplayer.flow_internal;
 			_autoPlayNext = autoPlayNext;
 		}
 		
+        [Value]
 		public function get cuepointMultiplier():Number {
 			return _cuepointMultiplier;
 		}
