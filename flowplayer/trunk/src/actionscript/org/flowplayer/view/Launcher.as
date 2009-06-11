@@ -542,10 +542,10 @@ import org.flowplayer.model.DisplayPluginModel;
 		}
 
 		private function createFlashVarsConfig():void {
-			if (! stage.loaderInfo.parameters) {
+			if (! root.loaderInfo.parameters) {
 				return;
 			}
-            var configStr:String = stage.loaderInfo.parameters["config"];
+            var configStr:String = Preloader(root).injectedConfig || root.loaderInfo.parameters["config"];
             var configObj:Object = configStr.indexOf("{") == 0 ? ConfigLoader.parse(configStr) : {};
             
             if (configStr.indexOf("{") == 0 && ! configObj.hasOwnProperty("url")) {
