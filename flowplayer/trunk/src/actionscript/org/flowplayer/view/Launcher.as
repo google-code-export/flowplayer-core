@@ -546,9 +546,9 @@ import org.flowplayer.model.DisplayPluginModel;
 				return;
 			}
             var configStr:String = Preloader(root).injectedConfig || root.loaderInfo.parameters["config"];
-            var configObj:Object = configStr.indexOf("{") == 0 ? ConfigLoader.parse(configStr) : {};
-            
-            if (configStr.indexOf("{") == 0 && ! configObj.hasOwnProperty("url")) {
+            var configObj:Object = configStr && configStr.indexOf("{") == 0 ? ConfigLoader.parse(configStr) : {};
+
+            if (! configStr || (configStr && configStr.indexOf("{") == 0 && ! configObj.hasOwnProperty("url"))) {
                 _config = ConfigLoader.parseConfig(configObj, playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion);
                 callAndHandleError(initPhase1, PlayerError.INIT_FAILED);
 
