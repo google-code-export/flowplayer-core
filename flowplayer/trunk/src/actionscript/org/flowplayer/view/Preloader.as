@@ -36,6 +36,8 @@ package org.flowplayer.view {
         private var _rotation:RotatingAnimation;
         private static var _stageHeight:int = 0;
         private static var _stageWidth:int = 0;
+        // this variable can be set from external SWF files, if it's set well use it to construct the config
+        public var injectedConfig:String;
 
         public function Preloader() {
             stop();
@@ -77,6 +79,12 @@ package org.flowplayer.view {
 
             loaderInfo.addEventListener(ProgressEvent.PROGRESS, onLoadProgress);
             loaderInfo.addEventListener(Event.COMPLETE, init);
+
+            // prepare stage if the app (Launcher) has been greated already. this is the
+            // case when we are embedded in another SWF
+            if (_app) {
+                prepareStage();
+            }
 		}
 
 		private function onLoadProgress(event:ProgressEvent):void {
@@ -128,6 +136,7 @@ package org.flowplayer.view {
         }
 
 		private function prepareStage():void {
+            if (! stage) return;
             stage.align = StageAlign.TOP_LEFT;
             stage.scaleMode = StageScaleMode.NO_SCALE;
             stageHeight = stage.stageHeight;
