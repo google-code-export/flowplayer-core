@@ -4,6 +4,9 @@ Version history:
 -----
 Fixes:
 - now possible to use RTMP for mp3 files
+- Issue 12: cuepointMultiplier was undefined in teh clip object set to JS event listeners
+- Issue 14: onBeforeStop was unnecessarily fired when calling setPlaylist() and the player was not playing,
+            additionally onStop was never fired even if onBeforeStop was
 
 3.1.1
 -----

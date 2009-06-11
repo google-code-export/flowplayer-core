@@ -138,8 +138,8 @@ package org.flowplayer.controller {
             }            
         }
 		
-		internal function close():void {
-			if (onEvent(ClipEventType.STOP, [true, true])) {
+		internal function close(silent:Boolean):void {
+			if (onEvent(ClipEventType.STOP, [true, silent])) {
 				changeState(waitingState);
 			}
 		}

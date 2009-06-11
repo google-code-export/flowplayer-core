@@ -235,10 +235,11 @@ import org.flowplayer.util.TextUtil;
 		
 		/**
 		 * Stops the player and closes the stream and connection.
+         * Does not dispatch any events.
 		 */
 		public function close():FlowplayerBase {
 			log.debug("close()");
-			_playListController.close();
+			_playListController.close(true);
 			return this;
 		}
 		
