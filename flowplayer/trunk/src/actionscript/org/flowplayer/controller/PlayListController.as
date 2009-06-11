@@ -62,7 +62,9 @@ package org.flowplayer.controller {
 		}
 
 		flow_internal function setPlaylist(clips:Array):void {
-			close();
+            if (getState() != State.WAITING) {
+                close(false);
+            }
 			_playList.replaceClips2(clips);
 		}
 
@@ -238,8 +240,8 @@ package org.flowplayer.controller {
 			return _playList.current;
 		}
 		
-		flow_internal function close():void {
-			_state.close();
+		flow_internal function close(silent:Boolean):void {
+			_state.close(silent);
 		}
 		
 		flow_internal function seekTo(seconds:Number):Clip {
