@@ -20,7 +20,9 @@
 package org.flowplayer.view {
     import flash.display.AVM1Movie;
 import flash.system.Security;
-import org.flowplayer.model.Plugin;
+
+    import org.flowplayer.model.ErrorCode;
+    import org.flowplayer.model.Plugin;
 	import org.flowplayer.controller.NetStreamControllingStreamProvider;	
 	
 	import com.adobe.utils.StringUtil;
@@ -33,7 +35,8 @@ import org.flowplayer.model.Plugin;
 	import org.flowplayer.model.Loadable;
 	import org.flowplayer.model.PlayerError;
     import org.flowplayer.model.PluginError;
-	import org.flowplayer.model.PluginModel;
+    import org.flowplayer.model.PluginEvent;
+    import org.flowplayer.model.PluginModel;
 	import org.flowplayer.model.ProviderModel;
 	import org.flowplayer.util.Log;
 	import org.flowplayer.util.URLUtil;
@@ -231,15 +234,20 @@ import org.flowplayer.model.Plugin;
                 if (_loadListener != null) {
                     plugin.onLoad(_loadListener);
                 }
-                if (_loadErrorListener != null) {
-                    plugin.onError(_loadErrorListener);
-                }
+                plugin.onError(onPluginError);
 			}
 			if (plugin is Callable && _useExternalInterface) {
 				ExternalInterfaceHelper.initializeInterface(plugin as Callable, pluginInstance);
 			}
 		}
-		
+
+        private function onPluginError(event:PluginEvent):void {
+            log.debug("onPluginError() " + event.error);
+            if (event.error) {
+                _errorHandler.handleError(event.error, event.info + ", " + event.info2, true);
+            }
+        }
+
 		private function createPluginInstance(instanceUsed:Boolean, instance:DisplayObject):Object {
 			if (instance.hasOwnProperty("newPlugin")) return instance["newPlugin"](); 
 			

@@ -38,7 +38,7 @@ package org.flowplayer.model {
 		 * @see PluginEventType#ERROR
 		 */
 		public function dispatchError(error:PluginError, info:Object = null):void {
-			doDispatchEvent(new PluginEvent(error.eventType as PluginEventType, name, error.code, error.message, info), true);
+			doDispatchEvent(new PluginEvent(error.eventType as PluginEventType, name, error, info), true);
 		}
 
 		public function dispatchEvent(event:PluginEvent):void {

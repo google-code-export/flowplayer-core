@@ -1,6 +1,7 @@
 package org.flowplayer.view {
 	import org.flowplayer.flow_internal;
-	import org.flowplayer.model.EventDispatcher;
+    import org.flowplayer.model.ErrorCode;
+    import org.flowplayer.model.EventDispatcher;
 	import org.flowplayer.model.PlayerError;
 	import org.flowplayer.model.PlayerEvent;
 	import org.flowplayer.model.PlayerEventType;
@@ -28,8 +29,8 @@ package org.flowplayer.view {
 			doDispatchEvent(event, true);
 		}
 		
-		public function dispatchError(error:PlayerError, info:Object = null):void {
-			doDispatchEvent(new PlayerEvent(error.eventType, error.code, error.message, info), true);
+		public function dispatchError(error:ErrorCode, info:Object = null):void {
+			doDispatchEvent(new PlayerEvent(error.eventType, error, info), true);
 		}
 
 		/**

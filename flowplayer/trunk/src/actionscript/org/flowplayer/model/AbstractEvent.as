@@ -46,9 +46,9 @@ import org.flowplayer.util.ObjectConverter;
             log.debug(_info + ", " + _info2 + ", " + _info3 + ", " + _info4 + ", " + _info5);
 		}
 
-		public function hasError(error:ErrorCode):Boolean {
-			return _info == error.code;
-		}
+        public function get error():ErrorCode {
+            return _info as ErrorCode;
+        }
 
 		public function isCancellable():Boolean {
 			return _eventType.isCancellable;
