@@ -32,7 +32,8 @@ import org.flowplayer.model.ClipEventType;
 import org.flowplayer.model.DisplayPluginModel;
 	import org.flowplayer.model.DisplayProperties;
 	import org.flowplayer.model.DisplayPropertiesImpl;
-	import org.flowplayer.model.EventDispatcher;
+    import org.flowplayer.model.ErrorCode;
+    import org.flowplayer.model.EventDispatcher;
 	import org.flowplayer.model.Loadable;
 	import org.flowplayer.model.Logo;
 	import org.flowplayer.model.PlayButtonOverlay;
@@ -287,8 +288,6 @@ import org.flowplayer.model.DisplayPluginModel;
 		}
 
 		private function onPluginLoadError(event:PluginEvent):void {
-			if (! event.hasError(PluginError.INIT_FAILED)) return;
-			
 			var plugin:PluginModel = event.target as PluginModel;
 			log.warn("load/init error on " + plugin);
 			_pluginRegistry.removePlugin(plugin);
@@ -395,7 +394,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			}
 		}
 
-		public function handleError(error:PlayerError, info:Object = null, throwError:Boolean = true):void {
+		public function handleError(error:ErrorCode, info:Object = null, throwError:Boolean = true):void {
 			if (_flowplayer) {
 				_flowplayer.dispatchError(error, info);
 			} else {
@@ -714,7 +713,7 @@ import org.flowplayer.model.DisplayPluginModel;
 		
 		private function onClipError(event:ClipEvent):void {
             if (event.isDefaultPrevented()) return;
-			doHandleError(event.info + ", " + event.info2 + ", " + event.info3 + ", clip: '" + Clip(event.target) + "'");
+			doHandleError(event.error.code + ", " + event.error.message + ", " + event.info + ", clip: '" + Clip(event.target) + "'");
 		}
 
         private function onViewClicked(event:MouseEvent):void {

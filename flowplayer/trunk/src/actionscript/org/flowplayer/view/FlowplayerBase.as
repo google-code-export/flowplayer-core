@@ -19,45 +19,40 @@
 
 
 package org.flowplayer.view {
-import flash.external.ExternalInterface;
-import org.flowplayer.config.Config;
-	import org.flowplayer.controller.PlayListController;
-	import org.flowplayer.controller.ResourceLoader;
-	import org.flowplayer.controller.ResourceLoaderImpl;
-	import org.flowplayer.flow_internal;
-	import org.flowplayer.model.Clip;
-import org.flowplayer.model.ClipEvent;
-import org.flowplayer.model.ClipEventType;
-import org.flowplayer.model.Cuepoint;
-import org.flowplayer.model.DisplayPluginModel;
-	import org.flowplayer.model.DisplayProperties;
+    import flash.display.DisplayObject;
+    import flash.display.Stage;
+    import flash.text.TextField;
+    import flash.utils.getDefinitionByName;
+
+    import org.flowplayer.config.Config;
+    import org.flowplayer.controller.PlayListController;
+    import org.flowplayer.controller.ResourceLoader;
+    import org.flowplayer.controller.ResourceLoaderImpl;
+    import org.flowplayer.flow_internal;
+    import org.flowplayer.model.Clip;
+    import org.flowplayer.model.ClipEventType;
+    import org.flowplayer.model.Cuepoint;
+    import org.flowplayer.model.DisplayPluginModel;
+    import org.flowplayer.model.DisplayProperties;
     import org.flowplayer.model.DisplayPropertiesImpl;
-import org.flowplayer.model.DynamicCuepoint;
-import org.flowplayer.model.EventDispatcher;
-	import org.flowplayer.model.Loadable;
-	import org.flowplayer.model.PlayButtonOverlay;
-	import org.flowplayer.model.PlayerError;
-	import org.flowplayer.model.PlayerEvent;
-	import org.flowplayer.model.Playlist;
-	import org.flowplayer.model.Plugin;
-	import org.flowplayer.model.PluginFactory;
-	import org.flowplayer.model.ProviderModel;
-	import org.flowplayer.model.State;
-	import org.flowplayer.model.Status;
-	import org.flowplayer.util.Assert;
-	import org.flowplayer.util.Log;
-	import org.flowplayer.util.LogConfiguration;
+    import org.flowplayer.model.ErrorCode;
+    import org.flowplayer.model.Loadable;
+    import org.flowplayer.model.PlayerError;
+    import org.flowplayer.model.PlayerEvent;
+    import org.flowplayer.model.Playlist;
+    import org.flowplayer.model.Plugin;
+    import org.flowplayer.model.PluginFactory;
+    import org.flowplayer.model.ProviderModel;
+    import org.flowplayer.model.State;
+    import org.flowplayer.model.Status;
+    import org.flowplayer.util.Assert;
+    import org.flowplayer.util.Log;
+    import org.flowplayer.util.LogConfiguration;
     import org.flowplayer.util.PropertyBinder;
-import org.flowplayer.util.TextUtil;
-	import org.flowplayer.util.URLUtil;
-	import org.flowplayer.view.Panel;
-	
-	import flash.display.DisplayObject;
-	import flash.display.Stage;
-	import flash.text.TextField;
-	import flash.utils.getDefinitionByName;		
-	
-	use namespace flow_internal;
+    import org.flowplayer.util.TextUtil;
+    import org.flowplayer.util.URLUtil;
+
+    use namespace flow_internal;
 
 	/**
 	 * @author anssi
@@ -442,7 +437,7 @@ import org.flowplayer.util.TextUtil;
 		/**
 		 * Handles the specified error.
 		 */
-		public function handleError(error:PlayerError, info:Object = null, throwError:Boolean = true):void {
+		public function handleError(error:ErrorCode, info:Object = null, throwError:Boolean = true):void {
 			_errorHandler.handleError(error, info);
 		}
 
