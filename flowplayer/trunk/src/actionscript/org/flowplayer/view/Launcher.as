@@ -94,6 +94,7 @@ import org.flowplayer.model.DisplayPluginModel;
 		private var _copyrightNotice:TextField;
         private var _playlistLoader:ResourceLoader;
         private var _fullscreenManager:FullscreenManager;
+        private var _screenArranged:Boolean;
 
 		[Frame(factoryClass="org.flowplayer.view.Preloader")]
 		public function Launcher() {
@@ -124,7 +125,7 @@ import org.flowplayer.model.DisplayPluginModel;
 
 			rootStyle = _config.canvas.style;
 			stage.addEventListener(Event.RESIZE, onStageResize);
-			setSize(stageWidth, stageHeight);
+			setSize(stage.stageWidth, stage.stageHeight);
 
 			if (! VersionInfo.commercial) {
 				log.debug("Adding logo to canvas");
@@ -230,6 +231,10 @@ import org.flowplayer.model.DisplayPluginModel;
 		private function onStageResize(event:Event = null):void {
 			setSize(stage.stageWidth, stage.stageHeight);
 			arrangeCanvasLogo();
+            if (! _screenArranged) {
+                arrangeScreen();
+                _screenArranged = true;
+            }
 		}
 
 		private function arrangeCanvasLogo():void {
@@ -467,7 +472,7 @@ import org.flowplayer.model.DisplayPluginModel;
 						heightPct = 100 - Math.abs(50 - (screen.position.top.pct >= 0 ? screen.position.top.pct : screen.position.bottom.pct))*2; 
 						setScreenBottomAndHeight(screen, heightPct, controlsHeight);
 					} else {
-						heightPct = ((stageHeight - occupiedHeight) / stageHeight) * 100;
+						heightPct = ((stage.stageHeight - occupiedHeight) / stage.stageHeight) * 100;
 						setScreenBottomAndHeight(screen, heightPct, controlsHeight);
 					}
 				}
@@ -479,11 +484,11 @@ import org.flowplayer.model.DisplayPluginModel;
 			_panel.update(screen.getDisplayObject(), screen);
 			_panel.draw(screen.getDisplayObject());
 		}
-		
+
 		private function getScreenTopOrBottomPx(screen:DisplayProperties):Number {
 			var screenConf:Object = _config.getObject("screen");
-			if (screenConf.hasOwnProperty("top")) return screen.position.top.toPx(stageHeight);
-			if (screenConf.hasOwnProperty("bottom")) return screen.position.bottom.toPx(stageHeight);
+			if (screenConf.hasOwnProperty("top")) return screen.position.top.toPx(stage.stageHeight);
+			if (screenConf.hasOwnProperty("bottom")) return screen.position.bottom.toPx(stage.stageHeight);
 			return 0;
 		}
 
@@ -805,14 +810,14 @@ import org.flowplayer.model.DisplayPluginModel;
                 new ClipEventType(callbacks[i], true);
             }
         }
-
-        private function get stageWidth():Number {
-            return Math.max(stage.stageWidth, Preloader.stageWidth);
-        }
-
-        private function get stageHeight():Number {
-            return Math.max(stage.stageHeight, Preloader.stageHeight);
-        }
+//
+//        private function get stageWidth():Number {
+//            return Math.max(stage.stageWidth, Preloader.stageWidth);
+//        }
+//
+//        private function get stageHeight():Number {
+//            return Math.max(stage.stageHeight, Preloader.stageHeight);
+//        }
 
         private function callAndHandleError(func:Function, error:PlayerError):void {
             try {
