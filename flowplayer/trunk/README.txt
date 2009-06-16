@@ -7,6 +7,7 @@ Fixes:
 - Issue 12: cuepointMultiplier was undefined in teh clip object set to JS event listeners
 - Issue 14: onBeforeStop was unnecessarily fired when calling setPlaylist() and the player was not playing,
             additionally onStop was never fired even if onBeforeStop was
+- fixed screen vertical placement problems that reappeared with 3.1.1
 
 3.1.1
 -----
