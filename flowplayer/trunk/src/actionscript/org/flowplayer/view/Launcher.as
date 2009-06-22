@@ -321,7 +321,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			var count:Number = 0;
 			var loadables:Array = _config.getConfiguredLoadables();
             if (_builtInPlugins) {
-                loadables.concat(_builtInPlugins);
+                loadables = loadables.concat(_builtInPlugins);
             }
 			for (var i:Number = 0; i < loadables.length; i++) {
 
@@ -564,14 +564,14 @@ import org.flowplayer.model.DisplayPluginModel;
             var configObj:Object = configStr && configStr.indexOf("{") == 0 ? ConfigParser.parse(configStr) : {};
 
             if (! configStr || (configStr && configStr.indexOf("{") == 0 && ! configObj.hasOwnProperty("url"))) {
-                _config = ConfigParser.parseConfig(configObj, playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion);
+                _config = ConfigParser.parseConfig(configObj, playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion, builtIn);
                 callAndHandleError(initPhase1, PlayerError.INIT_FAILED);
 
             } else {
                 ConfigParser.loadConfig(configObj.hasOwnProperty("url") ? String(configObj["url"]) : configStr, function(config:Config):void {
                     _config = config;
                     callAndHandleError(initPhase1, PlayerError.INIT_FAILED);
-                }, new ResourceLoaderImpl(null, this), playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion);
+                }, new ResourceLoaderImpl(null, this), playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion, builtIn);
             }
 		}
 

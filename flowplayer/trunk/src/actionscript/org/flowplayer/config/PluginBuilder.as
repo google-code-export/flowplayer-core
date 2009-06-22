@@ -37,28 +37,31 @@ import org.flowplayer.model.ClipType;
 	internal class PluginBuilder {
 
 		private var log:Log = new Log(this);
-		private var _pluginObjects:Object;
-		private var _skinObjects:Object;
-		private var _config:Config;
-		private var _playerSwfName:String;
-		private var _controlsVersion:String;
-		private var _audioVersion:String;
+		private var _configuredPluginObjects:Object;
+        private var _builtInPluginObjects:Object;
+        private var _skinObjects:Object;
+        private var _config:Config;
+        private var _playerSwfName:String;
+        private var _controlsVersion:String;
+        private var _audioVersion:String;
         private var _createdLoadables:Array;
 
-		public function PluginBuilder(playerSwfName:String, controlsVersion:String, audioVersion:String, config:Config, pluginObjects:Object, skinObjects:Object) {
-			_playerSwfName = playerSwfName;
-			_config = config;
-			_pluginObjects = pluginObjects || new Object();
-			_skinObjects = skinObjects || new Object();
-			_controlsVersion = controlsVersion;
-			_audioVersion = audioVersion;
+        public function PluginBuilder(playerSwfName:String, controlsVersion:String, audioVersion:String, config:Config, pluginObjects:Object, skinObjects:Object, builtIn:Object) {
+            _playerSwfName = playerSwfName;
+            _config = config;
+            _configuredPluginObjects = pluginObjects || new Object();
+            _builtInPluginObjects = builtIn || new Object();
+            _skinObjects = skinObjects || new Object();
+            _controlsVersion = controlsVersion;
+            _audioVersion = audioVersion;
             _createdLoadables = [];
-		}
+        }
+
 
 		public function createLoadables(fromObjects:Object, playlist:Playlist, createDefaultLoadables:Boolean):Array {
 			var loadables:Array = [];
 			for (var name:String in fromObjects) {
-				if (! isObjectDisabled(name, _pluginObjects) && fromObjects[name].hasOwnProperty("url")) {
+				if (! isObjectDisabled(name, _configuredPluginObjects) && fromObjects[name].hasOwnProperty("url")) {
 					log.debug("creating loadable for '" + name + "', " + fromObjects[name]);
 					loadables.push(newLoadable(fromObjects, name));
                 }
@@ -66,21 +69,29 @@ import org.flowplayer.model.ClipType;
 
             _createdLoadables = _createdLoadables.concat(loadables);
 
-            if (createDefaultLoadables) {
-                log.debug("creating default loadables: controls and audio if needed");
+            if (! createDefaultLoadables) {
+                return loadables;
+            }
+
+            log.debug("creating default loadables: controls and audio if needed");
+            if (! isBuiltIn("controls")) {
                 var loadable:Loadable = createLoadable("controls", _controlsVersion);
                 if (loadable) {
                     loadables.push(loadable);
                 }
-                if (playlist.hasType(ClipType.AUDIO)) {
-                    loadable = createLoadable("audio", _audioVersion);
-                    if (loadable) {
-                        loadables.push(loadable);
-                    }
-                }
-                createInStreamProviders(fromObjects, playlist, loadables);
             }
+            if (playlist.hasType(ClipType.AUDIO) && ! isBuiltIn("audio")) {
+                loadable = createLoadable("audio", _audioVersion);
+                if (loadable) {
+                    loadables.push(loadable);
+                }
+            }
+            createInStreamProviders(fromObjects, playlist, loadables);
             return loadables;
+        }
+
+        private function isBuiltIn(name:String):Boolean {
+            return _builtInPluginObjects.hasOwnProperty(name);
         }
 
         public function createPrototypedLoadables(fromObjects:Object):Array {
@@ -89,7 +100,7 @@ import org.flowplayer.model.ClipType;
                 var referenceName:String = prototypeReference(name);
                 if (referenceName) {
                     log.debug("found a prototype reference " + referenceName + " for plugin " + name + ", class name " + fromObjects[name].url);
-                    loadables.push(newLoadable(_pluginObjects, referenceName, null, fromObjects[name].url));
+                    loadables.push(newLoadable(_configuredPluginObjects, referenceName, null, fromObjects[name].url));
                 }
             }
             _createdLoadables = _createdLoadables.concat(loadables);
@@ -97,8 +108,8 @@ import org.flowplayer.model.ClipType;
         }
 
         private function prototypeReference(prototypeName:String):String {
-            for (var name:String in _pluginObjects) {
-                var configuredPlugin:Object = _pluginObjects[name];
+            for (var name:String in _configuredPluginObjects) {
+                var configuredPlugin:Object = _configuredPluginObjects[name];
                 if (configuredPlugin["prototype"] == prototypeName) {
                     return name;
                 }
@@ -137,7 +148,7 @@ import org.flowplayer.model.ClipType;
 		
 		private function createLoadable(name:String, version:String):Loadable {
             log.debug("createLoadable() '" + name + "' version " + version);
-			if (isObjectDisabled(name, _pluginObjects)) {
+			if (isObjectDisabled(name, _configuredPluginObjects)) {
 				log.debug(name + " is disabled");
 				return null;
 			}
