@@ -43,6 +43,7 @@ import org.flowplayer.model.ClipType;
 		private var _playerSwfName:String;
 		private var _controlsVersion:String;
 		private var _audioVersion:String;
+        private var _createdLoadables:Array;
 
 		public function PluginBuilder(playerSwfName:String, controlsVersion:String, audioVersion:String, config:Config, pluginObjects:Object, skinObjects:Object) {
 			_playerSwfName = playerSwfName;
@@ -51,27 +52,66 @@ import org.flowplayer.model.ClipType;
 			_skinObjects = skinObjects || new Object();
 			_controlsVersion = controlsVersion;
 			_audioVersion = audioVersion;
+            _createdLoadables = [];
 		}
 
-		public function createLoadables(fromObjects:Object, playlist:Playlist):Array {
-			var pluginsToLoad:Array = new Array();
+		public function createLoadables(fromObjects:Object, playlist:Playlist, createDefaultLoadables:Boolean):Array {
+			var loadables:Array = [];
 			for (var name:String in fromObjects) {
-				if (! isObjectDisabled(name, _pluginObjects)) {
+				if (! isObjectDisabled(name, _pluginObjects) && fromObjects[name].hasOwnProperty("url")) {
 					log.debug("creating loadable for '" + name + "', " + fromObjects[name]);
-                    newLoadable(fromObjects, name);
-					pluginsToLoad.push(newLoadable(fromObjects, name));
+					loadables.push(newLoadable(fromObjects, name));
                 }
             }
-            createLoadable("controls", pluginsToLoad, _controlsVersion);
-            if (playlist.hasType(ClipType.AUDIO)) {
-                createLoadable("audio", pluginsToLoad, _audioVersion);
+
+            _createdLoadables = _createdLoadables.concat(loadables);
+
+            if (createDefaultLoadables) {
+                log.debug("creating default loadables: controls and audio if needed");
+                var loadable:Loadable = createLoadable("controls", _controlsVersion);
+                if (loadable) {
+                    loadables.push(loadable);
+                }
+                if (playlist.hasType(ClipType.AUDIO)) {
+                    loadable = createLoadable("audio", _audioVersion);
+                    if (loadable) {
+                        loadables.push(loadable);
+                    }
+                }
+                createInStreamProviders(fromObjects, playlist, loadables);
             }
-            createInStreamProviders(fromObjects, playlist, pluginsToLoad);
-            return pluginsToLoad;
+            return loadables;
         }
 
-        private function newLoadable(fromObjects:Object, name:String, nameInConf:String = null):Loadable {
-            return new PropertyBinder(new Loadable(name, _config), "config").copyProperties(fromObjects[nameInConf || name]) as Loadable;
+        public function createPrototypedLoadables(fromObjects:Object):Array {
+            var loadables:Array = [];
+            for (var name:String in fromObjects) {
+                var referenceName:String = prototypeReference(name);
+                if (referenceName) {
+                    log.debug("found a prototype reference " + referenceName + " for plugin " + name + ", class name " + fromObjects[name].url);
+                    loadables.push(newLoadable(_pluginObjects, referenceName, null, fromObjects[name].url));
+                }
+            }
+            _createdLoadables = _createdLoadables.concat(loadables);
+            return loadables;
+        }
+
+        private function prototypeReference(prototypeName:String):String {
+            for (var name:String in _pluginObjects) {
+                var configuredPlugin:Object = _pluginObjects[name];
+                if (configuredPlugin["prototype"] == prototypeName) {
+                    return name;
+                }
+            }
+            return null;
+        }
+
+        private function newLoadable(fromObjects:Object, name:String, nameInConf:String = null, url:String = null):Loadable {
+            var loadable:Loadable = new PropertyBinder(new Loadable(name, _config), "config").copyProperties(fromObjects[nameInConf || name]) as Loadable;
+            if (url) {
+                loadable.url = url;
+            }
+            return loadable;
         }
 
         private function createInStreamProviders(fromObjects:Object, playlist:Playlist, loadables:Array):void {
@@ -79,10 +119,11 @@ import org.flowplayer.model.ClipType;
             for (var i:int = 0; i < children.length; i++) {
                 var clip:Clip = children[i];
                 if (clip.configuredProviderName != "http") {
-                    var loadable:Loadable = findLoadable(clip.configuredProviderName, loadables);
+                    var loadable:Loadable = findLoadable(clip.configuredProviderName);
                     if (loadable) {
                         loadable = newLoadable(fromObjects, clip.provider, clip.configuredProviderName);
                         loadables.push(loadable);
+                        _createdLoadables.push(loadable);
                     }
                 }
             }
@@ -94,16 +135,17 @@ import org.flowplayer.model.ClipType;
 			return pluginObj == null;
 		}
 		
-		private function createLoadable(name:String, loadables:Array, version:String):void {
+		private function createLoadable(name:String, version:String):Loadable {
+            log.debug("createLoadable() '" + name + "' version " + version);
 			if (isObjectDisabled(name, _pluginObjects)) {
 				log.debug(name + " is disabled");
-				return;
+				return null;
 			}
-			var loadable:Loadable = findLoadable(name, loadables);
+			var loadable:Loadable = findLoadable(name);
 
 			if (! loadable) { 
 				loadable = new Loadable(name, _config);
-				loadables.push(loadable);
+                _createdLoadables.push(loadable);
 			} else {
 				log.debug(name + " was found in configuration, will not automatically add it into loadables");
 			}
@@ -111,11 +153,13 @@ import org.flowplayer.model.ClipType;
 			if (! loadable.url) {
 				loadable.url = getLoadableUrl(name, version);
 			}
+            log.debug("createLoadable(), created loadable with url " + loadable.url)
+            return loadable;
 		}
 		
-		private function findLoadable(name:String, loadables:Array):Loadable {
-			for (var i:Number = 0; i < loadables.length; i++) {
-				var plugin:Loadable = loadables[i];
+		private function findLoadable(name:String):Loadable {
+			for (var i:Number = 0; i < _createdLoadables.length; i++) {
+				var plugin:Loadable = _createdLoadables[i];
 				if (plugin.name == name) {
 					return plugin;
 				}
