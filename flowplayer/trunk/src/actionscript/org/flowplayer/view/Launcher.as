@@ -18,7 +18,7 @@
  */
 package org.flowplayer.view {
 	import org.flowplayer.config.Config;
-	import org.flowplayer.config.ConfigLoader;
+	import org.flowplayer.config.ConfigParser;
 	import org.flowplayer.config.ExternalInterfaceHelper;
 	import org.flowplayer.config.VersionInfo;
 	import org.flowplayer.controller.PlayListController;
@@ -52,7 +52,7 @@ import org.flowplayer.model.DisplayPluginModel;
 	import org.flowplayer.util.URLUtil;
 	import org.flowplayer.view.Panel;
 	import org.flowplayer.view.PluginLoader;
-	import org.flowplayer.view.Screen;
+    import org.flowplayer.view.Screen;
 	import org.osflash.thunderbolt.Logger;
 	
 	import flash.display.DisplayObject;
@@ -76,6 +76,7 @@ import org.flowplayer.model.DisplayPluginModel;
 
 	public class Launcher extends StyleableSprite implements ErrorHandler {
 
+        include "../../../../../plugins.as";
 		private var _panel:Panel;
 		private var _screen:Screen;
 		private var _config:Config;
@@ -95,6 +96,7 @@ import org.flowplayer.model.DisplayPluginModel;
         private var _playlistLoader:ResourceLoader;
         private var _fullscreenManager:FullscreenManager;
         private var _screenArranged:Boolean;
+        private var _builtInPlugins:Array;
 
 		[Frame(factoryClass="org.flowplayer.view.Preloader")]
 		public function Launcher() {
@@ -246,22 +248,28 @@ import org.flowplayer.model.DisplayPluginModel;
 		}
 
 		private function loadPlugins():void {
-			var plugins:Array = _config.getLoadables();
+			var plugins:Array = _config.getConfiguredLoadables();
 			log.info("will load following plugins: ");
-			for (var i:Number = 0; i < plugins.length; i++) {
-				log.info("" + plugins[i]);
-			}
+            logPluginInfo(plugins);
 			_pluginLoader = new PluginLoader(URLUtil.playerBaseUrl(loaderInfo), _pluginRegistry, this, useExternalInterfade());
-			_pluginLoader.addEventListener(Event.COMPLETE, pluginLoadListener);
+            _pluginLoader.addEventListener(Event.COMPLETE, pluginLoadListener);
             _flowplayer.pluginLoader = _pluginLoader;
-			if (plugins.length == 0) {
-				log.debug("configuration has no plugins");
-				initPhase3();
-			} else {
-				log.debug("loading plugins and providers");
-				_pluginLoader.load(plugins, onPluginLoad, onPluginLoadError);
-			}
-		}
+            if (plugins.length == 0) {
+                log.debug("configuration has no plugins");
+                initPhase3();
+            } else {
+                _builtInPlugins = _config.createLoadables(builtIn);
+                log.debug("following built-in plugins will be instantiated");
+                logPluginInfo(_builtInPlugins);
+                _pluginLoader.load(plugins, _builtInPlugins, onPluginLoad, onPluginLoadError);
+            }
+        }
+
+        private function logPluginInfo(plugins:Array):void {
+            for (var i:Number = 0; i < plugins.length; i++) {
+                log.info("" + plugins[i]);
+            }
+        }
 
         private function pluginLoadListener(event:Event = null):void {
             _pluginLoader.removeEventListener(Event.COMPLETE, pluginLoadListener);
@@ -300,7 +308,7 @@ import org.flowplayer.model.DisplayPluginModel;
 		}
 		
 		private function checkPluginsInitialized():void {
-			var numPlugins:int = countLoadablePlugins();
+			var numPlugins:int = countPlugins();
 			
 			if (++_pluginsInitialized == numPlugins) {
 				log.info("all plugins initialized");
@@ -309,9 +317,12 @@ import org.flowplayer.model.DisplayPluginModel;
 			log.info(_pluginsInitialized + " out of " + numPlugins + " plugins initialized");
 		}
 
-		private function countLoadablePlugins():int {
+		private function countPlugins():int {
 			var count:Number = 0;
-			var loadables:Array = _config.getLoadables();
+			var loadables:Array = _config.getConfiguredLoadables();
+            if (_builtInPlugins) {
+                loadables.concat(_builtInPlugins);
+            }
 			for (var i:Number = 0; i < loadables.length; i++) {
 
 				var plugin:PluginModel = Loadable(loadables[i]).plugin;
@@ -550,14 +561,14 @@ import org.flowplayer.model.DisplayPluginModel;
 				return;
 			}
             var configStr:String = Preloader(root).injectedConfig || root.loaderInfo.parameters["config"];
-            var configObj:Object = configStr && configStr.indexOf("{") == 0 ? ConfigLoader.parse(configStr) : {};
+            var configObj:Object = configStr && configStr.indexOf("{") == 0 ? ConfigParser.parse(configStr) : {};
 
             if (! configStr || (configStr && configStr.indexOf("{") == 0 && ! configObj.hasOwnProperty("url"))) {
-                _config = ConfigLoader.parseConfig(configObj, playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion);
+                _config = ConfigParser.parseConfig(configObj, playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion);
                 callAndHandleError(initPhase1, PlayerError.INIT_FAILED);
 
             } else {
-                ConfigLoader.loadConfig(configObj.hasOwnProperty("url") ? String(configObj["url"]) : configStr, function(config:Config):void {
+                ConfigParser.loadConfig(configObj.hasOwnProperty("url") ? String(configObj["url"]) : configStr, function(config:Config):void {
                     _config = config;
                     callAndHandleError(initPhase1, PlayerError.INIT_FAILED);
                 }, new ResourceLoaderImpl(null, this), playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion);

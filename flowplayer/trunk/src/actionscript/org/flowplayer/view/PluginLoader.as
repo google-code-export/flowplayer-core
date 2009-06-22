@@ -54,8 +54,10 @@ import flash.system.Security;
 	import flash.system.SecurityDomain;
 	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
-	import flash.utils.getQualifiedClassName;		
-	/**
+	import flash.utils.getQualifiedClassName;
+
+
+    /**
 	 * @author api
 	 */
 	public class PluginLoader extends EventDispatcher {
@@ -104,10 +106,10 @@ import flash.system.Security;
 			_callback = callback;
             _loadListener = null;
             _loadErrorListener = null;
-			load([model], null, null);
+			load([model]);
 		}
 
-		public function load(plugins:Array, loadListener:Function, loadErrorListener:Function):void {
+		public function load(plugins:Array, builtInPlugins:Array = null, loadListener:Function = null, loadErrorListener:Function = null):void {
 			log.debug("load()");
             _loadListener = loadListener;
             _loadErrorListener = loadErrorListener;
@@ -145,7 +147,24 @@ import flash.system.Security;
 				log.debug("starting to load plugin from url " + _swiffsToLoad[i]);
 				loader.load(new URLRequest(url), loaderContext);				
 			}
+            if (builtInPlugins && builtInPlugins.length > 0) {
+                intitializeBuiltInPlugins(builtInPlugins);
+            }
 		}
+
+        private function intitializeBuiltInPlugins(builtIn:Array):void {
+            log.debug("built in plugins", builtIn);
+            for (var i:int = 0; i < builtIn.length; i++) {
+                var loadable:Loadable = builtIn[i] as Loadable;
+                log.info("instantiating from loadable " + loadable + ", with config ", loadable.config);
+                var instance:Object = loadable.instantiate();
+                var model:PluginModel = createPluginModel(loadable, instance);
+                if (instance.hasOwnProperty("onConfig")) {
+                    instance.onConfig(model);
+                }
+                initializePlugin(model, instance);                
+            }
+        }
 		
         private function createIOErrorListener(url:String):Function {
             return function(event:IOErrorEvent):void {
@@ -182,7 +201,7 @@ import flash.system.Security;
 						initializeClassLibrary(loadable, info);
 					} else {
                         var plugin:Object = info.content is AVM1Movie ? info.loader : createPluginInstance(instanceUsed, info.content);
-						initializePlugin(loadable, plugin);
+						initializePlugin(createPluginModel(loadable, plugin), plugin);
 						//initializePlugin(loadable, instanceUsed, info);
 						instanceUsed = true;
 					}
@@ -208,38 +227,45 @@ import flash.system.Security;
 			_pluginRegistry.registerGenericPlugin(loadable.createPlugin(info.applicationDomain));
 		}
 
-		private function initializePlugin(loadable:Loadable, pluginInstance:Object):void {
-			log.debug("initializing plugin for loadable " + loadable + ", instance " + pluginInstance);
+		private function createPluginModel(loadable:Loadable, pluginInstance:Object):PluginModel {
+			log.debug("creating model for loadable " + loadable + ", instance " + pluginInstance);
 				
 			_loadedPlugins[loadable] = pluginInstance;
 		
 			log.debug("pluginInstance " + pluginInstance);
-			var plugin:PluginModel;
-			if (pluginInstance is FontProvider) {
-				_pluginRegistry.registerFont(FontProvider(pluginInstance).fontFamily);
-
-			} else if (pluginInstance is DisplayObject) {
-				plugin = Loadable(loadable).createDisplayPlugin(pluginInstance as DisplayObject);
-				_pluginRegistry.registerDisplayPlugin(plugin as DisplayPluginModel, pluginInstance as DisplayObject);
+			if (pluginInstance is DisplayObject) {
+				return Loadable(loadable).createDisplayPlugin(pluginInstance as DisplayObject);
 
 			} else if (pluginInstance is StreamProvider) {
-				plugin = Loadable(loadable).createProvider(pluginInstance);
-				_providers[plugin.name] = pluginInstance;
-				_pluginRegistry.registerProvider(plugin as ProviderModel);
+				return Loadable(loadable).createProvider(pluginInstance);
 			} else {
-				plugin = Loadable(loadable).createPlugin(pluginInstance);
-				_pluginRegistry.registerGenericPlugin(plugin);
-			}
-			if (pluginInstance is Plugin) {
-                if (_loadListener != null) {
-                    plugin.onLoad(_loadListener);
-                }
-                plugin.onError(onPluginError);
-			}
-			if (plugin is Callable && _useExternalInterface) {
-				ExternalInterfaceHelper.initializeInterface(plugin as Callable, pluginInstance);
+				return Loadable(loadable).createPlugin(pluginInstance);
 			}
 		}
+
+        private function initializePlugin(model:PluginModel, pluginInstance:Object):void {
+            if (pluginInstance is FontProvider) {
+                _pluginRegistry.registerFont(FontProvider(pluginInstance).fontFamily);
+
+            } else if (pluginInstance is DisplayObject) {
+                _pluginRegistry.registerDisplayPlugin(model as DisplayPluginModel, pluginInstance as DisplayObject);
+
+            } else if (pluginInstance is StreamProvider) {
+                _providers[model.name] = pluginInstance;
+                _pluginRegistry.registerProvider(model as ProviderModel);
+            } else {
+                _pluginRegistry.registerGenericPlugin(model);
+            }
+            if (pluginInstance is Plugin) {
+                if (_loadListener != null) {
+                    model.onLoad(_loadListener);
+                }
+                model.onError(onPluginError);
+            }
+            if (model is Callable && _useExternalInterface) {
+                ExternalInterfaceHelper.initializeInterface(model as Callable, pluginInstance);
+            }
+        }
 
         private function onPluginError(event:PluginEvent):void {
             log.debug("onPluginError() " + event.error);

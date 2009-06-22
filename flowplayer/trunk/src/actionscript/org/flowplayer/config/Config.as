@@ -92,16 +92,28 @@ package org.flowplayer.config {
 			}
 			return playList;
 		}
-		
-		public function getLoadables():Array {
-			if (!_loadables) {
-				_loadables = viewObjectBuilder.createLoadables(config.plugins, getPlaylist());
-			}
-			return _loadables;
-		}
-		
+
+        public function getConfiguredLoadables():Array {
+            if (!_loadables) {
+                _loadables = viewObjectBuilder.createLoadables(config.plugins, getPlaylist(), true);
+            }
+            return _loadables;
+        }
+
+        public function createLoadables(fromObjects:Object):Array {
+            var loadables:Array = viewObjectBuilder.createLoadables(fromObjects, getPlaylist(), false);
+            for (var i:int = 0; i < loadables.length; i++) {
+                var loadable:Loadable = loadables[i] as Loadable;
+                var configured:Object = config.plugins[loadable.name];
+                if (configured) {
+                    new PropertyBinder(loadable, "config").copyProperties(configured, true);
+                }
+            }
+            return loadables.concat(viewObjectBuilder.createPrototypedLoadables(fromObjects));
+        }
+
 		private function getLoadable(name:String):Loadable {
-			var loadables:Array = getLoadables();
+			var loadables:Array = getConfiguredLoadables();
 			for (var i:Number = 0; i < loadables.length; i++) {
 				var loadable:Loadable = loadables[i];
 				if (loadable.name == name) {

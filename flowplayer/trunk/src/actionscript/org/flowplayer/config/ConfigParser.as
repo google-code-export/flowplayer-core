@@ -29,8 +29,8 @@ import org.flowplayer.flow_internal;
 	/**
 	 * @author anssi
 	 */
-	public class ConfigLoader {
-		private static var log:Log = new Log(ConfigLoader);
+	public class ConfigParser {
+		private static var log:Log = new Log(ConfigParser);
 
         flow_internal static function parse(config:String):Object {
             return JSON.decode(config);
