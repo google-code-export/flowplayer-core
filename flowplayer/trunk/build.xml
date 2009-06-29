@@ -30,16 +30,14 @@
 	<property name="apidoc-dir" value="build/apidoc" />
 	<property name="lib-dir" value="lib" />
 	<property name="locale" value="en_US" />
-	<property name="libs-path-temp" value="${flex3libsdir} ${lib-dir}/thunderbolt ${plugin.libs}"/>
-
-    <condition property="libs-path" value="${libs-path-temp} ${extra-libs}" else="${libs-path-temp}">
-        <isset property="extra-libs" />
-    </condition>
-    <echo message="libs-path is ${libs-path}" />
+	<property name="libs-path" value="${flex3libsdir} ${lib-dir}/thunderbolt ${plugin.libs}"/>
 	<property name="classes-for-lib" value="org.flowplayer.view.Flowplayer org.flowplayer.util.PropertyBinder org.flowplayer.util.Arrange org.flowplayer.util.Assert org.flowplayer.model.PluginEvent org.flowplayer.util.TextUtil org.flowplayer.view.AbstractSprite org.flowplayer.view.AnimationEngine org.flowplayer.controller.NetStreamControllingStreamProvider" />
 	<property name="doc-classes" value="${classes-for-lib} org.flowplayer.view.FlowplayerBase org.flowplayer.view.StyleableSprite org.flowplayer.model.Plugin org.flowplayer.model.PluginModel org.flowplayer.model.DisplayPluginModel org.flowplayer.model.ProviderModel org.flowplayer.model.Cloneable org.flowplayer.model.DisplayProperties org.flowplayer.model.Identifiable org.flowplayer.model.Callable org.flowplayer.model.Clip org.flowplayer.model.Playlist org.flowplayer.model.AbstractEvent org.flowplayer.model.ClipEvent org.flowplayer.model.PlayerEvent org.flowplayer.model.PluginEvent org.flowplayer.model.ClipEventDispatcher org.flowplayer.model.ClipEventSupport org.flowplayer.model.EventType org.flowplayer.model.ClipEventType org.flowplayer.model.PlayerEventType org.flowplayer.model.PluginEventType org.flowplayer.view.Styleable org.flowplayer.controller.StreamProvider org.flowplayer.model.PluginFactory org.flowplayer.controller.ClipURLResolver org.flowplayer.controller.ConnectionProvider org.flowplayer.util.Log" />
-	<property name="classpath" value="${lib-dir}/corelib/src ${lib-dir}/goasp/src_go ${plugin.classes}" />
-	
+	<property name="classpath-temp" value="${lib-dir}/corelib/src ${lib-dir}/goasp/src_go ${plugin.classes}" />
+    <condition property="classpath" value="${classpath-temp} ${plugins}" else="${classpath-temp} src/actionscript-plugintemp">
+        <isset property="plugins" />
+    </condition>
+
 	<property name="library-binary" value="flowplayer.swc" />
 	<property name="library-binary-versioned" value="flowplayer-${version-info}.swc" />
 	
@@ -64,6 +62,13 @@
 		<delete dir="${build-dir}/example"></delete>
 	</target>
 	
+
+    <target name="quick" description="builds the player quickly" >
+        <antcall target="prepare" />
+        <property name="licenselib" value="${lib-dir}/licensekey" />
+        <antcall target="compile" />
+    </target>
+
 	<target name="build" description="builds all" depends="check-uptodate, build-lib, plugins" unless="uptodate.main">
 		<antcall target="prepare" />
 		<property name="licenselib" value="${lib-dir}/licensekey" />

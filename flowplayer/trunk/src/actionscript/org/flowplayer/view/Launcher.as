@@ -76,7 +76,6 @@ import org.flowplayer.model.DisplayPluginModel;
 
 	public class Launcher extends StyleableSprite implements ErrorHandler {
 
-        include "../../../../../plugins.as";
 		private var _panel:Panel;
 		private var _screen:Screen;
 		private var _config:Config;
@@ -258,16 +257,20 @@ import org.flowplayer.model.DisplayPluginModel;
                 log.debug("configuration has no plugins");
                 initPhase3();
             } else {
-                _builtInPlugins = _config.createLoadables(builtIn);
+                _builtInPlugins = _config.createLoadables(Plugins.BUILT_IN);
                 log.debug("following built-in plugins will be instantiated");
-                logPluginInfo(_builtInPlugins);
+                trace("builtIn plugins: ");
+                logPluginInfo(_builtInPlugins, true);
                 _pluginLoader.load(plugins, _builtInPlugins, onPluginLoad, onPluginLoadError);
             }
         }
 
-        private function logPluginInfo(plugins:Array):void {
+        private function logPluginInfo(plugins:Array, doTrace:Boolean = false):void {
             for (var i:Number = 0; i < plugins.length; i++) {
                 log.info("" + plugins[i]);
+                if (doTrace) {
+                    trace("" + plugins[i]);
+                }
             }
         }
 
@@ -564,14 +567,14 @@ import org.flowplayer.model.DisplayPluginModel;
             var configObj:Object = configStr && configStr.indexOf("{") == 0 ? ConfigParser.parse(configStr) : {};
 
             if (! configStr || (configStr && configStr.indexOf("{") == 0 && ! configObj.hasOwnProperty("url"))) {
-                _config = ConfigParser.parseConfig(configObj, playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion, builtIn);
+                _config = ConfigParser.parseConfig(configObj, playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion, Plugins.BUILT_IN);
                 callAndHandleError(initPhase1, PlayerError.INIT_FAILED);
 
             } else {
                 ConfigParser.loadConfig(configObj.hasOwnProperty("url") ? String(configObj["url"]) : configStr, function(config:Config):void {
                     _config = config;
                     callAndHandleError(initPhase1, PlayerError.INIT_FAILED);
-                }, new ResourceLoaderImpl(null, this), playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion, builtIn);
+                }, new ResourceLoaderImpl(null, this), playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion, Plugins.BUILT_IN);
             }
 		}
 
