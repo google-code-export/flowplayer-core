@@ -257,7 +257,7 @@ import org.flowplayer.model.DisplayPluginModel;
                 log.debug("configuration has no plugins");
                 initPhase3();
             } else {
-                _builtInPlugins = _config.createLoadables(Plugins.BUILT_IN);
+                _builtInPlugins = _config.createLoadables(BuiltInConfig.config.plugins);
                 log.debug("following built-in plugins will be instantiated");
                 trace("builtIn plugins: ");
                 logPluginInfo(_builtInPlugins, true);
@@ -567,14 +567,14 @@ import org.flowplayer.model.DisplayPluginModel;
             var configObj:Object = configStr && configStr.indexOf("{") == 0 ? ConfigParser.parse(configStr) : {};
 
             if (! configStr || (configStr && configStr.indexOf("{") == 0 && ! configObj.hasOwnProperty("url"))) {
-                _config = ConfigParser.parseConfig(configObj, playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion, Plugins.BUILT_IN);
+                _config = ConfigParser.parseConfig(configObj, BuiltInConfig.config, playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion);
                 callAndHandleError(initPhase1, PlayerError.INIT_FAILED);
 
             } else {
-                ConfigParser.loadConfig(configObj.hasOwnProperty("url") ? String(configObj["url"]) : configStr, function(config:Config):void {
+                ConfigParser.loadConfig(configObj.hasOwnProperty("url") ? String(configObj["url"]) : configStr, BuiltInConfig.config, function(config:Config):void {
                     _config = config;
                     callAndHandleError(initPhase1, PlayerError.INIT_FAILED);
-                }, new ResourceLoaderImpl(null, this), playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion, Plugins.BUILT_IN);
+                }, new ResourceLoaderImpl(null, this), playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion);
             }
 		}
 

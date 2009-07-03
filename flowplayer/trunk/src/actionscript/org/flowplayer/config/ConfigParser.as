@@ -36,16 +36,16 @@ import org.flowplayer.flow_internal;
             return JSON.decode(config);
         }
 
-        flow_internal static function parseConfig(config:Object, playerSwfName:String, controlsVersion:String, audioVersion:String, builtInPlugins:Object):Config {
-            if (!config) return new Config({}, playerSwfName, controlsVersion, audioVersion, builtInPlugins);
+        flow_internal static function parseConfig(config:Object, builtInConfig:Object, playerSwfName:String, controlsVersion:String, audioVersion:String):Config {
+            if (!config) return new Config({}, builtInConfig, playerSwfName, controlsVersion, audioVersion);
             var configObj:Object = config is String ? JSON.decode(config as String) : config;
-            return new Config(configObj, playerSwfName, controlsVersion, audioVersion, builtInPlugins);
+            return new Config(configObj, builtInConfig, playerSwfName, controlsVersion, audioVersion);
         }
 
-        flow_internal static function loadConfig(fileName:String, listener:Function, loader:ResourceLoader, playerSwfName:String, controlsVersion:String, audioVersion:String, builtInPlugins:Object):void {
+        flow_internal static function loadConfig(fileName:String, builtInConfig:Object, listener:Function, loader:ResourceLoader, playerSwfName:String, controlsVersion:String, audioVersion:String):void {
             loader.load(fileName, function(loader:ResourceLoader):void {
                 trace(loader.getContent());
-                listener(parseConfig(loader.getContent(), playerSwfName, controlsVersion, audioVersion, builtInPlugins))
+                listener(parseConfig(loader.getContent(), builtInConfig, playerSwfName, controlsVersion, audioVersion))
             }, true);
         }
 	}
