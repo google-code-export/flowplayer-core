@@ -104,11 +104,13 @@ package org.flowplayer.config {
 
         public function createLoadables(fromObjects:Object):Array {
             var loadables:Array = viewObjectBuilder.createLoadables(fromObjects, getPlaylist(), false);
-            for (var i:int = 0; i < loadables.length; i++) {
-                var loadable:Loadable = loadables[i] as Loadable;
-                var configured:Object = config.plugins[loadable.name];
-                if (configured) {
-                    new PropertyBinder(loadable, "config").copyProperties(configured, true);
+            if (config.plugins) {
+                for (var i:int = 0; i < loadables.length; i++) {
+                    var loadable:Loadable = loadables[i] as Loadable;
+                    var configured:Object = config.plugins[loadable.name];
+                    if (configured) {
+                        new PropertyBinder(loadable, "config").copyProperties(configured, true);
+                    }
                 }
             }
             return loadables.concat(viewObjectBuilder.createPrototypedLoadables(fromObjects));
