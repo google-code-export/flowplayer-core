@@ -53,16 +53,16 @@ package org.flowplayer.config {
 		private var _audioVersion:String;
 		private var _loadables:Array;
         private var _canvas:Canvas;
-        private var _builtInPluginObjects:Object
+        private var _builtInConfig:Object
 
-		public function Config(config:Object, playerSwfName:String, controlsVersion:String, audioVersion:String, builtInPluginObjects:Object) {
+		public function Config(config:Object, builtInConfig:Object, playerSwfName:String, controlsVersion:String, audioVersion:String) {
 			Assert.notNull(config, "No configuration provided.");
 			this.config = config;
 			_playerSwfName = playerSwfName;
 			_playlistBuilder = new PlaylistBuilder(playerId, config.playlist, config.clip);
 			_controlsVersion = controlsVersion;
 			_audioVersion = audioVersion;
-            _builtInPluginObjects = builtInPluginObjects;
+            _builtInConfig = builtInConfig || new Object();
 		}
 
         flow_internal function set playlistDocument(docObj:String):void {
@@ -129,7 +129,7 @@ package org.flowplayer.config {
 		
 		private function get viewObjectBuilder():PluginBuilder {
 			if (_pluginBuilder == null) {
-				_pluginBuilder = new PluginBuilder(_playerSwfName, _controlsVersion, _audioVersion, this, config.plugins, config, _builtInPluginObjects);
+				_pluginBuilder = new PluginBuilder(_playerSwfName, _controlsVersion, _audioVersion, this, config.plugins, config, _builtInConfig.plugins);
 			}
 			return _pluginBuilder;
 		}
