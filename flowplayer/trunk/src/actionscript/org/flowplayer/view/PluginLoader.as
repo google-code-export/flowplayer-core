@@ -85,17 +85,6 @@ import flash.system.Security;
 			_loadedCount = 0;
 		}
 
-		private function getPluginSwiffUrls(plugins:Array):Array {
-			var result:Array = new Array();
-			for (var i:Number = 0; i < plugins.length; i++) {
-				var loadable:Loadable = Loadable(plugins[i]); 
-				if (result.indexOf(loadable.url) < 0) {
-					result.push(constructUrl(loadable.url));
-				}
-			}
-			return result;
-		}
-		
 		private function constructUrl(url:String):String {
 			if (url.indexOf("..") >= 0) return url;
 			if (url.indexOf("/") >= 0) return url;
@@ -109,7 +98,7 @@ import flash.system.Security;
 			load([model]);
 		}
 
-		public function load(plugins:Array, builtInPlugins:Array = null, loadListener:Function = null, loadErrorListener:Function = null):void {
+		public function load(plugins:Array, loadListener:Function = null, loadErrorListener:Function = null):void {
 			log.debug("load()");
             _loadListener = loadListener;
             _loadErrorListener = loadErrorListener;
@@ -117,7 +106,9 @@ import flash.system.Security;
             Security.allowDomain("*");
 
 			_providers = new Dictionary();
-			_loadables = plugins;
+			_loadables = plugins.filter(function(plugin:*, index:int, array:Array):Boolean {
+                return plugin.url && String(plugin.url).toLocaleLowerCase().indexOf(".swf") > 0;
+            });
 			_swiffsToLoad = getPluginSwiffUrls(plugins);
 			if (! _loadables || _loadables.length == 0) {
 				log.info("Not loading any plugins.");
@@ -147,22 +138,32 @@ import flash.system.Security;
 				log.debug("starting to load plugin from url " + _swiffsToLoad[i]);
 				loader.load(new URLRequest(url), loaderContext);				
 			}
-            if (builtInPlugins && builtInPlugins.length > 0) {
-                intitializeBuiltInPlugins(builtInPlugins);
-            }
+            intitializeBuiltInPlugins(plugins);
 		}
 
-        private function intitializeBuiltInPlugins(builtIn:Array):void {
-            log.debug("built in plugins", builtIn);
-            for (var i:int = 0; i < builtIn.length; i++) {
-                var loadable:Loadable = builtIn[i] as Loadable;
-                log.info("instantiating from loadable " + loadable + ", with config ", loadable.config);
-                var instance:Object = loadable.instantiate();
-                var model:PluginModel = createPluginModel(loadable, instance);
-                if (instance.hasOwnProperty("onConfig")) {
-                    instance.onConfig(model);
+        private function getPluginSwiffUrls(plugins:Array):Array {
+            var result:Array = new Array();
+            for (var i:Number = 0; i < plugins.length; i++) {
+                var loadable:Loadable = Loadable(plugins[i]);
+                if (! loadable.isBuiltIn && loadable.url && result.indexOf(loadable.url) < 0) {
+                    result.push(constructUrl(loadable.url));
                 }
-                initializePlugin(model, instance);                
+            }
+            return result;
+        }
+
+        private function intitializeBuiltInPlugins(plugins:Array):void {
+            for (var i:int = 0; i < plugins.length; i++) {
+                var loadable:Loadable = plugins[i] as Loadable;
+                if (loadable.isBuiltIn) {
+                    log.info("instantiating from loadable " + loadable + ", with config ", loadable.config);
+                    var instance:Object = loadable.instantiate();
+                    var model:PluginModel = createPluginModel(loadable, instance);
+                    if (instance.hasOwnProperty("onConfig")) {
+                        instance.onConfig(model);
+                    }
+                    initializePlugin(model, instance);
+                }
             }
         }
 		
@@ -305,6 +306,7 @@ import flash.system.Security;
 		}
 
 		private function hasSwiff(infoUrl:String, modelUrl:String):Boolean {
+            if (! modelUrl) return false;
 			var slashPos:int = modelUrl.lastIndexOf("/");
 			var swiffUrl:String = slashPos >= 0 ? modelUrl.substr(slashPos) : modelUrl;
 			return StringUtil.endsWith(infoUrl, swiffUrl);

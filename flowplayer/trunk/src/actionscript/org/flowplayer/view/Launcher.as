@@ -95,7 +95,6 @@ import org.flowplayer.model.DisplayPluginModel;
         private var _playlistLoader:ResourceLoader;
         private var _fullscreenManager:FullscreenManager;
         private var _screenArranged:Boolean;
-        private var _builtInPlugins:Array;
 
 		[Frame(factoryClass="org.flowplayer.view.Preloader")]
 		public function Launcher() {
@@ -247,7 +246,7 @@ import org.flowplayer.model.DisplayPluginModel;
 		}
 
 		private function loadPlugins():void {
-			var plugins:Array = _config.getConfiguredLoadables();
+			var plugins:Array = _config.getLoadables();
 			log.info("will load following plugins: ");
             logPluginInfo(plugins);
 			_pluginLoader = new PluginLoader(URLUtil.playerBaseUrl(loaderInfo), _pluginRegistry, this, useExternalInterfade());
@@ -257,11 +256,11 @@ import org.flowplayer.model.DisplayPluginModel;
                 log.debug("configuration has no plugins");
                 initPhase3();
             } else {
-                _builtInPlugins = _config.createLoadables(BuiltInConfig.config.plugins);
-                log.debug("following built-in plugins will be instantiated");
-                trace("builtIn plugins: ");
-                logPluginInfo(_builtInPlugins, true);
-                _pluginLoader.load(plugins, _builtInPlugins, onPluginLoad, onPluginLoadError);
+//                _builtInPlugins = _config.createLoadables(BuiltInConfig.config.plugins);
+//                log.debug("following built-in plugins will be instantiated");
+//                trace("builtIn plugins: ");
+//                logPluginInfo(_builtInPlugins, true);
+                _pluginLoader.load(plugins, onPluginLoad, onPluginLoadError);
             }
         }
 
@@ -322,15 +321,12 @@ import org.flowplayer.model.DisplayPluginModel;
 
 		private function countPlugins():int {
 			var count:Number = 0;
-			var loadables:Array = _config.getConfiguredLoadables();
-            if (_builtInPlugins) {
-                loadables = loadables.concat(_builtInPlugins);
-            }
+			var loadables:Array = _config.getLoadables();
 			for (var i:Number = 0; i < loadables.length; i++) {
 
 				var plugin:PluginModel = Loadable(loadables[i]).plugin;
                 if (! plugin) {
-                    handleError(PlayerError.PLUGIN_LOAD_FAILED, "Unable to load plugin " + Loadable(loadables[i]).url);
+                    handleError(PlayerError.PLUGIN_LOAD_FAILED, "Unable to load plugin, url " + Loadable(loadables[i]).url + ", name " + Loadable(loadables[i]).name);
 //                    throw new Error("Plugin " + loadables[i] + " not available");
                 }
                 var isNonAdHocPlugin:Boolean = plugin.pluginObject is Plugin;
