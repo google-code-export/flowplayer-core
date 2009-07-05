@@ -18,7 +18,9 @@
  */
 
 package org.flowplayer.config {
-	import org.flowplayer.config.PluginBuilder;
+    import flash.utils.ByteArray;
+
+    import org.flowplayer.config.PluginBuilder;
 	import org.flowplayer.controller.NetStreamControllingStreamProvider;
 	import org.flowplayer.flow_internal;
     import org.flowplayer.model.Canvas;
@@ -57,13 +59,39 @@ package org.flowplayer.config {
 
 		public function Config(config:Object, builtInConfig:Object, playerSwfName:String, controlsVersion:String, audioVersion:String) {
 			Assert.notNull(config, "No configuration provided.");
-			this.config = config;
+			this.config = createConfigObject(config, builtInConfig);
 			_playerSwfName = playerSwfName;
 			_playlistBuilder = new PlaylistBuilder(playerId, config.playlist, config.clip);
 			_controlsVersion = controlsVersion;
 			_audioVersion = audioVersion;
             _builtInConfig = builtInConfig || new Object();
 		}
+
+        private function createConfigObject(configured:Object, builtInConfig:Object):Object {
+            var buffer:ByteArray = new ByteArray();
+            buffer.writeObject(builtInConfig);
+            buffer.position = 0;
+            var result:Object = buffer.readObject();
+
+            result = copyProps(result, configured);
+            return result;
+        }
+
+        private function copyProps(target:Object, source:Object):Object {
+            var props:Boolean = false;
+            for (var key:String in source) {
+                if (target.hasOwnProperty(key)) {
+                    copyProps(target[key], source[key]);
+                } else {
+                    target[key] = source[key];
+                }
+                props = true;
+            }
+            if (! props) {
+                target = source;
+            }
+            return target;
+        }
 
         flow_internal function set playlistDocument(docObj:String):void {
             _playlistBuilder.playlistFeed = docObj;
@@ -95,29 +123,29 @@ package org.flowplayer.config {
 			return playList;
 		}
 
-        public function getConfiguredLoadables():Array {
+        public function getLoadables():Array {
             if (!_loadables) {
-                _loadables = viewObjectBuilder.createLoadables(config.plugins, getPlaylist(), true);
+                _loadables = viewObjectBuilder.createLoadables(getPlaylist());
             }
             return _loadables;
         }
-
-        public function createLoadables(fromObjects:Object):Array {
-            var loadables:Array = viewObjectBuilder.createLoadables(fromObjects, getPlaylist(), false);
-            if (config.plugins) {
-                for (var i:int = 0; i < loadables.length; i++) {
-                    var loadable:Loadable = loadables[i] as Loadable;
-                    var configured:Object = config.plugins[loadable.name];
-                    if (configured) {
-                        new PropertyBinder(loadable, "config").copyProperties(configured, true);
-                    }
-                }
-            }
-            return loadables.concat(viewObjectBuilder.createPrototypedLoadables(fromObjects));
-        }
+//
+//        public function createLoadables(fromObjects:Object):Array {
+//            var loadables:Array = viewObjectBuilder.createLoadables(fromObjects, getPlaylist(), false);
+//            if (config.plugins) {
+//                for (var i:int = 0; i < loadables.length; i++) {
+//                    var loadable:Loadable = loadables[i] as Loadable;
+//                    var configured:Object = config.plugins[loadable.name];
+//                    if (configured) {
+//                        new PropertyBinder(loadable, "config").copyProperties(configured, true);
+//                    }
+//                }
+//            }
+//            return loadables.concat(viewObjectBuilder.createPrototypedLoadables(fromObjects));
+//        }
 
 		private function getLoadable(name:String):Loadable {
-			var loadables:Array = getConfiguredLoadables();
+			var loadables:Array = getLoadables();
 			for (var i:Number = 0; i < loadables.length; i++) {
 				var loadable:Loadable = loadables[i];
 				if (loadable.name == name) {
@@ -129,7 +157,7 @@ package org.flowplayer.config {
 		
 		private function get viewObjectBuilder():PluginBuilder {
 			if (_pluginBuilder == null) {
-				_pluginBuilder = new PluginBuilder(_playerSwfName, _controlsVersion, _audioVersion, this, config.plugins, config, _builtInConfig.plugins);
+				_pluginBuilder = new PluginBuilder(_playerSwfName, _controlsVersion, _audioVersion, this, config.plugins, config);
 			}
 			return _pluginBuilder;
 		}
