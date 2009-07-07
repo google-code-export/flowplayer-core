@@ -73,22 +73,32 @@ package org.flowplayer.config {
             buffer.position = 0;
             var result:Object = buffer.readObject();
 
-            result = copyProps(result, configured);
-            return result;
+            return copyProps(result, configured);
         }
 
-        private function copyProps(target:Object, source:Object):Object {
+        private function copyProps(target:Object, source:Object, propName:String = null):Object {
             var props:Boolean = false;
+            if (source is Number || source is String || source is Array) {
+                target = source;
+                return target;
+            }
+
+            if (source is Array) {
+                if (target.hasOwnProperty(propName)) {
+                    for (var i:int = 0; i < source.length; i++) {
+                        (target[propName] as Array).push(source[i]);
+                    }
+                }
+                return target;
+            }
+
             for (var key:String in source) {
                 if (target.hasOwnProperty(key)) {
-                    copyProps(target[key], source[key]);
+                    target[key] = copyProps(target[key], source[key], key);
                 } else {
                     target[key] = source[key];
                 }
                 props = true;
-            }
-            if (! props) {
-                target = source;
             }
             return target;
         }
@@ -129,20 +139,6 @@ package org.flowplayer.config {
             }
             return _loadables;
         }
-//
-//        public function createLoadables(fromObjects:Object):Array {
-//            var loadables:Array = viewObjectBuilder.createLoadables(fromObjects, getPlaylist(), false);
-//            if (config.plugins) {
-//                for (var i:int = 0; i < loadables.length; i++) {
-//                    var loadable:Loadable = loadables[i] as Loadable;
-//                    var configured:Object = config.plugins[loadable.name];
-//                    if (configured) {
-//                        new PropertyBinder(loadable, "config").copyProperties(configured, true);
-//                    }
-//                }
-//            }
-//            return loadables.concat(viewObjectBuilder.createPrototypedLoadables(fromObjects));
-//        }
 
 		private function getLoadable(name:String):Loadable {
 			var loadables:Array = getLoadables();
