@@ -76,6 +76,7 @@ import flash.system.Security;
 		private var _loadErrorListener:Function;
 		private var _loadListener:Function;
         private var _loadComplete:Boolean;
+        private var _allPlugins:Array;
 
 		public function PluginLoader(baseUrl:String, pluginRegistry:PluginRegistry, errorHandler:ErrorHandler, useExternalInterface:Boolean) {
 			_baseUrl = baseUrl;
@@ -106,14 +107,11 @@ import flash.system.Security;
             Security.allowDomain("*");
 
 			_providers = new Dictionary();
+            _allPlugins = plugins.concat([]);
 			_loadables = plugins.filter(function(plugin:*, index:int, array:Array):Boolean {
                 return plugin.url && String(plugin.url).toLocaleLowerCase().indexOf(".swf") > 0;
             });
 			_swiffsToLoad = getPluginSwiffUrls(plugins);
-			if (! _loadables || _loadables.length == 0) {
-				log.info("Not loading any plugins.");
-				return;
-			}
 
 			_loadedPlugins = new Dictionary();
 			_loadedCount = 0;
@@ -128,17 +126,23 @@ import flash.system.Security;
                 Loadable(_loadables[i]).onError(_loadErrorListener);
             }
 
-			for (i = 0; i < _swiffsToLoad.length; i++) {
-				var loader:Loader = new Loader();
-				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loaded);
-				var url:String = _swiffsToLoad[i];
-
-				loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, createIOErrorListener(url));
-				loader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, onProgress);
-				log.debug("starting to load plugin from url " + _swiffsToLoad[i]);
-				loader.load(new URLRequest(url), loaderContext);				
-			}
             intitializeBuiltInPlugins(plugins);
+            if (_swiffsToLoad.length == 0) {
+                setConfigPlugins();
+                dispatchEvent(new Event(Event.COMPLETE, true, false));
+                return;
+            }
+
+            for (i = 0; i < _swiffsToLoad.length; i++) {
+                var loader:Loader = new Loader();
+                loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loaded);
+                var url:String = _swiffsToLoad[i];
+
+                loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, createIOErrorListener(url));
+                loader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, onProgress);
+                log.debug("starting to load plugin from url " + _swiffsToLoad[i]);
+                loader.load(new URLRequest(url), loaderContext);
+            }
 		}
 
         private function getPluginSwiffUrls(plugins:Array):Array {
@@ -155,13 +159,14 @@ import flash.system.Security;
         private function intitializeBuiltInPlugins(plugins:Array):void {
             for (var i:int = 0; i < plugins.length; i++) {
                 var loadable:Loadable = plugins[i] as Loadable;
+                log.debug("intitializeBuiltInPlugins() " + loadable + " isBuiltIn " + loadable.isBuiltIn);
                 if (loadable.isBuiltIn) {
                     log.info("instantiating from loadable " + loadable + ", with config ", loadable.config);
                     var instance:Object = loadable.instantiate();
                     var model:PluginModel = createPluginModel(loadable, instance);
-                    if (instance.hasOwnProperty("onConfig")) {
-                        instance.onConfig(model);
-                    }
+//                    if (instance.hasOwnProperty("onConfig")) {
+//                        instance.onConfig(model);
+//                    }
                     initializePlugin(model, instance);
                 }
             }
@@ -289,7 +294,7 @@ import flash.system.Security;
 		}
 		
 		public function setConfigPlugins():void {
-			_loadables.forEach(function(loadable:Loadable, index:int, array:Array):void {
+			_allPlugins.forEach(function(loadable:Loadable, index:int, array:Array):void {
                 if (! loadable.loadFailed) {
                     var pluginInstance:Object = plugins[loadable];
                     log.info(index + ": setting config to " + pluginInstance + ", " + loadable);
