@@ -159,9 +159,9 @@ import flash.system.Security;
         private function intitializeBuiltInPlugins(plugins:Array):void {
             for (var i:int = 0; i < plugins.length; i++) {
                 var loadable:Loadable = plugins[i] as Loadable;
-                log.debug("intitializeBuiltInPlugins() " + loadable + " isBuiltIn " + loadable.isBuiltIn);
+                log.debug("intitializeBuiltInPlugins() " + loadable);
                 if (loadable.isBuiltIn) {
-                    log.info("instantiating from loadable " + loadable + ", with config ", loadable.config);
+                    log.info("intitializeBuiltInPlugins(), instantiating from loadable " + loadable + ", with config ", loadable.config);
                     var instance:Object = loadable.instantiate();
                     var model:PluginModel = createPluginModel(loadable, instance);
 //                    if (instance.hasOwnProperty("onConfig")) {
