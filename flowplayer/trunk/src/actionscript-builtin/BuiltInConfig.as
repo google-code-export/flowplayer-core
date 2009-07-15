@@ -1,5 +1,5 @@
 package {
-    import org.flowplayer.controls.Controls;
+//    import org.flowplayer.controls.Controls;
 //    import org.flowplayer.content.Content;
 //    import org.flowplayer.akamai.AkamaiConnectionProvider;
 //    import org.flowplayer.rtmp.RTMPStreamProvider;
@@ -12,7 +12,7 @@ package {
 //    import org.flowplayer.cluster.ClusterConnectionProvider;
 
     public class BuiltInConfig {
-        private var controls:org.flowplayer.controls.Controls;
+//        private var controls:org.flowplayer.controls.Controls;
 //        private var content:org.flowplayer.content.Content;
 //        private var akamai:org.flowplayer.akamai.AkamaiConnectionProvider;
 //        private var rtmp:org.flowplayer.rtmp.RTMPStreamProvider;
@@ -27,7 +27,7 @@ package {
         public static const config:Object = {
             logo: { fullscreenOnly: false },
             "plugins":{
-                "controls":{"url":"org.flowplayer.controls.Controls"}
+//                "controls":{"url":"org.flowplayer.controls.Controls"}
 //                content: { url: "org.flowplayer.content.Content" },
 //                akamai: { url: "org.flowplayer.akamai.AkamaiConnectionProvider" },
 //                rtmp: { url: "org.flowplayer.rtmp.RTMPStreamProvider" },
