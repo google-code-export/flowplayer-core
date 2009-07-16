@@ -77,7 +77,7 @@ import org.flowplayer.model.ClipType;
         }
 
         private function isBuiltIn(name:String):Boolean {
-            return _pluginObjects[name] && String(_pluginObjects[name]["url"]).toLocaleLowerCase().indexOf(".swf") < 0;
+            return _pluginObjects[name] && _pluginObjects[name].hasOwnProperty("url") && String(_pluginObjects[name]["url"]).toLocaleLowerCase().indexOf(".swf") < 0;
         }
 
         private function updatePrototypedLoadableUrls():void {
