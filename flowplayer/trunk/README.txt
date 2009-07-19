@@ -3,6 +3,7 @@ Version history:
 3.1.2
 -----
 Fixes:
+- volume control and mute/unmute were not working after an instream clip had been played
 - now possible to use RTMP for mp3 files
 - Issue 12: cuepointMultiplier was undefined in teh clip object set to JS event listeners
 - Issue 14: onBeforeStop was unnecessarily fired when calling setPlaylist() and the player was not playing,

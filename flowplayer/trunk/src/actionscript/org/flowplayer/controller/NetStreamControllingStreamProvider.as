@@ -375,6 +375,7 @@ import org.flowplayer.model.PluginModel;
 		 * @param event the event that is dispatched after resuming
 		 */		
 		protected function doResume(netStream:NetStream, event:ClipEvent):void {
+            _volumeController.netStream = netStream;
 			netStream.resume();
 			dispatchEvent(event);
 		}
