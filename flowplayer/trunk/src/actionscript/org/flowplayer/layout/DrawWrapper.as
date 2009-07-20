@@ -18,7 +18,8 @@
  */
 
 package org.flowplayer.layout {
-	import org.flowplayer.view.AbstractSprite;		import org.flowplayer.util.Log;	
+	import org.flowplayer.view.AbstractSprite;	
+	import org.flowplayer.util.Log;	
 	
 	import flash.display.DisplayObject;
 	import flash.geom.Rectangle;		
@@ -41,7 +42,7 @@ package org.flowplayer.layout {
 				log.warn("Did not get bounds for view " + view);
 				return;
 			}
-			log.debug("got bounds " + bounds);
+			log.debug("got bounds " + bounds + " for view " + view);
 			view.x = bounds.x;
 			view.y = bounds.y;
 			if (view is AbstractSprite) {

@@ -58,7 +58,6 @@ package org.flowplayer.layout {
 				var valStr:String = valueObject as String;
 				_pct = NumberUtil.decodePercentage(valStr);
 				_px = NumberUtil.decodePixels(valStr);
-				log.debug("set values to " + this);
 			} else {
 				_px = valueObject as Number;
 				_pct = NaN;
@@ -112,9 +111,12 @@ package org.flowplayer.layout {
 		
 		public function toString():String {
 			return "[Dimension] " + _px + "px -- " + _pct + "%";
-		}				public function toPx(containerLength:Number):Number {
+		}
+		
+		public function toPx(containerLength:Number):Number {
 			if (_pct >= 0) return containerLength * _pct / 100;
 			if (_px >= 0) return _px;
-			return undefined;		}
+			return undefined;
+		}
 	}
 }
