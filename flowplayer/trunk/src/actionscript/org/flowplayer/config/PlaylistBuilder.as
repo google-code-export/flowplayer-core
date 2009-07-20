@@ -110,7 +110,7 @@ package org.flowplayer.config {
                 baseUrl = url.substring(0, lastSlashIndex);
                 fileName = url.substring(lastSlashIndex + 1);
             }
-            var clip:Clip = Clip.create(fileName, baseUrl);
+            var clip:Clip = Clip.create(clipObj, fileName, baseUrl);
             new PropertyBinder(clip, "customProperties").copyProperties(clipObj) as Clip;
             if (isChild || clipObj.hasOwnProperty("position")) {
                 return clip;

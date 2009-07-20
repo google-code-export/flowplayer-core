@@ -18,9 +18,10 @@
  */
 
 package org.flowplayer.config {
+    import org.flowplayer.flow_internal;
     import org.flowplayer.model.Clip;
-import org.flowplayer.model.ClipType;
-	import org.flowplayer.model.Playlist;	
+    import org.flowplayer.model.ClipType;
+    import org.flowplayer.model.Playlist;
 	
 	import flash.display.DisplayObject;
 	
@@ -32,7 +33,10 @@ import org.flowplayer.model.ClipType;
 	import org.flowplayer.model.Plugin;
 	import org.flowplayer.model.PluginModel;
 	import org.flowplayer.util.Log;
-	import org.flowplayer.util.PropertyBinder;	
+	import org.flowplayer.util.PropertyBinder;
+
+
+    use namespace flow_internal;
 
 	internal class PluginBuilder {
 
@@ -69,11 +73,23 @@ import org.flowplayer.model.ClipType;
             if (! isBuiltIn("controls")) {
                 initLoadable("controls", _controlsVersion);
             }
-            if (playlist.hasType(ClipType.AUDIO) && ! isBuiltIn("audio")) {
+            if (hasAudioClipsWithoutProvider(playlist) && ! isBuiltIn("audio")) {
                 initLoadable("audio", _audioVersion);
             }
             createInStreamProviders(playlist, _loadables);
             return _loadables;
+        }
+
+        private function hasAudioClipsWithoutProvider(playlist:Playlist):Boolean {
+            var clips:Array = playlist.clips; 
+            for (var i:int; i < clips.length; i++) {
+                var clip:Clip = clips[i] as Clip;
+
+                if (ClipType.AUDIO == clip.type && ! clip.clipObject.hasOwnProperty("provider")) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private function isBuiltIn(name:String):Boolean {

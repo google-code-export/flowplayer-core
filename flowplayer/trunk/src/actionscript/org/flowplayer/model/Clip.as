@@ -78,6 +78,7 @@ import org.flowplayer.flow_internal;
         private var _urlResolvers:Array;
         private var _connectionProvider:String;
         private var _seekableOnBegin:Object;
+        private var _clipObject:Object;
 
         public function Clip() {
             _childPlaylist = new TimedPlaylist();
@@ -97,8 +98,8 @@ import org.flowplayer.flow_internal;
             _seekableOnBegin = null;
 		}
 
-		public static function create(url:String, baseUrl:String = null):Clip {
-			return init(new Clip(), url, baseUrl);
+		public static function create(clipObj:Object, url:String, baseUrl:String = null):Clip {
+			return init(new Clip(), clipObj, url, baseUrl);
 		}
 
         public function addChild(clip:Clip):void {
@@ -115,7 +116,8 @@ import org.flowplayer.flow_internal;
             }
         }
 
-        private static function init(clip:Clip, url:String, baseUrl:String = null):Clip {
+        private static function init(clip:Clip, clipObj:Object, url:String, baseUrl:String = null):Clip {
+            clip._clipObject = clipObj;
             clip._url = url;
             clip._baseUrl = baseUrl;
             clip._autoPlay = true;
@@ -826,6 +828,10 @@ import org.flowplayer.flow_internal;
 
         public function get isOneShot():Boolean {
             return _parent && position == -2;
+        }
+
+        flow_internal function get clipObject():Object {
+            return _clipObject;
         }
     }
 }

@@ -301,11 +301,13 @@ package org.flowplayer.model {
 		public function hasType(type:ClipType):Boolean {
             var clips:Array = _clips.concat(childClips);
             for (var i:Number = 0; i < clips.length; i++) {
-                if (Clip(clips[i]).type == type) {
+                var clip:Clip = Clip(clips[i]);
+
+                if (clip.type == type) {
                     return true;
                 }
             }
-            return false
+            return false;
         }
 	}
 }
