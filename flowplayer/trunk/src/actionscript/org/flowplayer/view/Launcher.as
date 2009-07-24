@@ -95,6 +95,9 @@ import org.flowplayer.model.DisplayPluginModel;
         private var _playlistLoader:ResourceLoader;
         private var _fullscreenManager:FullscreenManager;
         private var _screenArranged:Boolean;
+        private var _clickCount:int;
+        private var _clickTimer:Timer = new Timer(200, 1);
+        private var _clickEvent:MouseEvent;
 
 		[Frame(factoryClass="org.flowplayer.view.Preloader")]
 		public function Launcher() {
@@ -667,10 +670,14 @@ import org.flowplayer.model.DisplayPluginModel;
 		}
 		
 		private function addListeners():void {
-//            addEventListener(MouseEvent.DOUBLE_CLICK, onDoubleClick);
-            _screen.addEventListener(MouseEvent.CLICK, onViewClicked);
+            _clickTimer.addEventListener(TimerEvent.TIMER, onClickTimer);
+
+            doubleClickEnabled = true;
+            addEventListener(MouseEvent.DOUBLE_CLICK, onDoubleClick);
+
+            _screen.addEventListener(MouseEvent.CLICK, onClickEvent);
             if (_playButtonOverlay) {
-                _playButtonOverlay.getDisplayObject().addEventListener(MouseEvent.CLICK, onViewClicked);
+                _playButtonOverlay.getDisplayObject().addEventListener(MouseEvent.CLICK, onClickEvent);
             }
 			addEventListener(MouseEvent.ROLL_OVER, onMouseOver);
 			addEventListener(MouseEvent.ROLL_OUT, onMouseOut);
@@ -738,14 +745,20 @@ import org.flowplayer.model.DisplayPluginModel;
 			doHandleError(event.error.code + ", " + event.error.message + ", " + event.info + ", clip: '" + Clip(event.target) + "'");
 		}
 
-        private function onViewClicked(event:MouseEvent):void {
-            if (_enteringFullscreen) return;
-            log.debug("onViewClicked, target " + event.target + ", current target " + event.currentTarget);
+        private function onClickTimer(event:TimerEvent):void {
+            if (_clickCount == 1) {
+                onSingleClick(_clickEvent);
+            }
+            _clickCount = 0;
+        }
 
-            if (_playButtonOverlay && isParent(DisplayObject(event.target), _playButtonOverlay.getDisplayObject())) {
-                _flowplayer.toggle();
+        private function onDoubleClick(event:MouseEvent = null):void {
+            log.debug("onDoubleClick");
+            _flowplayer.toggleFullscreen();
+        }
 
-            } else if (isParent(DisplayObject(event.target), _screen)) {
+        private function onSingleClick(event:MouseEvent):void {
+            if (isParent(DisplayObject(event.target), _screen)) {
                 log.debug("screen clicked");
                 var clip:Clip = _flowplayer.playlist.current;
                 if (clip.linkUrl) {
@@ -755,10 +768,27 @@ import org.flowplayer.model.DisplayPluginModel;
                     return;
                 }
                 _flowplayer.toggle();
+            }
+        }
 
+        private function onClickEvent(event:MouseEvent):void {
+            if (_enteringFullscreen) return;
+            log.debug("onViewClicked, target " + event.target + ", current target " + event.currentTarget);
+            event.stopPropagation();
+
+            if (_playButtonOverlay && isParent(DisplayObject(event.target), _playButtonOverlay.getDisplayObject())) {
+                _flowplayer.toggle();
+                return;
             }
 
-            event.stopPropagation();
+            if (_clickCount == 0) {
+                _clickEvent = event;
+            }
+            if (++_clickCount == 2) {
+                onDoubleClick(event);
+            } else {
+                _clickTimer.start();
+            }
         }
 
 		private function isParent(child:DisplayObject, parent:DisplayObject):Boolean {
