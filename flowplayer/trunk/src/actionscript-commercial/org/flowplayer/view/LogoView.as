@@ -18,9 +18,10 @@
  */
 
 package org.flowplayer.view {
-	import flash.text.TextField;	
-	
-import org.flowplayer.controller.ResourceLoader;
+	import flash.text.TextField;
+
+    import org.flowplayer.KeyUtil;
+    import org.flowplayer.controller.ResourceLoader;
 import org.flowplayer.util.URLUtil;
 	import org.flowplayer.controller.ResourceLoaderImpl;
 	import org.flowplayer.model.DisplayProperties;
@@ -51,26 +52,28 @@ import org.flowplayer.util.URLUtil;
 		private var _panel:Panel;
 		private var _originalProps:DisplayProperties;
 		private var _copyrightNotice:TextField;
-		public function LogoView(panel:Panel, model:Logo, player:Flowplayer) {
-			_panel = panel;
-			this.model = model;
-			_originalProps = _model.clone() as DisplayProperties;
-			log.debug("original model dimensions " + _originalProps.dimensions);
-			_player = player;
-			setEventListeners();
 
-			CONFIG::commercialVersion {
-				loadLogoImage();
-			}
+        public function LogoView(panel:Panel, model:Logo, player:Flowplayer) {
+            _panel = panel;
+            this.model = model;
+            _originalProps = _model.clone() as DisplayProperties;
+            log.debug("original model dimensions " + _originalProps.dimensions);
+            _player = player;
+            setEventListeners();
 
-			CONFIG::freeVersion {
-				_copyrightNotice = LogoUtil.createCopyrightNotice(10);
-				addChild(_copyrightNotice);
-				createLogoImage(new FlowplayerLogo());
-			}
-			
-		}
-		
+            CONFIG::commercialVersion {
+                loadLogoImage();
+            }
+
+            CONFIG::freeVersion {
+                _copyrightNotice = LogoUtil.createCopyrightNotice(10);
+                addChild(_copyrightNotice);
+                createLogoImage(new FlowplayerLogo());
+            }
+
+        }
+
+
 		CONFIG::freeVersion
 		private function onLogoTimer(event:TimerEvent):void {
 			if (! this.parent && _panel.stage.displayState == StageDisplayState.NORMAL) return;
@@ -125,11 +128,26 @@ import org.flowplayer.util.URLUtil;
 		CONFIG::commercialVersion
 		private function loadLogoImage():void {
 			if (_model.url) {
+                var playerBaseUrl:String = URLUtil.playerBaseUrl(_panel.loaderInfo);
+                if (! verifyLogoUrl(_model.url, playerBaseUrl)) return;
+
 				log.debug("loading image from " + _model.url);
-                var loader:ResourceLoader = new ResourceLoaderImpl(URLUtil.playerBaseUrl(_panel.loaderInfo), _player);
+                var loader:ResourceLoader = new ResourceLoaderImpl(playerBaseUrl, _player);
                 loader.load(_model.url, onImageLoaded);
 			}
 		}
+
+        CONFIG::commercialVersion
+        private function verifyLogoUrl(configuredUrl:String, playerBaseUrl:String):Boolean {
+            if  (! URLUtil.isCompleteURLWithProtocol(configuredUrl)) return true;
+            if (URLUtil.localDomain(playerBaseUrl)) return true;
+
+            if (KeyUtil.parseDomain(configuredUrl, true) != KeyUtil.parseDomain(playerBaseUrl, true)) {
+                log.error("cannot load logo from domain " + KeyUtil.parseDomain(configuredUrl, true));
+                return false;
+            }
+            return true;
+        }
 
 		CONFIG::commercialVersion
 		private function onImageLoaded(loader:ResourceLoader):void {

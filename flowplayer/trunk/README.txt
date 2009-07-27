@@ -2,6 +2,7 @@ Version history:
 
 3.1.2
 -----
+- The domain of the logo url must the same domain from where the player SWF is loaded from.
 Fixes:
 - volume control and mute/unmute were not working after an instream clip had been played
 - now possible to use RTMP for mp3 files
@@ -9,6 +10,7 @@ Fixes:
 - Issue 14: onBeforeStop was unnecessarily fired when calling setPlaylist() and the player was not playing,
             additionally onStop was never fired even if onBeforeStop was
 - fixed screen vertical placement problems that reappeared with 3.1.1
+- The rotating animation now has the same size and position as it has after initialized
 
 3.1.1
 -----
