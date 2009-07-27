@@ -27,14 +27,16 @@ package org.flowplayer.model {
 
 		private var _fadeSpeed:int;
 		private var _rotateSpeed:int;
-		private var _url:String;		private var _label:String;
+		private var _url:String;
+		private var _label:String;
 		private var _replayLabel:String;
 		private var _buffering:Boolean;
-		public function PlayButtonOverlay() {
+
+		public function PlayButtonOverlay() {
 			super(null, "play", false);
 			// these are used initially before screen is arranged
 			// once screen is availabe, these will be overridden
-			top = "45%";
+			top = "50%";
 			left = "50%";
 			width = "22%";
 			height = "22%";
