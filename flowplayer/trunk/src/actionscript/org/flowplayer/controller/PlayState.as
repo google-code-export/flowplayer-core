@@ -183,11 +183,14 @@ package org.flowplayer.controller {
 			if (playList.current.isNullClip) return false;
 			
 			if (eventType.isCancellable) {
+                log.debug("onEvent(): dispatching before event for " + eventType.name);
 				if (! playList.current.dispatchBeforeEvent(new ClipEvent(eventType, beforeEventInfo))) {
 					log.info("event default was prevented, will not execute a state change");
 					return false;
 				}
-			}
+			} else {
+                log.debug("event is not cancellable, will not dispatch before event");
+            }
 			log.debug("calling onEvent(" + eventType.name + ") on media controller ");
 			 getMediaController().onEvent(eventType, params);
 			return true;

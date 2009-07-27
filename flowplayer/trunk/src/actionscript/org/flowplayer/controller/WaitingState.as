@@ -41,7 +41,7 @@ import org.flowplayer.model.ClipEventType;
 			log.debug("play()");
 			if (! playListReady) return;
 			bufferingState.nextStateAfterBufferFull = playingState;
-			if (onEvent(ClipEventType.BEGIN, [false])) {
+			if (onEvent(ClipEventType.BEGIN, [false], false)) {
 				playList.current.played = true;
 				changeState(bufferingState);
 			}
@@ -60,7 +60,7 @@ import org.flowplayer.model.ClipEventType;
 			if (! playListReady) return;
 			log.debug("startBuffering()");
 			bufferingState.nextStateAfterBufferFull = pausedState;
-			if (onEvent(ClipEventType.BEGIN, [true])) {
+			if (onEvent(ClipEventType.BEGIN, [true], true)) {
 				changeState(bufferingState);
 			}
 		}
