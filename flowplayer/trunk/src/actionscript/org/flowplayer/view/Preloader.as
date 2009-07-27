@@ -64,8 +64,8 @@ package org.flowplayer.view {
         private function arrange(event:Event = null):void {
             stageHeight = stage.stageHeight;
             stageWidth = stage.stageWidth;
-            _rotation.setSize(stageWidth * 0.22, stageWidth * 0.22);
-            Arrange.center(_rotation, stage.width, stage.height);
+            _rotation.setSize(stageHeight * 0.22, stageHeight * 0.22);
+            Arrange.center(_rotation, stage.width, stage.height - 28);
         }
 
         private function onAddedToStage(event:Event):void {
