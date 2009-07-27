@@ -5,6 +5,8 @@ Version history:
 - The domain of the logo url must the same domain from where the player SWF is loaded from.
 - Fullscreen can be toggled by doublclick on the video area.
 Fixes:
+- A separator in the Context Menu made the callbacks in the following menu items out of order. Related forum post: http://flowplayer.org/forum/8/22541
+- the width and height settings of a logo were ignored if the logo was a sWF file
 - volume control and mute/unmute were not working after an instream clip had been played
 - now possible to use RTMP for mp3 files
 - Issue 12: cuepointMultiplier was undefined in teh clip object set to JS event listeners
