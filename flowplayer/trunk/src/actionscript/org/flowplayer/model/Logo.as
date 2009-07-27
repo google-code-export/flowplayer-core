@@ -45,10 +45,10 @@ package org.flowplayer.model {
 		
 		public function set url(url:String):void {
 			_url = url;
-			if (_url && _url.indexOf(".swf") > 0) {
-				width = "6.5%";
-				height = "6.5%";
-			}
+//			if (_url && _url.indexOf(".swf") > 0) {
+//				width = "6.5%";
+//				height = "6.5%";
+//			}
 		}
 		
 		public function get fullscreenOnly():Boolean {
@@ -80,9 +80,15 @@ package org.flowplayer.model {
 
 		public function set scaleMaximum(scaleMaximum:Number):void {
 			_scaleMaximum = scaleMaximum;
-		}				public function get linkUrl():String {
-			return _linkUrl;		}				public function set linkUrl(linkUrl:String):void {
-			_linkUrl = linkUrl;		}
+		}
+		
+		public function get linkUrl():String {
+			return _linkUrl;
+		}
+		
+		public function set linkUrl(linkUrl:String):void {
+			_linkUrl = linkUrl;
+		}
 		
 		public function get linkWindow():String {
 			return _linkWindow;

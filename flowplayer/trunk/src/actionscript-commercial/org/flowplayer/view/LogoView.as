@@ -69,6 +69,8 @@ import org.flowplayer.util.URLUtil;
                 _copyrightNotice = LogoUtil.createCopyrightNotice(10);
                 addChild(_copyrightNotice);
                 createLogoImage(new FlowplayerLogo());
+                _model.width = "6.5%";
+                _model.height = "6.5%";
             }
 
         }

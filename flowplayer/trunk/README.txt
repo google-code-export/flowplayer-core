@@ -3,6 +3,7 @@ Version history:
 3.1.2
 -----
 - The domain of the logo url must the same domain from where the player SWF is loaded from.
+- Fullscreen can be toggled by doublclick on the video area.
 Fixes:
 - volume control and mute/unmute were not working after an instream clip had been played
 - now possible to use RTMP for mp3 files
