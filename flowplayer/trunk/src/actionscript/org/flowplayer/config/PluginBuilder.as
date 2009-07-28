@@ -124,7 +124,7 @@ package org.flowplayer.config {
                 var clip:Clip = children[i];
                 if (clip.configuredProviderName != "http") {
                     var loadable:Loadable = findLoadable(clip.configuredProviderName);
-                    if (loadable) {
+                    if (loadable && ! findLoadable(clip.provider)) {
                         loadable = newLoadable(_pluginObjects, clip.provider, clip.configuredProviderName);
                         loadables.push(loadable);
                     }
