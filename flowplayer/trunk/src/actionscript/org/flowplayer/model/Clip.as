@@ -18,6 +18,8 @@
  */
 
 package org.flowplayer.model {
+    import flash.net.NetStream;
+
     import org.flowplayer.controller.ClipURLResolver;
     import org.flowplayer.controller.ConnectionProvider;
 import org.flowplayer.flow_internal;
@@ -79,6 +81,7 @@ import org.flowplayer.flow_internal;
         private var _connectionProvider:String;
         private var _seekableOnBegin:Object;
         private var _clipObject:Object;
+        private var _netStream:NetStream;
 
         public function Clip() {
             _childPlaylist = new TimedPlaylist();
@@ -832,6 +835,19 @@ import org.flowplayer.flow_internal;
 
         flow_internal function get clipObject():Object {
             return _clipObject;
+        }
+
+        /**
+         * Gets the NetStream object that is currently associated with this clip, or <code>null</code> if none is
+         * currently associated.
+         * @return
+         */
+        public function getNetStream():NetStream {
+            return _netStream;
+        }
+
+        public function setNetStream(value:NetStream):void {
+            _netStream = value;
         }
     }
 }
