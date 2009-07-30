@@ -42,7 +42,7 @@ package org.flowplayer.controller {
 	internal class StreamProviderController extends AbstractDurationTrackingController implements MediaController {
 		private var _config:Config;
 		private var _controllerFactory:MediaControllerFactory;
-		private var _metadataDispatched:Boolean;
+//		private var _metadataDispatched:Boolean;
 
 		public function StreamProviderController(controllerFactory:MediaControllerFactory, volumeController:VolumeController, config:Config, playlist:Playlist) {
 			super(volumeController, playlist);
@@ -73,7 +73,7 @@ package org.flowplayer.controller {
 		}
 
 		protected override function doLoad(event:ClipEvent, clip:Clip, pauseAfterStart:Boolean = false):void {
-			_metadataDispatched = false;
+//			_metadataDispatched = false;
 			getProvider().load(event, clip, pauseAfterStart);
 		}
 

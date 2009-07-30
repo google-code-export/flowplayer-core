@@ -588,7 +588,7 @@ import org.flowplayer.model.PluginModel;
 		}
 
 		private function _onNetStatus(event:NetStatusEvent):void {
-			log.info("_onNetStatus, code: ", event.info.code);
+			log.info("_onNetStatus, code: " + event.info.code);
 
             if (! clipURLResolver.handeNetStatusEvent(event)) {
                 log.debug("clipURLResolver.handeNetStatusEvent returned false, ignoring this event");
@@ -695,6 +695,7 @@ import org.flowplayer.model.PluginModel;
 			netStream.client = new NetStreamClient(clip, _player.config, _streamCallbacks);
 			_netStream.bufferTime = clip.bufferLength;
 			_volumeController.netStream = _netStream;
+            clip.setNetStream(_netStream);
 			_netStream.addEventListener(NetStatusEvent.NET_STATUS, _onNetStatus);
 		}
 

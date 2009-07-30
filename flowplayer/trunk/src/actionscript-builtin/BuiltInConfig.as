@@ -25,7 +25,6 @@ package {
 //        private var cluster:org.flowplayer.cluster.ClusterConnectionProvider;
 
         public static const config:Object = {
-            logo: { fullscreenOnly: false },
             "plugins":{
 //                "controls":{"url":"org.flowplayer.controls.Controls"}
 //                content: { url: "org.flowplayer.content.Content" },
