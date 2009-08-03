@@ -312,10 +312,13 @@ import org.flowplayer.model.DisplayPluginModel;
 		}
 
 		private function onPluginLoadError(event:PluginEvent):void {
-			var plugin:PluginModel = event.target as PluginModel;
-			log.warn("load/init error on " + plugin);
-			_pluginRegistry.removePlugin(plugin);
-			checkPluginsInitialized();
+            if (event.target is Loadable) {
+                throw new Error("unable to load plugin '" + Loadable(event.target).name + "', url: '" + Loadable(event.target).url + "'");
+            } else {
+                var plugin:PluginModel = event.target as PluginModel;
+                _pluginRegistry.removePlugin(plugin);
+                throw new Error("load/init error on " + plugin);
+            }
 		}
 		
 		private function checkPluginsInitialized():void {
