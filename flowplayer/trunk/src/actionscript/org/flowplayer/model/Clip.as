@@ -550,6 +550,7 @@ import org.flowplayer.flow_internal;
 		[Value]
 		public function get provider():String {
 			if (type == ClipType.AUDIO && _provider == "http") return "audio";
+            if (_url && _url.toLowerCase().indexOf("rtmp") == 0) return "rtmp";
             if (parent) return _provider + "Instream";
 			return _provider;
 		}

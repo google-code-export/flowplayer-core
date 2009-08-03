@@ -1,5 +1,10 @@
 Version history:
 
+3.1.3
+-----
+- Now automatically uses a plugin that is called 'rtmp' for all clips that have the rtmp-protocol in their URLs.
+  This makes it possilbe to use RTMP with RSS playlists.
+
 3.1.2
 -----
 - The domain of the logo url must the same domain from where the player SWF is loaded from.
