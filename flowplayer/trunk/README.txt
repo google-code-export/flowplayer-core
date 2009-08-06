@@ -4,6 +4,8 @@ Version history:
 -----
 - Now automatically uses a plugin that is called 'rtmp' for all clips that have the rtmp-protocol in their URLs.
   This makes it possilbe to use RTMP with RSS playlists.
+Fixes:
+- RSS playlists: The 'type' attribute value 'audio/mp3' in the media:content element caused an error.
 
 3.1.2
 -----

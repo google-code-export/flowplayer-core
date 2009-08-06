@@ -85,8 +85,8 @@ package org.flowplayer.config {
             for (var i:int; i < clips.length; i++) {
                 var clip:Clip = clips[i] as Clip;
 
-                if (ClipType.AUDIO == clip.type && ! clip.clipObject.hasOwnProperty("provider")) {
-                    return true;
+                if (ClipType.AUDIO == clip.type) {
+                    return ! clip.clipObject || ! clip.clipObject.hasOwnProperty("provider");
                 }
             }
             return false;
