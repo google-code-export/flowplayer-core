@@ -23,6 +23,9 @@ package org.flowplayer.model {
 	public class ClipType {
 
         private static const FLASH_VIDEO_EXTENSIONS:Array = ['f4b', 'f4p', 'f4v', 'flv'];
+        private static const VIDEO_EXTENSIONS:Array = ['3g2', '3gp', 'aac', 'm4a', 'm4v', 'mov', 'mp4', 'vp6', 'mpeg4', 'video'];
+        private static const IMAGE_EXTENSIONS:Array = ['png', 'jpg', 'jpeg', 'gif', 'swf', 'image'];
+
 		public static const VIDEO:ClipType = new ClipType("video");
 		public static const AUDIO:ClipType = new ClipType("audio");
 		public static const IMAGE:ClipType = new ClipType("image");
@@ -72,6 +75,10 @@ package org.flowplayer.model {
 
         public static function getExtension(name:String):String {
             if (! name) return null;
+
+            var extension:String = knownEndingExtension(name);
+            if (extension) return extension;
+
             var parts:Array = URLUtil.baseUrlAndRest(name);
             var filename:String = parts[1];
 
@@ -84,14 +91,26 @@ package org.flowplayer.model {
             return lcName.substring(dotPos + 1, lcName.length);
         }
 
+        private static function knownEndingExtension(name:String):String {
+            var extensions:Array = VIDEO_EXTENSIONS.concat(IMAGE_EXTENSIONS).concat(FLASH_VIDEO_EXTENSIONS);
+            extensions.push("mp3");
+            for (var i:int = 0; i < extensions.length; i++) {
+                var extension:String = extensions[i] as String;
+                if (name.lastIndexOf(extension) == name.length - extension.length) {
+                    return extension;
+                }
+            }
+            return null;
+        }
+
 		public static function fromFileExtension(name:String):ClipType {
 			return resolveType(getExtension(name));
 		}
-		
-		public static function resolveType(type:String):ClipType {
-			if (['3g2', '3gp', 'aac', 'm4a', 'm4v', 'mov', 'mp4', 'vp6', 'mpeg4', 'video'].concat(FLASH_VIDEO_EXTENSIONS).indexOf(type) >= 0)
+
+        public static function resolveType(type:String):ClipType {
+			if (VIDEO_EXTENSIONS.concat(FLASH_VIDEO_EXTENSIONS).indexOf(type) >= 0)
 				return ClipType.VIDEO;
-			if (['png', 'jpg', 'jpeg', 'gif', 'swf', 'image'].indexOf(type) >= 0)
+			if (IMAGE_EXTENSIONS.indexOf(type) >= 0)
 				return ClipType.IMAGE;
 			if (type == 'mp3')
 				return ClipType.AUDIO;
