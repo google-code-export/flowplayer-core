@@ -6,6 +6,7 @@ Version history:
   This makes it possilbe to use RTMP with RSS playlists.
 Fixes:
 - RSS playlists: The 'type' attribute value 'audio/mp3' in the media:content element caused an error.
+- Dispatches onMetadata() if an URL resolver changes the clip URL (changes to a different file)
 
 3.1.2
 -----
