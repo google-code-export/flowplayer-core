@@ -115,11 +115,16 @@ package org.flowplayer.controller {
                 for (var key:String in _providers) {
                     log.debug("found provider " + key);
                 }
-				clip.dispatchError(ClipError.PROVIDER_NOT_LOADED, "Provider '" + clip.provider + "'");
+				clip.dispatchError(ClipError.PROVIDER_NOT_LOADED, "Provider '" + clip.provider + "' " + getInstreamProviderErrorMsg(clip));
 				return null;
 			}
 			provider.volumeController = getVolumeController();
 			return provider;
 		}
+
+        private function getInstreamProviderErrorMsg(clip:Clip):String {
+            if (! clip.isInStream) return "";
+            return "(if this instream clip was started using play() you need to explicitly load/configure provider '" + clip.provider + "' before calling play())";
+        }
 	}
 }
