@@ -406,7 +406,7 @@ import org.flowplayer.model.DisplayPluginModel;
 		}
 		
 		private function createErrorMessageHideTimer():void {
-			var errorHideTimer:Timer = new Timer(4000, 1);
+			var errorHideTimer:Timer = new Timer(10000, 1);
 			errorHideTimer.addEventListener(TimerEvent.TIMER_COMPLETE, hideErrorMessage);
 			errorHideTimer.start();
 		}
@@ -745,7 +745,7 @@ import org.flowplayer.model.DisplayPluginModel;
 		
 		private function onClipError(event:ClipEvent):void {
             if (event.isDefaultPrevented()) return;
-			doHandleError(event.error.code + ", " + event.error.message + ", " + event.info + ", clip: '" + Clip(event.target) + "'");
+			doHandleError(event.error.code + ", " + event.error.message + ", " + event.info2 + ", clip: '" + Clip(event.target) + "'");
 		}
 
         private function onClickTimer(event:TimerEvent):void {
