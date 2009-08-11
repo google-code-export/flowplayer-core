@@ -143,6 +143,7 @@ package org.flowplayer.config {
         }
 
         public function createCuepointGroup(cuepoints:Array, callbackId:String, timeMultiplier:Number):Array {
+            log.debug("createCuepointGroup(), creating " + cuepoints.length + " cuepoints");
             var cues:Array = new Array();
             for (var i:Number = 0; i < cuepoints.length; i++) {
                 var cueObj:Object = cuepoints[i];
@@ -163,6 +164,7 @@ package org.flowplayer.config {
 		}
 
 		private function createCuepoint(cueObj:Object, callbackId:String, timeMultiplier:Number):Object {
+            log.debug("createCuepoint(), creating cuepoint from: ", cueObj);
 			if (cueObj is Number) return new Cuepoint(roundTime(cueObj as int, timeMultiplier), callbackId);
 			if (! cueObj.hasOwnProperty("time")) throw new Error("Cuepoint does not have time: " + cueObj);
 			var cue:Object = Cuepoint.createDynamic(roundTime(cueObj.time, timeMultiplier), callbackId);
