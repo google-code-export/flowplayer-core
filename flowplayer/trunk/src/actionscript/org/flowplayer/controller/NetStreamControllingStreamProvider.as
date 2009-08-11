@@ -527,13 +527,13 @@ import org.flowplayer.model.PluginModel;
 		 * Override this to receive the player instance.
 		 */
 		public function onLoad(player:Flowplayer):void { 
-		} 	
+		}
 		
 		/**
 		 * Gets the default connection provider to be used if the ProviderModel
 		 * supplied to this provider does not specify a connection provider.
 		 */
-		protected function getDefaultConnectionProvider():ConnectionProvider {
+		public function getDefaultConnectionProvider():ConnectionProvider {
 			return new DefaultRTMPConnectionProvider();
 		} 	
 		
