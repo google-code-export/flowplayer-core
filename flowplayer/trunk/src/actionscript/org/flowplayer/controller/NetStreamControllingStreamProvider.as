@@ -51,6 +51,7 @@ import org.flowplayer.model.PluginModel;
 
 		protected var log:Log = new Log(this);
 		private var _connection:NetConnection;
+        private var _connectionArgs:Array;
 		private var _netStream:NetStream;
 		private var _startedClip:Clip;
 		private var _playlist:Playlist;
@@ -331,16 +332,13 @@ import org.flowplayer.model.PluginModel;
 				_connection.close();
 				_connection = null;
 			}
-            _connectionClient.clip = clip;
-			connectionProvider.connectionClient = _connectionClient;
-            log.debug("about to call connectionProvider.connect, objectEncoding " + _model.objectEncoding);
-			connectionProvider.connect(this, clip, onConnectionSuccess, _model.objectEncoding, rest);
+            _connectionArgs = rest;
+            resolveClipUrl(clip, onClipUrlResolved);
 		}
 
 		/**
 		 * Starts loading using the specified netStream and clip. Can be overridden in subclasses.
-		 * The implementation in this class calls <code>netStream.play(getClipUrl(clip))</code> with the clip's URL.
-		 * 
+		 *
 		 * @param event the event that is dispatched after the loading has been successfully
 		 * started
 		 * @param netStream
@@ -348,9 +346,19 @@ import org.flowplayer.model.PluginModel;
 		 */
 		protected function doLoad(event:ClipEvent, netStream:NetStream, clip:Clip):void {
 			netStream.client = new NetStreamClient(clip, _player.config, _streamCallbacks);
-			resolveClipUrl(clip, onClipUrlResolved);
-//			netStream.play(getClipUrl(clip));
+			netStreamPlay(getClipUrl(clip));
 		}
+
+        /**
+         * Gets the clip URL from the specified clip. The URL is supplied to NetStream.play(url).
+         * Can be overridden unsubclasses.
+         * 
+         * @param clip
+         * @return
+         */
+        protected function getClipUrl(clip:Clip):String {
+            return clip.completeUrl;
+        }
 		
 		/**
 		 * Pauses the specified netStream. This implementation calls <code>netStream.pause()</code>
@@ -502,10 +510,10 @@ import org.flowplayer.model.PluginModel;
 		protected function get started():Boolean {
 			return _started;
 		}
-		
+
 		/**
 		 * Resolves the url for the specified clip.
-		 */		
+		 */
 		protected final function resolveClipUrl(clip:Clip, successListener:Function):void {
 			clipURLResolver.resolve(this, clip, successListener);
 		}
@@ -556,8 +564,10 @@ import org.flowplayer.model.PluginModel;
         }
 
         protected function onClipUrlResolved(clip:Clip):void {
-            log.debug("starting playback with resolved url " + clip.completeUrl);
-            netStreamPlay(clip.completeUrl);
+            _connectionClient.clip = clip;
+			connectionProvider.connectionClient = _connectionClient;
+            log.debug("about to call connectionProvider.connect, objectEncoding " + _model.objectEncoding);
+			connectionProvider.connect(this, clip, onConnectionSuccess, _model.objectEncoding, _connectionArgs || []);
         }
         
         /* ---- Private methods ----- */
