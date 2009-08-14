@@ -2,11 +2,11 @@
 	<property file="build.properties" />
 
 	<property name="version-1" value="3" />
-	<property name="version-2" value="1" />
-	<property name="version-3" value="3" />
+	<property name="version-2" value="2" />
+	<property name="version-3" value="0" />
 	<property name="version-status" value="dev" />
-	<property name="controls-version-info" value="3.1.2" />
-	<property name="audio-version-info" value="3.1.0" />
+	<property name="controls-version-info" value="3.1.3-dev4" />
+	<property name="audio-version-info" value="3.2.0-dev" />
 	<property name="flowplayer-js-version-info" value="3.1.2" />
 	<property name ="source-dist-root-folder" value="flowplayer" />
 	
@@ -21,7 +21,8 @@
 	<property name="src" value="src" />
 	<property name="src-as" value="${src}/actionscript" />
 	<property name="src-flash" value="${src}/flash" />
-	<property name="src-as-commercial" value="${src}/actionscript-commercial" />
+    <property name="src-as-commercial" value="${src}/actionscript-commercial" />
+    <property name="src-as-builtin" value="${src}/actionscript-builtin" />
 	<property name="src-js" value="${src}/javascript" />
 	<property name="src-test" value="test" />
 	<property name="src-html" value="${src}/html" />
@@ -31,14 +32,18 @@
 	<property name="lib-dir" value="lib" />
 	<property name="locale" value="en_US" />
 
-    <condition property="_plugin-libs" value="${plugin-libs} ../controls/src/flash/${controls}" else="${plugin-libs} ../controls/src/flash/default">
+    <condition property="plugin-skin" value="${controls}" else="default">
         <isset property="controls" />
     </condition>
+    <condition property="_plugin-libs" value="../controls/src/flash/${plugin-skin}" else="">
+        <available file="../controls/build.xml" />
+    </condition>
+
 	<property name="libs-path" value="${flex3libsdir} ${lib-dir}/thunderbolt ${_plugin-libs}"/>
 	<property name="classes-for-lib" value="org.flowplayer.view.Flowplayer org.flowplayer.util.PropertyBinder org.flowplayer.util.Arrange org.flowplayer.util.Assert org.flowplayer.model.PluginEvent org.flowplayer.util.TextUtil org.flowplayer.view.AbstractSprite org.flowplayer.view.AnimationEngine org.flowplayer.controller.NetStreamControllingStreamProvider" />
 	<property name="doc-classes" value="${classes-for-lib} org.flowplayer.view.FlowplayerBase org.flowplayer.view.StyleableSprite org.flowplayer.model.Plugin org.flowplayer.model.PluginModel org.flowplayer.model.DisplayPluginModel org.flowplayer.model.ProviderModel org.flowplayer.model.Cloneable org.flowplayer.model.DisplayProperties org.flowplayer.model.Identifiable org.flowplayer.model.Callable org.flowplayer.model.Clip org.flowplayer.model.Playlist org.flowplayer.model.AbstractEvent org.flowplayer.model.ClipEvent org.flowplayer.model.PlayerEvent org.flowplayer.model.PluginEvent org.flowplayer.model.ClipEventDispatcher org.flowplayer.model.ClipEventSupport org.flowplayer.model.EventType org.flowplayer.model.ClipEventType org.flowplayer.model.PlayerEventType org.flowplayer.model.PluginEventType org.flowplayer.view.Styleable org.flowplayer.controller.StreamProvider org.flowplayer.model.PluginFactory org.flowplayer.controller.ClipURLResolver org.flowplayer.controller.ConnectionProvider org.flowplayer.util.Log" />
 	<property name="classpath-temp" value="${lib-dir}/corelib/src ${lib-dir}/goasp/src_go ${plugin-classes}" />
-    <condition property="classpath" value="${classpath-temp} ${plugins}" else="${classpath-temp} src/actionscript-builtin">
+    <condition property="classpath" value="${classpath-temp} ${plugins}" else="${classpath-temp} ${src-as-builtin}">
         <isset property="plugins" />
     </condition>
 
@@ -332,9 +337,9 @@
     	</sequential>
     </macrodef>
 	
-	<target name="source-dist">
+	<target name="source-dist" description="prepares the source distribution package">
 		<zip zipfile="${dist-dir}/${source-dist-name}">
-			<zipfileset prefix="${source-dist-root-folder}" dir="." includes="${src-as}/**/*.as, ${src-as-commercial}/**/*.as, ${src-flash}/**/*" />
+			<zipfileset prefix="${source-dist-root-folder}" dir="." includes="${src-as}/**/*.as, ${src-as-commercial}/**/*.as, ${src-as-builtin}/**/*.as, ${src-flash}/**/*" />
 			<zipfileset prefix="${source-dist-root-folder}" dir="." includes="example/**/*" />
 			<zipfileset prefix="${source-dist-root-folder}" dir="." includes="lib/**/*" />
 			<zipfileset prefix="${source-dist-root-folder}" dir=".">
