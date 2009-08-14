@@ -1,5 +1,9 @@
 Version history:
 
+3.2.0
+-----
+- changes to the ConnectionProvider and URLResolver APIs
+
 3.1.3
 -----
 - Now automatically uses a plugin that is called 'rtmp' for all clips that have the rtmp-protocol in their URLs.

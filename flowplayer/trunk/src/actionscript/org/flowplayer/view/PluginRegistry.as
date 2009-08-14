@@ -18,7 +18,8 @@
  */
 
 package org.flowplayer.view {
-	import org.flowplayer.controller.StreamProvider;	
+    import org.flowplayer.controller.ClipURLResolver;
+    import org.flowplayer.controller.StreamProvider;
 	import org.flowplayer.controller.NetStreamControllingStreamProvider;	
 	import org.flowplayer.model.DisplayPluginModel;	
 	import org.flowplayer.model.Cloneable;
@@ -223,5 +224,18 @@ package org.flowplayer.view {
 				}
 			}
 		}
-	}
+
+        public function getUrlResolvers():Array {
+            var result:Array = [];
+            for (var name:String in _genericPlugins) {
+                var model:PluginModel = _genericPlugins[name] as PluginModel;
+                var plugin:Object = model.pluginObject;
+                if (plugin is ClipURLResolver) {
+                    result.push(name);
+                }
+            }
+            result.sort();
+            return result;
+        }
+    }
 }

@@ -746,13 +746,30 @@ import org.flowplayer.model.PluginModel;
         private function get clipURLResolver():ClipURLResolver {
             log.debug("get clipURLResolver,  clip.urlResolver = " + clip.urlResolvers + ", _clipUrlResolver = " + _defaultClipUrlResolver);
             if (! clip) return _defaultClipUrlResolver;
-            if (! clip.urlResolvers) return _defaultClipUrlResolver;
-            if (! _clipUrlResolver) {
+
+            // already created?
+            if (_clipUrlResolver) return _clipUrlResolver;
+
+            // defined in clip?
+            if (clip.urlResolvers) {
                 _clipUrlResolver = CompositeClipUrlResolver.createResolver(clip.urlResolvers, _player.pluginRegistry);
-                _clipUrlResolver.onFailure = function(message:String = null):void {
-                    clip.dispatchError(ClipError.STREAM_LOAD_FAILED, "failed to resolve clip url" + (message ? ": " + message : ""));
-                };
             }
+
+            // get all resolvers from repository
+            var configured:Array = _player.pluginRegistry.getUrlResolvers();
+            if (configured && configured.length > 0) {
+                log.debug("using configured URL resolvers", configured);
+                _clipUrlResolver = CompositeClipUrlResolver.createResolver(configured, _player.pluginRegistry);
+            }
+
+            if (! _clipUrlResolver) {
+                _clipUrlResolver = _defaultClipUrlResolver;
+            }
+
+            _clipUrlResolver.onFailure = function(message:String = null):void {
+                clip.dispatchError(ClipError.STREAM_LOAD_FAILED, "failed to resolve clip url" + (message ? ": " + message : ""));
+            };
+
             return _clipUrlResolver;
         }
 
