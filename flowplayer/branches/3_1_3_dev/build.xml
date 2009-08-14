@@ -9,7 +9,7 @@
 	<property name="audio-version-info" value="3.1.0" />
 	<property name="flowplayer-js-version-info" value="3.1.2" />
 	<property name ="source-dist-root-folder" value="flowplayer" />
-	
+
     <property name="version-status-quoted" value="&quot;&#39;${version-status}&#39;&quot;" />
 	<condition property="version-info" value="${version-1}.${version-2}.${version-3}" else="${version-1}.${version-2}.${version-3}-${version-status}">
 		<equals arg1="${version-status}" arg2="" />
@@ -21,7 +21,8 @@
 	<property name="src" value="src" />
 	<property name="src-as" value="${src}/actionscript" />
 	<property name="src-flash" value="${src}/flash" />
-	<property name="src-as-commercial" value="${src}/actionscript-commercial" />
+    <property name="src-as-commercial" value="${src}/actionscript-commercial" />
+    <property name="src-as-builtin" value="${src}/actionscript-builtin" />
 	<property name="src-js" value="${src}/javascript" />
 	<property name="src-test" value="test" />
 	<property name="src-html" value="${src}/html" />
@@ -31,33 +32,37 @@
 	<property name="lib-dir" value="lib" />
 	<property name="locale" value="en_US" />
 
-    <condition property="_plugin-libs" value="${plugin-libs} ../controls/src/flash/${controls}" else="${plugin-libs} ../controls/src/flash/default">
+    <condition property="plugin-skin" value="${controls}" else="default">
         <isset property="controls" />
     </condition>
+    <condition property="_plugin-libs" value="../controls/src/flash/${plugin-skin}" else="">
+        <available file="../controls/build.xml" />
+    </condition>
+
 	<property name="libs-path" value="${flex3libsdir} ${lib-dir}/thunderbolt ${_plugin-libs}"/>
 	<property name="classes-for-lib" value="org.flowplayer.view.Flowplayer org.flowplayer.util.PropertyBinder org.flowplayer.util.Arrange org.flowplayer.util.Assert org.flowplayer.model.PluginEvent org.flowplayer.util.TextUtil org.flowplayer.view.AbstractSprite org.flowplayer.view.AnimationEngine org.flowplayer.controller.NetStreamControllingStreamProvider" />
 	<property name="doc-classes" value="${classes-for-lib} org.flowplayer.view.FlowplayerBase org.flowplayer.view.StyleableSprite org.flowplayer.model.Plugin org.flowplayer.model.PluginModel org.flowplayer.model.DisplayPluginModel org.flowplayer.model.ProviderModel org.flowplayer.model.Cloneable org.flowplayer.model.DisplayProperties org.flowplayer.model.Identifiable org.flowplayer.model.Callable org.flowplayer.model.Clip org.flowplayer.model.Playlist org.flowplayer.model.AbstractEvent org.flowplayer.model.ClipEvent org.flowplayer.model.PlayerEvent org.flowplayer.model.PluginEvent org.flowplayer.model.ClipEventDispatcher org.flowplayer.model.ClipEventSupport org.flowplayer.model.EventType org.flowplayer.model.ClipEventType org.flowplayer.model.PlayerEventType org.flowplayer.model.PluginEventType org.flowplayer.view.Styleable org.flowplayer.controller.StreamProvider org.flowplayer.model.PluginFactory org.flowplayer.controller.ClipURLResolver org.flowplayer.controller.ConnectionProvider org.flowplayer.util.Log" />
 	<property name="classpath-temp" value="${lib-dir}/corelib/src ${lib-dir}/goasp/src_go ${plugin-classes}" />
-    <condition property="classpath" value="${classpath-temp} ${plugins}" else="${classpath-temp} src/actionscript-builtin">
+    <condition property="classpath" value="${classpath-temp} ${plugins}" else="${classpath-temp} ${src-as-builtin}">
         <isset property="plugins" />
     </condition>
 
 	<property name="library-binary" value="flowplayer.swc" />
 	<property name="library-binary-versioned" value="flowplayer-${version-info}.swc" />
-	
+
     <property name="player-binary" value="flowplayer.swf" />
     <property name="debug-player-binary" value="flowplayer.debug.swf" />
 	<property name="commercial-player-binary" value="flowplayer.commercial.swf" />
 	<property name="player-binary-versioned" value="flowplayer-${version-info}.swf" />
 	<property name="commercial-player-binary-versioned" value="flowplayer.commercial-${version-info}.swf" />
-	
+
 	<property name="dist-name" value="flowplayer-${version-info}.zip" />
 	<property name="commercial-dist-name" value="flowplayer.commercial-${version-info}.zip" />
 	<property name="multidomain-dist-name" value="flowplayer.multidomain-${version-info}.zip" />
 	<property name="devkit-dist-name" value="flowplayer.devkit-${version-info}.zip" />
 	<property name="apidoc-dist-name" value="flowplayer.asdoc-${version-info}.zip" />
 	<property name="source-dist-name" value="flowplayer-${version-info}-src.zip" />
-	
+
 	<target name="clean" depends="clean-plugins">
 		<delete dir="${build-dir}">
 			<include name="*swf"/>
@@ -72,16 +77,16 @@
 		<antcall target="compile" />
 		<example player-swf="${player-binary-versioned}" example-dir="example-free"/>
 	</target>
-	
+
 	<target name="build-biz" description="builds all" depends="check-uptodate, build-lib, plugins" unless="uptodate.commercial">
 		<antcall target="prepare" />
 		<property name="licenselib" value="${lib-dir}/licensekey" />
 		<antcall target="compile-commercial" />
 		<example player-swf="${commercial-player-binary-versioned}" example-dir="example-biz"/>
 	</target>
-	
+
 	<target name="build-all" description="builds all" depends="build, build-biz" />
-	
+
 	<target name="zip-bundled">
 		<antcall target="prepare" />
 
@@ -131,7 +136,7 @@
 			</copy>
 		</sequential>
 	</macrodef>
-	
+
     <macrodef name="compile-player">
         <attribute name="binary" />
         <attribute name="commercial" />
@@ -161,7 +166,7 @@
     			<arg line="-frame 'player' org.flowplayer.view.Launcher" />
     			<arg line="-file-specs '${src-as}/org/flowplayer/view/Preloader.as'" />
     			<arg line="-output '${build-dir}/@{binary}'"/>
-    		</exec>            
+    		</exec>
         </sequential>
     </macrodef>
 
@@ -172,7 +177,7 @@
     	<copy file="${build-dir}/${library-binary}" tofile="${build-dir}/${library-binary-versioned}" />
     	<copy file="${build-dir}/${library-binary}" todir="${devkit-dir}" />
 	</target>
-	
+
     <target name="compile-lib">
 		<exec executable="${compc_bin}" failonerror="true">
 			<arg line="-source-path ${src-as} ${src-as-commercial} ${classpath}" />
@@ -198,13 +203,13 @@
 			</fileset>
 		</copy>
 	</target>
-	
+
 	<target name="test" description="build testrunner">
 		<exec executable="${mxmlc_bin}" failonerror="true">
 			<arg line="-source-path ${src-as} ${src-test} ${classpath} -library-path ${libs-path} ${lib-dir}/flexunit -default-frame-rate=${framerate} -default-background-color=${bgcolor} -strict=true '${src-test}/org/flowplayer/css/CssTest.as' -output '${build-dir}/Test.swf'"/>
 		</exec>
 	</target>
-	
+
 	<target name="prepare">
 		<mkdir dir="${build-dir}/example"/>
 		<mkdir dir="${dist-dir}"/>
@@ -256,19 +261,19 @@
 		</uptodate>
 		<echo message="lib up-to-date: ${uptodate.lib}"/>
 	</target>
-	
+
 	<target name="plugins" description="Build all plugins">
         <iterate-plugins target="deploy"/>
 	</target>
-	
+
 	<target name="plugin-names" description="Echoes all plugin names">
         <iterate-plugins target="echo-name"/>
 	</target>
-		
+
 	<target name="clean-plugins" description="Cleans all plugins">
         <iterate-plugins target="clean"/>
 	</target>
-	
+
 	<macrodef name="iterate-plugins">
         <attribute name="target" />
         <sequential>
@@ -281,7 +286,7 @@
             </subant>
         </sequential>
     </macrodef>
-	
+
 	<target name="doc" description="generates the apidocs">
 		<exec executable="${asdoc_bin}" failonerror="true">
 			<arg line="-source-path ${src-as} ${classpath}" />
@@ -291,13 +296,13 @@
 			<arg line="-output ${apidoc-dir}" />
 			<arg line="-main-title 'FlowPlayer ${version-1}.${version-2}.${version-3} API documentation'"/>
 			<arg line="-window-title 'FlowPlayer ${version-1}.${version-2}.${version-3} API documentation'"/>
-		</exec>            
+		</exec>
 	</target>
-	
+
 	<target name="zip" description="creates a distribution zip package" depends="build">
 		<zip-player zip-name="${dist-name}" player-swf-dir="${build-dir}" player-swf="${player-binary-versioned}" license="LICENSE.txt" example-dir="example-free" />
 	</target>
-	
+
 	<target name="zip-biz" description="creates a Commercial distribution zip package" depends="build-biz">
 		<zip-player zip-name="${commercial-dist-name}" player-swf-dir="${build-dir}" player-swf="${commercial-player-binary-versioned}" license="LICENSE_COMMERCIAL.txt" example-dir="example-biz" />
 		<zip-player zip-name="${multidomain-dist-name}" player-swf-dir="${build-dir}" player-swf="${commercial-player-binary-versioned}" license="LICENSE_MULTIDOMAIN.txt" example-dir="example-biz"  />
@@ -311,7 +316,7 @@
         <attribute name="example-dir" />
     	<sequential>
     		<echo message="++ Zipping @{zip-name} +++"></echo>
-    		
+
     		<zip destfile="${dist-dir}/@{zip-name}">
     			<zipfileset prefix="flowplayer" dir=".">
     				<include name="@{license}" />
@@ -331,10 +336,10 @@
     		<verify-zip zip-name="@{zip-name}" player-swf="@{player-swf}" license="@{license}" />
     	</sequential>
     </macrodef>
-	
-	<target name="source-dist">
+
+	<target name="source-dist" description="prepares the source distribution package">
 		<zip zipfile="${dist-dir}/${source-dist-name}">
-			<zipfileset prefix="${source-dist-root-folder}" dir="." includes="${src-as}/**/*.as, ${src-as-commercial}/**/*.as, ${src-flash}/**/*" />
+			<zipfileset prefix="${source-dist-root-folder}" dir="." includes="${src-as}/**/*.as, ${src-as-commercial}/**/*.as, ${src-as-builtin}/**/*.as, ${src-flash}/**/*" />
 			<zipfileset prefix="${source-dist-root-folder}" dir="." includes="example/**/*" />
 			<zipfileset prefix="${source-dist-root-folder}" dir="." includes="lib/**/*" />
 			<zipfileset prefix="${source-dist-root-folder}" dir=".">
@@ -346,7 +351,7 @@
 			</zipfileset>
 		</zip>
 	</target>
-	
+
 	<macrodef name="verify-zip">
 		<attribute name="zip-name" />
 		<attribute name="player-swf" />
@@ -357,19 +362,19 @@
 			<unzip src="${dist-dir}/@{zip-name}" dest="${dist-dir}" />
 			<condition property="${resources-available}" value="true">
 				<and>
-					<available file="${dist-dir}/flowplayer/@{player-swf}" />	
-					<available file="${dist-dir}/flowplayer/flowplayer.controls-${controls-version-info}.swf" />	
-					<available file="${dist-dir}/flowplayer/@{license}" />	
-					<available file="${dist-dir}/flowplayer/README.txt" />	
-					<available file="${dist-dir}/flowplayer/example/index.html" />	
-					<available file="${dist-dir}/flowplayer/example/style.css" />	
-					<available file="${dist-dir}/flowplayer/example/flowplayer-${flowplayer-js-version-info}.min.js" />	
+					<available file="${dist-dir}/flowplayer/@{player-swf}" />
+					<available file="${dist-dir}/flowplayer/flowplayer.controls-${controls-version-info}.swf" />
+					<available file="${dist-dir}/flowplayer/@{license}" />
+					<available file="${dist-dir}/flowplayer/README.txt" />
+					<available file="${dist-dir}/flowplayer/example/index.html" />
+					<available file="${dist-dir}/flowplayer/example/style.css" />
+					<available file="${dist-dir}/flowplayer/example/flowplayer-${flowplayer-js-version-info}.min.js" />
 				</and>
 			</condition>
 			<fail unless="${resources-available}" message="Not all required resources present in @{zip-name}" />
 		</sequential>
 	</macrodef>
-	
+
 	<target name="zip-devkit" depends="doc, build-lib">
 		<zip destfile="${dist-dir}/${devkit-dist-name}">
 			<zipfileset prefix="flowplayer.devkit" dir="${devkit-dir}">
@@ -390,9 +395,9 @@
 			<zipfileset prefix="flowplayer.devkit/doc" dir="${apidoc-dir}">
 				<include name="**/*" />
 			</zipfileset>
-		</zip>		
+		</zip>
 	</target>
-	
+
 	<target name="dist" description="Create distribution packages">
 		<iterate-plugins target="dist" />
 		<ant target="zip" />
