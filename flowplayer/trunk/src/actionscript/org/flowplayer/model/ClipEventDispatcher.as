@@ -15,11 +15,15 @@ package org.flowplayer.model {
 	public class ClipEventDispatcher extends EventDispatcher {
 		
 		public function dispatch(eventType:ClipEventType, info:Object = null, info2:Object = null, info3:Object = null):void {
-			doDispatchEvent(new ClipEvent(eventType, info, info2, info3), false);
+            if (eventType == ClipEventType.ERROR) {
+                doDispatchErrorEvent(new ClipEvent(eventType, info, info2, info3));
+            } else {
+                doDispatchEvent(new ClipEvent(eventType, info, info2, info3), false);
+            }
 		}
 		
 		public function dispatchError(error:ClipError, info:Object = null):void {
-			doDispatchEvent(new ClipEvent(error.eventType, error, info), false);
+			doDispatchErrorEvent(new ClipEvent(error.eventType, error, info));
 		}
 		
 		public function dispatchEvent(event:ClipEvent):void {

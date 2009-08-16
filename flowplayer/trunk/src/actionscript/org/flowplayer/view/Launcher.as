@@ -313,11 +313,12 @@ import org.flowplayer.model.DisplayPluginModel;
 
 		private function onPluginLoadError(event:PluginEvent):void {
             if (event.target is Loadable) {
-                throw new Error("unable to load plugin '" + Loadable(event.target).name + "', url: '" + Loadable(event.target).url + "'");
+                handleError(PlayerError.PLUGIN_LOAD_FAILED, "unable to load plugin '" + Loadable(event.target).name + "', url: '" + Loadable(event.target).url + "'");
+//                throw new Error("unable to load plugin '" + Loadable(event.target).name + "', url: '" + Loadable(event.target).url + "'");
             } else {
                 var plugin:PluginModel = event.target as PluginModel;
                 _pluginRegistry.removePlugin(plugin);
-                throw new Error("load/init error on " + plugin);
+                handleError(PlayerError.PLUGIN_LOAD_FAILED, "load/init error on " + plugin);
             }
 		}
 		

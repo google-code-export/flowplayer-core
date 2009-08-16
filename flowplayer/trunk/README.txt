@@ -3,6 +3,8 @@ Version history:
 3.2.0
 -----
 - changes to the ConnectionProvider and URLResolver APIs
+Fixes:
+- error codes and error message were not properly passed to onEvent JS listeners
 
 3.1.3
 -----

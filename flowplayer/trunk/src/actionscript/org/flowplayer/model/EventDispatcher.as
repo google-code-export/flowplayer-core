@@ -110,18 +110,29 @@ package org.flowplayer.model {
 			return ! event.isDefaultPrevented();
 		}
 
-		/**
-		 * Dispatches the event to the action phase listeners.
-		 */
-		flow_internal final function doDispatchEvent(event:AbstractEvent, fireExternal:Boolean):void {
-			if (event.target == null) {
-				event.target = this;
-			}
-			if (fireExternal) {
-				dispatchExternalEvent(event);
-			}			
-			_dispatchEvent(event, _listeners);
-		}
+        /**
+         * Dispatches the event to the action phase listeners.
+         */
+        flow_internal final function doDispatchEvent(event:AbstractEvent, fireExternal:Boolean):void {
+            if (event.target == null) {
+                event.target = this;
+            }
+            if (fireExternal) {
+                dispatchExternalEvent(event);
+            }
+            _dispatchEvent(event, _listeners);
+        }
+
+        /**
+         * Dispatches an error event to the action phase listeners.
+         */
+        flow_internal final function doDispatchErrorEvent(event:AbstractEvent):void {
+            if (event.target == null) {
+                event.target = this;
+            }
+            event.fireErrorExternal(_playerId);
+            _dispatchEvent(event, _listeners);
+        }
 
 		private function _dispatchEvent(event:AbstractEvent, listenerDict:Dictionary):void {
 			log.info(this + " dispatchEvent(), event " + event);

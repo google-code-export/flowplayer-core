@@ -20,7 +20,11 @@ package org.flowplayer.model {
 		 */
 		public function dispatch(eventType:PluginEventType, eventId:Object = null, info:Object = null, info2:Object = null, info3:Object = null):void {
 			log.debug(info2 + " " + info3);
-            doDispatchEvent(new PluginEvent(eventType, name, eventId, info, info2, info3), true);
+            if (eventType == PluginEventType.ERROR) {
+                doDispatchErrorEvent(new PluginEvent(eventType, name, eventId, info, info2, info3));                
+            } else {
+                doDispatchEvent(new PluginEvent(eventType, name, eventId, info, info2, info3), true);
+            }
 		}
 		
 		/**
@@ -38,7 +42,7 @@ package org.flowplayer.model {
 		 * @see PluginEventType#ERROR
 		 */
 		public function dispatchError(error:PluginError, info:Object = null):void {
-			doDispatchEvent(new PluginEvent(error.eventType as PluginEventType, name, error, info), true);
+			doDispatchErrorEvent(new PluginEvent(error.eventType as PluginEventType, name, error, info));
 		}
 
 		public function dispatchEvent(event:PluginEvent):void {
