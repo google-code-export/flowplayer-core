@@ -48,8 +48,11 @@ package org.flowplayer.controller {
 		}
 
 		public final function onEvent(event:ClipEventType, params:Array = null):void {
+            if (! params) {
+                params = [];
+            }
 			if (event == ClipEventType.BEGIN) {
-				load(new ClipEvent(event), clip, params ? params[0] : false);
+				load(new ClipEvent(event), clip, params[0]);
             } else if (event == ClipEventType.PAUSE) {
                 pause(new ClipEvent(event));
             } else if (event == ClipEventType.RESUME) {

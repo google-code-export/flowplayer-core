@@ -98,6 +98,7 @@ import org.flowplayer.model.DisplayPluginModel;
         private var _clickCount:int;
         private var _clickTimer:Timer = new Timer(200, 1);
         private var _clickEvent:MouseEvent;
+        private var _initialized:Boolean;
 
 		[Frame(factoryClass="org.flowplayer.view.Preloader")]
 		public function Launcher() {
@@ -218,6 +219,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 			addListeners();
 
+            _initialized = true;
 //            _controlsModel.onPluginEvent(function(event:PluginEvent):void {
 //                log.debug("received plugin event " + event.id);
 //                var model:DisplayPluginModel = event.target as DisplayPluginModel;
@@ -313,11 +315,12 @@ import org.flowplayer.model.DisplayPluginModel;
 
 		private function onPluginLoadError(event:PluginEvent):void {
             if (event.target is Loadable) {
-                throw new Error("unable to load plugin '" + Loadable(event.target).name + "', url: '" + Loadable(event.target).url + "'");
+                handleError(PlayerError.PLUGIN_LOAD_FAILED, "unable to load plugin '" + Loadable(event.target).name + "', url: '" + Loadable(event.target).url + "'");
+//                throw new Error("unable to load plugin '" + Loadable(event.target).name + "', url: '" + Loadable(event.target).url + "'");
             } else {
                 var plugin:PluginModel = event.target as PluginModel;
                 _pluginRegistry.removePlugin(plugin);
-                throw new Error("load/init error on " + plugin);
+                handleError(PlayerError.PLUGIN_LOAD_FAILED, "load/init error on " + plugin);
             }
 		}
 		
@@ -745,7 +748,7 @@ import org.flowplayer.model.DisplayPluginModel;
 		
 		private function onClipError(event:ClipEvent):void {
             if (event.isDefaultPrevented()) return;
-			doHandleError(event.error.code + ", " + event.error.message + ", " + event.info2 + ", clip: '" + Clip(event.target) + "'");
+			doHandleError(event.error.code + ", " + event.error.message + ", " + event.info2 + ", clip: '" + Clip(event.target) + "'", false);
 		}
 
         private function onClickTimer(event:TimerEvent):void {

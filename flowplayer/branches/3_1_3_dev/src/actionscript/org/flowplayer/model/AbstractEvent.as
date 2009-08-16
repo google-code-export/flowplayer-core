@@ -91,6 +91,16 @@ import org.flowplayer.util.ObjectConverter;
 			return _propagationStopped;
 		}
 		
+        flow_internal function fireErrorExternal(playerId:String):void {
+            try {
+                ExternalInterface.call(
+                    "flowplayer.fireEvent",
+                    playerId || ExternalInterface.objectID, getExternalName(eventType.name, false), ErrorCode(_info).code, ErrorCode(_info).message + info2 ? ": " + info2 : "");
+            } catch (e:Error) {
+                log.error("Error in fireErrorExternal() " + e);
+            }
+        }
+
 		flow_internal function fireExternal(playerId:String, beforePhase:Boolean = false):Boolean {
             log.debug("fireExternal " + eventType.name + ", " + externalEventArgument + ", " + externalEventArgument2 + ", " + externalEventArgument3 + "," + externalEventArgument4 + ", " + externalEventArgument5);
 			if (!ExternalInterface.available) return true;
