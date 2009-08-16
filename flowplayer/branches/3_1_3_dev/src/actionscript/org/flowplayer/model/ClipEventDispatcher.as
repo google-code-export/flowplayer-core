@@ -17,9 +17,9 @@ package org.flowplayer.model {
 		public function dispatch(eventType:ClipEventType, info:Object = null, info2:Object = null, info3:Object = null):void {
 			doDispatchEvent(new ClipEvent(eventType, info, info2, info3), false);
 		}
-		
+
 		public function dispatchError(error:ClipError, info:Object = null):void {
-			doDispatchEvent(new ClipEvent(error.eventType, error, info), false);
+			doDispatchErrorEvent(new ClipEvent(error.eventType, error, info), false);
 		}
 		
 		public function dispatchEvent(event:ClipEvent):void {
