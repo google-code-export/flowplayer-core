@@ -38,6 +38,9 @@ import org.flowplayer.util.Log;
                 log.debug(elem.localName() + ": " + elem.text().toString());
                 
                 switch(elem.localName()) {
+                    case 'clip':
+                        parseClipProperties(elem, clip);
+                        break;
                     case 'duration':
                         clip.duration = int(elem.text().toString());
                         break;
@@ -58,6 +61,14 @@ import org.flowplayer.util.Log;
             }
             parseMedia(item, clip);
             log.debug("created clip " + clip);
+        }
+
+        private function parseClipProperties(elem:XML, clip:Clip):void {
+            var binder:PropertyBinder = new PropertyBinder(clip);
+            for each (var attr:XML in elem.attributes()) {
+                log.debug("parseClipProperties(), initializing clip property '" + attr.name() + "' to value " + attr.toString());
+                binder.copyProperty(attr.name().toString(), attr.toString(), true);
+            }
         }
         
         private function addClipCustomProperty(clip:Clip, elem:XML, value:Object):void {

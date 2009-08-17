@@ -6,10 +6,11 @@ Version history:
 Fixes:
 - error codes and error message were not properly passed to onEvent JS listeners
 
-3.1.3
+3.x
 -----
 - Now automatically uses a plugin that is called 'rtmp' for all clips that have the rtmp-protocol in their URLs.
-  This makes it possilbe to use RTMP with RSS playlists.
+- Added possibility to specify all clip properties in an RSS playlist
+
 Fixes:
 - RSS playlists: The 'type' attribute value 'audio/mp3' in the media:content element caused an error.
 - Dispatches onMetadata() if an URL resolver changes the clip URL (changes to a different file)
