@@ -31,15 +31,17 @@ import org.flowplayer.util.Log;
         public function parseClip(item:XML, playlist:Playlist, commonClipObject:Object):void {
             var clip:Clip =  new Clip();
             new PropertyBinder(clip, "customProperties").copyProperties(commonClipObject) as Clip;
-            
+
             log.debug("parseClip", clip);
             playlist.addClip(clip, -1 , true);
+            var clipElem:XML;
             for each (var elem:XML in item.children()) {
                 log.debug(elem.localName() + ": " + elem.text().toString());
-                
+
                 switch(elem.localName()) {
                     case 'clip':
-                        parseClipProperties(elem, clip);
+                        clipElem = elem;
+//                        parseClipProperties(elem, clip);
                         break;
                     case 'duration':
                         clip.duration = int(elem.text().toString());
@@ -60,6 +62,11 @@ import org.flowplayer.util.Log;
                 }
             }
             parseMedia(item, clip);
+
+            if (clipElem) {
+                parseClipProperties(clipElem[0], clip);
+            }
+
             log.debug("created clip " + clip);
         }
 
