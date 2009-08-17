@@ -98,7 +98,7 @@ package org.flowplayer.util {
         private function toType(value:Object, type:String):Object {
             log.debug("toType() " + type);
             if (type == "Boolean") return value == "true";
-            if (type == "Number") return value as Number;
+            if (type == "Number") return Number(value);
             return value;
         }
 		
