@@ -19,13 +19,9 @@ package org.flowplayer.view {
 		 * Dispatches a player event of the specified type.
 		 */
 		public function dispatch(eventType:PlayerEventType, info:Object = null):void {
-            if (eventType == PlayerEventType.ERROR) {
-                doDispatchErrorEvent(new PlayerEvent(eventType, info));                
-            } else {
                 doDispatchEvent(new PlayerEvent(eventType, info), true);
             }
-		}
-		
+
 		/**
 		 * Dispatches a player event.
 		 */
@@ -34,7 +30,7 @@ package org.flowplayer.view {
 		}
 		
 		public function dispatchError(error:ErrorCode, info:Object = null):void {
-			doDispatchErrorEvent(new PlayerEvent(error.eventType, error, info));
+			doDispatchErrorEvent(new PlayerEvent(error.eventType, error, info), true);
 		}
 
 		/**

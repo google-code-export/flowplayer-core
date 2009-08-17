@@ -18,7 +18,8 @@
  */
 
 package org.flowplayer.util {
-	import flash.utils.getQualifiedClassName;
+    import flash.utils.describeType;
+    import flash.utils.getQualifiedClassName;
 	
 	import org.flowplayer.util.Log;	
 
@@ -32,29 +33,74 @@ package org.flowplayer.util {
 	public class PropertyBinder {
 
 		private var log:Log = new Log(this);
-		private var object:Object;		private var _extraProps:String;
+		private var _object:Object;
+        private var _objectDesc:XML;
+		private var _extraProps:String;
 
 		/**
 		 * Creates a new property binder for the specified target object.
 		 * @param object the target object into which the properties will be copid to
 		 * @param extraProps a property name for all properties for which the target does not provide an accessor or a setter function
-		 */		public function PropertyBinder(object:Object, extraProps:String = null) {
+		 */
+		public function PropertyBinder(object:Object, extraProps:String = null) {
 			log.info("created for " + getQualifiedClassName(object));
-			this.object = object;
+			_object = object;
 			_extraProps = extraProps;
+            _objectDesc = describeType(_object);
 		}
 		
 		public function copyProperties(source:Object, overwrite:Boolean = true):Object {
-			if (! source) return object;
+			if (! source) return _object;
 			log.debug("copyProperties, overwrite = " + overwrite + (_extraProps ? ", extraprops will be set to " + _extraProps : ""));
 			for (var prop:String in source) {
-				if (overwrite || ! hasValue(object, prop)) {
-					initProperty(prop, object, source[prop]);
+				if (overwrite || ! hasValue(_object, prop)) {
+					copyProperty(prop, source[prop]);
 				}
 			}
-			log.debug("done with " + getQualifiedClassName(object));
-			return object;
+			log.debug("done with " + getQualifiedClassName(_object));
+			return _object;
 		}
+
+        public function copyProperty(prop:String, value:Object, convertType:Boolean = false):void {
+            log.debug("copyProperty() " + prop + ": " + value);
+            var setter:String = "set" + prop.charAt(0).toUpperCase() + prop.substring(1);
+            var method:XMLList = _objectDesc.method.(@name == setter);
+            if (method.length() == 1) {
+                try {
+                    _object[setter](convertType ? toType(value, method.@type) : value);
+                    log.debug("successfully initialized property '" + prop + "' to value '" + value +"'");
+                    return;
+                } catch (e:Error) {
+                    log.debug("unable to initialize using " + setter);
+                }
+            }
+
+            var property:XMLList = _objectDesc.*.(hasOwnProperty("@name") && @name == prop);
+            if (property.length() == 1) {
+                try {
+                    log.debug("trying to set property '" + prop + "' directly");
+                    _object[prop] = convertType ? toType(value, property.@type) : value;
+                    log.debug("successfully initialized property '" + prop + "' to value '" + value + "'");
+                    return;
+                } catch (e:Error) {
+                    log.debug("unable to set to field / using accessor");
+                }
+            }
+
+            if (_extraProps) {
+                log.debug("setting to extraprops " + _extraProps + ", prop " + prop + " value " + value);
+                configure(_object, _extraProps || "customProperties", prop, value);
+            } else {
+                log.debug("skipping property '" + prop + "', value " + value);
+            }
+        }
+
+        private function toType(value:Object, type:String):Object {
+            log.debug("toType() " + type);
+            if (type == "Boolean") return value == "true";
+            if (type == "Number") return value as Number;
+            return value;
+        }
 		
 		private function hasValue(obj:Object, prop:String):Boolean {
 			if (objHasValue(obj, prop)) {
@@ -74,7 +120,7 @@ package org.flowplayer.util {
 				if (value is Boolean) {
 					return true;
 				}
-				return value;
+				return value as Boolean;
 			} catch (ignore:Error) { }
 			try {
 				return obj.hasValue(prop);
@@ -82,36 +128,6 @@ package org.flowplayer.util {
 			return false;
 		}
 
-		private function initProperty(prop:String, objectToPopulate:Object, value:Object):void {
-			var setter:String = "set" + prop.charAt(0).toUpperCase() + prop.substring(1);
-			try {
-				if (objectToPopulate[setter]) {
-					log.debug("initProperty with setter " + setter);
-					objectToPopulate[setter](value);
-				}
-				log.debug("successfully initialized property '" + prop + "' to value '" + value +"'");
-				return;
-			} catch (e:Error) {
-				log.debug("unable to initialize using " + setter);
-			}
-			
-			try {
-				log.debug("trying to set property '" + prop + "' directly");
-				objectToPopulate[prop] = value;
-				log.debug("successfully initialized property '" + prop + "' to value '" + value + "'");
-				return;
-			} catch (e:Error) {
-				log.debug("unable to set to field / using accessor");
-			}
-			
-			if (_extraProps) {
-				log.debug("setting to extraprops " + _extraProps + ", prop " + prop + " value " + value);
-				configure(objectToPopulate, _extraProps || "customProperties", prop, value);
-			} else {
-				log.debug("skipping property '" + prop + "', value " + value);
-			}
-		}
-		
 		private function configure(configurable:Object, configProperty:String, prop:String, value:Object):void {
 			var config:Object = configurable[configProperty] || new Object();
 			config[prop] = value;

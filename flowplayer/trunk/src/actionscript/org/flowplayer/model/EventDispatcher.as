@@ -114,6 +114,10 @@ package org.flowplayer.model {
          * Dispatches the event to the action phase listeners.
          */
         flow_internal final function doDispatchEvent(event:AbstractEvent, fireExternal:Boolean):void {
+            if (event.info is ErrorCode) {
+                doDispatchErrorEvent(event, fireExternal);
+                return;
+            }
             if (event.target == null) {
                 event.target = this;
             }
@@ -126,11 +130,13 @@ package org.flowplayer.model {
         /**
          * Dispatches an error event to the action phase listeners.
          */
-        flow_internal final function doDispatchErrorEvent(event:AbstractEvent):void {
+        flow_internal final function doDispatchErrorEvent(event:AbstractEvent, fireExternal:Boolean):void {
             if (event.target == null) {
                 event.target = this;
             }
-            event.fireErrorExternal(_playerId);
+            if (fireExternal) {
+                event.fireErrorExternal(_playerId);
+            }
             _dispatchEvent(event, _listeners);
         }
 
