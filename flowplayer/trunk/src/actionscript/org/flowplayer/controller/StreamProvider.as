@@ -171,10 +171,5 @@ import org.flowplayer.model.Clip;
          * @return the netConnection currently in use, or null if this provider has not started streaming yet
          */
         function get netConnection():NetConnection;
-
-        /**
-         * Gets the default connection provider used by this provider.
-         */
-        function getDefaultConnectionProvider():ConnectionProvider;
     }
 }

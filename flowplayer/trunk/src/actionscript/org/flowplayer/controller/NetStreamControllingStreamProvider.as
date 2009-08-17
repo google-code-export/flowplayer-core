@@ -536,15 +536,7 @@ import org.flowplayer.model.PluginModel;
 		 */
 		public function onLoad(player:Flowplayer):void { 
 		}
-		
-		/**
-		 * Gets the default connection provider to be used if the ProviderModel
-		 * supplied to this provider does not specify a connection provider.
-		 */
-		public function getDefaultConnectionProvider():ConnectionProvider {
-			return new DefaultRTMPConnectionProvider();
-		} 	
-		
+
 		/**
 		 * Gets the default clip url resolver to be used if the ProviderModel
 		 * supplied to this provider does not specify a connection provider.
@@ -569,7 +561,17 @@ import org.flowplayer.model.PluginModel;
             log.debug("about to call connectionProvider.connect, objectEncoding " + _model.objectEncoding);
 			connectionProvider.connect(this, clip, onConnectionSuccess, _model.objectEncoding, _connectionArgs || []);
         }
-        
+
+        /**
+         * Gets the connection provider for the specified clip. Note: this function should return the same instance
+         * on repeated calls for the same clip.
+         * @param clip
+         * @return
+         */
+        protected function getConnectionProvider(clip:Clip):ConnectionProvider {
+            return _connectionProvider;
+        }
+
         /* ---- Private methods ----- */
         /* -------------------------- */
 
@@ -588,9 +590,8 @@ import org.flowplayer.model.PluginModel;
 				if (! _connectionProvider) {
 					throw new Error("connection provider " + _model.connectionProvider + " not loaded");
 				}
-			} else {
-				_connectionProvider = getDefaultConnectionProvider();
 			}
+            _connectionProvider = new DefaultRTMPConnectionProvider();
 		}
 
 		private function dispatchError(error:ClipError, info:String):void {
@@ -745,7 +746,7 @@ import org.flowplayer.model.PluginModel;
 
         private function get clipURLResolver():ClipURLResolver {
             log.debug("get clipURLResolver,  clip.urlResolver = " + clip.urlResolvers + ", _clipUrlResolver = " + _defaultClipUrlResolver);
-            if (! clip) return _defaultClipUrlResolver;
+            if (! clip || (clip.urlResolvers && clip.urlResolvers[0] == null)) return _defaultClipUrlResolver;
 
             // already created?
             if (_clipUrlResolver) return _clipUrlResolver;
@@ -774,16 +775,17 @@ import org.flowplayer.model.PluginModel;
         }
 
         private function get connectionProvider():ConnectionProvider {
-            if (! clip) return _connectionProvider;
-            if (! clip.connectionProvider) return _connectionProvider;
-            var provider:ConnectionProvider = PluginModel(_player.pluginRegistry.getPlugin(clip.connectionProvider)).pluginObject as ConnectionProvider;
-            if (! provider) {
-                throw new Error("connectionProvider " + clip.connectionProvider + " not loaded");                
+            if (clip.connectionProvider) {
+                var provider:ConnectionProvider = PluginModel(_player.pluginRegistry.getPlugin(clip.connectionProvider)).pluginObject as ConnectionProvider;
+                if (! provider) {
+                    throw new Error("connectionProvider " + clip.connectionProvider + " not loaded");
+                }
+                provider.onFailure = function(message:String = null):void {
+                    clip.dispatchError(ClipError.STREAM_LOAD_FAILED, "connection failed" + (message ? ": " + message : ""));
+                };
+                return provider;
             }
-            provider.onFailure = function(message:String = null):void {
-                clip.dispatchError(ClipError.STREAM_LOAD_FAILED, "connection failed" + (message ? ": " + message : ""));
-            };
-            return provider;
+            return getConnectionProvider(clip);
         }
 	}
 }
