@@ -83,10 +83,15 @@ package org.flowplayer.config {
             return playList;
         }
 
-		public function createClips(clipObjects:Array):Array {
+		public function createClips(clipObjects:Object):Array {
+
+            if (clipObjects is String) {
+                return new RSSPlaylistParser().parse(clipObjects as String, null, _commonClipObject);
+            }
+
 			var clips:Array = new Array();
-			for (var i : Number = 0; i < clipObjects.length; i++) {
-				var clipObj:Object = clipObjects[i];
+			for (var i : Number = 0; i < (clipObjects as Array).length; i++) {
+				var clipObj:Object = (clipObjects as Array)[i];
 				if (clipObj is String) {
 					clipObj = { url: clipObj };
 				}

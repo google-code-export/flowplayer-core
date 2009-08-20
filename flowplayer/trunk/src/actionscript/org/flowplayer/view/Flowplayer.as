@@ -106,7 +106,7 @@ import org.flowplayer.model.PlayerError;
 				addCallback("getCurrentClip", function():Object { 
 					return new ObjectConverter(currentClip).convert(); });
 				addCallback("getClip", function(index:Number):Object { return convert(playlist.getClip(index)); });
-                addCallback("setPlaylist", function(clipObjects:Array):void { setPlaylist(_config.createClips(clipObjects)); });
+                addCallback("setPlaylist", function(playlist:Object):void { if (playlist is String) loadPlaylistFeed(playlist as String, _playListController.setPlaylist) else setPlaylist(_config.createClips(playlist)); });
                 addCallback("addClip", function(clip:Object, index:int = -1):void { addClip(_config.createClip(clip), index); });
 				addCallback("showError", showError);
 
@@ -137,6 +137,16 @@ import org.flowplayer.model.PlayerError;
 			}
 		}
 
+        private function loadPlaylistFeed(feedName:String, clipHandler:Function):void {
+            var feedLoader:ResourceLoader = createLoader();
+            feedLoader.addTextResourceUrl(feedName);
+            feedLoader.load(null,
+                    function(loader:ResourceLoader):void {
+                        log.info("received playlist feed");
+                        clipHandler(_config.createClips(loader.getContent()));
+                    });
+        }
+
 		private function pluginLoad(name:String, url:String, properties:Object = null, callbackId:String = null):void {
 			var loadable:Loadable = new Loadable(name, _config, url);
 			if (properties) {
@@ -152,6 +162,10 @@ import org.flowplayer.model.PlayerError;
 		private function genericPlay(param:Object = null, instream:Boolean = false):void {
 			if (param == null) {
                 play();
+                return;
+            }
+            if (param is String) {
+                loadPlaylistFeed(param as String, _playListController.playClips);
                 return;
             }
             if (param is Number) {
