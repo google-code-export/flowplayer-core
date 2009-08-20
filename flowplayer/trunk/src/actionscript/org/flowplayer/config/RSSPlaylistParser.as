@@ -11,8 +11,14 @@ import org.flowplayer.util.Log;
     internal class RSSPlaylistParser {
         private var log:Log = new Log(this);
 
-        public function parse(rawRSS:String, playlist:Playlist, commonClipObject:Object):void {
-            log.info("parse");
+
+        public function createClips(rawRSS:String, playlist:Playlist, commonClipObject:Object):Array {
+            return parse(rawRSS, null, commonClipObject);
+        }
+
+        public function parse(rawRSS:String, playlist:Playlist, commonClipObject:Object):Array {
+            log.info("parse " + rawRSS);
+            var result:Array = [];
             if(! XMLUtil.isValidXML(rawRSS)) {
                 throw new Error("Feed does not contain valid XML.");
             }
@@ -21,19 +27,22 @@ import org.flowplayer.util.Log;
                 if (ch.localName() == 'channel') {
                     for each (var item:XML in ch.children()) {
                         if(item.name() == 'item') {
-                            parseClip(item, playlist, commonClipObject);
+                            result.push(parseClip(item, commonClipObject, playlist));
                         }
                     }
                 }
             }
+            return result;
         }
         
-        public function parseClip(item:XML, playlist:Playlist, commonClipObject:Object):void {
+        private function parseClip(item:XML, commonClipObject:Object, playlist:Playlist = null):Clip {
             var clip:Clip =  new Clip();
             new PropertyBinder(clip, "customProperties").copyProperties(commonClipObject) as Clip;
 
             log.debug("parseClip", clip);
-            playlist.addClip(clip, -1 , true);
+            if (playlist) {
+                playlist.addClip(clip, -1 , true);
+            }
             var clipElem:XML;
             for each (var elem:XML in item.children()) {
                 log.debug(elem.localName() + ": " + elem.text().toString());
@@ -68,6 +77,7 @@ import org.flowplayer.util.Log;
             }
 
             log.debug("created clip " + clip);
+            return clip;
         }
 
         private function parseClipProperties(elem:XML, clip:Clip):void {
