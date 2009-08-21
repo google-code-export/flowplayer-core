@@ -220,9 +220,12 @@
 			<srcfiles dir="${src-as}">
 			  <include name="**/*.as"/>
 			</srcfiles>
-			<srcfiles dir="${src-as-commercial}">
-				  <include name="**/*.as"/>
-			</srcfiles>
+            <srcfiles dir="${src-as-commercial}">
+                  <include name="**/*.as"/>
+            </srcfiles>
+            <srcfiles dir="${src-as-builtin}">
+                  <include name="**/*.as"/>
+            </srcfiles>
 			<srcfiles dir="${basedir}">
 				  <include name="*.xml"/>
 				  <include name="*.properties"/>
