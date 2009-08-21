@@ -41,9 +41,9 @@ package org.flowplayer.view {
 
         public function Preloader() {
             stop();
-            if (checkLoaded()) return;
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
             addEventListener(Event.RESIZE, arrange);
+            loaderInfo.addEventListener(Event.COMPLETE, init);
         }
 
         private function get rotationEnabled():Boolean {
@@ -70,6 +70,7 @@ package org.flowplayer.view {
 
         private function onAddedToStage(event:Event):void {
             trace("Preloader added to stage, stage size " + stageWidth + " x " + stageHeight);
+            prepareStage();
             if (rotationEnabled) {
                 _rotation = new RotatingAnimation();
                 addChild(_rotation);
@@ -78,7 +79,6 @@ package org.flowplayer.view {
             }
 
             loaderInfo.addEventListener(ProgressEvent.PROGRESS, onLoadProgress);
-            loaderInfo.addEventListener(Event.COMPLETE, init);
 
             // prepare stage if the app (Launcher) has been greated already. this is the
             // case when we are embedded in another SWF
@@ -110,7 +110,6 @@ package org.flowplayer.view {
                 }
             }
             nextFrame();
-            prepareStage();
             try {
                 var mainClass:Class = Class(getDefinitionByName("org.flowplayer.view.Launcher"));
                 _app = new mainClass() as DisplayObject;
