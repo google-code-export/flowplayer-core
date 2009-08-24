@@ -94,7 +94,7 @@ import org.flowplayer.model.DisplayPluginModel;
 		private var _copyrightNotice:TextField;
         private var _playlistLoader:ResourceLoader;
         private var _fullscreenManager:FullscreenManager;
-        private var _screenArranged:Boolean;
+        private var _screenArrangeCount:int = 0;
         private var _clickCount:int;
         private var _clickTimer:Timer = new Timer(200, 1);
         private var _clickEvent:MouseEvent;
@@ -127,7 +127,8 @@ import org.flowplayer.model.DisplayPluginModel;
 			loader = createNewLoader(); 
 
 			rootStyle = _config.canvas.style;
-			stage.addEventListener(Event.RESIZE, onStageResize);
+            stage.addEventListener(Event.RESIZE, onStageResize);
+            stage.addEventListener(Event.RESIZE, arrangeScreen);
 			setSize(stage.stageWidth, stage.stageHeight);
 
 			if (! VersionInfo.commercial) {
@@ -211,9 +212,9 @@ import org.flowplayer.model.DisplayPluginModel;
 			if (useExternalInterfade()) {
 				_flowplayer.dispatchEvent(PlayerEvent.load("player"));
 			} 
-            arrangeScreen();
 			log.debug("starting configured streams");
-			startStreams();
+            startStreams();
+            arrangeScreen();
 
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 			addListeners();
@@ -240,10 +241,6 @@ import org.flowplayer.model.DisplayPluginModel;
 		private function onStageResize(event:Event = null):void {
 			setSize(stage.stageWidth, stage.stageHeight);
 			arrangeCanvasLogo();
-            if (! _screenArranged) {
-                arrangeScreen();
-                _screenArranged = true;
-            }
 		}
 
 		private function arrangeCanvasLogo():void {
@@ -475,7 +472,9 @@ import org.flowplayer.model.DisplayPluginModel;
 			_panel.addView(screen.getDisplayObject(), null, screen);
 		}
 		
-		private function arrangeScreen():void {
+		private function arrangeScreen(event:Event = null):void {
+            log.debug("arrangeScreen(), already arranged " + _screenArrangeCount);
+            if (_screenArrangeCount > 1) return;
             if (! _pluginRegistry) return;
             var screen:DisplayProperties = _pluginRegistry.getPlugin("screen") as DisplayProperties;
             if (! screen) return;
@@ -500,12 +499,13 @@ import org.flowplayer.model.DisplayPluginModel;
 					}
 				}
 			}
-			log.debug("arranging screen to pos " + screen.position);
+			log.debug("arrangeScreen(): arranging screen to pos " + screen.position);
 			screen.display = "block";
 			screen.getDisplayObject().visible = true;
 			_pluginRegistry.updateDisplayProperties(screen, true);
 			_panel.update(screen.getDisplayObject(), screen);
 			_panel.draw(screen.getDisplayObject());
+            _screenArrangeCount++;
 		}
 
 		private function getScreenTopOrBottomPx(screen:DisplayProperties):Number {
@@ -523,7 +523,7 @@ import org.flowplayer.model.DisplayPluginModel;
 				log.debug("using configured top/bottom for screen");
 			}
 			
-			var heightConfigured:Boolean = _config.getObject("screen") && _config.getObject("screen").hasOwnProperty("height");
+            var heightConfigured:Boolean = _config.getObject("screen") && _config.getObject("screen").hasOwnProperty("height");
 			if (! heightConfigured) {
 				log.debug("screen height not configured, setting it to value " + heightPct + "%");
 				screen.height =  heightPct + "%";
@@ -556,11 +556,14 @@ import org.flowplayer.model.DisplayPluginModel;
 		}
 		
 		private function onFullscreen(event:PlayerEvent):void {
-				log.debug("entering fullscreen, disabling display clicks");
-				_enteringFullscreen = true;
-				var delay:Timer = new Timer(1000, 1);
-				delay.addEventListener(TimerEvent.TIMER_COMPLETE, onTimerComplete);
-				delay.start();
+            log.debug("entering fullscreen, disabling display clicks");
+            _screenArrangeCount = 100;
+            stage.removeEventListener(Event.RESIZE, arrangeScreen);
+            
+            _enteringFullscreen = true;
+            var delay:Timer = new Timer(1000, 1);
+            delay.addEventListener(TimerEvent.TIMER_COMPLETE, onTimerComplete);
+            delay.start();
 		}
 		
 		private function onTimerComplete(event:TimerEvent):void {

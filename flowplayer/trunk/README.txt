@@ -8,6 +8,7 @@ Version history:
 - Added possibility to specify all clip properties in an RSS playlist
 
 Fixes:
+- video goes tiny on Firefox: http://flowplayer.org/forum/8/23226
 - RSS playlists: The 'type' attribute value 'audio/mp3' in the media:content element caused an error.
 - Dispatches onMetadata() if an URL resolver changes the clip URL (changes to a different file)
 - error codes and error message were not properly passed to onEvent JS listeners

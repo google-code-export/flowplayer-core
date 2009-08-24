@@ -35,8 +35,8 @@
     <condition property="plugin-skin" value="${controls}" else="default">
         <isset property="controls" />
     </condition>
-    <condition property="_plugin-libs" value="../controls/src/flash/${plugin-skin}" else="">
-        <available file="../controls/build.xml" />
+    <condition property="_plugin-libs" value="../${controls-dir}/src/flash/${plugin-skin}" else="">
+        <available file="../${controls-dir}/build.xml" />
     </condition>
 
 	<property name="libs-path" value="${flex3libsdir} ${lib-dir}/thunderbolt ${_plugin-libs}"/>
