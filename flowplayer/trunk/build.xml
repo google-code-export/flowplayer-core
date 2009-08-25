@@ -35,7 +35,7 @@
     <condition property="plugin-skin" value="${controls}" else="default">
         <isset property="controls" />
     </condition>
-    <condition property="_plugin-libs" value="../${controls-dir}/src/flash/${plugin-skin}" else="">
+    <condition property="_plugin-libs" value="${controls-dir}/src/flash/${plugin-skin}" else="">
         <available file="${controls-dir}/build.xml" />
     </condition>
 
