@@ -18,6 +18,8 @@
  */
 
 package org.flowplayer.view {
+    import com.adobe.utils.StringUtil;
+
     import org.flowplayer.model.ClipEvent;
 import org.flowplayer.model.PlayerError;
 	import org.flowplayer.controller.ResourceLoader;	
@@ -78,7 +80,8 @@ import org.flowplayer.model.PlayerError;
 				addCallback("getVersion", function():Array { return version; });
                 addCallback("getPlaylist", function():Array { return convert(playlist.clips) as Array; });
 				addCallback("getId", function():String { return id; });
-				addCallback("play", genericPlay);
+                addCallback("play", genericPlay);
+//                addCallback("playFeed", playFeed);
 				addCallback("startBuffering", function():void { startBuffering(); });
 				addCallback("stopBuffering", function():void { stopBuffering(); } );
                 addCallback("isFullscreen", isFullscreen);
@@ -159,12 +162,12 @@ import org.flowplayer.model.PlayerError;
 			ExternalInterfaceHelper.addCallback("fp_" + methodName, func);
 		}
 		
-		private function genericPlay(param:Object = null, instream:Boolean = false):void {
+		private function genericPlay(param:Object = null, instream:Boolean = false, isPlaylist:Boolean = false):void {
 			if (param == null) {
                 play();
                 return;
             }
-            if (param is String) {
+            if (isPlaylist) {
                 loadPlaylistFeed(param as String, _playListController.playClips);
                 return;
             }
@@ -187,6 +190,10 @@ import org.flowplayer.model.PlayerError;
             }
             play(clip);
 		}
+
+        private function playFeed(feed:String):void {
+            loadPlaylistFeed(feed, _playListController.playClips);
+        }
 
 		private function genericSeek(target:Object):void {
 			var percentage:Number = target is String ? NumberUtil.decodePercentage(target as String) : NaN;
