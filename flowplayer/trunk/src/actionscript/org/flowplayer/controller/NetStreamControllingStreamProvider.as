@@ -754,13 +754,13 @@ import org.flowplayer.model.PluginModel;
             // defined in clip?
             if (clip.urlResolvers) {
                 _clipUrlResolver = CompositeClipUrlResolver.createResolver(clip.urlResolvers, _player.pluginRegistry);
-            }
-
-            // get all resolvers from repository
-            var configured:Array = _player.pluginRegistry.getUrlResolvers();
-            if (configured && configured.length > 0) {
-                log.debug("using configured URL resolvers", configured);
-                _clipUrlResolver = CompositeClipUrlResolver.createResolver(configured, _player.pluginRegistry);
+            } else {
+                // get all resolvers from repository
+                var configured:Array = _player.pluginRegistry.getUrlResolvers();
+                if (configured && configured.length > 0) {
+                    log.debug("using configured URL resolvers", configured);
+                    _clipUrlResolver = CompositeClipUrlResolver.createResolver(configured, _player.pluginRegistry);
+                }
             }
 
             if (! _clipUrlResolver) {
