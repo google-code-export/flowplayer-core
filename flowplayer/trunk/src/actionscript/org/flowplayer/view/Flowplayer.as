@@ -81,7 +81,7 @@ import org.flowplayer.model.PlayerError;
                 addCallback("getPlaylist", function():Array { return convert(playlist.clips) as Array; });
 				addCallback("getId", function():String { return id; });
                 addCallback("play", genericPlay);
-//                addCallback("playFeed", playFeed);
+                addCallback("playFeed", playFeed);
 				addCallback("startBuffering", function():void { startBuffering(); });
 				addCallback("stopBuffering", function():void { stopBuffering(); } );
                 addCallback("isFullscreen", isFullscreen);
@@ -162,13 +162,9 @@ import org.flowplayer.model.PlayerError;
 			ExternalInterfaceHelper.addCallback("fp_" + methodName, func);
 		}
 		
-		private function genericPlay(param:Object = null, instream:Boolean = false, isPlaylist:Boolean = false):void {
+		private function genericPlay(param:Object = null, instream:Boolean = false):void {
 			if (param == null) {
                 play();
-                return;
-            }
-            if (isPlaylist) {
-                loadPlaylistFeed(param as String, _playListController.playClips);
                 return;
             }
             if (param is Number) {

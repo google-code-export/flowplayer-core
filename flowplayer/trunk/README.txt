@@ -2,7 +2,7 @@ Version history:
 
 3.x
 -----
-- Possibility to pass a RSS file name with play("playlist.rss", false, true) and setPlaylist("playlist.rss") calls.
+- Possibility to pass a RSS file name with playFeed("playlist.rss") and setPlaylist("playlist.rss") calls.
 - changes to the ConnectionProvider and URLResolver APIs
 - Now automatically uses a plugin that is called 'rtmp' for all clips that have the rtmp-protocol in their URLs.
 - Added possibility to specify all clip properties in an RSS playlist
