@@ -117,14 +117,18 @@ package org.flowplayer.util {
 				if (value is Number) {
 					return value >= 0;
 				}
-				if (value is Boolean) {
-					return true;
-				}
-				return value as Boolean;
+                if (value is Boolean) {
+                    return true;
+                }
+                
+				return value != null;
 			} catch (ignore:Error) { }
-			try {
+            
+			// some flowplayer classes implement hasValue() (for example DisplayPropertiesImpl)
+            try {
 				return obj.hasValue(prop);
 			} catch (ignore:Error) { }
+
 			return false;
 		}
 

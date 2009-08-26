@@ -175,6 +175,14 @@ import org.flowplayer.flow_internal;
 			}
 		}
 
+        /**
+         * Removes all cuepoints from the clip
+         * @return
+         */
+        public function removeCuepoints():void {
+            _cuepoints = new Dictionary();
+        }
+
 		public function addCuepoint(cue:Cuepoint):void {
 			if (! cue) return;
 			if (cue.time >= 0) {

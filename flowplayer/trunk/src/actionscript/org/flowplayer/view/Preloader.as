@@ -28,11 +28,14 @@ package org.flowplayer.view {
     import flash.utils.getDefinitionByName;
 
     import org.flowplayer.util.Arrange;
+    import org.flowplayer.util.Log;
+    import org.flowplayer.util.LogConfiguration;
 
     public class Preloader extends MovieClip {
-
+        private var _log:Log = new Log(this);
         private var _app:DisplayObject;
         private var _initTimer:Timer;
+        private var _stageTimer:Timer;
         private var _rotation:RotatingAnimation;
         private static var _stageHeight:int = 0;
         private static var _stageWidth:int = 0;
@@ -40,6 +43,12 @@ package org.flowplayer.view {
         public var injectedConfig:String;
 
         public function Preloader() {
+
+            var logConfig:LogConfiguration = new LogConfiguration();
+            logConfig.level = "debug";
+            logConfig.filter = "org.flowplayer.view.Preloader";
+            Log.configure(logConfig);
+
             stop();
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
             addEventListener(Event.RESIZE, arrange);
@@ -55,10 +64,33 @@ package org.flowplayer.view {
 
         private function checkLoaded():Boolean {
             if (loaderInfo.bytesLoaded == loaderInfo.bytesTotal) {
+                if (stage.stageWidth == 0 || stage.stageHeight == 0) {
+                    log("player completeley loaded but stage dimensions still zero, waiting for stage to have size");
+                    startStageWait();
+                    return false;
+                }
+
                 init();
                 return true;
             }
             return false;
+        }
+
+        private function startStageWait():void {
+            if (_stageTimer) return;
+            _stageTimer = new Timer(50);
+            _stageTimer.addEventListener(TimerEvent.TIMER, onStageWait);
+            _stageTimer.start();
+        }
+
+        private function onStageWait(event:TimerEvent):void {
+            if (stage.stageWidth == 0 || stage.stageHeight == 0) {
+                log("stage dimensions " + stage.stageWidth + "x" + stage.stageHeight);
+                return;
+            }
+            log("stage has nonzero size " + stage.stageWidth + "x" + stage.stageHeight);
+            _stageTimer.stop();
+            init();
         }
 
         private function arrange(event:Event = null):void {
@@ -69,8 +101,8 @@ package org.flowplayer.view {
         }
 
         private function onAddedToStage(event:Event):void {
-            trace("Preloader added to stage, stage size " + stageWidth + " x " + stageHeight);
-            prepareStage();
+            log("Preloader added to stage, stage size " + stageWidth + " x " + stageHeight);
+//            prepareStage();
             if (rotationEnabled) {
                 _rotation = new RotatingAnimation();
                 addChild(_rotation);
@@ -90,14 +122,14 @@ package org.flowplayer.view {
 		private function onLoadProgress(event:ProgressEvent):void {
             if (checkLoaded()) return;
   			var percent:Number = Math.floor((event.bytesLoaded*100) / event.bytesTotal);
-            trace("percent " + percent);
+            log(percent);
             if (_rotation) {
                 Arrange.center(_rotation, stageWidth, stageHeight);
             }
    		}
        
         private function init(event:Event = null):void {
-            trace("init");
+            log("init");
             if (_initTimer) {
                 _initTimer.stop();
             }
@@ -110,16 +142,17 @@ package org.flowplayer.view {
                 }
             }
             nextFrame();
+            prepareStage();
             try {
                 var mainClass:Class = Class(getDefinitionByName("org.flowplayer.view.Launcher"));
                 _app = new mainClass() as DisplayObject;
                 addChild(_app as DisplayObject);
-                trace("Launcher instantiated");
-                trace("stage size " + stageWidth + " x " + stageHeight);
+                log("Launcher instantiated");
+                log("stage size " + stageWidth + " x " + stageHeight);
             } catch (e:Error) {
-                trace("error instantiating Launcher " + e + ": " + e.message);
+                log("error instantiating Launcher " + e + ": " + e.message);
                 if (! _initTimer) {
-                    trace("starting init timer");
+                    log("starting init timer");
                     _app = null;
                     prevFrame();
                     _initTimer = new Timer(300);
@@ -158,6 +191,11 @@ package org.flowplayer.view {
         public static function set stageWidth(val:int):void {
             if (val < _stageWidth) return;
             _stageWidth = val;
+        }
+
+        private function log(msg:Object):void {
+            _log.debug(msg + "");
+            trace(msg + "");
         }
     }
 }
