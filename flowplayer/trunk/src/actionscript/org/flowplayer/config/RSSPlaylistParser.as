@@ -9,6 +9,7 @@ import org.flowplayer.util.Log;
 
     
     internal class RSSPlaylistParser {
+        private static const UNSUPPORTED_TYPE:int = 10;
         private var log:Log = new Log(this);
 
 
@@ -17,7 +18,6 @@ import org.flowplayer.util.Log;
         }
 
         public function parse(rawRSS:String, playlist:Playlist, commonClipObject:Object):Array {
-            log.info("parse " + rawRSS);
             var result:Array = [];
             if(! XMLUtil.isValidXML(rawRSS)) {
                 throw new Error("Feed does not contain valid XML.");
@@ -27,7 +27,22 @@ import org.flowplayer.util.Log;
                 if (ch.localName() == 'channel') {
                     for each (var item:XML in ch.children()) {
                         if(item.name() == 'item') {
-                            result.push(parseClip(item, commonClipObject, playlist));
+                            try {
+                                var clip:Clip = parseClip(item, commonClipObject);
+                            } catch (e:Error) {
+                                if (e.errorID == UNSUPPORTED_TYPE) {
+                                    log.info("unsupported media type, ignoring this item");
+                                } else {
+                                    throw e;
+                                }
+                            }
+                            if (clip) {
+                                log.info("created clip " + clip);
+                                result.push(clip);
+                                if (playlist) {
+                                    playlist.addClip(clip, -1 , true);
+                                }
+                            }
                         }
                     }
                 }
@@ -35,42 +50,38 @@ import org.flowplayer.util.Log;
             return result;
         }
         
-        private function parseClip(item:XML, commonClipObject:Object, playlist:Playlist = null):Clip {
+        private function parseClip(item:XML, commonClipObject:Object):Clip {
             var clip:Clip =  new Clip();
             new PropertyBinder(clip, "customProperties").copyProperties(commonClipObject) as Clip;
 
-            log.debug("parseClip", clip);
-            if (playlist) {
-                playlist.addClip(clip, -1 , true);
-            }
             var clipElem:XML;
+            var groupParsed:Boolean;
             for each (var elem:XML in item.children()) {
-                log.debug(elem.localName() + ": " + elem.text().toString());
+//                log.debug(elem.localName() + ": " + elem.text().toString());
 
                 switch(elem.localName()) {
                     case 'clip':
                         clipElem = elem;
 //                        parseClipProperties(elem, clip);
                         break;
-                    case 'duration':
-                        clip.duration = int(elem.text().toString());
-                        break;
-                    case 'enclosure':
-                        clip.url = elem.@url.toString();
-                        clip.type = ClipType.fromMimeType(elem.@type.toString());
-                        break;
                     case 'link':
                         clip.linkUrl = elem.text().toString();
                         break;
+                    case 'duration':
+                        clip.duration = int(elem.text().toString());
+                        break;
                     case 'group':
                         parseMedia(elem, clip);
+                        groupParsed = true;
                         break;
                     default:
                         var prop:Object = parseCustomProperty(elem);
                         addClipCustomProperty(clip, elem, prop);
                 }
             }
-            parseMedia(item, clip);
+            if (! groupParsed) {
+                parseMedia(item, clip);
+            }
 
             if (clipElem) {
                 parseClipProperties(clipElem[0], clip);
@@ -78,6 +89,14 @@ import org.flowplayer.util.Log;
 
             log.debug("created clip " + clip);
             return clip;
+        }
+
+        private function setClipType(clip:Clip, typeVal:String):void {
+            var type:ClipType = ClipType.fromMimeType(typeVal);
+            if (! type) {
+                throw new Error("unsupported media type '" + typeVal + "'", UNSUPPORTED_TYPE);
+            }
+            clip.type = type;
         }
 
         private function parseClipProperties(elem:XML, clip:Clip):void {
@@ -131,29 +150,40 @@ import org.flowplayer.util.Log;
         }
 
         private function parseMedia(obj:XML, clip:Clip):void {
+            var validType:Boolean = false;
             for each (var elem:XML in obj.children()) {
-                log.debug("parseMedia(), " + elem.localName() + ": " + elem.text().toString());
+//                log.debug("parseMedia(), " + elem.localName() + ": " + elem.text().toString());
 
-                switch(elem.localName()) {
-                    case 'content':
-                        clip.url = elem.@url.toString();
-                        if(elem.@type) {
-                            clip.type = ClipType.fromMimeType(elem.@type.toString());
+                if (elem.localName() == 'content') {
+
+                    clip.url = elem.@url.toString();
+                    if(int(elem.@duration.toString()) > 0) {
+                        clip.duration = int(elem.@duration.toString());
+                    }
+
+                    if(elem.@type) {
+                        try {
+                            setClipType(clip, elem.@type.toString());
+                            log.info("found valid type " + elem.@type.toString());
+                            return;
+                        } catch (e:Error) {
+                            if (e.errorID == UNSUPPORTED_TYPE) {
+                                log.info("skipping unsupported media type " + elem.@type.toString());
+                                // slip this
+                                continue;
+                            }
                         }
-                        if(int(elem.@duration.toString()) > 0) {
-                            clip.duration = int(elem.@duration.toString());
-                        }
-//                        if(elem.@start) {
-//                            clip.start = TimeUtil.seconds(elem.@start.toString());
-//                        }
-                        if(elem.children().length() >0) {
-                            parseMedia(elem, clip);
-                        }
-                        break;
-//                    default:
-//                        clip.setCustomProperty(elem.localName(), elem.text());
+                    }
+
+                    if(elem.children().length() >0) {
+                        log.info("  parsing media children");
+                        return parseMedia(elem, clip);
+                    }
                 }
-                log.debug(elem.toString());
+            }
+            if (! validType) {
+                log.info("could not find valid media type");
+                throw new Error("Could not find a supported media type", UNSUPPORTED_TYPE);
             }
         }
     }
