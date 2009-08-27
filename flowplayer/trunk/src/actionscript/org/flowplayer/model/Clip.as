@@ -176,11 +176,23 @@ import org.flowplayer.flow_internal;
 		}
 
         /**
-         * Removes all cuepoints from the clip
+         * Removes cuepoints from this clip
+         * @param filter a filter function, that should return true for all cuepoints to be removed. takes in the cuepoint object.
          * @return
          */
-        public function removeCuepoints():void {
-            _cuepoints = new Dictionary();
+        public function removeCuepoints(filter:Function = null):void {
+            if (filter == null) {
+                _cuepoints = new Dictionary();
+                return;
+            }
+            for (var time:Object in _cuepoints) {
+                var points:Array = _cuepoints[time];
+                for (var i:int = 0; i < points.length; i++) {
+                    if (filter(points[i] as Cuepoint)) {
+                        delete _cuepoints[time];
+                    }
+                }
+            }
         }
 
 		public function addCuepoint(cue:Cuepoint):void {
