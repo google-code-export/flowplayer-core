@@ -39,7 +39,7 @@ import org.flowplayer.view.PluginRegistry;
             if (! names || names.length == 0) {
                 throw new Error("resolver name not supplied");
             }
-            if (names.length == 1) return getResolver(names[0], pluginRegistry);
+//            if (names.length == 1) return getResolver(names[0], pluginRegistry);
 
             log.debug("creating composite resolver with " + names.length + " resolvers");
             var resolvers:Array = new Array();
@@ -58,10 +58,16 @@ import org.flowplayer.view.PluginRegistry;
         }
 
         public function resolve(provider:StreamProvider, clip:Clip, successListener:Function):void {
-            log.debug("resolving with " + _resolvers.length + " resolvers");
+            if (clip.resolvedUrl) {
+                log.debug("clip URL has been already resolved to '" + clip.url + "', calling successListener");
+                successListener(clip)
+                return;
+            }
+            log.debug("resolve(): resolving with " + _resolvers.length + " resolvers");
             _provider = provider;
             _clip = clip;
             _successListener = successListener;
+            _current = 0;
             resolveNext();
         }
 

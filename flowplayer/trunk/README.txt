@@ -8,6 +8,7 @@ Version history:
 - Added possibility to specify all clip properties in an RSS playlist
 
 Fixes:
+- the result of URL resolvers in now cached, and the resolvers will not be used again when a clip is replayed
 - some style properties like 'backgroundGradient' had no effect in config
 - video goes tiny on Firefox: http://flowplayer.org/forum/8/23226
 - RSS playlists: The 'type' attribute value 'audio/mp3' in the media:content element caused an error.
