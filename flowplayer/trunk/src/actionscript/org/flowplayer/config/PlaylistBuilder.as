@@ -162,7 +162,7 @@ package org.flowplayer.config {
 			if (clipObj == _commonClipObject) return;
 			
 			for (var prop:String in _commonClipObject) {
-				if (clipObj[prop] == undefined && prop != NESTED_PLAYLIST) {
+				if (! clipObj.hasOwnProperty(prop) && prop != NESTED_PLAYLIST) {
 					clipObj[prop] = _commonClipObject[prop];
 				}
 			}

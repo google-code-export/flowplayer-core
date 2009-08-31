@@ -2,6 +2,8 @@ Version history:
 
 3.x
 -----
+- enhancements to RSS playlist parsing: Now skips all media:content that have unsupported types. Now the type attribute
+of the media:content element is mandatory and has to be present in the RSS file
 - Possibility to pass a RSS file name with playFeed("playlist.rss") and setPlaylist("playlist.rss") calls.
 - changes to the ConnectionProvider and URLResolver APIs
 - Now automatically uses a plugin that is called 'rtmp' for all clips that have the rtmp-protocol in their URLs.

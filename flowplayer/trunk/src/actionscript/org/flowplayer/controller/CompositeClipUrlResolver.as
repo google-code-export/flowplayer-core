@@ -44,6 +44,7 @@ import org.flowplayer.view.PluginRegistry;
             log.debug("creating composite resolver with " + names.length + " resolvers");
             var resolvers:Array = new Array();
             for (var i:int = 0; i < names.length; i++) {
+                log.debug("initializing resolver " + names[i]);
                 resolvers.push(getResolver(names[i], pluginRegistry));
             }
             return new CompositeClipUrlResolver(resolvers);
@@ -58,7 +59,7 @@ import org.flowplayer.view.PluginRegistry;
         }
 
         public function resolve(provider:StreamProvider, clip:Clip, successListener:Function):void {
-            if (clip.resolvedUrl) {
+            if (clip.getResolvedUrl()) {
                 log.debug("clip URL has been already resolved to '" + clip.url + "', calling successListener");
                 successListener(clip)
                 return;
@@ -90,6 +91,10 @@ import org.flowplayer.view.PluginRegistry;
 
         public function handeNetStatusEvent(event:NetStatusEvent):Boolean {
             return true;
+        }
+
+        public function get resolvers():Array {
+            return _resolvers;
         }
     }
 }

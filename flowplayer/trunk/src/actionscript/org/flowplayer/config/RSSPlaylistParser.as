@@ -1,11 +1,14 @@
 package org.flowplayer.config {
 import com.adobe.utils.XMLUtil;
-import org.flowplayer.model.Clip;
-import org.flowplayer.model.ClipType;
+
+    import org.flowplayer.flow_internal;
+    import org.flowplayer.model.Clip;
+    import org.flowplayer.model.ClipType;
     import org.flowplayer.model.Playlist;
-import org.flowplayer.util.Log;
+    import org.flowplayer.util.Log;
     import org.flowplayer.util.PropertyBinder;
 
+    use namespace flow_internal;
 
     
     internal class RSSPlaylistParser {
