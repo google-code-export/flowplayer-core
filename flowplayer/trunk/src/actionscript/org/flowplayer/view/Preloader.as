@@ -41,13 +41,15 @@ package org.flowplayer.view {
         private static var _stageWidth:int = 0;
         // this variable can be set from external SWF files, if it's set well use it to construct the config
         public var injectedConfig:String;
+        private var _ready:Boolean = false;
 
         public function Preloader() {
 
             var logConfig:LogConfiguration = new LogConfiguration();
-            logConfig.level = "debug";
+            logConfig.level = "error";
             logConfig.filter = "org.flowplayer.view.Preloader";
             Log.configure(logConfig);
+            _log.debug("Preloader") ;
 
             stop();
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
@@ -78,7 +80,7 @@ package org.flowplayer.view {
 
         private function startStageWait():void {
             if (_stageTimer) return;
-            _stageTimer = new Timer(50);
+            _stageTimer = new Timer(200);
             _stageTimer.addEventListener(TimerEvent.TIMER, onStageWait);
             _stageTimer.start();
         }
@@ -89,8 +91,12 @@ package org.flowplayer.view {
                 return;
             }
             log("stage has nonzero size " + stage.stageWidth + "x" + stage.stageHeight);
-            _stageTimer.stop();
-            init();
+            if (_ready) {
+                _stageTimer.stop();
+                init();
+            } else {
+                _ready = true;
+            }
         }
 
         private function arrange(event:Event = null):void {
@@ -101,7 +107,7 @@ package org.flowplayer.view {
         }
 
         private function onAddedToStage(event:Event):void {
-            log("Preloader added to stage, stage size " + stageWidth + " x " + stageHeight);
+            log("onAddedToStage(): stage size " + stageWidth + " x " + stageHeight);
 //            prepareStage();
             if (rotationEnabled) {
                 _rotation = new RotatingAnimation();
@@ -129,7 +135,7 @@ package org.flowplayer.view {
    		}
        
         private function init(event:Event = null):void {
-            log("init");
+            log("init()");
             if (_initTimer) {
                 _initTimer.stop();
             }

@@ -746,10 +746,10 @@ import org.flowplayer.model.PluginModel;
 
         private function get clipURLResolver():ClipURLResolver {
             log.debug("get clipURLResolver,  clip.urlResolver = " + clip.urlResolvers + ", _clipUrlResolver = " + _defaultClipUrlResolver);
-            if (! clip || (clip.urlResolvers && clip.urlResolvers[0] == null)) return _defaultClipUrlResolver;
-
-            // already created?
-            if (_clipUrlResolver) return _clipUrlResolver;
+            if (! clip || (clip.urlResolvers && clip.urlResolvers[0] == null)) {
+                clip.urlResolverObjects = [_defaultClipUrlResolver];
+                return _defaultClipUrlResolver;
+            }
 
             // defined in clip?
             if (clip.urlResolvers) {
@@ -771,6 +771,7 @@ import org.flowplayer.model.PluginModel;
                 clip.dispatchError(ClipError.STREAM_LOAD_FAILED, "failed to resolve clip url" + (message ? ": " + message : ""));
             };
 
+            clip.urlResolverObjects = _clipUrlResolver is CompositeClipUrlResolver ? CompositeClipUrlResolver(_clipUrlResolver).resolvers : [_clipUrlResolver];
             return _clipUrlResolver;
         }
 

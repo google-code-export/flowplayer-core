@@ -120,7 +120,7 @@ package org.flowplayer.util {
                 if (value is Boolean) {
                     return true;
                 }
-                
+
 				return value != null;
 			} catch (ignore:Error) { }
             

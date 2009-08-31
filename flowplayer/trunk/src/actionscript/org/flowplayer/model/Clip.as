@@ -51,7 +51,8 @@ import org.flowplayer.flow_internal;
 //		private var _previousPositives:Array;
 		private var _baseUrl:String;
 		private var _url:String;
-        private var _resolvedUrl:String;
+        private var _urlsByResolver:Array;
+        private var _urlResolverObjects:Array;
 		private var _type:ClipType;
 		private var _start:Number;
         private var _position:Number = -100;
@@ -87,7 +88,8 @@ import org.flowplayer.flow_internal;
             _childPlaylist = new TimedPlaylist();
 
 			_cuepoints = new Dictionary();
-			_cuepointsInNegative = new Array();
+			_cuepointsInNegative = [];
+            _urlsByResolver = []
 			_start = 0;
 			_bufferLength = 3;
 			_scaling = MediaSize.FILLED_TO_AVAILABLE_SPACE;
@@ -284,12 +286,7 @@ import org.flowplayer.flow_internal;
 
         [Value]
         public function get url():String {
-            return _resolvedUrl || _url;
-        }
-
-        public function get fileName():String {
-            var parts:Array = URLUtil.baseUrlAndRest(_url);
-            return parts[1];
+            return getResolvedUrl() || _url;
         }
 
         [Value]
@@ -305,13 +302,63 @@ import org.flowplayer.flow_internal;
 			this._url = url;
 		}
 
-        public function set resolvedUrl(val:String):void {
-            _resolvedUrl = val;
+        /**
+         * Sets the resolved url-
+         * @param resolver the resolver used in resolving
+         * @param val
+         */
+        public function setResolvedUrl(resolver:ClipURLResolver, val:String):void {
+            _urlsByResolver.push([resolver, val]);
         }
+
+        /**
+         * Gets the url that was resolved using the specified resolver.
+         * @param resolver the resolver whose result to look up, if null returns the result of the most recent resolver that was executed.
+         * null if no resolvers are in use, or if the url has not been resolved yet.
+         * @return
+         */
+        public function getResolvedUrl(resolver:ClipURLResolver = null):String {
+            if (resolver) {
+                return findResolvedUrl(resolver);
+            } else if (_urlsByResolver.length > 0) {
+                var resolverAndUrl:Array = _urlsByResolver[_urlsByResolver.length - 1];
+                return resolverAndUrl ? resolverAndUrl[1] as String : null;
+            }
+            return null;
+        }
+
 
         [Value]
         public function get resolvedUrl():String {
-            return _resolvedUrl;
+            return getResolvedUrl();
+        }
+
+        private function findResolvedUrl(resolver:ClipURLResolver):String {
+            for (var i:int = 0; i < _urlsByResolver.length; i++) {
+                var resolverAndUrl:Array = _urlsByResolver[i];
+                if (resolver == resolverAndUrl[0]) {
+                    return resolverAndUrl[1] as String;
+                }
+            }
+            return null;
+        }
+
+        /**
+         * Gets the url that was resolved using the resolver that's before the specified resolver
+         * in the resolver chain. URL resolvers should use this method to fetch the URL that is used as the starting
+         * point in resolving.
+         * @param resolver
+         * @return
+         */
+        public function getPreviousResolvedUrl(resolver:ClipURLResolver):String {
+            if (! _urlResolverObjects) throw new Error("Clip.urlResolverObjects is null");
+            var pos:int = _urlResolverObjects.indexOf(resolver);
+            if (pos > 0) {
+                return findResolvedUrl(_urlResolverObjects[pos-1]);
+            } else if (pos < 0) {
+                throw new Error("Resolver " + resolver + " is not a registered URL Resolver in clip " + this);
+            }
+            return _url;
         }
 
 		[Value]
@@ -751,6 +798,7 @@ import org.flowplayer.flow_internal;
             _connectionProvider = val;
         }
 
+        [Value]
         public function get urlResolvers():Array {
             return _urlResolvers;
         }
@@ -870,5 +918,10 @@ import org.flowplayer.flow_internal;
         public function setNetStream(value:NetStream):void {
             _netStream = value;
         }
+
+        public function set urlResolverObjects(urlResolverObjects:Array):void {
+            _urlResolverObjects = urlResolverObjects;
+        }
+
     }
 }
