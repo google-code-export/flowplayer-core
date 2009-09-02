@@ -37,8 +37,6 @@ package org.flowplayer.view {
         private var _initTimer:Timer;
         private var _stageTimer:Timer;
         private var _rotation:RotatingAnimation;
-        private static var _stageHeight:int = 0;
-        private static var _stageWidth:int = 0;
         // this variable can be set from external SWF files, if it's set well use it to construct the config
         public var injectedConfig:String;
         private var _ready:Boolean = false;
@@ -53,30 +51,27 @@ package org.flowplayer.view {
 
             stop();
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-            addEventListener(Event.RESIZE, arrange);
-            loaderInfo.addEventListener(Event.COMPLETE, init);
         }
 
-        private function get rotationEnabled():Boolean {
-            var config:Object = stage.loaderInfo.parameters["config"];
-            if (! config) return true;
-            if (config.replace(/\s/g, "").indexOf("buffering:null") > 0) return false;
-            return true;
-        }
-
-        private function checkLoaded():Boolean {
-            if (loaderInfo.bytesLoaded == loaderInfo.bytesTotal) {
-                if (stage.stageWidth == 0 || stage.stageHeight == 0) {
-                    log("player completeley loaded but stage dimensions still zero, waiting for stage to have size");
-                    startStageWait();
-                    return false;
-                }
-
-                init();
-                return true;
+        private function onAddedToStage(event:Event):void {
+            log("onAddedToStage(): stage size " + stage.width + " x " + stage.height);
+            if (rotationEnabled) {
+                _rotation = new RotatingAnimation();
+                addChild(_rotation);
+                arrange();
+                _rotation.start();
             }
-            return false;
-        }
+
+            addEventListener(Event.RESIZE, arrange);
+            loaderInfo.addEventListener(ProgressEvent.PROGRESS, onLoadProgress);
+//            loaderInfo.addEventListener(Event.COMPLETE, init);
+
+            // prepare stage if the app (Launcher) has been greated already. this is the
+            // case when we are embedded in another SWF
+            if (_app) {
+                prepareStage();
+            }
+		}
 
         private function startStageWait():void {
             if (_stageTimer) return;
@@ -99,38 +94,22 @@ package org.flowplayer.view {
             }
         }
 
-        private function arrange(event:Event = null):void {
-            stageHeight = stage.stageHeight;
-            stageWidth = stage.stageWidth;
-            _rotation.setSize(stageHeight * 0.22, stageHeight * 0.22);
-            Arrange.center(_rotation, stage.width, stage.height - 28);
-        }
-
-        private function onAddedToStage(event:Event):void {
-            log("onAddedToStage(): stage size " + stageWidth + " x " + stageHeight);
-//            prepareStage();
-            if (rotationEnabled) {
-                _rotation = new RotatingAnimation();
-                addChild(_rotation);
-                arrange();
-                _rotation.start();
-            }
-
-            loaderInfo.addEventListener(ProgressEvent.PROGRESS, onLoadProgress);
-
-            // prepare stage if the app (Launcher) has been greated already. this is the
-            // case when we are embedded in another SWF
-            if (_app) {
-                prepareStage();
-            }
-		}
-
 		private function onLoadProgress(event:ProgressEvent):void {
-            if (checkLoaded()) return;
   			var percent:Number = Math.floor((event.bytesLoaded*100) / event.bytesTotal);
             log(percent);
             if (_rotation) {
-                Arrange.center(_rotation, stageWidth, stageHeight);
+                Arrange.center(_rotation, stage.stageWidth, stage.stageHeight);
+            }
+            if (percent < 100) {
+                return;
+            }
+            prepareStage();
+            if (stageHasSize()) {
+                log("onLoadProgress() calling init()");
+                init();
+            } else {
+                log("onLoadProgress() starting stage wait");
+                startStageWait();
             }
    		}
        
@@ -139,37 +118,45 @@ package org.flowplayer.view {
             if (_initTimer) {
                 _initTimer.stop();
             }
-            if (_app) return;
+            if (_stageTimer) {
+                _stageTimer.stop();
+            }
+            nextFrame();
+//            prepareStage();
 
+            if (! stageHasSize()) {
+                log("init(), stage does not have size yet, starting wait timer");
+                startStageWait();
+                return;
+            } else {
+                log("stage has size " + stage.stageWidth + " x " + stage.stageHeight);
+            }
+            if (_app) {
+                log("init(), _app already instantiated returning");
+                return;
+            }
             if (_rotation) {
                 _rotation.stop();
                 if (_rotation.parent) {
                     removeChild(_rotation);
                 }
             }
-            nextFrame();
-            prepareStage();
+
             try {
                 var mainClass:Class = Class(getDefinitionByName("org.flowplayer.view.Launcher"));
                 _app = new mainClass() as DisplayObject;
                 addChild(_app as DisplayObject);
-                log("Launcher instantiated");
-                log("stage size " + stageWidth + " x " + stageHeight);
+                log("Launcher instantiated " + _app);
             } catch (e:Error) {
                 log("error instantiating Launcher " + e + ": " + e.message);
+                _app = null;
                 if (! _initTimer) {
                     log("starting init timer");
-                    _app = null;
                     prevFrame();
                     _initTimer = new Timer(300);
                     _initTimer.addEventListener(TimerEvent.TIMER, function(e:TimerEvent):void { init(); });
                 }
                 _initTimer.start();
-                if (_rotation) {
-                    addChild(_rotation);
-                    _rotation.start();
-                }
-                return;
             }
         }
 
@@ -177,31 +164,27 @@ package org.flowplayer.view {
             if (! stage) return;
             stage.align = StageAlign.TOP_LEFT;
             stage.scaleMode = StageScaleMode.NO_SCALE;
-            stageHeight = stage.stageHeight;
-            stageWidth = stage.stageWidth;
-        }
-
-        public static function get stageHeight():int {
-            return _stageHeight;
-        }
-
-        public static function set stageHeight(val:int):void {
-            if (val < _stageHeight) return;
-            _stageHeight = val;
-        }
-
-        public static function get stageWidth():int {
-            return _stageWidth;
-        }
-
-        public static function set stageWidth(val:int):void {
-            if (val < _stageWidth) return;
-            _stageWidth = val;
         }
 
         private function log(msg:Object):void {
             _log.debug(msg + "");
             trace(msg + "");
+        }
+
+        private function stageHasSize():Boolean {
+            return stage.stageWidth > 0 && stage.stageHeight > 0
+        }
+
+        private function get rotationEnabled():Boolean {
+            var config:Object = stage.loaderInfo.parameters["config"];
+            if (! config) return true;
+            if (config.replace(/\s/g, "").indexOf("buffering:null") > 0) return false;
+            return true;
+        }
+
+        private function arrange(event:Event = null):void {
+            _rotation.setSize(stage.height * 0.22, stage.width * 0.22);
+            Arrange.center(_rotation, stage.width, stage.stage.height - 28);
         }
     }
 }

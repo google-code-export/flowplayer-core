@@ -308,6 +308,14 @@ import org.flowplayer.flow_internal;
          * @param val
          */
         public function setResolvedUrl(resolver:ClipURLResolver, val:String):void {
+            for (var i:int = 0; i < _urlsByResolver.length; i++) {
+                var resolverAndUrl:Array = _urlsByResolver[i];
+                if (resolver == resolverAndUrl[0]) {
+                    resolverAndUrl[1] = val;
+                    return;
+                }
+            }
+
             _urlsByResolver.push([resolver, val]);
         }
 

@@ -19,6 +19,7 @@
 
 package org.flowplayer.view {
     import org.flowplayer.controller.ClipURLResolver;
+    import org.flowplayer.controller.ConnectionProvider;
     import org.flowplayer.controller.StreamProvider;
 	import org.flowplayer.controller.NetStreamControllingStreamProvider;	
 	import org.flowplayer.model.DisplayPluginModel;	
@@ -230,7 +231,7 @@ package org.flowplayer.view {
             for (var name:String in _genericPlugins) {
                 var model:PluginModel = _genericPlugins[name] as PluginModel;
                 var plugin:Object = model.pluginObject;
-                if (plugin is ClipURLResolver) {
+                if (plugin is ClipURLResolver && ! (plugin is ConnectionProvider)) {
                     result.push(name);
                 }
             }

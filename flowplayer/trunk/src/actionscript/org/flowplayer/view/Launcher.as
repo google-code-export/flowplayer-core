@@ -101,11 +101,11 @@ import org.flowplayer.model.DisplayPluginModel;
 
 		[Frame(factoryClass="org.flowplayer.view.Preloader")]
 		public function Launcher() {
-			super("#canvas", this);
 			addEventListener(Event.ADDED_TO_STAGE, function(e:Event):void {
                 trace("Launcher added to stage");
                 callAndHandleError(createFlashVarsConfig, PlayerError.INIT_FAILED);
             });
+            super("#canvas", this);
         }
 
         private function initPhase1():void {
@@ -253,7 +253,7 @@ import org.flowplayer.model.DisplayPluginModel;
 
 		private function loadPlugins():void {
 			var plugins:Array = _config.getLoadables();
-			log.info("will load following plugins: ");
+			log.debug("will load following plugins: ");
             logPluginInfo(plugins);
 			_pluginLoader = new PluginLoader(URLUtil.playerBaseUrl(loaderInfo), _pluginRegistry, this, useExternalInterfade());
             _pluginLoader.addEventListener(Event.COMPLETE, pluginLoadListener);
