@@ -256,18 +256,22 @@
 						return fn[1].call(player, target, arg2);
 					}
 				}  
-	
-				if (evt == 'onStart' || evt == 'onUpdate' || evt == 'onResume') {
-					
+
+				// 1. clip properties, 2-3. metadata, 4. updates, 5. resumes from nested clip
+				if (arg1 && "onBeforeBegin,onMetaData,onStart,onUpdate,onResume".indexOf(evt) != -1) {					
+					// update clip properties
 					extend(target, arg1);					
 					
-					if (!target.duration) {
-						target.duration = arg1.metaData.duration; 	
-					} else {
-						target.fullDuration = arg1.metaData.duration;	
-					}  					
-				}  
+					if (arg1.metaData) {
+						if (!target.duration) {
+							target.duration = arg1.metaData.duration; 	
+						} else {
+							target.fullDuration = arg1.metaData.duration;	
+						}  					
+					}
+				}  				
 				
+
 				var ret = true;
 				each(listeners[evt], function() {
 					ret = this.call(player, target, arg1, arg2);		
@@ -287,10 +291,12 @@
 		
 		// get other events
 		each(json, function(key, val) {
+			
 			if (typeof val == 'function') {
 				bind(listeners, key, val);
-				delete json[key];	
+				delete json[key];
 			}
+			
 		});
 
 		
@@ -298,7 +304,7 @@
 		if (index == -1) {
 			player.onCuepoint = this.onCuepoint;	
 		}
-	
+
 	};
 
 //}}}
@@ -434,7 +440,7 @@
                      self[method] = function() {
                         var a = [].slice.call(arguments);
                         var ret = player._api().fp_invoke(name, method, a); 
-                        return ret == 'undefined' ? self : ret;
+                        return ret === 'undefined' || ret === undefined ? self : ret;
                      };
                   });
                   hasMethods = true;         
@@ -550,20 +556,18 @@ function Player(wrapper, params, conf) {
 		
 		unload: function() {
 			
-			// check that API is sane
-			try {
-				if (!api || api.fp_isFullscreen()) { return self; }				
-			} catch (error) {
-				return self;
-			}
-			
 			// unload only if in splash state
 			if (html.replace(/\s/g,'') !== '') {
 				
 				if (self._fireEvent("onBeforeUnload") === false) {
 					return self;
 				}	
-				api.fp_close();
+				
+				// try closing
+				try {
+					if (api) { api.fp_close(); }				
+				} catch (error) {}				
+				
 				api = null;				
 				wrapper.innerHTML = html;				
 				self._fireEvent("onUnload");
@@ -697,7 +701,7 @@ function Player(wrapper, params, conf) {
 	
 	
 	// event handlers
-	each(("Click*,Load*,Unload*,Keypress*,Volume*,Mute*,Unmute*,PlaylistReplace,ClipAdd,Fullscreen*,FullscreenExit,Error").split(","),
+	each(("Click*,Load*,Unload*,Keypress*,Volume*,Mute*,Unmute*,PlaylistReplace,ClipAdd,Fullscreen*,FullscreenExit,Error,MouseOver,MouseOut").split(","),
 		function() {		 
 			var name = "on" + this;
 			
@@ -721,7 +725,7 @@ function Player(wrapper, params, conf) {
 	
 	
 	// core API methods
-	each(("pause,resume,mute,unmute,stop,toggle,seek,getStatus,getVolume,setVolume,getTime,isPaused,isPlaying,startBuffering,stopBuffering,isFullscreen,toggleFullscreen,reset,close,setPlaylist,addClip").split(","),		
+	each(("pause,resume,mute,unmute,stop,toggle,seek,getStatus,getVolume,setVolume,getTime,isPaused,isPlaying,startBuffering,stopBuffering,isFullscreen,toggleFullscreen,reset,close,setPlaylist,addClip,playFeed").split(","),		
 		function() {		 
 			var name = this;
 			
@@ -737,7 +741,7 @@ function Player(wrapper, params, conf) {
 					ret = (a1 === undefined) ? api["fp_" + name]() : api["fp_" + name](a1);
 				}
 				
-				return ret == 'undefined' ? self : ret;
+				return ret === 'undefined' || ret === undefined ? self : ret;
 			};			 
 		}
 	); 		
@@ -836,7 +840,7 @@ function Player(wrapper, params, conf) {
 			
 			activeIndex = arg0;
 			var clip = playlist[arg0];			
-
+			
 			if (clip) {
 				ret = clip._fireEvent(evt, arg1, arg2);	
 			} 
@@ -846,7 +850,8 @@ function Player(wrapper, params, conf) {
 				// clip argument is given for common clip, because it behaves as the target
 				ret = commonClip._fireEvent(evt, arg1, arg2, clip);	
 			}  
-		} 
+		}
+		
 		
 		// trigger player event
 		each(listeners[evt], function() {
@@ -952,7 +957,17 @@ function Player(wrapper, params, conf) {
 		// event listeners
 		each(conf, function(key, val) {
 			if (typeof val == 'function') {
-				bind(listeners, key, val);
+				
+				// common clip event
+				if (commonClip[key]) {
+					commonClip[key](val);
+					
+				// player event
+				} else {
+					bind(listeners, key, val);	
+				}				
+				
+				// no need to supply for the Flash component
 				delete conf[key];	
 			}
 		});		 
