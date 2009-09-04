@@ -899,8 +899,9 @@ function Player(wrapper, params, conf) {
 		
 		// playerId	
 		playerId = wrapper.id || "fp" + makeId();
-		apiId = params.id || playerId + "_api"; 		
+		apiId = params.id || playerId + "_api";
 		params.id = apiId;
+		params.cachebusting = true;
 		conf.playerId = playerId;
 		
 
