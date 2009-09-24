@@ -51,6 +51,7 @@ package org.flowplayer.view {
 
             stop();
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+            addEventListener(Event.RESIZE, arrange);
         }
 
         private function onAddedToStage(event:Event):void {
@@ -62,7 +63,6 @@ package org.flowplayer.view {
                 _rotation.start();
             }
 
-            addEventListener(Event.RESIZE, arrange);
             loaderInfo.addEventListener(ProgressEvent.PROGRESS, onLoadProgress);
 //            loaderInfo.addEventListener(Event.COMPLETE, init);
 
@@ -103,7 +103,6 @@ package org.flowplayer.view {
             if (percent < 100) {
                 return;
             }
-            prepareStage();
             if (stageHasSize()) {
                 log("onLoadProgress() calling init()");
                 init();
@@ -122,7 +121,6 @@ package org.flowplayer.view {
                 _stageTimer.stop();
             }
             nextFrame();
-//            prepareStage();
 
             if (! stageHasSize()) {
                 log("init(), stage does not have size yet, starting wait timer");
@@ -141,6 +139,7 @@ package org.flowplayer.view {
                     removeChild(_rotation);
                 }
             }
+            prepareStage();
 
             try {
                 var mainClass:Class = Class(getDefinitionByName("org.flowplayer.view.Launcher"));
@@ -183,8 +182,8 @@ package org.flowplayer.view {
         }
 
         private function arrange(event:Event = null):void {
-            _rotation.setSize(stage.height * 0.22, stage.width * 0.22);
-            Arrange.center(_rotation, stage.width, stage.stage.height - 28);
+            _rotation.setSize(stage.stageHeight * 0.22, stage.stageHeight * 0.22);
+            Arrange.center(_rotation, stage.width, stage.height - 28);
         }
     }
 }

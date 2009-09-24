@@ -152,42 +152,57 @@ import com.adobe.utils.XMLUtil;
             return result;
         }
 
-        private function parseMedia(obj:XML, clip:Clip):void {
-            var validType:Boolean = false;
+        private function parseMedia(obj:XML, clip:Clip):Boolean {
+
+            // first try to find the default item
+            for each (var item:XML in obj.children()) {
+                if (item.localName() == 'content' && item.@isDefault.toString() == "true") {
+                    log.debug("parseMedia(): found default media item");
+                    if (parseMediaItem(item, clip)) {
+                        log.debug("parseMedia(): using the default media item");
+                        return true;
+                    }
+                }
+            }            
+
             for each (var elem:XML in obj.children()) {
-//                log.debug("parseMedia(), " + elem.localName() + ": " + elem.text().toString());
-
                 if (elem.localName() == 'content') {
-
-                    clip.url = elem.@url.toString();
-                    if(int(elem.@duration.toString()) > 0) {
-                        clip.duration = int(elem.@duration.toString());
+                    if (parseMediaItem(elem, clip)) {
+                        return true;
                     }
-
-                    if(elem.@type) {
-                        try {
-                            setClipType(clip, elem.@type.toString());
-                            log.info("found valid type " + elem.@type.toString());
-                            return;
-                        } catch (e:Error) {
-                            if (e.errorID == UNSUPPORTED_TYPE) {
-                                log.info("skipping unsupported media type " + elem.@type.toString());
-                                // slip this
-                                continue;
-                            }
-                        }
-                    }
-
                     if(elem.children().length() >0) {
                         log.info("  parsing media children");
                         return parseMedia(elem, clip);
                     }
                 }
             }
-            if (! validType) {
-                log.info("could not find valid media type");
-                throw new Error("Could not find a supported media type", UNSUPPORTED_TYPE);
+
+            log.info("could not find valid media type");
+            throw new Error("Could not find a supported media type", UNSUPPORTED_TYPE);
+            return false;
+        }
+
+        private function parseMediaItem(elem:XML, clip:Clip):Boolean {
+
+            clip.url = elem.@url.toString();
+            if(int(elem.@duration.toString()) > 0) {
+                clip.duration = int(elem.@duration.toString());
             }
+
+            if(elem.@type) {
+                try {
+                    setClipType(clip, elem.@type.toString());
+                    log.info("found valid type " + elem.@type.toString());
+                    return true;
+                } catch (e:Error) {
+                    if (e.errorID == UNSUPPORTED_TYPE) {
+                        log.info("skipping unsupported media type " + elem.@type.toString());
+                    } else {
+                        throw e;
+                    }
+                }
+            }
+            return false;
         }
     }
 }
