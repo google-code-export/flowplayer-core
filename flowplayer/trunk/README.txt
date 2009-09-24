@@ -1,6 +1,13 @@
 Version history:
 
-3.x
+
+3.1.4
+-----
+Fixes:
+- RSS playlist parsing now respects the isDefault attribute used in mRSS media group items
+- Fixed passing of connection arguments
+
+3.1.3
 -----
 - enhancements to RSS playlist parsing: Now skips all media:content that have unsupported types. Now the type attribute
 of the media:content element is mandatory and has to be present in the RSS file
