@@ -87,6 +87,9 @@ import org.flowplayer.view.PluginRegistry;
         }
 
         public function set onFailure(listener:Function):void {
+            for (var i:int = 0; i < _resolvers.length; i++) {
+                ClipURLResolver(_resolvers[i]).onFailure = listener;
+            }
         }
 
         public function handeNetStatusEvent(event:NetStatusEvent):Boolean {

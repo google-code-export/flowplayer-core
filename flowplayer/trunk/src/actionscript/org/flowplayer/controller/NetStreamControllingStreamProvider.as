@@ -768,6 +768,7 @@ import org.flowplayer.model.PluginModel;
             }
 
             _clipUrlResolver.onFailure = function(message:String = null):void {
+                log.error("clip URL resolving failed: " + message);
                 clip.dispatchError(ClipError.STREAM_LOAD_FAILED, "failed to resolve clip url" + (message ? ": " + message : ""));
             };
 
