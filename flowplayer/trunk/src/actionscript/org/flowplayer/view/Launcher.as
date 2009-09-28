@@ -219,17 +219,18 @@ import org.flowplayer.model.DisplayPluginModel;
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 			addListeners();
 
-            _controlsModel.onPluginEvent(function(event:PluginEvent):void {
-                log.debug("received plugin event " + event.id);
-                var model:DisplayPluginModel = event.target as DisplayPluginModel;
-                log.debug("controls y-pos now is " + model.getDisplayObject().y);
-            });
-
-            _controlsModel.onBeforePluginEvent(function(event:PluginEvent):void {
-                log.debug("received before plugin event " + event.id);
-                var model:DisplayPluginModel = event.target as DisplayPluginModel;
-                log.debug("controls y-pos now is " + model.getDisplayObject().y);
-            });
+//            _controlsModel.onPluginEvent(function(event:PluginEvent):void {
+//                log.debug("received plugin event " + event.id);
+//                var model:DisplayPluginModel = event.target as DisplayPluginModel;
+//                log.debug("controls y-pos now is " + model.getDisplayObject().y);
+//            });
+//
+//            _controlsModel.onBeforePluginEvent(function(event:PluginEvent):void {
+//                log.debug("received before plugin event " + event.id);
+//                var model:DisplayPluginModel = event.target as DisplayPluginModel;
+//                log.debug("controls y-pos now is " + model.getDisplayObject().y);
+//                event.preventDefault();
+//            });
 		}
 
 		private function resizeCanvasLogo():void {
