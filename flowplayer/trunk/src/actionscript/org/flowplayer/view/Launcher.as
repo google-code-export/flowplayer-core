@@ -200,6 +200,11 @@ import org.flowplayer.model.DisplayPluginModel;
 
 			log.debug("calling onLoad to plugins");
 			_pluginRegistry.onLoad(_flowplayer);
+
+            if (countPlugins() == 0) {
+                log.debug("no loadable plugins, calling initPhase4");
+                initPhase4();
+            }
 		}
 
 		private function initPhase4(event:Event = null):void {
