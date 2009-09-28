@@ -24,33 +24,48 @@ package org.flowplayer.model {
 
 		/**
 		 * Dispatches an event of type PluginEventType.LOAD
-		 * @see PluginEventType#LOAD
-		 */
-		public function dispatchOnLoad():void {
-			dispatch(PluginEventType.LOAD);
-		}
-		
-		/**
-		 * Dispatches a plugin error event.
-		 * @param error
-		 * @param info optional info object, will be passed to JavaScript
-		 * @see PluginEventType#ERROR
-		 */
-		public function dispatchError(error:PluginError, info:Object = null):void {
-			doDispatchErrorEvent(new PluginEvent(error.eventType as PluginEventType, name, error, info), true);
-		}
+         * @see PluginEventType#LOAD
+         */
+        public function dispatchOnLoad():void {
+            dispatch(PluginEventType.LOAD);
+        }
 
-		public function dispatchEvent(event:PluginEvent):void {
-			doDispatchEvent(event, true);
-		}
 
-		public function dispatchBeforeEvent(event:PluginEvent):Boolean {
-			return doDispatchBeforeEvent(event, true);
-		}
+        /**
+         * Dispatches a plugin error event.
+         * @param error
+         * @param info optional info object, will be passed to JavaScript
+         * @see PluginEventType#ERROR
+         */
+        public function dispatchError(error:PluginError, info:Object = null):void {
+            doDispatchErrorEvent(new PluginEvent(error.eventType as PluginEventType, name, error, info), true);
+        }
 
-		public function onPluginEvent(listener:Function):void {
-			setListener(PluginEventType.PLUGIN_EVENT, listener);
-		}
+        /**
+         * Dispatches a plugin event in the before phase.
+         *
+         * @param eventType the type of the event to dispatch
+         * @param eventId the ID for the event, this the ID used to distinguis between diferent generic plugin events
+         * @param info optional info object, will be passed to JavaScript
+         * @param info2 optional info object, will be passed to JavaScript
+         * @return true if the event can continue, false if it was prevented
+         * @see PluginEvent#id
+         */
+        public function dispatchBeforeEvent(eventType:PluginEventType, eventId:Object = null, info:Object = null, info2:Object = null, info3:Object = null):Boolean {
+            return doDispatchBeforeEvent(new PluginEvent(eventType, name, eventId, info, info2, info3), true);
+        }
+
+        public function dispatchEvent(event:PluginEvent):void {
+            doDispatchEvent(event, true);
+        }
+
+        public function onPluginEvent(listener:Function):void {
+            setListener(PluginEventType.PLUGIN_EVENT, listener);
+        }
+
+        public function onBeforePluginEvent(listener:Function):void {
+            setListener(PluginEventType.PLUGIN_EVENT, listener, null, true);
+        }
 
 		public function onLoad(listener:Function):void {
 			setListener(PluginEventType.LOAD, listener);

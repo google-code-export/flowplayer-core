@@ -34,7 +34,11 @@ package org.flowplayer.model {
 		
 		function dispatchEvent(event:PluginEvent):void;
 
-		function onPluginEvent(listener:Function):void;
+        function dispatchBeforeEvent(eventType:PluginEventType, eventId:Object = null, info:Object = null, info2:Object = null, info3:Object = null):Boolean;
+
+        function onPluginEvent(listener:Function):void;
+
+        function onBeforePluginEvent(listener:Function):void;
 
 		function onLoad(listener:Function):void;
 
