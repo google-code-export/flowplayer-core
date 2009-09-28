@@ -55,8 +55,10 @@ package org.flowplayer.view {
         }
 
         private function onAddedToStage(event:Event):void {
-            log("onAddedToStage(): stage size " + stage.width + " x " + stage.height);
+            log("onAddedToStage(): stage size is " + stage.stageWidth + " x " + stage.stageHeight);
+
             if (rotationEnabled) {
+                log("initializing rotation animation");
                 _rotation = new RotatingAnimation();
                 addChild(_rotation);
                 arrange();
@@ -64,13 +66,7 @@ package org.flowplayer.view {
             }
 
             loaderInfo.addEventListener(ProgressEvent.PROGRESS, onLoadProgress);
-//            loaderInfo.addEventListener(Event.COMPLETE, init);
-
-            // prepare stage if the app (Launcher) has been greated already. this is the
-            // case when we are embedded in another SWF
-            if (_app) {
-                prepareStage();
-            }
+            loaderInfo.addEventListener(Event.COMPLETE, init);
 		}
 
         private function startStageWait():void {
@@ -142,7 +138,7 @@ package org.flowplayer.view {
             prepareStage();
 
             try {
-                var mainClass:Class = Class(getDefinitionByName("org.flowplayer.view.Launcher"));
+                var mainClass:Class = getAppClass();
                 _app = new mainClass() as DisplayObject;
                 addChild(_app as DisplayObject);
                 log("Launcher instantiated " + _app);
@@ -157,6 +153,14 @@ package org.flowplayer.view {
                 }
                 _initTimer.start();
             }
+        }
+
+        private function getAppClass():Class {
+            try {
+                return Class(getDefinitionByName("org.flowplayer.view.Launcher"));
+            } catch (e:Error) {
+            }
+            return null;
         }
 
 		private function prepareStage():void {
