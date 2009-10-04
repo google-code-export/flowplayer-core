@@ -78,7 +78,7 @@ import flash.system.Security;
         private var _loadComplete:Boolean;
         private var _allPlugins:Array;
         private var _loaderContext:LoaderContext;
-        private var _loadIndex:int = 0;
+        private var _loadStartedCount:int = 0;
 
 		public function PluginLoader(baseUrl:String, pluginRegistry:PluginRegistry, errorHandler:ErrorHandler, useExternalInterface:Boolean) {
 			_baseUrl = baseUrl;
@@ -117,6 +117,7 @@ import flash.system.Security;
 
 			_loadedPlugins = new Dictionary();
 			_loadedCount = 0;
+            _loadStartedCount = 0;
 
 			_loaderContext = new LoaderContext();
 			_loaderContext.applicationDomain = ApplicationDomain.currentDomain;
@@ -139,19 +140,20 @@ import flash.system.Security;
 		}
 
         private function loadNext():Boolean {
-            if (_loadIndex >= _swiffsToLoad.length) {
+            if (_loadStartedCount >= _swiffsToLoad.length) {
+                log.debug("loadNext(): all plugins loaded");
                 return false;
             }
 
             var loader:Loader = new Loader();
             loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loaded);
-            var url:String = _swiffsToLoad[_loadIndex];
+            var url:String = _swiffsToLoad[_loadStartedCount];
 
             loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, createIOErrorListener(url));
             loader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, onProgress);
-            log.debug("starting to load plugin from url " + _swiffsToLoad[_loadIndex]);
+            log.debug("starting to load plugin from url " + _swiffsToLoad[_loadStartedCount]);
             loader.load(new URLRequest(url), _loaderContext);
-            _loadIndex++;
+            _loadStartedCount++;
             return true;
         }
 
