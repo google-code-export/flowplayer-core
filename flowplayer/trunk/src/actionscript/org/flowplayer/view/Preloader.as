@@ -52,6 +52,7 @@ package org.flowplayer.view {
             stop();
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
             addEventListener(Event.RESIZE, arrange);
+            loaderInfo.addEventListener(Event.COMPLETE, init);
         }
 
         private function onAddedToStage(event:Event):void {
@@ -66,7 +67,6 @@ package org.flowplayer.view {
             }
 
             loaderInfo.addEventListener(ProgressEvent.PROGRESS, onLoadProgress);
-            loaderInfo.addEventListener(Event.COMPLETE, init);
 		}
 
         private function startStageWait():void {
