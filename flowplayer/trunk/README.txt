@@ -4,6 +4,7 @@ Version history:
 3.1.4
 -----
 Fixes:
+- player did not initialize if the controlbar plugin was disabled and if the play button overlay was disabled with play: null
 - works properly without cachebusting on IE
 - RSS playlist parsing now respects the isDefault attribute used in mRSS media group items
 - Fixed passing of connection arguments

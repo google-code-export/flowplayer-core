@@ -17,7 +17,7 @@ import com.adobe.utils.XMLUtil;
 
 
         public function createClips(rawRSS:String, playlist:Playlist, commonClipObject:Object):Array {
-            return parse(rawRSS, null, commonClipObject);
+            return parse(rawRSS, playlist, commonClipObject);
         }
 
         public function parse(rawRSS:String, playlist:Playlist, commonClipObject:Object):Array {
