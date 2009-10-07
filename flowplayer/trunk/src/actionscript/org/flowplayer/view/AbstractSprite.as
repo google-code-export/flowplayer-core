@@ -57,7 +57,7 @@ package org.flowplayer.view {
 		}
 
 		public override function get height():Number {
-            if (scaleX != 1) return _height * scaleY;
+            if (scaleY != 1) return _height * scaleY;
 			return _height || super.height;
 		}
 		
