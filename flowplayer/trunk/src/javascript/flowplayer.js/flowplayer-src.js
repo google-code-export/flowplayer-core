@@ -565,12 +565,16 @@ function Player(wrapper, params, conf) {
 				
 				// try closing
 				try {
-					if (api) { api.fp_close(); }				
+					if (api) { 
+						api.fp_close();
+						
+						// fire unload only when API is present
+						self._fireEvent("onUnload");
+					}				
 				} catch (error) {}				
 				
 				api = null;				
 				wrapper.innerHTML = html;				
-				self._fireEvent("onUnload");
 			} 
 			
 			return self;
@@ -901,7 +905,6 @@ function Player(wrapper, params, conf) {
 		playerId = wrapper.id || "fp" + makeId();
 		apiId = params.id || playerId + "_api";
 		params.id = apiId;
-		params.cachebusting = true;
 		conf.playerId = playerId;
 		
 
