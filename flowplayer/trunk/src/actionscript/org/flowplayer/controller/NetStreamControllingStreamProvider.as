@@ -383,9 +383,16 @@ import org.flowplayer.model.PluginModel;
 		 * @param event the event that is dispatched after resuming
 		 */		
 		protected function doResume(netStream:NetStream, event:ClipEvent):void {
-            _volumeController.netStream = netStream;
-			netStream.resume();
-			dispatchEvent(event);
+            try {
+                _volumeController.netStream = netStream;
+                netStream.resume();
+            } catch (e:Error) {
+                // netStream is invalid because of a timeout
+                log.debug("doResume(): error catched " + e + ", will connect again");
+                dispatchEvent(new ClipEvent(ClipEventType.STOP));
+                _started = false;
+                connect(clip);
+            }
 		}
 		
 		/**
