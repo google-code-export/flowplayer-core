@@ -1,5 +1,12 @@
 Version history:
 
+3.1.5
+-----
+Fixes:
+- The player went to a locked state when resuming playback after a period that was long enought to send the
+netConnection to an invalid state. Now when resuming playback on an invalid connection the clip starts again from
+the beginning. This is only when using RTMP connections and does not affect progressive download playback.
+- Custom netConnect and netStream events did not pass the info object to JS listeners
 
 3.1.4
 -----
