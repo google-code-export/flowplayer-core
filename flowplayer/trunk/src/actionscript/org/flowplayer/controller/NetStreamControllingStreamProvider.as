@@ -72,6 +72,8 @@ import org.flowplayer.model.PluginModel;
 		private var _started:Boolean;
         private var _connectionClient:NetConnectionClient;
         private var _streamCallbacks:Dictionary = new Dictionary();
+        private var _currentTime:Number;
+        private var _resumeStartTime:Number = -1;
 
         public function NetStreamControllingStreamProvider() {
             _connectionClient = new NetConnectionClient();            
@@ -111,6 +113,7 @@ import org.flowplayer.model.PluginModel;
 		public final function load(event:ClipEvent, clip:Clip, pauseAfterStart:Boolean = false):void {
 			_paused = false;
 			_stopping = false;
+            _resumeStartTime = -1;
 			Assert.notNull(clip, "load(clip): clip cannot be null");
 			if (pauseAfterStart) {
 				log.info("this clip will pause after start");
@@ -391,6 +394,7 @@ import org.flowplayer.model.PluginModel;
                 log.debug("doResume(): error catched " + e + ", will connect again");
                 dispatchEvent(new ClipEvent(ClipEventType.STOP));
                 _started = false;
+                _resumeStartTime = _currentTime;
                 connect(clip);
             }
 		}
@@ -478,11 +482,8 @@ import org.flowplayer.model.PluginModel;
 		 * is not equl to netStream.time
 		 */
 		protected function getCurrentPlayheadTime(netStream:NetStream):Number {
-            var time:Number = netStream.time;
-//            if (Math.round(time % 5) == 0) {
-//                log.debug("getCurrentPlayheadTime: " + time)
-//            }
-			return time;
+            _currentTime = netStream.time;
+			return _currentTime;
 		}
 
 		/**
@@ -577,6 +578,14 @@ import org.flowplayer.model.PluginModel;
          */
         protected function getConnectionProvider(clip:Clip):ConnectionProvider {
             return _connectionProvider;
+        }
+
+        /**
+         * The time where playback should be started from in case resuming failed because of a failed netConnection.
+         * @return
+         */
+        protected function get resumeStartTime():Number {
+            return _resumeStartTime;
         }
 
         /* ---- Private methods ----- */
@@ -796,5 +805,5 @@ import org.flowplayer.model.PluginModel;
             }
             return getConnectionProvider(clip);
         }
-	}
+    }
 }

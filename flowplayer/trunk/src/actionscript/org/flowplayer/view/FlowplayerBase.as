@@ -663,6 +663,7 @@ package org.flowplayer.view {
         private function createCallbackListener(type:ClipEventType, name:String):Function {
             return function(infoObj:Object):void {
                 log.debug("received callback " + type.name + " forwarding it " + (typeof infoObj));
+
                 if (name == "onCuePoint") {
                     var cuepoint:Cuepoint = Cuepoint.createDynamic(infoObj["time"], "embedded");
                     for (var prop:String in infoObj) {
@@ -679,11 +680,16 @@ package org.flowplayer.view {
                     playlist.current.dispatch(ClipEventType.forName(name), cuepoint);
                     return;
                 }
-//                for (var param:String in infoObj.parameters) {
-//                    log.debug(param + ": " + infoObj.parameters[param]);
-//                }
-                playlist.current.dispatch(ClipEventType.forName(name), infoObj);
+                playlist.current.dispatch(ClipEventType.forName(name), createInfo(infoObj));
             };
+        }
+
+        private function createInfo(infoObj:Object):Object {
+            var result:Object = {};
+            for (var prop:String in infoObj) {
+                result[prop] = infoObj[prop];
+            }
+            return result;
         }
 
         public function set pluginLoader(val:PluginLoader):void {
