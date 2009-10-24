@@ -67,6 +67,10 @@ package org.flowplayer.view {
             }
 
             loaderInfo.addEventListener(ProgressEvent.PROGRESS, onLoadProgress);
+            log("onAddedToStage(), bytes loaded " + loaderInfo.bytesLoaded);
+            if (loaderInfo.bytesLoaded >= 100) {
+                init();
+            }
 		}
 
         private function startStageWait():void {
