@@ -18,7 +18,9 @@
  */
 
 package org.flowplayer.model {
-	import flash.display.DisplayObject;			import org.flowplayer.model.Cloneable;	
+	import flash.display.DisplayObject;
+
+    import org.flowplayer.model.Cloneable;
 	
 	/**
 	 * @author api
@@ -79,5 +81,5 @@ package org.flowplayer.model {
 		public function set pluginObject(pluginObject:Object):void {
 			setDisplayObject(pluginObject as DisplayObject);
 		}
-	}
+    }
 }

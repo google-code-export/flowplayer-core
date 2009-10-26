@@ -113,7 +113,7 @@ import org.flowplayer.model.PlayerError;
                 addCallback("addClip", function(clip:Object, index:int = -1):void { addClip(_config.createClip(clip), index); });
 				addCallback("showError", showError);
 
-				addCallback("loadPlugin", pluginLoad);
+                addCallback("loadPlugin", pluginLoad);
 				addCallback("showPlugin", showPlugin);
 				addCallback("hidePlugin", hidePlugin);
 				addCallback("togglePlugin", togglePlugin);

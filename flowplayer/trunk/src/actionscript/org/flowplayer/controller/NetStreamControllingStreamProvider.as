@@ -72,8 +72,6 @@ import org.flowplayer.model.PluginModel;
 		private var _started:Boolean;
         private var _connectionClient:NetConnectionClient;
         private var _streamCallbacks:Dictionary = new Dictionary();
-        private var _currentTime:Number;
-        private var _resumeStartTime:Number = -1;
 
         public function NetStreamControllingStreamProvider() {
             _connectionClient = new NetConnectionClient();            
@@ -113,7 +111,6 @@ import org.flowplayer.model.PluginModel;
 		public final function load(event:ClipEvent, clip:Clip, pauseAfterStart:Boolean = false):void {
 			_paused = false;
 			_stopping = false;
-            _resumeStartTime = -1;
 			Assert.notNull(clip, "load(clip): clip cannot be null");
 			if (pauseAfterStart) {
 				log.info("this clip will pause after start");
@@ -374,7 +371,7 @@ import org.flowplayer.model.PluginModel;
 		protected function doPause(netStream:NetStream, event:ClipEvent = null):void {
 			if (! netStream) return;
 			netStream.pause();
-			if (event) {
+            if (event) {
 				dispatchEvent(event);
 			}
 		}
@@ -389,16 +386,17 @@ import org.flowplayer.model.PluginModel;
             try {
                 _volumeController.netStream = netStream;
                 netStream.resume();
+                dispatchEvent(event);
             } catch (e:Error) {
                 // netStream is invalid because of a timeout
-                log.debug("doResume(): error catched " + e + ", will connect again");
+                log.info("doResume(): error catched " + e + ", will connect again. All resolved URLs are discarded.");
+                clip.clearResolvedUrls();
                 dispatchEvent(new ClipEvent(ClipEventType.STOP));
                 _started = false;
-                _resumeStartTime = _currentTime;
                 connect(clip);
             }
-		}
-		
+        }
+
 		/**
 		 * Silent seek mode. When enabled the SEEK event is not dispatched.
 		 * @see ClipEventType#SEEK
@@ -482,8 +480,7 @@ import org.flowplayer.model.PluginModel;
 		 * is not equl to netStream.time
 		 */
 		protected function getCurrentPlayheadTime(netStream:NetStream):Number {
-            _currentTime = netStream.time;
-			return _currentTime;
+            return netStream.time;
 		}
 
 		/**
@@ -578,14 +575,6 @@ import org.flowplayer.model.PluginModel;
          */
         protected function getConnectionProvider(clip:Clip):ConnectionProvider {
             return _connectionProvider;
-        }
-
-        /**
-         * The time where playback should be started from in case resuming failed because of a failed netConnection.
-         * @return
-         */
-        protected function get resumeStartTime():Number {
-            return _resumeStartTime;
         }
 
         /* ---- Private methods ----- */
@@ -702,7 +691,11 @@ import org.flowplayer.model.PluginModel;
 			if (closeStreamAndConnection) {
 				_startedClip = null;
 				log.debug("doStop(), closing netStream and connection");
-				netStream.close();
+
+                try {
+                    netStream.close();
+                } catch (e:Error) {}
+
 				if (_connection) {
 					_connection.close();
 					_connection = null;
