@@ -89,7 +89,7 @@ import org.flowplayer.flow_internal;
 
 			_cuepoints = new Dictionary();
 			_cuepointsInNegative = [];
-            _urlsByResolver = []
+            _urlsByResolver = [];
 			_start = 0;
 			_bufferLength = 3;
 			_scaling = MediaSize.FILLED_TO_AVAILABLE_SPACE;
@@ -367,6 +367,14 @@ import org.flowplayer.flow_internal;
                 throw new Error("Resolver " + resolver + " is not a registered URL Resolver in clip " + this);
             }
             return _url;
+        }
+
+        /**
+         * Clears all resolved URLs.
+         * @return
+         */
+        public function clearResolvedUrls():void {
+            _urlsByResolver = [];
         }
 
 		[Value]
@@ -930,6 +938,5 @@ import org.flowplayer.flow_internal;
         public function set urlResolverObjects(urlResolverObjects:Array):void {
             _urlResolverObjects = urlResolverObjects;
         }
-
     }
 }

@@ -42,6 +42,7 @@ package org.flowplayer.view {
     import org.flowplayer.model.Playlist;
     import org.flowplayer.model.Plugin;
     import org.flowplayer.model.PluginFactory;
+    import org.flowplayer.model.PluginModel;
     import org.flowplayer.model.ProviderModel;
     import org.flowplayer.model.State;
     import org.flowplayer.model.Status;
