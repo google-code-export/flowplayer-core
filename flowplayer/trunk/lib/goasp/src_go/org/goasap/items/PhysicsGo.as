@@ -26,6 +26,10 @@ package org.goasap.items {
 	 * 
 	 * @author Moses Gunesch
 	 */
-	public class PhysicsGo extends GoItem {		
-		public function PhysicsGo() {			super();		}
-	}}
+	public class PhysicsGo extends GoItem {
+		
+		public function PhysicsGo() {
+			super();
+		}
+	}
+}

@@ -18,8 +18,18 @@
  */
 
 package org.flowplayer.controller {
-	import org.flowplayer.flow_internal;	import org.flowplayer.model.PlayerEvent;	import org.flowplayer.util.Log;	import org.flowplayer.view.PlayerEventDispatcher;		import flash.events.TimerEvent;	import flash.media.SoundChannel;	import flash.media.SoundTransform;	import flash.net.NetStream;	import flash.utils.Timer;		
-		use namespace flow_internal;
+	import org.flowplayer.flow_internal;
+	import org.flowplayer.model.PlayerEvent;
+	import org.flowplayer.util.Log;
+	import org.flowplayer.view.PlayerEventDispatcher;
+	
+	import flash.events.TimerEvent;
+	import flash.media.SoundChannel;
+	import flash.media.SoundTransform;
+	import flash.net.NetStream;
+	import flash.utils.Timer;		
+	
+	use namespace flow_internal;
 
 	/**
 	 * @author api

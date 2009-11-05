@@ -76,7 +76,8 @@ package org.flowplayer.model {
 			props.height = "100%";
 			return props;
 		}
-		public function getDisplayObject():DisplayObject {
+
+		public function getDisplayObject():DisplayObject {
 			return _displayObject;
 		}
 		
@@ -217,4 +218,5 @@ package org.flowplayer.model {
 		public function get leftStr():Object {
 			return _position.left.asObject();
 		}
-	}}
+	}
+}

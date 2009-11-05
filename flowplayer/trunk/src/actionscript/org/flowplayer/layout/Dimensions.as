@@ -35,7 +35,8 @@ package org.flowplayer.layout {
 			var clone:Dimensions = new Dimensions();
 			clone._width = _width.clone() as Length;
 			clone._height = _height.clone() as Length;
-			return clone;		}
+			return clone;
+		}
 		
 		public function get width():Length {
 			return _width;

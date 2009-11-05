@@ -31,7 +31,8 @@ package org.flowplayer.view {
 	
 	import flash.display.DisplayObject;
 	import flash.geom.Rectangle;
-	import flash.utils.Dictionary;			
+	import flash.utils.Dictionary;		
+	
 	use namespace flow_internal;
 	
 	/**
@@ -45,7 +46,8 @@ package org.flowplayer.view {
 		private var _pluginRegistry:PluginRegistry;
 		private var _runningPlayablesByView:Dictionary = new Dictionary();
 		private var _canceledByPlayable:Dictionary = new Dictionary();
-		public function AnimationEngine(panel:Panel, pluginRegistry:PluginRegistry) {
+
+		public function AnimationEngine(panel:Panel, pluginRegistry:PluginRegistry) {
 			_panel = panel;
 			_pluginRegistry = pluginRegistry;
 		}
