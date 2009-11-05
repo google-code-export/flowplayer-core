@@ -18,7 +18,8 @@
  */
 
 package org.flowplayer.util {
-	/**
+
+	/**
 	 * @author anssi
 	 */
 	public class NumberUtil {

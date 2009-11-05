@@ -19,7 +19,8 @@
 package org.flowplayer.layout {
 	import org.flowplayer.util.Arrange;	
 	
-	import flash.display.StageDisplayState;		import flash.display.DisplayObject;
+	import flash.display.StageDisplayState;	
+	import flash.display.DisplayObject;
 	import flash.display.Stage;
 	import flash.events.EventDispatcher;
 	import flash.geom.Rectangle;

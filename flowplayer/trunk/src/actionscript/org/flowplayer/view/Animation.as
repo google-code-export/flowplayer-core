@@ -31,8 +31,10 @@ package org.flowplayer.view {
 		private var _target:DisplayObject;
 		private var _targetValue:Number;
 		private var _startValue:Number;
-		private var _tweenProperty:String;		private var _canceled:Boolean;
-		public function Animation(target:DisplayObject, tweenProperty:String, targetValue:Number, durationMillis:Number = 500) {
+		private var _tweenProperty:String;
+		private var _canceled:Boolean;
+
+		public function Animation(target:DisplayObject, tweenProperty:String, targetValue:Number, durationMillis:Number = 500) {
 			super(0, durationMillis/1000);
 			_target = target;
 			_targetValue = targetValue;
@@ -73,8 +75,11 @@ package org.flowplayer.view {
 		
 		public override function toString():String {
 			return "[Animation] of property '" + _tweenProperty + "', start " + _startValue + ", target " + _targetValue;
-		}				protected function get target():DisplayObject {
-			return _target;		}
+		}
+		
+		protected function get target():DisplayObject {
+			return _target;
+		}
 		
 		public function get canceled():Boolean {
 			return _canceled;

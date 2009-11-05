@@ -67,7 +67,9 @@ package org.flowplayer.layout {
 						constraint.setMarginConstraint(i, margin);
 				}
 			}
-		}				private function getMarginConstraint(view:DisplayObject, i:Number, properties:DisplayProperties):Constraint {
+		}
+		
+		private function getMarginConstraint(view:DisplayObject, i:Number, properties:DisplayProperties):Constraint {
 			var position:Position = properties.position;
 			if (i == 0) {
 				if (position.top.pct >= 0) return new RelativeConstraint(view, properties.dimensions.height, getContainer(), position.top.pct, "height");
@@ -85,6 +87,7 @@ package org.flowplayer.layout {
 				if (position.left.pct >= 0) return new RelativeConstraint(view, properties.dimensions.width, getContainer(), position.left.pct, "width");
 				if (position.left.px >= 0) return new FixedContraint(position.left.px);
 			}
-			return null;		}
+			return null;
+		}
 	}
 }

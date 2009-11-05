@@ -19,8 +19,13 @@
 
 package org.flowplayer.util {
 	import flash.display.DisplayObject;	
-	import flash.display.DisplayObjectContainer;	import flash.display.GradientType;	import flash.display.Graphics;	import flash.display.Shape;	import flash.geom.Matrix;		
-	/**
+	import flash.display.DisplayObjectContainer;
+	import flash.display.GradientType;
+	import flash.display.Graphics;
+	import flash.display.Shape;
+	import flash.geom.Matrix;		
+
+	/**
 	 * @author api
 	 */
 	public class GraphicsUtil {
