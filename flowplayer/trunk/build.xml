@@ -416,11 +416,8 @@
 	</target>
 
     <!-- following is used when building from a webapp in our compile farm -->
-    <target name="copy" if="copy-target-dir">
-        <condition property="copy-basename" value="flowplayer.commercial" else="flowplayer">
-            <isset property="copy-commercial" />
-        </condition>
-        <copy file="${build-dir}/${copy-basename}.swf" tofile="${copy-target-dir}/${copy-basename}-${version-info}-X.swf" />
+    <target name="copy" if="copy-source">
+        <copy file="${copy-source}" tofile="${copy-target}" verbose="true" />
     </target>
 
     <target name="quick" description="builds the player quickly" depends="prepare">
@@ -437,6 +434,7 @@
         <echo message="version-1: ${version-1}" />
         <echo message="version-2: ${version-2}" />
         <echo message="version-3: ${version-3}" />
+        <echo message="version-status: ${version-status}" />
     </target>
 
 </project>
