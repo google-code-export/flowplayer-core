@@ -104,7 +104,25 @@ package org.flowplayer.view {
 		public function onVolume(listener:Function):void {
 			setListener(PlayerEventType.VOLUME, listener);
 		}
-		
+
+        /**
+         * Adds a mouse over listener.
+         * @param listener
+         * @return
+         */
+        public function onMouseOver(listener:Function):void {
+            setListener(PlayerEventType.MOUSE_OVER, listener);
+        }
+
+        /**
+         * Adds a mouse over listener.
+         * @param listener
+         * @return
+         */
+        public function onMouseOut(listener:Function):void {
+            setListener(PlayerEventType.MOUSE_OUT, listener);
+        }
+
 		override protected function get cancellableEvents():Dictionary {
 			return PlayerEventType.cancellable;
 		}
