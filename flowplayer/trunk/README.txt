@@ -1,5 +1,9 @@
 Version history:
 
+3.1.6
+-----
+- Added onMouseOver() and onMouseOut() listener registration methods to the Flowplayer API
+
 3.1.5
 -----
 Fixes:
