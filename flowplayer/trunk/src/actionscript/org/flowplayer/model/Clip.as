@@ -107,6 +107,11 @@ import org.flowplayer.flow_internal;
 			return init(new Clip(), clipObj, url, baseUrl);
 		}
 
+        /**
+         * Use Playlist#addClip() to add child clips to the playlist. This is for internal use only.
+         * @param clip
+         * @return
+         */
         public function addChild(clip:Clip):void {
             clip.parent = this;
             if (clip.isPreroll) {

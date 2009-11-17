@@ -86,7 +86,7 @@ package org.flowplayer.view {
 		 * @see #animate()
 		 * @see PluginRegistry
 		 */
-		public function animate(disp:DisplayObject, props:Object, durationMillis:int = 400, endCallback:Function = null):DisplayProperties {
+		public function animate(disp:DisplayObject, props:Object, durationMillis:int = 400, endCallback:Function = null, easeFunc:Function = null):DisplayProperties {
 			var currentProps:DisplayProperties = _pluginRegistry.getPluginByDisplay(disp);
 			var isPlugin:Boolean = currentProps != null;
 			if (isPlugin) {
@@ -101,13 +101,13 @@ package org.flowplayer.view {
 				log.debug("current dimensions " + currentProps.dimensions);
 				disp.visible = newProps.visible;
 				if (disp.visible) {
-					panelAnimate(currentProps.getDisplayObject(), newProps, durationMillis, endCallback);
+					panelAnimate(currentProps.getDisplayObject(), newProps, durationMillis, endCallback, easeFunc);
 				} else {
 					_panel.removeChild(disp);
 				}
 				_pluginRegistry.updateDisplayProperties(newProps);
 			} else {
-				startTweens(disp, alpha(props), props.width, props.height, props.x, props.y, durationMillis, endCallback);
+				startTweens(disp, alpha(props), props.width, props.height, props.x, props.y, durationMillis, endCallback, easeFunc);
 			}
 			return newProps;
 		}
@@ -128,12 +128,16 @@ package org.flowplayer.view {
 
 		/**
 		 * Animates a single DisplayObject property.
-		 * @param view the display object to animate 
+		 * @param view the display object to animate
+         * @param propertyName the property to animate
+         * @param target property target value
+         * @durationMillis the duration of the animation
+         * @easeFunc the easing function to use, the default is mx.effects.easing.Quadratic.easeOut 
 		 */
-		public function animateProperty(view:DisplayObject, propertyName:String, target:Number, durationMillis:int = 500, callback:Function = null):void {
+		public function animateProperty(view:DisplayObject, propertyName:String, target:Number, durationMillis:int = 500, callback:Function = null, easeFunc:Function = null):void {
 			var props:Object = new Object();
 			props[propertyName] = target;
-			animate(view, props, durationMillis, callback);
+			animate(view, props, durationMillis, callback, easeFunc);
 		}
 
 		/**
@@ -163,14 +167,15 @@ package org.flowplayer.view {
 		 * @param currentAnimation if specified all other animations except the specified one will be canceled
 		 */
 		public function cancel(view:DisplayObject, currentAnimation:Animation = null):void {
-			log.debug("cancel");
+			log.debug("cancel() cancelling animation for " + view);
 			for (var viewObj:Object in _runningPlayablesByView) {
+                log.debug("cancel(), currently running animation for " + viewObj);
 				var viewWithRunningAnimation:DisplayObject = viewObj as DisplayObject;
 				if (viewWithRunningAnimation == view) {
 					var anim:Animation = _runningPlayablesByView[viewWithRunningAnimation] as Animation;
 					
-					if (anim && currentAnimation && anim != currentAnimation) {
-						if (currentAnimation.tweenProperty == anim.tweenProperty) {
+					if (anim && currentAnimation && anim != currentAnimation || ! currentAnimation) {
+						if (currentAnimation && currentAnimation.tweenProperty == anim.tweenProperty || ! currentAnimation) {
 							log.info("tween for property " + anim.tweenProperty + " was canceled on view " + view);
 							_canceledByPlayable[anim] = true;
 							anim.stop();
@@ -179,6 +184,12 @@ package org.flowplayer.view {
 				}
 			}
 		}
+
+        private function logRunningAnimations(phase:String, view:DisplayObject):void {
+            for (var viewObj:Object in _runningPlayablesByView) {
+                log.debug(phase + ": found running animation for " + view + ", " + _runningPlayablesByView[viewObj]);
+            }
+        }
 
 		private function animateAlpha(view:DisplayObject, target:Number, durationMillis:Number = 500, callback:Function = null, updatePanel:Boolean = true):Animation {
 			Assert.notNull(view, "animateAlpha: view cannot be null");
@@ -221,14 +232,14 @@ package org.flowplayer.view {
 			return tween;
 		}
 
-		private function panelAnimate(view:DisplayObject, props:DisplayProperties, durationMillis:int = 500, callback:Function = null):void {
+		private function panelAnimate(view:DisplayObject, props:DisplayProperties, durationMillis:int = 500, callback:Function = null, easeFunc:Function = null):void {
 			Assert.notNull(props.name, "displayProperties.name must be specified");
 			log.debug("animate " + view);
 			if (view.parent != _panel) {
 				_panel.addView(view);
 			}
 			var target:Rectangle = _panel.update(view, props);
-			startTweens(view, props.alpha, target.width, target.height, target.x, target.y, durationMillis, callback);			
+			startTweens(view, props.alpha, target.width, target.height, target.x, target.y, durationMillis, callback, easeFunc);
 			if (durationMillis == 0) {
 				if (props.alpha >= 0) {
 					view.alpha = props.alpha;
@@ -237,7 +248,7 @@ package org.flowplayer.view {
 			}
 		}
 		
-		private function startTweens(view:DisplayObject, alpha: Number, width:Number, height:Number, x:Number, y:Number, durationMillis:int, callback:Function):Array {
+		private function startTweens(view:DisplayObject, alpha: Number, width:Number, height:Number, x:Number, y:Number, durationMillis:int, callback:Function, easeFunc:Function = null):Array {
 			var tweens:Array = new Array();
 			
 			var alphaTween:Animation = createTween("alpha", view, alpha, durationMillis);
@@ -246,10 +257,10 @@ package org.flowplayer.view {
 				addTween(tweens, alphaTween);
 			}
 			
-			addTween(tweens, createTween("width", view, width, durationMillis));
-			addTween(tweens, createTween("height", view, height, durationMillis));
-			addTween(tweens, createTween("x", view, x, durationMillis));
-			addTween(tweens, createTween("y", view, y, durationMillis));
+			addTween(tweens, createTween("width", view, width, durationMillis, easeFunc));
+			addTween(tweens, createTween("height", view, height, durationMillis, easeFunc));
+			addTween(tweens, createTween("x", view, x, durationMillis, easeFunc));
+			addTween(tweens, createTween("y", view, y, durationMillis, easeFunc));
 			if (tweens.length == 0) {
 				// call the callback also when not animating anything
 				if (callback != null) {
@@ -270,8 +281,10 @@ package org.flowplayer.view {
 
 		private function start(view:DisplayObject, playable:IPlayable, callback:Function = null):IPlayable {
 			if (playable == null) return null;
+            logRunningAnimations("start", view);
+            
 			_runningPlayablesByView[view] = playable; 
-			log.debug("staring animation " + playable);
+			log.debug("start() staring animation for view " + view);
 
 			playable.addEventListener(GoEvent.COMPLETE, 
 				function(event:GoEvent):void {
@@ -283,22 +296,27 @@ package org.flowplayer.view {
 		}
 		
 		private function onComplete(view:DisplayObject, playable:IPlayable, callback:Function = null):void {
-			if (callback != null && !_canceledByPlayable[playable]) {
-				callback();
-			}
-			
-			delete _canceledByPlayable[playable];
-			delete _runningPlayablesByView[view];
+            log.debug("onComplete, view " + view);
+            delete _canceledByPlayable[playable];
+            delete _runningPlayablesByView[view];
+
+            if (callback != null && !_canceledByPlayable[playable]) {
+                callback();
+            }
 		}
 
-		private function createTween(property:String, view:DisplayObject, targetValue:Number, durationMillis:int):Animation {
+		private function createTween(property:String, view:DisplayObject, targetValue:Number, durationMillis:int, easeFunc:Function = null):Animation {
 			if (isNaN(targetValue)) return null;
 			if (view[property] == targetValue) {
 				log.debug("view property " + property + " already in target value " + targetValue + ", will not animate");
 				return null;
 			}
 			log.debug("creating tween for property " + property + ", target value is " + targetValue + ", current value is " + view[property]);
-			return new Animation(view, property, targetValue, durationMillis);
+			var animation:Animation = new Animation(view, property, targetValue, durationMillis);
+            if (easeFunc != null) {
+                animation.easing = easeFunc;
+            }
+            return animation;
 		}
 	}
 }
