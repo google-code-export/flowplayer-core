@@ -178,12 +178,24 @@ package org.flowplayer.view {
 						if (currentAnimation && currentAnimation.tweenProperty == anim.tweenProperty || ! currentAnimation) {
 							log.info("tween for property " + anim.tweenProperty + " was canceled on view " + view);
 							_canceledByPlayable[anim] = true;
+                            delete _runningPlayablesByView[view];
 							anim.stop();
 						}
 					}
 				}
 			}
 		}
+
+        public function hasAnimationRunning(view:DisplayObject):Boolean {
+            for (var viewObj:Object in _runningPlayablesByView) {
+                log.debug("cancel(), currently running animation for " + viewObj);
+                var viewWithRunningAnimation:DisplayObject = viewObj as DisplayObject;
+                if (viewWithRunningAnimation == view) {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         private function logRunningAnimations(phase:String, view:DisplayObject):void {
             for (var viewObj:Object in _runningPlayablesByView) {

@@ -49,8 +49,8 @@ import org.flowplayer.flow_internal;
         public static const CLIP_ADD:ClipEventType = new ClipEventType("onClipAdd");
 
 		private static var _allValues:Dictionary;
-		private static var _cancellable:Dictionary = new Dictionary();
-		{
+        private static var _cancellable:Dictionary = new Dictionary();
+        {
 			_cancellable[BEGIN.name] = BEGIN;
 			_cancellable[SEEK.name] = SEEK;
 			_cancellable[PAUSE.name] = PAUSE;
