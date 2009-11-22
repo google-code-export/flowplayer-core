@@ -98,6 +98,7 @@ import org.flowplayer.model.DisplayPluginModel;
         private var _clickCount:int;
         private var _clickTimer:Timer = new Timer(200, 1);
         private var _clickEvent:MouseEvent;
+        private var _keyHandler:KeyboardHandler;
 
 		[Frame(factoryClass="org.flowplayer.view.Preloader")]
 		public function Launcher() {
@@ -220,9 +221,8 @@ import org.flowplayer.model.DisplayPluginModel;
 			log.debug("starting configured streams");
             startStreams();
             arrangeScreen();
-
-			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
-			addListeners();
+            _keyHandler = new KeyboardHandler(stage, _flowplayer, this);
+            addListeners();
 
 //            _controlsModel.onPluginEvent(function(event:PluginEvent):void {
 //                log.debug("received plugin event " + event.id);
@@ -826,17 +826,6 @@ import org.flowplayer.model.DisplayPluginModel;
             return false;
 		}
 
-		private function onKeyDown(event:KeyboardEvent):void {
-			log.debug("keydown");
-			if (_enteringFullscreen) return;
-			if (_flowplayer.dispatchBeforeEvent(PlayerEvent.keyPress(event.keyCode))) {
-				_flowplayer.dispatchEvent(PlayerEvent.keyPress(event.keyCode));
-				if (event.keyCode == Keyboard.SPACE) {
-					_flowplayer.toggle();
-				}
-			}
-		}
-		
 		override protected function onRedraw():void {
 			if (bgImageHolder && getChildIndex(bgImageHolder) > getChildIndex(_panel)) {
 				swapChildren(bgImageHolder, _panel);
@@ -893,5 +882,9 @@ import org.flowplayer.model.DisplayPluginModel;
                 throw e;
             }
         }
-	}
+
+        internal function get enteringFullscreen():Boolean {
+            return _enteringFullscreen;
+        }
+    }
 }

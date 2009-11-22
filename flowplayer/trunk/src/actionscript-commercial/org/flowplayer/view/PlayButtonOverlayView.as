@@ -153,7 +153,7 @@ import org.flowplayer.model.ClipEvent;
 			eventSupport.onConnect(startBuffering);
 
             // onBegin is here because onBeforeBegin is not dispatched when playing after a timed out and invalid netConnection
-            eventSupport.onBegin(hideButton);
+            eventSupport.onStart(hideButton);
             
             eventSupport.onBeforeBegin(hideButton);
 			eventSupport.onBeforeBegin(startBuffering);
