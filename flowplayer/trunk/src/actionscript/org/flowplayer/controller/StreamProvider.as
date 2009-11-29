@@ -171,5 +171,14 @@ import org.flowplayer.model.Clip;
          * @return the netConnection currently in use, or null if this provider has not started streaming yet
          */
         function get netConnection():NetConnection;
+
+
+        /**
+         * Sets a time provider to be used by this StreamProvider. Normally the playhead time is queried from
+         * the NetStream.time property.
+         *
+         * @param timeProvider
+         */
+        function set timeProvider(timeProvider:TimeProvider):void;
     }
 }

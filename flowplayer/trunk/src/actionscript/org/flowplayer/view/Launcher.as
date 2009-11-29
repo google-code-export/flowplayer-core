@@ -236,6 +236,7 @@ import org.flowplayer.model.DisplayPluginModel;
 //                log.debug("controls y-pos now is " + model.getDisplayObject().y);
 //                event.preventDefault();
 //            });
+//            lookupSlowMotionPlugin(_flowplayer);
 		}
 
 		private function resizeCanvasLogo():void {

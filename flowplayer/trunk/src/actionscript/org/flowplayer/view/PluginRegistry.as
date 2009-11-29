@@ -80,7 +80,8 @@ package org.flowplayer.view {
 			if (plugin is DisplayProperties) {
 				updateZIndex(plugin as DisplayProperties);
 			}
-			return clone(plugin);
+            return plugin;
+//			return clone(plugin);
 		}
 		
 		private function updateZIndex(props:DisplayProperties):void {

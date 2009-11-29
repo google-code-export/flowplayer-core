@@ -20,7 +20,8 @@
 package org.flowplayer.controller {
 import flash.utils.Dictionary;
 import org.flowplayer.controller.StreamProvider;
-	import org.flowplayer.controller.VolumeController;
+    import org.flowplayer.controller.TimeProvider;
+    import org.flowplayer.controller.VolumeController;
 	import org.flowplayer.model.Clip;
 	import org.flowplayer.model.ClipError;
 	import org.flowplayer.model.ClipEvent;
@@ -72,6 +73,7 @@ import org.flowplayer.model.PluginModel;
 		private var _started:Boolean;
         private var _connectionClient:NetConnectionClient;
         private var _streamCallbacks:Dictionary = new Dictionary();
+        private var _timeProvider:TimeProvider;
 
         public function NetStreamControllingStreamProvider() {
             _connectionClient = new NetConnectionClient();            
@@ -480,6 +482,9 @@ import org.flowplayer.model.PluginModel;
 		 * is not equl to netStream.time
 		 */
 		protected function getCurrentPlayheadTime(netStream:NetStream):Number {
+            if (_timeProvider) {
+                return _timeProvider.getTime(netStream);
+            }
             return netStream.time;
 		}
 
@@ -798,5 +803,11 @@ import org.flowplayer.model.PluginModel;
             }
             return getConnectionProvider(clip);
         }
+
+        public function set timeProvider(timeProvider:TimeProvider):void {
+            log.debug("set timeprovider() " + timeProvider);
+            _timeProvider = timeProvider;
+        }
+
     }
 }
