@@ -34,8 +34,8 @@ import org.flowplayer.flow_internal;
 		public static const STOP:ClipEventType = new ClipEventType("onStop");
 		public static const FINISH:ClipEventType = new ClipEventType("onFinish");
 		public static const CUEPOINT:ClipEventType = new ClipEventType("onCuepoint");
-		public static const SEEK:ClipEventType = new ClipEventType("onSeek");
-		
+        public static const SEEK:ClipEventType = new ClipEventType("onSeek");
+
 		public static const BUFFER_EMPTY:ClipEventType = new ClipEventType("onBufferEmpty");
 		public static const BUFFER_FULL:ClipEventType = new ClipEventType("onBufferFull");
 		public static const BUFFER_STOP:ClipEventType = new ClipEventType("onBufferStop");
