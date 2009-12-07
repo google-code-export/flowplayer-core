@@ -82,6 +82,7 @@ import org.flowplayer.model.ClipEvent;
 		public function set label(label:String):void {
 			if (! _player) return;
 			log.debug("set label '" + label + "'");
+            _play.label = label;
 			if (label && (! _button || ! (_button is LabelPlayButton))) {
 				log.debug("switching to label button ");
 				switchButton(new LabelPlayButton(_player, label));
@@ -94,6 +95,22 @@ import org.flowplayer.model.ClipEvent;
 			}
 			onResize();
 		}
+
+        [External]
+        public function set replayLabel(label:String):void {
+            if (! _player) return;
+            log.debug("set replayLabel '" + label + "'");
+            _play.replayLabel = label;
+        }
+
+        CONFIG::commercialVersion {
+            [External]
+            public function set image(url:String):void {
+                log.debug("set image() will show? " + (_button.parent == this));
+                _play.url = url;
+                loadImage(url, null, _button.parent == this);
+            }
+        }
 		
 		override public function set alpha(value:Number):void {
 			log.debug("setting alpha to " + value + " tween " + _tween);
@@ -107,7 +124,9 @@ import org.flowplayer.model.ClipEvent;
 		private function switchButton(newButton:DisplayObject):void {
 			removeChildIfAdded(_button);
 			_button = newButton;
-			addButton();
+            if (_button is AbstractSprite) {
+                AbstractSprite(_button).setSize(width - 15, height - 15);
+            }
 		}
 
 		private function onMouseOut(event:MouseEvent = null):void {
@@ -131,7 +150,9 @@ import org.flowplayer.model.ClipEvent;
 			
 			CONFIG::commercialVersion {
 				if (useCustomImage()) {
-					loadImage(_play.url);
+					loadImage(_play.url, function():void {
+                        _play.dispatch(PluginEventType.LOAD);
+                    }, _showButtonInitially);
 				} else {
 					log.debug("dispatching complete");
 					_play.dispatch(PluginEventType.LOAD);
@@ -227,21 +248,26 @@ import org.flowplayer.model.ClipEvent;
 		}
 
 		CONFIG::commercialVersion
-		private function loadImage(url:String):void {
-			log.debug("loading a custom button image from url " + url);
-			_player.createLoader().load(url, onLoadComplete);
+		private function loadImage(url:String, callback:Function = null, show:Boolean = false):void {
+			log.debug("loading a custom button image from url " + url + ", will show? " + show);
+			_player.createLoader().load(url, function(loader:ResourceLoader):void {
+                initializeButtonImage(loader.getContent() as DisplayObject, show);
+                if (callback != null) {
+                    callback();
+                }
+            });
 		}
 		
 		CONFIG::commercialVersion
-		private function onLoadComplete(loader:ResourceLoader):void {
-			_button = loader.getContent() as DisplayObject;
-			_button.alpha = model.alpha;
-			log.debug("loaded image " + _play.url);
-			if (_showButtonInitially) {
-				showButton();
-			}
+		private function initializeButtonImage(image:DisplayObject, show:Boolean):void {
+            switchButton(image);
+            _button.alpha = model.alpha;
+            log.debug("loaded image " + _play.url);
+            if (show) {
+                log.debug("showing button");
+                showButton();
+            }
 			onResize();
-			_play.dispatch(PluginEventType.LOAD);
 		}
 
 		protected override function onResize():void {

@@ -672,8 +672,11 @@ import org.flowplayer.model.DisplayPluginModel;
 		}
 		
 		private function createLogo():void {
-			var logo:Logo = _config.getLogo() || new Logo();
-			var logoView:LogoView = new LogoView(_panel, logo, _flowplayer);
+            var logoView:LogoView = new LogoView(_panel, _flowplayer);
+            var logo:Logo = _config.getLogo(logoView) || new Logo(logoView, "logo");
+            // do not show it initially
+            logo.visible = false;
+            logoView.model = logo;
 			initView(logoView, logo, logoView.draw, false);
 		}
 

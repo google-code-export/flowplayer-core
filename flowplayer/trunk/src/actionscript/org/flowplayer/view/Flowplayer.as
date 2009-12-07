@@ -296,7 +296,7 @@ import org.flowplayer.model.PlayerError;
 			var plugin:Callable = _pluginRegistry.getPlugin(pluginName) as Callable;
 			checkPlugin(plugin, pluginName, Callable);
 			try {
-				log.debug("invoke()");
+				log.debug("invoke() on " + plugin + "." + methodName);
 				if (plugin.getMethod(methodName).hasReturnValue) {
 					log.debug("method has a return value");
 					return plugin.invokeMethod(methodName, args is Array ? args as Array : [ args ]);
