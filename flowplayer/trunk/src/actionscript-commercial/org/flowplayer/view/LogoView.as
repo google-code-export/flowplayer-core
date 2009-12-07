@@ -22,7 +22,10 @@ package org.flowplayer.view {
 
     import org.flowplayer.KeyUtil;
     import org.flowplayer.controller.ResourceLoader;
-import org.flowplayer.util.URLUtil;
+    import org.flowplayer.model.Plugin;
+    import org.flowplayer.model.PluginModel;
+    import org.flowplayer.util.PropertyBinder;
+    import org.flowplayer.util.URLUtil;
 	import org.flowplayer.controller.ResourceLoaderImpl;
 	import org.flowplayer.model.DisplayProperties;
 	import org.flowplayer.model.Logo;
@@ -39,9 +42,11 @@ import org.flowplayer.util.URLUtil;
 	import flash.geom.Rectangle;
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
-	import flash.utils.Timer;	
+	import flash.utils.Timer;
 
-	/**
+    import org.flowplayer.view.Flowplayer;
+
+    /**
 	 * @author api
 	 */
 	public class LogoView extends AbstractSprite {
@@ -50,19 +55,23 @@ import org.flowplayer.util.URLUtil;
 		private var _player:Flowplayer;
 		private var _image:DisplayObject;
 		private var _panel:Panel;
-		private var _originalProps:DisplayProperties;
 		private var _copyrightNotice:TextField;
+        private var _preHideAlpha:Number = 1;
 
-        public function LogoView(panel:Panel, model:Logo, player:Flowplayer) {
+        public function LogoView(panel:Panel, player:Flowplayer) {
             _panel = panel;
-            this.model = model;
-            _originalProps = _model.clone() as DisplayProperties;
-            log.debug("original model dimensions " + _originalProps.dimensions);
             _player = player;
+        }
+
+        public function set model(model:Logo):void {
+            setModel(model);
+            log.debug("fullscreenOnly " + model.fullscreenOnly);
             setEventListeners();
 
             CONFIG::commercialVersion {
-                loadLogoImage();
+                if (_model.url) {
+                    load(_model.url, _model.fullscreenOnly);
+                }
             }
 
             CONFIG::freeVersion {
@@ -73,22 +82,14 @@ import org.flowplayer.util.URLUtil;
                 _model.height = "6.5%";
             }
 
+            log.debug("LogoView() model dimensions " + _model.dimensions);
         }
-
-
-		CONFIG::freeVersion
-		private function onLogoTimer(event:TimerEvent):void {
-			if (! this.parent && _panel.stage.displayState == StageDisplayState.NORMAL) return;
-			if (! this.parent) {
-				show();
-			}
-			_panel.setChildIndex(this, _panel.numChildren -1);
-		}
 		
 		override protected function onResize():void {
 			if (_image) {
-				log.debug("onResize, width " + width);
+				log.debug("onResize, " + _model.dimensions);
 				if (_model.dimensions.width.hasValue() && _model.dimensions.height.hasValue()) {
+                    log.debug("onResize(), scaling image according to model");
 					if (_image.height - copyrightNoticeheight() > _image.width) {
 						_image.height = height - copyrightNoticeheight();
 						_image.scaleX = _image.scaleY;
@@ -100,11 +101,12 @@ import org.flowplayer.util.URLUtil;
 //				Arrange.center(_image, width, height);
 				_image.x = width - _image.width;
 				_image.y = 0;
+                log.debug("image: " + Arrange.describeBounds(_image));
 
 				CONFIG::freeVersion {
 					_copyrightNotice.y = _image.height;
-                _copyrightNotice.visible = _copyrightNotice.textWidth < width;
-                _copyrightNotice.width = width;
+                    _copyrightNotice.visible = _copyrightNotice.textWidth < width;
+                    _copyrightNotice.width = width;
 				}
 			}
 		}
@@ -127,24 +129,52 @@ import org.flowplayer.util.URLUtil;
 //			return managedHeight;
 //		}
 
-		CONFIG::commercialVersion
-		private function loadLogoImage():void {
-			if (_model.url) {
+		CONFIG::commercialVersion {
+            [External]
+            public function configure(props:Object):void {
+                new PropertyBinder(_model).copyProperties(props);
+
+                if (_model.url) {
+                    load(_model.url, _model.fullscreenOnly);
+                } else if (_image) {
+                    removeChild(_image);
+                }
+
+                if (_model.linkUrl) {
+                    setLinkEventListener();
+                } else {
+                    removeLinkEventListener();
+                }
+            }
+        }
+
+        CONFIG::commercialVersion {
+            private function load(url:String, fullscreenOnly:Boolean):void {
+                log.debug("load(), " + url);
+                _model.url = url;
+                _model.fullscreenOnly = fullscreenOnly;
                 var playerBaseUrl:String = URLUtil.playerBaseUrl(_panel.loaderInfo);
                 if (! verifyLogoUrl(_model.url, playerBaseUrl)) return;
 
-				log.debug("loading image from " + _model.url);
+                if (_image) {
+                    removeChild(_image);
+                }
+
+                log.debug("loading image from " + url);
                 var loader:ResourceLoader = new ResourceLoaderImpl(playerBaseUrl, _player);
-                loader.load(_model.url, onImageLoaded);
-			}
-		}
+                loader.load(url, onImageLoaded);
+            }
+        }
 
         CONFIG::commercialVersion
         private function verifyLogoUrl(configuredUrl:String, playerBaseUrl:String):Boolean {
             if  (! URLUtil.isCompleteURLWithProtocol(configuredUrl)) return true;
             if (URLUtil.localDomain(playerBaseUrl)) return true;
 
-            if (KeyUtil.parseDomain(configuredUrl, true) != KeyUtil.parseDomain(playerBaseUrl, true)) {
+            var playerDomain:String = KeyUtil.parseDomain(playerBaseUrl, true);
+            if (playerDomain == "flowplayer.org") return true;
+
+            if (KeyUtil.parseDomain(configuredUrl, true) != playerDomain) {
                 log.error("cannot load logo from domain " + KeyUtil.parseDomain(configuredUrl, true));
                 return false;
             }
@@ -159,29 +189,40 @@ import org.flowplayer.util.URLUtil;
 		
 		private function createLogoImage(image:DisplayObject):void {
 			_image = image;
+
+            _model.width = image.width;
+            _model.height = image.height;
+
 			addChild(_image);
-			log.debug("logo shown in fullscreen only " + _model.fullscreenOnly);
+			log.debug("createLogoImage() logo shown in fullscreen only " + _model.fullscreenOnly);
 			if (! _model.fullscreenOnly) {
 				show();
 			}
+            update();
 			onResize();
-
-			// small hack to get the initial scaling correct
-			show();
-			if (_model.fullscreenOnly) {
-				hide();
-			}
 		}
 
 		private function setEventListeners():void {
 			_panel.stage.addEventListener(FullScreenEvent.FULL_SCREEN, onFullscreen);
-			
-			if (_model.linkUrl) {
-				addEventListener(MouseEvent.CLICK, 
-					function(event:MouseEvent):void { navigateToURL(new URLRequest(_model.linkUrl), _model.linkWindow); });
-				buttonMode = true;
-			}
+            setLinkEventListener();
 		}
+
+        private function setLinkEventListener():void {
+            if (_model.linkUrl) {
+                addEventListener(MouseEvent.CLICK, onClick);
+                buttonMode = true;
+            }
+        }
+
+        private function removeLinkEventListener():void {
+            removeEventListener(MouseEvent.CLICK, onClick);
+            buttonMode = false;
+        }
+
+
+        private function onClick(event:MouseEvent):void {
+            navigateToURL(new URLRequest(_model.linkUrl), _model.linkWindow);
+        }
 
 		private function onFullscreen(event:FullScreenEvent):void {
 			if (event.fullScreen) {
@@ -189,29 +230,39 @@ import org.flowplayer.util.URLUtil;
 			} else {
 				if (_model.fullscreenOnly) {
 					hide(0);
-				} else {
-					update();
 				}
 			}
 		}
 
 		private function show():void {
-			this.alpha = _model.opacity;
+			this.alpha = _preHideAlpha;
+            _model.alpha = _preHideAlpha;
+            _model.visible = true;
 			this.visible = true;
 			CONFIG::freeVersion {
 				_model.zIndex = 100;
 			}
 			if (! this.parent) {
 				log.debug("showing " + _model.dimensions);
-				_panel.addView(this, null, _model);
+//                _player.animationEngine.fadeIn(this);
+                _panel.addView(this, null, _model);
+
 				if (_model.displayTime > 0) {
+                    log.debug("show() creating hide timer");
 					var timer:Timer = new Timer(_model.displayTime * 1000, 1);
-					timer.addEventListener(TimerEvent.TIMER_COMPLETE, function(event:TimerEvent):void { hide(_model.fadeSpeed); });
+					timer.addEventListener(TimerEvent.TIMER_COMPLETE,
+
+                            function(event:TimerEvent):void {
+                                log.debug("display time complete");
+                                hide(_model.fadeSpeed);
+                                timer.stop(); 
+                            });
 					timer.start();
 				}
-			} else {
-				update();
 			}
+//            else {
+//				update();
+//			}
 		}
 
 		private function update():void {
@@ -222,23 +273,28 @@ import org.flowplayer.util.URLUtil;
 		}
 		
 		private function hide(fadeSpeed:int = 0):void {
-			log.debug("hiding logo");
-			if (fadeSpeed > 0) {
-				_player.animationEngine.fadeOut(this, fadeSpeed, removeFromPanel);
+			log.debug("hide(), hiding logo");
+            _preHideAlpha = _model.alpha;
+            if (fadeSpeed > 0) {
+				_player.animationEngine.fadeOut(this, fadeSpeed);
 			} else {
 				removeFromPanel();
 			}
 		}
-		
+
 		private function removeFromPanel():void {
-			if (this.parent)
+            log.debug("removeFromPanel() " + this.parent);
+			if (this.parent) {
+                log.debug("removing logo from panel");
 				_panel.removeChild(this);
+            }
 		}
 		
 		CONFIG::freeVersion
-		public function set model(model:Logo):void {
+		public function setModel(model:Logo):void {
+            log.debug("setModel() ignoring configured logo settings");
 			// in the free version we ignore the supplied logo configuration
-			_model = new Logo();
+			_model = new Logo(this, "logo");
 			_model.fullscreenOnly = model.fullscreenOnly;
 			_model.height = "9%";
 			_model.width = "9%";
@@ -250,8 +306,9 @@ import org.flowplayer.util.URLUtil;
 		}
 		
 		CONFIG::commercialVersion
-		public function set model(model:Logo):void {
+		public function setModel(model:Logo):void {
+            log.debug("setModel() using configured logo settings");
 			_model = model;
 		}
-	}
+    }
 }

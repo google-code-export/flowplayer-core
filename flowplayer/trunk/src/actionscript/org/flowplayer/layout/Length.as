@@ -32,6 +32,8 @@ package org.flowplayer.layout {
 		private var _clearPct:Boolean;
 
 		public function Length(value:Object = null) {
+            _px = NaN;
+            _pct = NaN;
 			if (value || (value is Number && Number(value) == 0)) {
 				setValue(value);
 			}

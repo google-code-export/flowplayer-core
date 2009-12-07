@@ -18,12 +18,14 @@
  */
 
 package org.flowplayer.model {
-	import org.flowplayer.model.DisplayPropertiesImpl;	
+    import flash.display.DisplayObject;
+
+    import org.flowplayer.model.DisplayPropertiesImpl;
 
 	/**
 	 * @author api
 	 */
-	public class Logo extends DisplayPropertiesImpl {
+	public class Logo extends DisplayPluginModelImpl {
 		
 		private var _url:String;
 		private var _fullscreenOnly:Boolean = true;
@@ -33,9 +35,13 @@ package org.flowplayer.model {
 		private var _linkUrl:String;
 		private var _linkWindow:String;
 		
-		public function Logo() {
+		public function Logo(disp:DisplayObject, name:String):void {
+            super(disp, name, false);
+            name = "logo";
 			top = "20";
 			right = "20";
+            alpha = 1;
+
 			_linkWindow = "_self";
 		}
 		

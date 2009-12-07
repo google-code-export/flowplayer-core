@@ -74,6 +74,7 @@ import org.flowplayer.model.PluginModel;
         private var _connectionClient:NetConnectionClient;
         private var _streamCallbacks:Dictionary = new Dictionary();
         private var _timeProvider:TimeProvider;
+        private var _seeking:Boolean;
 
         public function NetStreamControllingStreamProvider() {
             _connectionClient = new NetConnectionClient();            
@@ -121,7 +122,8 @@ import org.flowplayer.model.PluginModel;
 			clip.onMetaData(onMetaData, function(clip:Clip):Boolean {
                 return clip.provider == (_model ? _model.name : (clip.parent ? 'httpInstream' : 'http')); 
             });
-			
+
+            clip.startDispatched = false;
 			log.debug("previously started clip " + _startedClip);
 			if (_startedClip && _startedClip == clip && _connection) {
 				log.info("playing previous clip again, reusing existing connection and resuming");
@@ -418,6 +420,18 @@ import org.flowplayer.model.PluginModel;
 		protected final function get paused():Boolean {
 			return _paused;
 		}
+
+        /**
+         * Is the seek in process?
+         * @return
+         */
+        protected final function get seeking():Boolean {
+            return _seeking;
+        }
+
+        protected final function set seeking(value:Boolean):void {
+            _seeking = value;
+        }
 		
 		/**
 		 * Seeks the netStream to the specified target. The implementation in this class calls
@@ -429,6 +443,7 @@ import org.flowplayer.model.PluginModel;
 		protected function doSeek(event:ClipEvent, netStream:NetStream, seconds:Number):void {
 			// the seek event is dispatched when we recevive the seek notification from netStream
 			log.debug("calling netStream.seek(" + seconds + ")");
+            _seeking = true;
 			netStream.seek(seconds);
 		}
 
@@ -626,37 +641,35 @@ import org.flowplayer.model.PluginModel;
 				return;
 			}
 			
-			if (event.info.code == "NetStream.Buffer.Empty") {
-				dispatchPlayEvent(ClipEventType.BUFFER_EMPTY);
-			}
-			else if (event.info.code == "NetStream.Buffer.Full") {
-				dispatchPlayEvent(ClipEventType.BUFFER_FULL);
-			}
-			else if (event.info.code == "NetStream.Play.Start") {
-				if (! _paused && canDispatchBegin()) {
-					log.debug("dispatching onBegin");
-					clip.dispatchEvent(new ClipEvent(ClipEventType.BEGIN, _pauseAfterStart));
-				}
-			}
-			else if (event.info.code == "NetStream.Play.Stop") {
+            if (event.info.code == "NetStream.Buffer.Empty") {
+                dispatchPlayEvent(ClipEventType.BUFFER_EMPTY);
+            } else if (event.info.code == "NetStream.Buffer.Full") {
+                dispatchPlayEvent(ClipEventType.BUFFER_FULL);
+            } else if (event.info.code == "NetStream.Play.Start") {
+                if (! _paused && canDispatchBegin()) {
+                    log.debug("dispatching onBegin");
+                    clip.dispatchEvent(new ClipEvent(ClipEventType.BEGIN, _pauseAfterStart));
+                }
+            } else if (event.info.code == "NetStream.Play.Stop") {
 //				dispatchPlayEvent(ClipEventType.STOP);
-			}
-			else if (event.info.code == "NetStream.Seek.Notify") {
-				if (! silentSeek) {
-					startSeekTargetWait();
-				}
-				silentSeek = false;
+            } else if (event.info.code == "NetStream.Seek.Notify") {
+                if (! silentSeek) {
+                    startSeekTargetWait();
+                } else {
+                    _seeking = false;
+                }
+                silentSeek = false;
 
-			} else if (event.info.code == "NetStream.Seek.InvalidTime") {
+            } else if (event.info.code == "NetStream.Seek.InvalidTime") {
 
-			} else if (event.info.code == "NetStream.Play.StreamNotFound" || 
-				event.info.code == "NetConnection.Connect.Rejected" || 
-				event.info.code == "NetConnection.Connect.Failed") {
+            } else if (event.info.code == "NetStream.Play.StreamNotFound" ||
+                       event.info.code == "NetConnection.Connect.Rejected" ||
+                       event.info.code == "NetConnection.Connect.Failed") {
 				
-				if (canDispatchStreamNotFound()) {
-					clip.dispatchError(ClipError.STREAM_NOT_FOUND, event.info.code);
-				}
-			}
+                if (canDispatchStreamNotFound()) {
+                    clip.dispatchError(ClipError.STREAM_NOT_FOUND, event.info.code);
+                }
+            }
 
 			onNetStatus(event);
 		}
@@ -683,6 +696,7 @@ import org.flowplayer.model.PluginModel;
 				log.debug("dispatching onSeek");
 				dispatchPlayEvent(ClipEventType.SEEK, _seekTarget);
 				_seekTarget = -1;
+                _seeking = false;
 			}
 		}
 
@@ -726,7 +740,10 @@ import org.flowplayer.model.PluginModel;
 
 		protected function onMetaData(event:ClipEvent):void {
 			log.info("in NetStreamControllingStremProvider.onMetaData: " + event.target);
-			clip.dispatch(ClipEventType.START, _pauseAfterStart);
+            if (! clip.startDispatched) {
+                clip.dispatch(ClipEventType.START, _pauseAfterStart);
+                clip.startDispatched = true;
+            }
 			// some files require that we seek to the first frame only after receiving metadata
 			// otherwise we will never receive the metadata
 			if (_pauseAfterStart) {

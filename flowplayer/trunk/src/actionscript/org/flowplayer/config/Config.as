@@ -168,8 +168,8 @@ package org.flowplayer.config {
 			return play;
 		}
 		
-		public function getLogo():Logo {
-			return viewObjectBuilder.getDisplayProperties(getObject("logo"), "logo", Logo) as Logo;
+		public function getLogo(view:DisplayObject):Logo {
+            return new PropertyBinder(new Logo(view, "logo"), null).copyProperties(getObject("logo"), true) as Logo;
 		}
 		
 		public function getObject(name:String):Object {

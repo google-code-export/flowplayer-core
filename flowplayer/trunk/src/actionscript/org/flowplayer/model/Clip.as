@@ -83,6 +83,7 @@ import org.flowplayer.flow_internal;
         private var _seekableOnBegin:Object;
         private var _clipObject:Object;
         private var _netStream:NetStream;
+        private var _startDispatched:Boolean;
 
         public function Clip() {
             _childPlaylist = new TimedPlaylist();
@@ -942,6 +943,14 @@ import org.flowplayer.flow_internal;
 
         public function set urlResolverObjects(urlResolverObjects:Array):void {
             _urlResolverObjects = urlResolverObjects;
+        }
+
+        public function get startDispatched():Boolean {
+            return _startDispatched;
+        }
+
+        public function set startDispatched(value:Boolean):void {
+            _startDispatched = value;
         }
     }
 }
