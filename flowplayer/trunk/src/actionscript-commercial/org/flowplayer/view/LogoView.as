@@ -77,9 +77,9 @@ package org.flowplayer.view {
             CONFIG::freeVersion {
                 _copyrightNotice = LogoUtil.createCopyrightNotice(10);
                 addChild(_copyrightNotice);
-                createLogoImage(new FlowplayerLogo());
                 _model.width = "6.5%";
                 _model.height = "6.5%";
+                createLogoImage(new FlowplayerLogo());
             }
 
             log.debug("LogoView() model dimensions " + _model.dimensions);
@@ -156,7 +156,7 @@ package org.flowplayer.view {
                 var playerBaseUrl:String = URLUtil.playerBaseUrl(_panel.loaderInfo);
                 if (! verifyLogoUrl(_model.url, playerBaseUrl)) return;
 
-                if (_image) {
+                if (_image && _image.parent == this) {
                     removeChild(_image);
                 }
 
@@ -190,8 +190,10 @@ package org.flowplayer.view {
 		private function createLogoImage(image:DisplayObject):void {
 			_image = image;
 
-            _model.width = image.width;
-            _model.height = image.height;
+            CONFIG::commercialVersion {
+                _model.width = image.width;
+                _model.height = image.height;
+            }
 
 			addChild(_image);
 			log.debug("createLogoImage() logo shown in fullscreen only " + _model.fullscreenOnly);
@@ -270,6 +272,10 @@ package org.flowplayer.view {
 			log.debug("updating " + _model.dimensions);
 			_panel.update(this, _model);
 			_panel.draw(this);
+
+            if (_player.pluginRegistry.getPlugin(_model.name)) {
+                _player.pluginRegistry.updateDisplayProperties(_model);
+            }
 		}
 		
 		private function hide(fadeSpeed:int = 0):void {
