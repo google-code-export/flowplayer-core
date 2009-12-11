@@ -392,10 +392,13 @@ import org.flowplayer.flow_internal;
 			if (! _type && _url) {
 				_type = ClipType.fromFileExtension(url);
 			}
-			if (! _type) {
-				return ClipType.VIDEO;
-			}
-			return _type;
+			if (_type) {
+                return _type;
+            }
+            if (_url && _url.indexOf("mp3:") >= 0) {
+                return ClipType.AUDIO;
+            }
+            return ClipType.VIDEO;
 		}
 
         public function get isFlashVideo():Boolean {
