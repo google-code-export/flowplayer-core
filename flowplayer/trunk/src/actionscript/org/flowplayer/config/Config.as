@@ -252,5 +252,9 @@ package org.flowplayer.config {
         public function get playlistFeed():String {
             return config.playlist is String ? config.playlist : null;
         }
+        
+        public function get playerSwfName():String {
+        	return _playerSwfName;
+        }
 	}
 }
