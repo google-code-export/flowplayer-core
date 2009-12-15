@@ -8,8 +8,7 @@ package org.flowplayer.config {
     import org.flowplayer.model.Playlist;
     import org.flowplayer.util.Log;
     import org.flowplayer.util.PropertyBinder;
-  //  import com.adobe.xml.syndication.rss.Item20;      
-  //  import com.adobe.xml.syndication.rss.RSS20;
+
 
     use namespace flow_internal;
     
@@ -21,15 +20,8 @@ package org.flowplayer.config {
         private var ns:Namespace = new Namespace("");
         private var ym:Namespace = new Namespace("http://search.yahoo.com/mrss/");
         private var fp:Namespace = new Namespace("http://flowplayer.org/fprss/");
-        private var bitrates:Array = [];
-        //private var feed:IFeed;
-		
-		/*namespace media = "http://search.yahoo.com/mrss/";
-		use namespace media;
-		
-		namespace fp = "http://flowplayer.org/fprss/";
-		use namespace fp;
-		*/
+
+   
         public function createClips(rawRSS:String, playlist:Playlist, commonClipObject:Object):Array {
             return parse(rawRSS, playlist, commonClipObject);
         }
@@ -42,12 +34,12 @@ package org.flowplayer.config {
             
             default xml namespace = ns;
 			
-			var xml:XML = new XML(rawRSS);
+			var rss:XML = new XML(rawRSS);
             
-            if (xml.name() == "rss" && Number(xml.@version) <= 2)
+            if (rss.name() == "rss" && Number(rss.@version) <= 2)
 			{	
      			
-     			for each (var item:XML in xml.channel.item) {
+     			for each (var item:XML in rss.channel.item) {
 
      		
 	            	try {
