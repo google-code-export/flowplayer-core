@@ -3,6 +3,9 @@ Version history:
 3.1.6
 -----
 - Added onMouseOver() and onMouseOut() listener registration methods to the Flowplayer API
+- enhancements to RSS playlist. Converted parsing to E4X, yahoo media and flowplayer namespace support. 
+- added feature to obtain bitrate and dimension information to a new clip custom property "bitrates" for future support for bitrate choosing. 
+- added getter for playerSwfName config
 
 3.1.5
 -----
