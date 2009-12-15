@@ -161,7 +161,7 @@
                 <arg line="-define+=CONFIG::skin,true" />
     			<arg line="-keep-as3-metadata=Value,External" />
     			<arg line="-source-path ${src-as} ${src-as-commercial} ${classpath}" />
-    			<arg line="-library-path ${libs-path} ${src-flash} @{license-lib}" />
+    			<arg line="-library-path ${libs-path} ${src-flash} ${plugin-swc} @{license-lib}" />
     			<arg line="-default-frame-rate=${framerate}" />
     			<arg line="-default-background-color=${bgcolor}" />
                 <arg line="-strict=true" />
