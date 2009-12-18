@@ -79,15 +79,20 @@ import org.flowplayer.model.ClipEvent;
 		
 
 		[External]
-		public function set label(label:String):void {
-			if (! _player) return;
-			log.debug("set label '" + label + "'");
+        public function set label(label:String):void {
             _play.label = label;
+            switchLabel(label);
+        }
+
+        private function switchLabel(label:String):void {
+            if (! _player) return;
+            log.debug("switchLabel() label '" + label + "'");
 			if (label && (! _button || ! (_button is LabelPlayButton))) {
 				log.debug("switching to label button ");
 				switchButton(new LabelPlayButton(_player, label));
 			}
 			if (! label && (! _button || (_button is LabelPlayButton))) {
+                log.debug("switching to standard non-label button ");
 				switchButton(new PlayOverlay());
 			}
 			if (label) {
@@ -339,15 +344,15 @@ import org.flowplayer.model.ClipEvent;
 
 		public function showButton(event:ClipEvent = null, label:String = null):void {
 			log.debug("showButton(), label " + label);
-			
+
 			// we only support labels if a custom button is not defined
 			CONFIG::commercialVersion {
 				if (! _play.url) {
-					this.label = label || _play.label;
+					switchLabel(label || _play.label);
 				}
 			}
 			CONFIG::freeVersion {
-				this.label = label || _play.label;
+				switchLabel(label || _play.label);
 			}
 			
 			if (! _button) return;
@@ -378,7 +383,7 @@ import org.flowplayer.model.ClipEvent;
             if (_playlist.hasNext(false) && _playlist.nextClip.autoPlay) {
                 return;
             }
-			showButton(event, _playlist.hasNext(false) ? null:  _play.replayLabel);
+			showButton(event, _playlist.hasNext(false) ? null : _play.replayLabel);
 		}
 		
 		public function hideButton(event:ClipEvent = null):void {
