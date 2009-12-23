@@ -19,11 +19,10 @@
 
 package org.flowplayer.controller {
     import flash.net.NetConnection;
-import flash.net.NetStream;
-import org.flowplayer.model.Clip;
+    import flash.net.NetStream;
+    import org.flowplayer.model.Clip;
 	import org.flowplayer.model.ClipEvent;
 	import org.flowplayer.model.Playlist;
-	
 	import flash.display.DisplayObject;	
 
 	/**
@@ -180,5 +179,10 @@ import org.flowplayer.model.Clip;
          * @param timeProvider
          */
         function set timeProvider(timeProvider:TimeProvider):void;
+        
+        /**
+         * Gets the type of StreamProvider either http, rtmp, psuedo. 
+         */
+        function get type():String;
     }
 }

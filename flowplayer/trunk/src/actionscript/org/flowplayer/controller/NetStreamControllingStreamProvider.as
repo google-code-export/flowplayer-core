@@ -825,6 +825,10 @@ import org.flowplayer.model.PluginModel;
             log.debug("set timeprovider() " + timeProvider);
             _timeProvider = timeProvider;
         }
+        
+        public function get type():String {
+        	return "http";
+        }
 
     }
 }
