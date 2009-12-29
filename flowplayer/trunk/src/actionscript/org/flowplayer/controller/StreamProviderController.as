@@ -98,6 +98,11 @@ package org.flowplayer.controller {
 			getProvider().seek(event, seconds);
 		}
 
+        override protected function doSwitchStream(param:ClipEvent):void {
+            var provider:StreamProvider = getProvider();
+            
+        }
+
 		public override function get time():Number {
 			return getProvider().time;
 		}

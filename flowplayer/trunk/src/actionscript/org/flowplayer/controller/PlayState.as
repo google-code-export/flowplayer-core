@@ -112,8 +112,12 @@ package org.flowplayer.controller {
 		internal function stopBuffering():void {
 			log.debug("cannot stop buffering in this state");
 		}
-		
-		internal function play():void {
+
+        internal function play():void {
+            log.debug("cannot start playing in this state");
+        }
+
+        internal function switchStream():void {
             log.debug("cannot start playing in this state");
         }
 

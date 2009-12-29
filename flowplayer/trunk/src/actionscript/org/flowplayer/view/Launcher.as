@@ -514,6 +514,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			}
 			log.debug("arrangeScreen(): arranging screen to pos " + screen.position);
 			screen.display = "block";
+            screen.alpha = 1;
 			screen.getDisplayObject().visible = true;
 			_pluginRegistry.updateDisplayProperties(screen, true);
 			_panel.update(screen.getDisplayObject(), screen);

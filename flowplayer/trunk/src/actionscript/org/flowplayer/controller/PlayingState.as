@@ -64,6 +64,11 @@ package org.flowplayer.controller {
             }
         }
 
+        internal override function switchStream():void {
+            log.debug("cannot start playing in this state");
+            onEvent(ClipEventType.SWITCH);
+        }
+
         override protected function setEventListeners(eventSupport:ClipEventSupport, add:Boolean = true):void {
             if (add) {
                 log.debug("adding event listeners");
