@@ -146,6 +146,11 @@ package org.flowplayer.view {
             addClip(clip, playlist.currentIndex);
             _playListController.playInstream(clip);
         }
+        
+        public function playSwitchStream(clip:Clip):void {
+        	log.debug("playSwitchStream(" + clip + ")");
+        	_playListController.playSwitchStream(clip);
+        }
 
 		/**
 		 * Starts buffering the current clip in playList.
