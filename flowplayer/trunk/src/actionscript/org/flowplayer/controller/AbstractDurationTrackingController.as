@@ -58,8 +58,8 @@ package org.flowplayer.controller {
                 stop(new ClipEvent(event), params[0], params[1]);
             } else if (event == ClipEventType.SEEK) {
                 seekTo(new ClipEvent(event), params[0]);
-            } else if (event == ClipEventType.SEEK) {
-                doSwitchStream(new ClipEvent(event));
+            } else if (event == ClipEventType.SWITCH) {
+				doSwitchStream(new ClipEvent(event), clip);
             }
 		}
 
@@ -202,7 +202,7 @@ package org.flowplayer.controller {
 		protected function doStopBuffering():void {
 		}
 
-        protected function doSwitchStream(param:ClipEvent):void {
+        protected function doSwitchStream(param:ClipEvent, clip:Clip):void {
         }
     }
 }
