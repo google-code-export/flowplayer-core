@@ -18,7 +18,9 @@
  */
 
 package org.flowplayer.controller {
-	import org.flowplayer.model.PlayerError;	
+    import flash.system.LoaderContext;
+
+    import org.flowplayer.model.PlayerError;
 	import org.flowplayer.util.URLUtil;	
 	
 	import flash.display.Loader;
@@ -107,7 +109,14 @@ package org.flowplayer.controller {
             _loadCompete = false;
 			for (var url:String in _loaders) {
 				log.debug("startLoading() " + URLUtil.addBaseURL(_baseUrl, url));
-				_loaders[url].load(new URLRequest(URLUtil.addBaseURL(_baseUrl, url)));
+                if (_loaders[url] is URLLoader) {
+                    _loaders[url].load(new URLRequest(URLUtil.addBaseURL(_baseUrl, url)));
+                } else {
+                    var context:LoaderContext = new LoaderContext();
+                    // set the check policy flag in the loader context
+                    context.checkPolicyFile=true;
+                    Loader(_loaders[url]).load(new URLRequest(URLUtil.addBaseURL(_baseUrl, url)), context);
+                }
 			}
 		}
 
@@ -116,7 +125,7 @@ package org.flowplayer.controller {
 			loader.addEventListener(Event.COMPLETE, onLoadComplete);
 			loader.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
 			loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecurityError);
-			return loader;
+            return loader;
 		}
 
 		private function createLoader():Loader {

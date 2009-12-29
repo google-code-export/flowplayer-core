@@ -230,6 +230,7 @@ import org.flowplayer.model.PluginModel;
 		public function get bufferEnd():Number {
 			if (! _netStream) return 0;
 			if (! currentClipStarted()) return 0;
+//            log.debug("bytes loaded: " + _netStream.bytesLoaded +", bytes total: " + _netStream.bytesTotal + ", duration: " + clip.durationFromMetadata);
 			return Math.min(_netStream.bytesLoaded / _netStream.bytesTotal * clip.durationFromMetadata, clip.duration);
 		}
 

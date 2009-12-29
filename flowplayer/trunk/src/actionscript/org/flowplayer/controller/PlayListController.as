@@ -114,6 +114,10 @@ package org.flowplayer.controller {
             _state.play();
         }
 
+        flow_internal function switchStream(clip:Clip):void {
+            _state.switchStream();
+        }
+
 		flow_internal function play(clip:Clip = null, clipIndex:Number = -1):Clip {
 			log.debug("play() " + clip + ", " + clipIndex);
 			if (clip || clipIndex >= 0) {

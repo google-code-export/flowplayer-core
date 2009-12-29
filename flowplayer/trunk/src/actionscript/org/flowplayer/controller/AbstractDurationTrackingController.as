@@ -58,6 +58,8 @@ package org.flowplayer.controller {
                 stop(new ClipEvent(event), params[0], params[1]);
             } else if (event == ClipEventType.SEEK) {
                 seekTo(new ClipEvent(event), params[0]);
+            } else if (event == ClipEventType.SEEK) {
+                doSwitchStream(new ClipEvent(event));
             }
 		}
 
@@ -170,7 +172,7 @@ package org.flowplayer.controller {
             doSeekTo(event, seconds);
             durationTracker.time = seconds;
         }
-		
+
 		protected function get clip():Clip {
 			return _playlist.current;
 		}
@@ -199,5 +201,8 @@ package org.flowplayer.controller {
 		
 		protected function doStopBuffering():void {
 		}
+
+        protected function doSwitchStream(param:ClipEvent):void {
+        }
     }
 }

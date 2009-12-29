@@ -233,7 +233,7 @@ package org.flowplayer.config {
 			
 			// add defaults settings from the plugin instance (will not override those set in config)
 			if (disp is Plugin) {
-				log.debug(name + " implements Pluggable, querying defaultConfig");
+				log.debug(name + " implements Plugin, querying defaultConfig");
 				var defaults:Object = Plugin(disp).getDefaultConfig();
 				if (defaults) {
 					fixPositionSettings(plugin, defaults);
