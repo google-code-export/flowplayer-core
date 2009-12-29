@@ -147,9 +147,9 @@ package org.flowplayer.view {
             _playListController.playInstream(clip);
         }
         
-        public function switchStream(clip:Clip):void {
+        public function switchStream(clip:Clip, netStreamPlayOptions:Object = null):void {
         	log.debug("playSwitchStream(" + clip + ")");
-        	_playListController.switchStream(clip);
+        	_playListController.switchStream(clip, netStreamPlayOptions);
         }
 
 		/**
