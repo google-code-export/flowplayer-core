@@ -114,8 +114,8 @@ package org.flowplayer.controller {
             _state.play();
         }
 
-        flow_internal function switchStream(clip:Clip):void {
-            _state.switchStream();
+        flow_internal function switchStream(clip:Clip, netStreamPlayOption:Object = null):void {
+            _state.switchStream(netStreamPlayOption);
         }
 
 		flow_internal function play(clip:Clip = null, clipIndex:Number = -1):Clip {

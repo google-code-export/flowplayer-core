@@ -117,7 +117,7 @@ package org.flowplayer.controller {
             log.debug("cannot start playing in this state");
         }
 
-        internal function switchStream():void {
+        internal function switchStream(netStreamPlayOptions:Object = null):void {
             log.debug("cannot start playing in this state");
         }
 

@@ -98,29 +98,39 @@ package org.flowplayer.controller {
 			getProvider().seek(event, seconds);
 		}
 
-        override protected function doSwitchStream(event:ClipEvent, clip:Clip):void {
-          
+        override protected function doSwitchStream(event:ClipEvent, clip:Clip, netStreamPlayOptions:Object = null):void {
+          	
+          	
+          	
             var provider:StreamProvider = getProvider();
          	var currentTime:Number = provider.netStream.time;
-         
+         	
+         	if (provider.netStream.hasOwnProperty("play2") && netStreamPlayOptions)
+         	{
+				import flash.net.NetStreamPlayOptions;
+				
+         		if (netStreamPlayOptions is NetStreamPlayOptions) {
+         			provider.netStream.play2(netStreamPlayOptions as NetStreamPlayOptions);
+         		}
+         	} else {
 			
-            switch (provider.type) {
-        		case ProviderTypes.HTTP: 
-        	    	provider.load(event, clip);
-        	    break;
-        	 	case ProviderTypes.PSEUDO:     	 			
-        	 		clip.onMetaData(function(event:ClipEvent):void {
-        	 			provider.seek(event,currentTime);
-        	 		});
-        	 		provider.load(event, clip);	
-        	 	break;
-        	 	case ProviderTypes.RTMP:
-        	 		//provider.netStream.close();
-					provider.netStream.play(clip.url);
-					provider.netStream.seek(currentTime);
-        	 	break;
-        	}
-            
+	            switch (provider.type) {
+	        		case ProviderTypes.HTTP: 
+	        	    	provider.load(event, clip);
+	        	    break;
+	        	 	case ProviderTypes.PSEUDO:     	 			
+	        	 		clip.onMetaData(function(event:ClipEvent):void {
+	        	 			provider.seek(event,currentTime);
+	        	 		});
+	        	 		provider.load(event, clip);	
+	        	 	break;
+	        	 	case ProviderTypes.RTMP:
+	        	 		//provider.netStream.close();
+						provider.netStream.play(clip.url);
+						provider.netStream.seek(currentTime);
+	        	 	break;
+	        	}
+         	}
             
         }
 
