@@ -100,13 +100,14 @@ package org.flowplayer.controller {
 
         override protected function doSwitchStream(event:ClipEvent, clip:Clip, netStreamPlayOptions:Object = null):void {
           	
-          	
+          	import org.flowplayer.util.VersionUtil;
           	
             var provider:StreamProvider = getProvider();
          	var currentTime:Number = provider.netStream.time;
-         	
-         	if (provider.netStream.hasOwnProperty("play2") && netStreamPlayOptions)
-         	{
+			
+			
+			
+         	if (provider.netStream.hasOwnProperty("play2") && netStreamPlayOptions && VersionUtil.isFlash10()) {
 				import flash.net.NetStreamPlayOptions;
 				
          		if (netStreamPlayOptions is NetStreamPlayOptions) {
