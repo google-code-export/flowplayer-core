@@ -98,8 +98,30 @@ package org.flowplayer.controller {
 			getProvider().seek(event, seconds);
 		}
 
-        override protected function doSwitchStream(param:ClipEvent):void {
+        override protected function doSwitchStream(event:ClipEvent):void {
+          
             var provider:StreamProvider = getProvider();
+            var clip:Clip = event.target as Clip;
+         	var currentTime:Number = provider.netStream.time;
+         
+            switch (provider.type) {
+        		case ProviderTypes.HTTP: 
+        	    	provider.load(event, clip);
+        	    	
+        	    break;
+        	 	case ProviderTypes.PSEUDO:     	 			
+        	 		clip.onMetaData(function(event:ClipEvent):void {
+        	 			provider.seek(event,currentTime);
+        	 		});
+        	 		provider.load(event, clip);	
+        	 	break;
+        	 	case ProviderTypes.RTMP:
+        	 		provider.netStream.close();
+					provider.netStream.play(clip.url);
+					provider.netStream.seek(currentTime);
+        	 	break;
+        	}
+            
             
         }
 
