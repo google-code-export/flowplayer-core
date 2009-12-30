@@ -51,6 +51,7 @@ package org.flowplayer.view {
     import org.flowplayer.util.LogConfiguration;
     import org.flowplayer.util.PropertyBinder;
     import org.flowplayer.util.TextUtil;
+    import org.flowplayer.util.VersionUtil;
     import org.flowplayer.util.URLUtil;
 
     use namespace flow_internal;
@@ -91,6 +92,7 @@ package org.flowplayer.view {
 			var style:FlowStyleSheet;
 			var styleable:StyleableSprite;
 			var animation:Animation;
+			var version:VersionUtil;
 			
 			if (_instance) {
 				log.error("Flowplayer already instantiated");
