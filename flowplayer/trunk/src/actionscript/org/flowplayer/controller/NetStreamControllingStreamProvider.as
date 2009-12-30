@@ -205,6 +205,12 @@ import org.flowplayer.model.PluginModel;
 			doStop(event, _netStream, closeStreamAndConnection);
 		}
 		
+		public final function switchStream(event:ClipEvent, clip:Clip, netStreamPlayOptions:Object = null):void {
+			log.debug("switchStream called");
+			if (! _netStream) return;
+			doSwitchStream(event, _netStream, clip, netStreamPlayOptions);
+		}
+		
 		/**
 		 * @inheritDoc
 		 */
@@ -446,6 +452,10 @@ import org.flowplayer.model.PluginModel;
 			log.debug("calling netStream.seek(" + seconds + ")");
             _seeking = true;
 			netStream.seek(seconds);
+		}
+		
+		protected function doSwitchStream(event:ClipEvent, netStream:NetStream, clip:Clip, netStreamPlayOptions:Object = null):void {
+			load(event, clip);
 		}
 
 		/**

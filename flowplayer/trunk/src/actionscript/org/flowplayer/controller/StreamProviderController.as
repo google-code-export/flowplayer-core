@@ -99,7 +99,11 @@ package org.flowplayer.controller {
 		}
 
         override protected function doSwitchStream(event:ClipEvent, clip:Clip, netStreamPlayOptions:Object = null):void {
-          	
+        	
+        	var provider:StreamProvider = getProvider();
+      
+        	provider.switchStream(event, clip, netStreamPlayOptions);
+          	/*
           	import org.flowplayer.util.VersionUtil;
           	
             var provider:StreamProvider = getProvider();
@@ -131,7 +135,7 @@ package org.flowplayer.controller {
 						provider.netStream.seek(currentTime);
 	        	 	break;
 	        	}
-         	}
+         	}*/
             
         }
 

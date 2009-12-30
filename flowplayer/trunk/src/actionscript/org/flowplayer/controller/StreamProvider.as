@@ -184,5 +184,14 @@ package org.flowplayer.controller {
          * Gets the type of StreamProvider either http, rtmp, psuedo. 
          */
         function get type():String;
+        
+        /**
+         * Switch the stream in realtime with / without dynamic stream switching support
+         * 
+         * @param event ClipEvent the clip event
+         * @param clip Clip the clip to switch to
+         * @param netStreamPlayOptions Object the NetStreamPlayOptions object to enable dynamic stream switching
+         */
+        function switchStream(event:ClipEvent, clip:Clip, netStreamPlayOptions:Object = null):void;
     }
 }
