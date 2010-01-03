@@ -5,8 +5,8 @@
 	<property name="version-2" value="1" />
 	<property name="version-3" value="6" />
 	<property name="version-status" value="dev" />
-	<property name="controls-version-info" value="3.1.5" />
-	<property name="audio-version-info" value="3.1.2" />
+	<property name="controls-version-info" value="3.1.6-dev" />
+	<property name="audio-version-info" value="3.1.3" />
 	<property name="flowplayer-js-version-info" value="3.1.4" />
 	<property name ="source-dist-root-folder" value="flowplayer" />
 	
@@ -56,6 +56,7 @@
 	
     <property name="player-binary" value="flowplayer.swf" />
     <property name="debug-player-binary" value="flowplayer.debug.swf" />
+    <property name="commercial-debug-player-binary" value="flowplayer.commercial.debug.swf" />
 	<property name="commercial-player-binary" value="flowplayer.commercial.swf" />
 	<property name="player-binary-versioned" value="flowplayer-${version-info}.swf" />
 	<property name="commercial-player-binary-versioned" value="flowplayer.commercial-${version-info}.swf" />
@@ -107,7 +108,8 @@
 
     <target name="build-debug" description="builds the debug version of the player" depends="prepare">
         <property name="licenselib" value="${lib-dir}/licensekey" />
-    	<compile-player binary="${debug-player-binary}" commercial="false" free="true" license-lib="${licenselib}" debug="true"/>
+        <compile-player binary="${debug-player-binary}" commercial="false" free="true" license-lib="${licenselib}" debug="true"/>
+        <compile-player binary="${commercial-debug-player-binary}" commercial="true" free="false" license-lib="${licenselib}" debug="true"/>
     </target>
 
     <target name="compile-commercial">
@@ -160,8 +162,8 @@
                 <arg line="-define+=CONFIG::audioVersion,${audio-version-info-quoted}" />
                 <arg line="-define+=CONFIG::skin,true" />
     			<arg line="-keep-as3-metadata=Value,External" />
-    			<arg line="-source-path ${src-as} ${src-as-commercial} ${classpath}" />
-    			<arg line="-library-path ${libs-path} ${src-flash} ${plugin-swc} @{license-lib}" />
+    			<arg line="-source-path ${src-as} ${src-as-commercial} ${classpath} ${plugin-libs}" />
+    			<arg line="-library-path ${libs-path} ${src-flash} @{license-lib}" />
     			<arg line="-default-frame-rate=${framerate}" />
     			<arg line="-default-background-color=${bgcolor}" />
                 <arg line="-strict=true" />
@@ -289,8 +291,8 @@
                 <fileset dir="${plugins.dir}" includes="${plugin.buildfiles}"/>
             	<property name="remotedir" value="${remotedir}" />
             	<property name="swfremotedir" value="${swfremotedir}" />
-            	<property name="keyfile" value="${keyfile}" />
-                <property name="pass" value="${remotepass}" />
+            	<property name="aws-accessId" value="${aws-accessId}" />
+                <property name="aws-secretKey" value="${aws-secretKey}" />
                 <property name="url-file" value="${url-file}" />
             </subant>
         </sequential>
