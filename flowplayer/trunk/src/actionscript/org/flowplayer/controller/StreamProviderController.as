@@ -72,90 +72,53 @@ package org.flowplayer.controller {
 			}
 		}
 
-		protected override function doLoad(event:ClipEvent, clip:Clip, pauseAfterStart:Boolean = false):void {
-//			_metadataDispatched = false;
+		override protected function doLoad(event:ClipEvent, clip:Clip, pauseAfterStart:Boolean = false):void {
 			getProvider().load(event, clip, pauseAfterStart);
 		}
 
-		protected override function doPause(event:ClipEvent):void {
+		override protected function doPause(event:ClipEvent):void {
 			getProvider().pause(event);
 		}
 
-		protected override function doResume(event:ClipEvent):void {
+		override protected function doResume(event:ClipEvent):void {
 			getProvider().resume(event);
 		}
 
-		protected override function doStop(event:ClipEvent, closeStream:Boolean):void {
+		override protected function doStop(event:ClipEvent, closeStream:Boolean):void {
 			getProvider().stop(event, closeStream);
 		}
 
-		protected override function doStopBuffering():void {
+		override protected function doStopBuffering():void {
 			getProvider().stopBuffering();
 		}
 
-		protected override function doSeekTo(event:ClipEvent, seconds:Number):void {
+		override protected function doSeekTo(event:ClipEvent, seconds:Number):void {
 			durationTracker.time = seconds;
 			getProvider().seek(event, seconds);
 		}
 
         override protected function doSwitchStream(event:ClipEvent, clip:Clip, netStreamPlayOptions:Object = null):void {
-        	
         	var provider:StreamProvider = getProvider();
-      
         	provider.switchStream(event, clip, netStreamPlayOptions);
-          	/*
-          	import org.flowplayer.util.VersionUtil;
-          	
-            var provider:StreamProvider = getProvider();
-         	var currentTime:Number = provider.netStream.time;
-			
-			
-			
-         	if (provider.netStream.hasOwnProperty("play2") && netStreamPlayOptions && VersionUtil.isFlash10()) {
-				import flash.net.NetStreamPlayOptions;
-				
-         		if (netStreamPlayOptions is NetStreamPlayOptions) {
-         			provider.netStream.play2(netStreamPlayOptions as NetStreamPlayOptions);
-         		}
-         	} else {
-			
-	            switch (provider.type) {
-	        		case ProviderTypes.HTTP: 
-	        	    	provider.load(event, clip);
-	        	    break;
-	        	 	case ProviderTypes.PSEUDO:     	 			
-	        	 		clip.onMetaData(function(event:ClipEvent):void {
-	        	 			provider.seek(event,currentTime);
-	        	 		});
-	        	 		provider.load(event, clip);	
-	        	 	break;
-	        	 	case ProviderTypes.RTMP:
-	        	 		//provider.netStream.close();
-						provider.netStream.play(clip.url);
-						provider.netStream.seek(currentTime);
-	        	 	break;
-	        	}
-         	}*/
-            
         }
 
 		public override function get time():Number {
 			return getProvider().time;
 		}
 
-		protected override function get bufferStart():Number {
+		override protected function get bufferStart():Number {
 			return getProvider().bufferStart;
 		}
 
-		protected override function get bufferEnd():Number {
+		override protected function get bufferEnd():Number {
 			return getProvider().bufferEnd;
 		}
 
-		protected override function get fileSize():Number {
+		override protected function get fileSize():Number {
 			return getProvider().fileSize;
 		}
 
-		protected override function get allowRandomSeek():Boolean {
+		override protected function get allowRandomSeek():Boolean {
 			return getProvider().allowRandomSeek;
 		}
 
