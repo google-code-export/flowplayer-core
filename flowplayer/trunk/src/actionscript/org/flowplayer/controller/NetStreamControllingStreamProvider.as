@@ -456,6 +456,7 @@ import org.flowplayer.model.PluginModel;
 		
 		protected function doSwitchStream(event:ClipEvent, netStream:NetStream, clip:Clip, netStreamPlayOptions:Object = null):void {
 			load(event, clip);
+            dispatchEvent(event);
 		}
 
 		/**
