@@ -86,7 +86,7 @@ package org.flowplayer.view {
 		}
 
 		protected override function onResize():void {
-			log.debug("onResize " + Arrange.describeBounds(this));
+//			log.debug("onResize " + Arrange.describeBounds(this));
 			_resizer.setMaxSize(width, height);
 			// we need to resize the previous clip because it might be the stopped image that we are currently showing
 			resizeClip(_playList.previousClip);
@@ -131,7 +131,6 @@ package org.flowplayer.view {
 		// resized is called when the clip has been resized
 		internal function resized(clip:Clip):void {
 			var disp:DisplayObject = _displays[clip];
-            log.debug("resized " + clip + ", display " + disp);
             disp.width = clip.width;
 			disp.height = clip.height;
 			if (clip.accelerated && _fullscreenManaer.isFullscreen) {
@@ -141,8 +140,6 @@ package org.flowplayer.view {
 				return;
 			}
 			Arrange.center(disp, width, height);
-			log.debug("resized() " + Arrange.describeBounds(this));
-			log.info("display of clip " +clip+ " arranged to  " + Arrange.describeBounds(disp));
 		}
 
 		public function getDisplayBounds():Rectangle {
