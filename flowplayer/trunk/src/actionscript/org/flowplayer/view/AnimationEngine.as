@@ -174,7 +174,7 @@ package org.flowplayer.view {
 				if (viewWithRunningAnimation == view) {
 					var anim:Animation = _runningPlayablesByView[viewWithRunningAnimation] as Animation;
 					
-					if (anim && currentAnimation && anim != currentAnimation || ! currentAnimation) {
+					if (anim && (currentAnimation && anim != currentAnimation || ! currentAnimation)) {
 						if (currentAnimation && currentAnimation.tweenProperty == anim.tweenProperty || ! currentAnimation) {
 							log.info("tween for property " + anim.tweenProperty + " was canceled on view " + view);
 							_canceledByPlayable[anim] = true;
