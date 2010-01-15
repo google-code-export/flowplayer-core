@@ -119,8 +119,8 @@ import flash.net.navigateToURL;
 		private function drawBackground():void {
 			graphics.clear();
 			if (! _style.backgroundTransparent) {
-				log.debug("drawing background color " + _style.backgroundColor);
-				graphics.beginFill(_style.backgroundColor);
+				log.debug("drawing background color " + _style.backgroundColor + ", alpha " + _style.backgroundAlpha);
+				graphics.beginFill(_style.backgroundColor, _style.backgroundAlpha);
 				GraphicsUtil.drawRoundRectangle(graphics, 0, 0, width, height, _style.borderRadius);
 				graphics.endFill();
 			} else {
@@ -358,7 +358,7 @@ import flash.net.navigateToURL;
 			_border = new Sprite();
 			addChild(_border);
 			log.info("border weight is " + _style.borderWidth);		
-			_border.graphics.lineStyle(_style.borderWidth, _style.borderColor);
+			_border.graphics.lineStyle(_style.borderWidth, _style.borderColor, _style.borderAlpha);
 			GraphicsUtil.drawRoundRectangle(_border.graphics, 0, 0, width, height, _style.borderRadius);
 		}
 		

@@ -154,17 +154,28 @@ package org.flowplayer.view {
 		 * Background color of the root style.
 		 */
 		public function get backgroundColor():uint {
-			if (hasProperty("backgroundColor")) { 
-				return parseColorValue("backgroundColor");
-			}
-			if (hasProperty("background")) { 
-				var props:Array = parseShorthand("background");
-				if (String(props[0]).indexOf("#") == 0) {
-					return colorValue(props[0]);
-				}
-			}
+            if (hasProperty("background")) {
+                return colorValue(parseShorthand("background")[0]);
+            }
+            if (hasProperty("backgroundColor")) {
+                return parseColorValue("backgroundColor");
+            }
 			return 0x333333;
 		}
+
+        /**
+         * Background aplpa.
+         * @return
+         */
+        public function get backgroundAlpha():Number {
+            if (hasProperty("background")) {
+                return colorAlpha(parseShorthand("background")[0]);
+            }
+            if (hasProperty("backgroundColor")) {
+                return parseColorAlpha("backgroundColor");
+            }
+            return 1;
+        }
 		
 		/**
 		 * Background gradient of the root style.
@@ -196,8 +207,10 @@ package org.flowplayer.view {
 		 * Border weight value of the root style.
 		 */
 		public function get borderWidth():Number {
-			if (hasProperty("borderWidth")) return NumberUtil.decodePixels(rootStyle["borderWidth"]);
-			if (! hasProperty("border")) return 1;
+            if (! hasProperty("border")) return 1;
+            if (hasProperty("borderWidth")) {
+                return NumberUtil.decodePixels(rootStyle["borderWidth"]);
+            }
 			return NumberUtil.decodePixels(parseShorthand("border")[0]);
 		}
 		
@@ -205,12 +218,26 @@ package org.flowplayer.view {
 		 * Border color value of the root style.
 		 */
 		public function get borderColor():uint {
-			if (hasProperty("borderColor")) return parseColorValue("borderColor");
-			if (hasProperty("border")) {
-				return colorValue(parseShorthand("border")[2]);
-			}
+            if (hasProperty("border")) {
+                return colorValue(parseShorthand("border")[2]);
+            }
+            if (hasProperty("borderColor")) return parseColorValue("borderColor");
 			return 0xffffff;
 		}
+
+        /**
+         * Border alpha of the root style.
+         * @return
+         */
+        public function get borderAlpha():Number {
+            if (hasProperty("border")) {
+                return colorAlpha(parseShorthand("border")[2]);
+            }
+            if (hasProperty("borderColor")) {
+                return parseColorAlpha("borderColor");
+            }
+            return 0xffffff;
+        }
 		
 		/**
 		 * Border radius of the root style.
@@ -301,15 +328,50 @@ package org.flowplayer.view {
 		}
 		
 		private function parseColorValue(colorProperty:String):uint {
-			var value:String = rootStyle[colorProperty];
-			return colorValue(value); 
+			return colorValue(rootStyle[colorProperty]);
 		}
-		
-		private function colorValue(color:String):uint {
-			if (! color) return 0xffffff;
-			return parseInt("0x" + color.substr(1));;
-		}
-		
+
+        private function parseColorAlpha(colorProperty:String):Number {
+            return colorAlpha(rootStyle[colorProperty]);
+        }
+
+        private function colorValue(color:String):uint {
+            if (! color) return 0xffffff;
+            if (color.indexOf("rgb") == 0) {
+                var rgb:Array = parseRGBAValues(color);
+                return rgb[0] << 16 ^ rgb[1] << 8 ^ rgb[2];
+            }
+            return parseInt("0x" + color.substr(1));
+        }
+
+        private function colorAlpha(color:String):Number {
+            if (! color) return 1;
+            if (color.indexOf("rgb") == 0) {
+                var rgb:Array = parseRGBAValues(color);
+                if (rgb.length == 4) {
+                    return rgb[3];
+                }
+            }
+            return 1;
+        }
+
+        private function parseRGBAValues(color:String):Array {
+            var input:String = stripSpaces(color);
+            var start:int = input.indexOf("(") + 1;
+            input = input.substr(start, input.indexOf(")") - start);
+            return input.split(",");
+        }
+
+        private function stripSpaces(input:String):String {
+            var result:String = "";
+            for (var j:int = 0; j < input.length; j++) {
+                if (input.charAt(j) != " ") {
+                    result += input.charAt(j);
+                }
+            }
+            return result;
+        }
+
 		private function parseShorthand(property:String):Array {
 			var str:String = rootStyle[property];
 			return str.split(" ");
