@@ -2,10 +2,14 @@ Version history:
 
 3.1.6
 -----
+- canvas, controlbar and the content plugin backgound color and border color can be now given with rgb() and rgba() CSS style syntax
 - Added onMouseOver() and onMouseOut() listener registration methods to the Flowplayer API
 - enhancements to RSS playlist. Converted parsing to E4X, yahoo media and flowplayer namespace support. 
 - added feature to obtain bitrate and dimension information to a new clip custom property "bitrates" for future support for bitrate choosing. 
 - added getter for playerSwfName config
+- if clip.url has the string "mp3:" in it, the clip.type will report 'audio'
+Fixes:
+- onSeek() was not fired when seeking while paused and when using RTMP. An extra onStart was fired too.
 
 3.1.5
 -----
