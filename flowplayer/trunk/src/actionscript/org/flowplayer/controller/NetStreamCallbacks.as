@@ -28,17 +28,9 @@ package org.flowplayer.controller {
 
          function onXMPData(infoObject:Object):void;
 
-//         function onBWDone(infoObject:Object):void;
-
-//         function onCuePoint(infoObject:Object):void;
-
          function onCaption(cps:String,spk:Number):void;
 
          function onCaptionInfo(obj:Object):void;
-
-//		function onLastSecond(infoObject:Object):void;
-
-         function onPlayStatus(infoObject:Object):void;
 
          function onImageData(obj:Object):void;
 

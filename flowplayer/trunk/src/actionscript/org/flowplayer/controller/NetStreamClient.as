@@ -85,10 +85,6 @@ import org.flowplayer.model.ClipEventType;
 			_clip.dispatchNetStreamEvent("onCaptionInfo", infoObject);
 		}
 		
-		public function onPlayStatus(infoObject:Object):void {
-			_clip.dispatchNetStreamEvent("onPlayStatus", infoObject);
-		}
-		
 		public function onImageData(infoObject:Object):void {
 			_clip.dispatchNetStreamEvent("onImageData", infoObject);
 		}
