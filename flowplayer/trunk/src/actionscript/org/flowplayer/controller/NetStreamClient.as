@@ -46,23 +46,18 @@ import org.flowplayer.model.ClipEventType;
 		public function onMetaData(infoObject:Object):void {
 			log.info("onMetaData, current clip " + _clip);
 
-			if (_clip.metaData && ! isNewFile()) {
-                _clip.dispatch(ClipEventType.METADATA);
-				return;
-			}
+            log.debug("onMetaData, data for clip " + _clip + ":");
+            var metaData:Object = new Object();
+            for (var key:String in infoObject) {
+                log.debug(key + ": " + infoObject[key]);
+                metaData[key] = infoObject[key];
+            }
+            _clip.metaData = metaData;
 
-			log.debug("onMetaData, data for clip " + _clip + ":");
-			var metaData:Object = new Object();
-			for (var key:String in infoObject) {
-				log.debug(key + ": " + infoObject[key]);
-				metaData[key] = infoObject[key];
-			}
-			_clip.metaData = metaData;
-
-			if (metaData.cuePoints && isNewFile()) {
-				log.debug("clip has embedded cuepoints");
-				_clip.addCuepoints(_config.createCuepoints(metaData.cuePoints, "embedded", _clip.cuepointMultiplier));
-			}
+            if (metaData.cuePoints && isNewFile()) {
+                log.debug("clip has embedded cuepoints");
+                _clip.addCuepoints(_config.createCuepoints(metaData.cuePoints, "embedded", _clip.cuepointMultiplier));
+            }
 
             _previousUrl = _clip.url;
             _clip.dispatch(ClipEventType.METADATA);
