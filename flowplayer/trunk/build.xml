@@ -4,7 +4,7 @@
 	<property name="version-1" value="3" />
 	<property name="version-2" value="1" />
 	<property name="version-3" value="6" />
-	<property name="version-status" value="dev" />
+	<property name="version-status" value="dev3" />
 	<property name="controls-version-info" value="3.1.6-dev" />
 	<property name="audio-version-info" value="3.1.3" />
 	<property name="flowplayer-js-version-info" value="3.1.4" />
@@ -35,6 +35,10 @@
     <condition property="plugin-skin" value="${controls}" else="default">
         <isset property="controls" />
     </condition>
+    <condition property="has-slowmotion-buttons" value="true" else="false">
+        <equals arg1="controls" arg2="modern" />
+    </condition>
+
     <condition property="plugin-libs" value="${controls-dir}/src/flash/${plugin-skin}" else="">
         <available file="${controls-dir}/build.xml" />
     </condition>
@@ -98,7 +102,7 @@
 		<compile-player binary="${bundled-basename}.swf" commercial="true" free="false" license-lib="${bundled-license-lib}" debug="false" />
     	<copy file="${build-dir}/${bundled-basename}.swf" tofile="${build-dir}/${bundled-basename}-${version-info}.swf" />
 		<example player-swf="${bundled-basename}-${version-info}.swf" example-dir="examble-bundled"/>
-		<zip-player license="LICENSE_BUNDLED.txt" player-swf="${bundled-basename}-${version-info}.swf" player-swf-dir="${build-dir}" zip-name="${bundled-basename}-${version-info}.zip" example-dir="examble-bundled" />
+		<zip-player license="LICENSE_UNLIMITED.txt" player-swf="${bundled-basename}-${version-info}.swf" player-swf-dir="${build-dir}" zip-name="${bundled-basename}-${version-info}.zip" example-dir="examble-bundled" />
 	</target>
 
     <target name="compile">
@@ -161,6 +165,7 @@
     			<arg line="-define+=CONFIG::controlsVersion,${controls-version-info-quoted}" />
                 <arg line="-define+=CONFIG::audioVersion,${audio-version-info-quoted}" />
                 <arg line="-define+=CONFIG::skin,true" />
+                <arg line="-define+=CONFIG::hasSlowMotion,${has-slowmotion-buttons}" />
     			<arg line="-keep-as3-metadata=Value,External" />
     			<arg line="-source-path ${src-as} ${src-as-commercial} ${classpath} ${plugin-libs}" />
     			<arg line="-library-path ${libs-path} ${src-flash} @{license-lib}" />
@@ -172,7 +177,7 @@
     			<arg line="-frame 'player' org.flowplayer.view.Launcher" />
     			<arg line="-file-specs '${src-as}/org/flowplayer/view/Preloader.as'" />
     			<arg line="-output '${build-dir}/@{binary}'"/>
-                <!--<arg line="-target-player '10.0.0'" />-->
+                <arg line="-target-player '10.0.0'" />
     		</exec>
         </sequential>
     </macrodef>
@@ -289,7 +294,8 @@
         <sequential>
             <subant target="@{target}">
                 <fileset dir="${plugins.dir}" includes="${plugin.buildfiles}"/>
-            	<property name="remotedir" value="${remotedir}" />
+                <property name="remotedir" value="${remotedir}" />
+                <property name="all-swf-zip" value="${basedir}/dist/latest.zip" />
             	<property name="swfremotedir" value="${swfremotedir}" />
             	<property name="aws-accessId" value="${aws-accessId}" />
                 <property name="aws-secretKey" value="${aws-secretKey}" />
