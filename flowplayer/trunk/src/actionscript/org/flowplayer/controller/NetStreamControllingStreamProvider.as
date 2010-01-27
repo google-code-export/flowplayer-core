@@ -208,6 +208,7 @@ import org.flowplayer.model.PluginModel;
 		public final function switchStream(event:ClipEvent, clip:Clip, netStreamPlayOptions:Object = null):void {
 			log.debug("switchStream called");
 			if (! _netStream) return;
+			//clip.currentTime = 0;
 			doSwitchStream(event, _netStream, clip, netStreamPlayOptions);
 		}
 		
@@ -220,7 +221,7 @@ import org.flowplayer.model.PluginModel;
 //			if (! _started) {
 //				return 0;
 //			}
-			return getCurrentPlayheadTime(netStream);
+			return getCurrentPlayheadTime(netStream) + clip.currentTime;
 		}
 		
 		/**
@@ -356,6 +357,7 @@ import org.flowplayer.model.PluginModel;
 		 * @param clip
 		 */
 		protected function doLoad(event:ClipEvent, netStream:NetStream, clip:Clip):void {
+			clip.currentTime = 0;
 			netStream.client = new NetStreamClient(clip, _player.config, _streamCallbacks);
 			netStreamPlay(getClipUrl(clip));
 		}
@@ -501,7 +503,8 @@ import org.flowplayer.model.PluginModel;
 		 * Is the playback duration of current clip reached?
 		 */
 		protected function isDurationReached():Boolean {
-			return Math.abs(getCurrentPlayheadTime(netStream) - clip.duration) <= 0.5;
+			//return Math.abs(getCurrentPlayheadTime(netStream) - clip.duration) <= 0.5;
+			return Math.abs(time - clip.duration) <= 0.5;
 		}
 		
 		/**
@@ -716,7 +719,7 @@ import org.flowplayer.model.PluginModel;
 			dispatchEvent(new ClipEvent(playEvent, info));
 		}
 		
-		private function doStop(event:ClipEvent, netStream:NetStream, closeStreamAndConnection:Boolean = false):void {
+		protected function doStop(event:ClipEvent, netStream:NetStream, closeStreamAndConnection:Boolean = false):void {
 			log.debug("doStop");
 			_stopping = true;
 			if (closeStreamAndConnection) {
