@@ -25,6 +25,7 @@ package org.flowplayer.view {
 	import flash.text.StyleSheet;
 	
 	import org.flowplayer.util.Log;
+	import org.flowplayer.util.StyleSheetUtil;
 	import org.flowplayer.view.FlowStyleSheet;
 	
 	import com.adobe.utils.StringUtil;	
@@ -126,7 +127,7 @@ package org.flowplayer.view {
 		 * The padding of the root style.
 		 */
 		public function get padding():Array {
-			if (! hasProperty("padding")) return [5, 5, 5, 5];
+			if (! StyleSheetUtil.hasProperty("padding", rootStyle)) return [5, 5, 5, 5];
 			var paddingStr:String = rootStyle["padding"];
 			
 			if (paddingStr.indexOf(" ") > 0) {
@@ -154,10 +155,10 @@ package org.flowplayer.view {
 		 * Background color of the root style.
 		 */
 		public function get backgroundColor():uint {
-            if (hasProperty("background")) {
-                return colorValue(parseShorthand("background")[0]);
+            if (StyleSheetUtil.hasProperty("background", rootStyle)) {
+                return StyleSheetUtil.colorValue(StyleSheetUtil.parseShorthand("background", rootStyle)[0]);
             }
-            if (hasProperty("backgroundColor")) {
+            if (StyleSheetUtil.hasProperty("backgroundColor", rootStyle)) {
                 return parseColorValue("backgroundColor");
             }
 			return 0x333333;
@@ -168,10 +169,10 @@ package org.flowplayer.view {
          * @return
          */
         public function get backgroundAlpha():Number {
-            if (hasProperty("background")) {
-                return colorAlpha(parseShorthand("background")[0]);
+            if (StyleSheetUtil.hasProperty("background", rootStyle)) {
+                return StyleSheetUtil.colorAlpha(StyleSheetUtil.parseShorthand("background", rootStyle)[0]);
             }
-            if (hasProperty("backgroundColor")) {
+            if (StyleSheetUtil.hasProperty("backgroundColor", rootStyle)) {
                 return parseColorAlpha("backgroundColor");
             }
             return 1;
@@ -181,7 +182,7 @@ package org.flowplayer.view {
 		 * Background gradient of the root style.
 		 */
 		public function get backgroundGradient():Array {
-			if (! hasProperty("backgroundGradient")) return null;
+			if (! StyleSheetUtil.hasProperty("backgroundGradient", rootStyle)) return null;
 			if (rootStyle["backgroundGradient"] is String) {
 				return decodeGradient(rootStyle["backgroundGradient"] as String);
 			}
@@ -199,30 +200,23 @@ package org.flowplayer.view {
 		 * Is the background transparent in the root style?
 		 */
 		public function get backgroundTransparent():Boolean {
-			if (! hasProperty("backgroundColor")) return false;
-			return rootStyle["backgroundColor"] == "transparent";
+			if (! StyleSheetUtil.hasProperty("backgroundColor", rootStyle)) return false;
+			
+			return rootStyle["backgroundColor"] == "transparent" || backgroundAlpha == 0;
 		}
 
 		/**
 		 * Border weight value of the root style.
 		 */
 		public function get borderWidth():Number {
-            if (! hasProperty("border")) return 1;
-            if (hasProperty("borderWidth")) {
-                return NumberUtil.decodePixels(rootStyle["borderWidth"]);
-            }
-			return NumberUtil.decodePixels(parseShorthand("border")[0]);
+            return StyleSheetUtil.borderWidth('border', rootStyle);
 		}
 		
 		/**
 		 * Border color value of the root style.
 		 */
 		public function get borderColor():uint {
-            if (hasProperty("border")) {
-                return colorValue(parseShorthand("border")[2]);
-            }
-            if (hasProperty("borderColor")) return parseColorValue("borderColor");
-			return 0xffffff;
+            return StyleSheetUtil.borderColor('border', rootStyle);
 		}
 
         /**
@@ -230,20 +224,14 @@ package org.flowplayer.view {
          * @return
          */
         public function get borderAlpha():Number {
-            if (hasProperty("border")) {
-                return colorAlpha(parseShorthand("border")[2]);
-            }
-            if (hasProperty("borderColor")) {
-                return parseColorAlpha("borderColor");
-            }
-            return 0xffffff;
+            return StyleSheetUtil.borderAlpha('border', rootStyle);
         }
 		
 		/**
 		 * Border radius of the root style.
 		 */
 		public function get borderRadius():int {
-			if (! hasProperty("borderRadius")) return 5;
+			if (! StyleSheetUtil.hasProperty("borderRadius", rootStyle)) return 5;
 			return NumberUtil.decodePixels(rootStyle["borderRadius"]);
 		}
 		
@@ -251,15 +239,15 @@ package org.flowplayer.view {
 		 * Backround image of the rot style.
 		 */
 		public function get backgroundImage():String {
-			if (hasProperty("backgroundImage")) {
+			if (StyleSheetUtil.hasProperty("backgroundImage", rootStyle)) {
 				var image:String = rootStyle["backgroundImage"];
 				if (image.indexOf("url(") == 0) {
 					return image.substring(4, image.indexOf(")"));
 				}
 				return rootStyle["backgroundImage"] as String;
 			}
-			if (hasProperty("background")) {
-				return find(parseShorthand("background"), "url(");
+			if (StyleSheetUtil.hasProperty("background", rootStyle)) {
+				return find(StyleSheetUtil.parseShorthand("background", rootStyle), "url(");
 			}
 			return null;
 		}
@@ -278,7 +266,7 @@ package org.flowplayer.view {
          * @see #linkUrl
          */
         public function get linkWindow():String {
-            if (! hasProperty("linkWindow")) return "_self";
+            if (! StyleSheetUtil.hasProperty("linkWindow", rootStyle)) return "_self";
             return rootStyle["linkWindow"] as String;
         }
 
@@ -292,15 +280,15 @@ package org.flowplayer.view {
 		}
 
 		public function get backgroundImageX():Length {
-			if (! hasProperty("background")) return new Length(0);
-			var props:Array = parseShorthand("background");
+			if (! StyleSheetUtil.hasProperty("background", rootStyle)) return new Length(0);
+			var props:Array = StyleSheetUtil.parseShorthand("background", rootStyle);
 			if (props.length < 2) return null;
 			return new Length(props[props.length - 2]);
 		}
 		
 		public function get backgroundImageY():Length {
-			if (! hasProperty("background")) return new Length(0);
-			var props:Array = parseShorthand("background");
+			if (! StyleSheetUtil.hasProperty("background", rootStyle)) return new Length(0);
+			var props:Array = StyleSheetUtil.parseShorthand("background", rootStyle);
 			if (props.length < 1) return null;
 			return new Length(props[props.length - 1]);
 		}
@@ -309,11 +297,11 @@ package org.flowplayer.view {
 		 * Is the background repeated in the root style?
 		 */
 		public function get backgroundRepeat():Boolean {
-			if (hasProperty("backgroundRepeat")) {
+			if (StyleSheetUtil.hasProperty("backgroundRepeat", rootStyle)) {
 				return rootStyle["backgroundRepeat"] == "repeat";
 			}
-			if (hasProperty("background")) {
-				return parseShorthand("background").indexOf("no-repeat") < 0;
+			if (StyleSheetUtil.hasProperty("background", rootStyle)) {
+				return StyleSheetUtil.parseShorthand("background", rootStyle).indexOf("no-repeat") < 0;
 			}
 			return false;
 		}
@@ -328,57 +316,15 @@ package org.flowplayer.view {
 		}
 		
 		private function parseColorValue(colorProperty:String):uint {
-			return colorValue(rootStyle[colorProperty]);
+			return StyleSheetUtil.colorValue(rootStyle[colorProperty]);
 		}
 
         private function parseColorAlpha(colorProperty:String):Number {
-            return colorAlpha(rootStyle[colorProperty]);
+            return StyleSheetUtil.colorAlpha(rootStyle[colorProperty]);
         }
 
-        private function colorValue(color:String):uint {
-            if (! color) return 0xffffff;
-            if (color.indexOf("rgb") == 0) {
-                var rgb:Array = parseRGBAValues(color);
-                return rgb[0] << 16 ^ rgb[1] << 8 ^ rgb[2];
-            }
-            return parseInt("0x" + color.substr(1));
-        }
+		
 
-        private function colorAlpha(color:String):Number {
-            if (! color) return 1;
-            if (color.indexOf("rgb") == 0) {
-                var rgb:Array = parseRGBAValues(color);
-                if (rgb.length == 4) {
-                    return rgb[3];
-                }
-            }
-            return 1;
-        }
-
-        private function parseRGBAValues(color:String):Array {
-            var input:String = stripSpaces(color);
-            var start:int = input.indexOf("(") + 1;
-            input = input.substr(start, input.indexOf(")") - start);
-            return input.split(",");
-        }
-
-        private function stripSpaces(input:String):String {
-            var result:String = "";
-            for (var j:int = 0; j < input.length; j++) {
-                if (input.charAt(j) != " ") {
-                    result += input.charAt(j);
-                }
-            }
-            return result;
-        }
-
-		private function parseShorthand(property:String):Array {
-			var str:String = rootStyle[property];
-			return str.split(" ");
-		}
-
-		private function hasProperty(prop:String):Boolean {
-			return rootStyle && rootStyle[prop] != undefined;
-		}
+		
 	}
 }
