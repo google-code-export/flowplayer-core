@@ -357,7 +357,7 @@ import flash.net.navigateToURL;
 			if (! _style.borderWidth > 0) return;
 			_border = new Sprite();
 			addChild(_border);
-			log.info("border weight is " + _style.borderWidth);		
+			log.info("border weight is " + _style.borderWidth + ", alpha "+ _style.borderAlpha);		
 			_border.graphics.lineStyle(_style.borderWidth, _style.borderColor, _style.borderAlpha);
 			GraphicsUtil.drawRoundRectangle(_border.graphics, 0, 0, width, height, _style.borderRadius);
 		}
