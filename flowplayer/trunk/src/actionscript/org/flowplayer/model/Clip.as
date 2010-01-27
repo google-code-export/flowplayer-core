@@ -84,6 +84,7 @@ import org.flowplayer.flow_internal;
         private var _clipObject:Object;
         private var _netStream:NetStream;
         private var _startDispatched:Boolean;
+        private var _currentTime:Number = 0;
 
         public function Clip() {
             _childPlaylist = new TimedPlaylist();
@@ -955,5 +956,14 @@ import org.flowplayer.flow_internal;
         public function set startDispatched(value:Boolean):void {
             _startDispatched = value;
         }
+        
+        public function get currentTime():Number {
+        	return _currentTime;
+        }
+        
+        public function set currentTime(time:Number):void {
+        	_currentTime = (_currentTime ==0 ? time + _start : time);
+        }
+        
     }
 }
