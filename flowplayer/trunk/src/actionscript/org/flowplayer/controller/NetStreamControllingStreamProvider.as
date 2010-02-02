@@ -823,17 +823,19 @@ import org.flowplayer.model.PluginModel;
         }
 
         private function get connectionProvider():ConnectionProvider {
+            var provider:ConnectionProvider;
             if (clip.connectionProvider) {
-                var provider:ConnectionProvider = PluginModel(_player.pluginRegistry.getPlugin(clip.connectionProvider)).pluginObject as ConnectionProvider;
+                provider = PluginModel(_player.pluginRegistry.getPlugin(clip.connectionProvider)).pluginObject as ConnectionProvider;
                 if (! provider) {
                     throw new Error("connectionProvider " + clip.connectionProvider + " not loaded");
                 }
-                provider.onFailure = function(message:String = null):void {
-                    clip.dispatchError(ClipError.STREAM_LOAD_FAILED, "connection failed" + (message ? ": " + message : ""));
-                };
-                return provider;
+            } else {
+                provider = getConnectionProvider(clip);
             }
-            return getConnectionProvider(clip);
+            provider.onFailure = function(message:String = null):void {
+                clip.dispatchError(ClipError.STREAM_LOAD_FAILED, "connection failed" + (message ? ": " + message : ""));
+            };
+            return provider;
         }
 
         public function set timeProvider(timeProvider:TimeProvider):void {
