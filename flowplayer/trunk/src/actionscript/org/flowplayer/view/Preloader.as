@@ -32,6 +32,7 @@ package org.flowplayer.view {
     public class Preloader extends MovieClip {
         private var _log:Log = new Log(this);
         private var _app:DisplayObject;
+        private var _finishedLoading:Boolean = false;
 //        private var _rotation:RotatingAnimation;
         // this variable can be set from external SWF files, if it's set well use it to construct the config
         public var injectedConfig:String;
@@ -54,6 +55,7 @@ package org.flowplayer.view {
             log("onAddedToStage(), bytes loaded " + loaderInfo.bytesLoaded);
 
 			addEventListener( Event.ENTER_FRAME, enterFrameHandler );
+			this.loaderInfo.addEventListener(Event.COMPLETE, loaded);
 //            if (rotationEnabled) {
 //                log("initializing rotation animation");
 //                _rotation = new RotatingAnimation();
@@ -62,13 +64,19 @@ package org.flowplayer.view {
 //                _rotation.start();
 //            }
 		}
-
+		
+		private function loaded(event:Event):void {
+			 _finishedLoading = true;
+		}
+		
 		private function enterFrameHandler( evt : Event ) : void {
             log("enterFrameHandler() " + loaderInfo.bytesLoaded);
 
             if (stage.stageWidth != 0 && stage.stageHeight != 0) {
             	arrangeRotationAnimation();
-            	if( loaderInfo.bytesLoaded == loaderInfo.bytesTotal ) {
+            	
+            	//if loaded bytes matches total bytes or have we received a complete event. PHP file output is producing a zero bytesTotal. 
+            	if( (loaderInfo.bytesLoaded == loaderInfo.bytesTotal) ||  _finishedLoading) {
             		initialize();
             		removeEventListener( Event.ENTER_FRAME, enterFrameHandler );
             	}
