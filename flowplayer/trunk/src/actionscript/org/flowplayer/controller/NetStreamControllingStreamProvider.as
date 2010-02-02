@@ -357,7 +357,7 @@ import org.flowplayer.model.PluginModel;
 		 * @param clip
 		 */
 		protected function doLoad(event:ClipEvent, netStream:NetStream, clip:Clip):void {
-			clip.currentTime = 0;
+			//clip.currentTime = 0;
 			netStream.client = new NetStreamClient(clip, _player.config, _streamCallbacks);
 			netStreamPlay(getClipUrl(clip));
 		}
