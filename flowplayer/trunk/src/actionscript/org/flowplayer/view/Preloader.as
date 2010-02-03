@@ -32,8 +32,6 @@ package org.flowplayer.view {
     public class Preloader extends MovieClip {
         private var _log:Log = new Log(this);
         private var _app:DisplayObject;
-        private var _finishedLoading:Boolean = false;
-//        private var _rotation:RotatingAnimation;
         // this variable can be set from external SWF files, if it's set well use it to construct the config
         public var injectedConfig:String;
 
@@ -43,45 +41,29 @@ package org.flowplayer.view {
             logConfig.level = "error";
             logConfig.filter = "org.flowplayer.view.Preloader";
             Log.configure(logConfig);
-            _log.debug("Preloader") ;
+            _log.debug("Preloader");
 
             stop();
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-            addEventListener(Event.RESIZE, resizeHandler);
         }
 
         private function onAddedToStage(event:Event):void {
             log("onAddedToStage(): stage size is " + stage.stageWidth + " x " + stage.stageHeight);
             log("onAddedToStage(), bytes loaded " + loaderInfo.bytesLoaded);
 
-			addEventListener( Event.ENTER_FRAME, enterFrameHandler );
-			this.loaderInfo.addEventListener(Event.COMPLETE, loaded);
-//            if (rotationEnabled) {
-//                log("initializing rotation animation");
-//                _rotation = new RotatingAnimation();
-//                addChild(_rotation);
-//                arrangeRotationAnimation();
-//                _rotation.start();
-//            }
-		}
-		
-		private function loaded(event:Event):void {
-			 _finishedLoading = true;
-		}
-		
-		private function enterFrameHandler( evt : Event ) : void {
+            addEventListener(Event.ENTER_FRAME, enterFrameHandler);
+        }
+
+        private function enterFrameHandler(evt:Event):void {
             log("enterFrameHandler() " + loaderInfo.bytesLoaded);
 
             if (stage.stageWidth != 0 && stage.stageHeight != 0) {
-            	arrangeRotationAnimation();
-            	
-            	//if loaded bytes matches total bytes or have we received a complete event. PHP file output is producing a zero bytesTotal. 
-            	if( (loaderInfo.bytesLoaded == loaderInfo.bytesTotal) ||  _finishedLoading) {
-            		initialize();
-            		removeEventListener( Event.ENTER_FRAME, enterFrameHandler );
-            	}
+                if (loaderInfo.bytesLoaded == loaderInfo.bytesTotal) {
+                    initialize();
+                    removeEventListener(Event.ENTER_FRAME, enterFrameHandler);
+                }
             }
-		}
+        }
 
         private function initialize():void {
             log("initialize()");
@@ -91,12 +73,6 @@ package org.flowplayer.view {
                 log("initialize(), _app already instantiated returning");
                 return;
             }
-//            if (_rotation) {
-//                _rotation.stop();
-//                if (_rotation.parent) {
-//                    removeChild(_rotation);
-//                }
-//            }
 
             prepareStage();
             try {
@@ -104,7 +80,7 @@ package org.flowplayer.view {
                 _app = new mainClass() as DisplayObject;
                 addChild(_app as DisplayObject);
                 log("Launcher instantiated " + _app);
-                removeEventListener( Event.ENTER_FRAME, enterFrameHandler );
+                removeEventListener(Event.ENTER_FRAME, enterFrameHandler);
             } catch (e:Error) {
                 log("error instantiating Launcher " + e + ": " + e.message);
                 _app = null;
@@ -119,7 +95,7 @@ package org.flowplayer.view {
             return null;
         }
 
-		private function prepareStage():void {
+        private function prepareStage():void {
             if (! stage) return;
             stage.align = StageAlign.TOP_LEFT;
             stage.scaleMode = StageScaleMode.NO_SCALE;
@@ -135,15 +111,6 @@ package org.flowplayer.view {
             if (! config) return true;
             if (config.replace(/\s/g, "").indexOf("buffering:null") > 0) return false;
             return true;
-        }
-
-        private function resizeHandler(event:Event = null):void {
-        	arrangeRotationAnimation();
-        }
-
-        private function arrangeRotationAnimation() : void {
-//            _rotation.setSize(stage.stageHeight * 0.22, stage.stageHeight * 0.22);
-//            Arrange.center(_rotation, stage.width, stage.height - 28);
         }
     }
 }
