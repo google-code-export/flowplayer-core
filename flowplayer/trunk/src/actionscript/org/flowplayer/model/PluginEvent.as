@@ -19,7 +19,10 @@
 
 package org.flowplayer.model {
 	import flash.events.Event;		
-
+	import org.flowplayer.flow_internal;
+	import flash.external.ExternalInterface;
+	
+	use namespace flow_internal;
 	/**
 	 * @author anssi
 	 */
@@ -32,6 +35,16 @@ package org.flowplayer.model {
             super(eventType, pluginName, info, info2, info3);
             _id = id;
 		}
+		
+		override flow_internal function fireErrorExternal(playerId:String):void {
+            try {
+                ExternalInterface.call(
+                    "flowplayer.fireEvent",
+                    playerId || ExternalInterface.objectID, getExternalName(eventType.name, false), error.code, error.message + info2 ? ": " + info2 : "");
+            } catch (e:Error) {
+                log.error("Error in fireErrorExternal() "+ e);
+            }
+        }
 
 		override public function get error():ErrorCode {
 			return _id as ErrorCode;

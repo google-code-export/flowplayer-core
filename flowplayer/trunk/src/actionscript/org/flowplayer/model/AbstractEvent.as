@@ -97,7 +97,7 @@ import org.flowplayer.util.ObjectConverter;
                     "flowplayer.fireEvent",
                     playerId || ExternalInterface.objectID, getExternalName(eventType.name, false), ErrorCode(_info).code, ErrorCode(_info).message + info2 ? ": " + info2 : "");
             } catch (e:Error) {
-                log.error("Error in fireErrorExternal() " + e);
+                log.error("Error in fireErrorExternal() "+ e);
             }
         }
 
@@ -126,7 +126,7 @@ import org.flowplayer.util.ObjectConverter;
 //			return JSON.encode(externalEventArgument);
 //		}
 
-		private function getExternalName(name:String, beforePhase:Boolean):String {
+		protected function getExternalName(name:String, beforePhase:Boolean):String {
 			if (! beforePhase) return name;
 			if (! name.indexOf("on") == 0) return "onBefore" + name;
 			return "onBefore" + name.substr(2);

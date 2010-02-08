@@ -352,21 +352,24 @@ import org.flowplayer.model.DisplayPluginModel;
                     handleError(PlayerError.PLUGIN_LOAD_FAILED, "Unable to load plugin, url " + Loadable(loadables[i]).url + ", name " + Loadable(loadables[i]).name);
 //                    throw new Error("Plugin " + loadables[i] + " not available");
                 }
-                var isNonAdHocPlugin:Boolean = plugin.pluginObject is Plugin;
-//                var isNonAdHocPlugin:Boolean = (plugin is DisplayPluginModel && DisplayPluginModel(plugin).getDisplayObject() is Plugin) ||
-//                    plugin is ProviderModel && ProviderModel(plugin).pluginObject is Plugin;
+				else
+				{
+	                var isNonAdHocPlugin:Boolean = plugin.pluginObject is Plugin;
+	//                var isNonAdHocPlugin:Boolean = (plugin is DisplayPluginModel && DisplayPluginModel(plugin).getDisplayObject() is Plugin) ||
+	//                    plugin is ProviderModel && ProviderModel(plugin).pluginObject is Plugin;
 
-                if (Loadable(loadables[i]).loadFailed) {
-                    log.debug("load failed for " + loadables[i]);
-                    count++;
-                } else if (! plugin) {
-                    log.debug("this plugin is not loaded yet");
-                    count++;
-                } else if (isNonAdHocPlugin) {
-					log.debug("will wait for onLoad from plugin " + plugin);
-					count++;
-				} else {
-					log.debug("will NOT wait for onLoad from plugin " + Loadable(loadables[i]).plugin);
+	                if (Loadable(loadables[i]).loadFailed) {
+	                    log.debug("load failed for " + loadables[i]);
+	                    count++;
+	                } else if (! plugin) {
+	                    log.debug("this plugin is not loaded yet");
+	                    count++;
+	                } else if (isNonAdHocPlugin) {
+						log.debug("will wait for onLoad from plugin " + plugin);
+						count++;
+					} else {
+						log.debug("will NOT wait for onLoad from plugin " + Loadable(loadables[i]).plugin);
+					}
 				}
 			}
 			// +1 comes from the playbuttonoverlay
