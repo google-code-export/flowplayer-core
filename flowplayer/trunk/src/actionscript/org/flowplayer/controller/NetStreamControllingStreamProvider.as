@@ -221,7 +221,7 @@ import org.flowplayer.model.PluginModel;
 //			if (! _started) {
 //				return 0;
 //			}
-			return getCurrentPlayheadTime(netStream) + clip.currentTime;
+			return getCurrentPlayheadTime(netStream);
 		}
 		
 		/**
@@ -503,8 +503,7 @@ import org.flowplayer.model.PluginModel;
 		 * Is the playback duration of current clip reached?
 		 */
 		protected function isDurationReached():Boolean {
-			//return Math.abs(getCurrentPlayheadTime(netStream) - clip.duration) <= 0.5;
-			return Math.abs(time - clip.duration) <= 0.5;
+			return Math.abs(getCurrentPlayheadTime(netStream) - clip.duration) <= 0.5;
 		}
 		
 		/**
