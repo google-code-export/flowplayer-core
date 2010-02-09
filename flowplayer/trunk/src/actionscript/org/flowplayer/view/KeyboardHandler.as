@@ -90,6 +90,7 @@ package org.flowplayer.view {
                     function(event:KeyboardEvent):void {
                         log.debug("keyDown: " + event.keyCode);
                         if (launcher.enteringFullscreen) return;
+						if ( ! _player.isKeyboardShortcutsEnabled() ) return;
                         if (player.dispatchBeforeEvent(PlayerEvent.keyPress(event.keyCode))) {
                             player.dispatchEvent(PlayerEvent.keyPress(event.keyCode));
                             if (_handlers[event.keyCode] != null) {

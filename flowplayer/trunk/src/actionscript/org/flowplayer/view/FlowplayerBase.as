@@ -73,6 +73,8 @@ package org.flowplayer.view {
 		private var _fullscreenManager:FullscreenManager;
 		private var _pluginLoader:PluginLoader;
 		private var _playerSWFBaseURL:String;
+		
+		private var _keyboardShortcutsEnabled:Boolean;
 
 		public function FlowplayerBase(
 			stage:Stage, 
@@ -107,7 +109,8 @@ package org.flowplayer.view {
 			_config = config;
 			_playerSWFBaseURL = playerSWFBaseURL;
 			_instance = this;
-
+			
+			_keyboardShortcutsEnabled = true;
 		}
 
         internal function set playlistController(control:PlayListController):void {
@@ -703,5 +706,15 @@ package org.flowplayer.view {
         public function set pluginLoader(val:PluginLoader):void {
             _pluginLoader = val;
         }
+
+		public function isKeyboardShortcutsEnabled():Boolean
+		{
+			return _keyboardShortcutsEnabled;
+		}
+		
+		public function setKeyboardShortcutsEnabled(enabled:Boolean):void
+		{
+			_keyboardShortcutsEnabled = enabled;
+		}
     }
 }

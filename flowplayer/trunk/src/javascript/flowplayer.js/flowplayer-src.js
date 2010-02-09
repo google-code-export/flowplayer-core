@@ -699,6 +699,16 @@ function Player(wrapper, params, conf) {
 		
 		getIndex: function() {
 			return playerIndex;	
+		},
+		
+		setKeyboardShortcutsEnabled: function(enabled)
+		{
+			self._api().fp_setKeyboardShortcutsEnabled(enabled);	
+		},
+		
+		isKeyboardShortcutsEnabled: function()
+		{
+			return self._api().fp_isKeyboardShortcutsEnabled();
 		}
 		
 	}); 
