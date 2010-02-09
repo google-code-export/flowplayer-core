@@ -134,7 +134,10 @@ import org.flowplayer.model.PlayerError;
 				addCallback("addCuepoints", addCuepoints); 
 				addCallback("updateClip", updateClip); 
 				addCallback("logging", logging);
-
+				
+				addCallback("setKeyboardShortcutsEnabled", setKeyboardShortcutsEnabled);
+				addCallback("isKeyboardShortcutsEnabled", isKeyboardShortcutsEnabled);
+				
 			} catch (e:Error) {
 				handleError(PlayerError.INIT_FAILED, "Unable to add callback to ExternalInterface");
 			}
