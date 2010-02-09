@@ -19,7 +19,7 @@
 
 package org.flowplayer.controller {
 	import org.flowplayer.model.Playlist;	
-	
+	import flash.display.Loader;
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
@@ -30,6 +30,8 @@ package org.flowplayer.controller {
 	import org.flowplayer.model.ClipEvent;
 	import org.flowplayer.model.ClipEventType;
 	import org.flowplayer.util.Log;	
+	
+	import org.flowplayer.view.ImageHolder;
 
 	/**
 	 * @author api
@@ -74,9 +76,21 @@ package org.flowplayer.controller {
 		}
 		
 		private function onLoadComplete(loader:ClipImageLoader):void {
-			clip.setContent(loader.getContent() as DisplayObject);
-			clip.originalHeight = loader.getContent().height;
-			clip.originalWidth = loader.getContent().width;
+			
+			
+			if ( loader.getContent() is Loader && ImageHolder.hasOffscreenContent(loader.getContent() as Loader ))
+			{
+				var holder:ImageHolder = new ImageHolder(loader.getContent() as Loader);
+				clip.originalHeight = holder.originalHeight;
+				clip.originalWidth  = holder.originalWidth;
+				clip.setContent(holder);
+			}
+			else	// no need to wrap it
+			{
+				clip.setContent(loader.getContent() as DisplayObject);
+				clip.originalHeight = loader.getContent().height;
+				clip.originalWidth = loader.getContent().width;
+			}
 			log.info("image loaded " + clip + ", content " + loader.getContent() + ", width " + clip.originalWidth + ", height " + clip.originalHeight);
             clip.dispatch(ClipEventType.START);
 			clip.dispatch(ClipEventType.BUFFER_FULL);
