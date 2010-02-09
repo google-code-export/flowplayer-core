@@ -99,11 +99,13 @@ package org.flowplayer.util {
 		 * Border color value of the root style.
 		 */
 		public static function borderColor(prefix:String, style:Object, defVal:Number = 0xffffff):uint {
+			if (hasProperty(prefix + "Color", style)) 
+				return colorValue(style[prefix + "Color"]);
+			
             if (hasProperty(prefix, style)) {
                 return StyleSheetUtil.colorValue(parseShorthand(prefix, style)[2]);
             }
-            if (hasProperty(prefix + "Color", style)) 
-				return colorValue(style[prefix + "Color"]);
+            
 			return defVal;
 		}
 
@@ -112,12 +114,13 @@ package org.flowplayer.util {
          * @return
          */
         public static function borderAlpha(prefix:String, style:Object, defVal:Number = 1):Number {
+			if (hasProperty(prefix + "Color", style)) 
+				return colorAlpha(style[prefix + "Color"]);
+	
             if (hasProperty(prefix, style)) {
                 return StyleSheetUtil.colorAlpha(parseShorthand(prefix, style)[2]);
             }
-            if (hasProperty(prefix + "Color", style)) 
-				return colorAlpha(style[prefix + "Color"]);
-				
+		
             return defVal;
         }
 		

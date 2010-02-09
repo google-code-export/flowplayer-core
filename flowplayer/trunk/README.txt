@@ -10,6 +10,9 @@ Version history:
 - if clip.url has the string "mp3:" in it, the clip.type will report 'audio'
 Fixes:
 - onSeek() was not fired when seeking while paused and when using RTMP. An extra onStart was fired too.
+- fireErrorExternal() was not working properly with an error PlayerEvent
+- countPlugins() was throwing an error when a plugin was not found
+- external swf files were not scaled properly
 
 3.1.5
 -----
