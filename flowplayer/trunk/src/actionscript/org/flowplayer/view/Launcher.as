@@ -53,13 +53,13 @@ import org.flowplayer.model.DisplayPluginModel;
 	import org.flowplayer.view.Panel;
 	import org.flowplayer.view.PluginLoader;
     import org.flowplayer.view.Screen;
+	import org.flowplayer.view.KeyboardHandler;
 	import org.osflash.thunderbolt.Logger;
 	
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import flash.events.Event;
-	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
 	import flash.net.URLRequest;
@@ -68,7 +68,7 @@ import org.flowplayer.model.DisplayPluginModel;
 	import flash.system.Security;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
-	import flash.ui.Keyboard;
+
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;		
 	
@@ -98,7 +98,6 @@ import org.flowplayer.model.DisplayPluginModel;
         private var _clickCount:int;
         private var _clickTimer:Timer = new Timer(200, 1);
         private var _clickEvent:MouseEvent;
-        private var _keyHandler:KeyboardHandler;
 
 		[Frame(factoryClass="org.flowplayer.view.Preloader")]
 		public function Launcher() {
@@ -158,11 +157,15 @@ import org.flowplayer.model.DisplayPluginModel;
             log.debug("creating Flowplayer API");
             createFlowplayer();
 			
+			// keyboard handler must be present for plugins.
+			//
+			
             loadPlaylistFeed();
 		}
 
         private function initPhase2(event:Event = null):void {
             log.info("initPhase2");
+			_flowplayer.keyboardHandler = new KeyboardHandler(stage, function():Boolean { return enteringFullscreen });
             loadPlugins();
         }
 
@@ -221,7 +224,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			log.debug("starting configured streams");
             startStreams();
             arrangeScreen();
-            _keyHandler = new KeyboardHandler(stage, _flowplayer, this);
+			
             addListeners();
 
 //            _controlsModel.onPluginEvent(function(event:PluginEvent):void {

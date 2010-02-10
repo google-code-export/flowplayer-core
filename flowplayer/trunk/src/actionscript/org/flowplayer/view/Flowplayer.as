@@ -56,7 +56,7 @@ import org.flowplayer.model.PlayerError;
 	 */
 	public class Flowplayer extends FlowplayerBase {
 
-		
+		private var _keyHandler:KeyboardHandler;
 		private var _canvas:StyleableSprite;
 		
 		public function Flowplayer(
