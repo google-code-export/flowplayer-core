@@ -8,6 +8,7 @@ Version history:
 - added feature to obtain bitrate and dimension information to a new clip custom property "bitrates" for future support for bitrate choosing. 
 - added getter for playerSwfName config
 - if clip.url has the string "mp3:" in it, the clip.type will report 'audio'
+- added setKeyboardShortcutsEnabled(), addKeyListener(), removeKeyListener() to FlowplayerBase
 Fixes:
 - onSeek() was not fired when seeking while paused and when using RTMP. An extra onStart was fired too.
 - fireErrorExternal() was not working properly with an error PlayerEvent

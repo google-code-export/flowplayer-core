@@ -53,6 +53,7 @@ package org.flowplayer.view {
     import org.flowplayer.util.TextUtil;
     import org.flowplayer.util.VersionUtil;
     import org.flowplayer.util.URLUtil;
+	import org.flowplayer.view.KeyboardHandler;
 
     use namespace flow_internal;
 
@@ -74,8 +75,9 @@ package org.flowplayer.view {
 		private var _pluginLoader:PluginLoader;
 		private var _playerSWFBaseURL:String;
 		
-		private var _keyboardShortcutsEnabled:Boolean;
 
+		private var _keyHandler:KeyboardHandler;
+		
 		public function FlowplayerBase(
 			stage:Stage, 
 			pluginRegistry:PluginRegistry,
@@ -109,8 +111,7 @@ package org.flowplayer.view {
 			_config = config;
 			_playerSWFBaseURL = playerSWFBaseURL;
 			_instance = this;
-			
-			_keyboardShortcutsEnabled = true;
+
 		}
 
         internal function set playlistController(control:PlayListController):void {
@@ -707,14 +708,31 @@ package org.flowplayer.view {
             _pluginLoader = val;
         }
 
+		public function set keyboardHandler(val:KeyboardHandler):void
+		{
+			_keyHandler = val;
+			_keyHandler.player = this as Flowplayer;
+		}
+
 		public function isKeyboardShortcutsEnabled():Boolean
 		{
-			return _keyboardShortcutsEnabled;
+			return _keyHandler.isKeyboardShortcutsEnabled();
 		}
 		
 		public function setKeyboardShortcutsEnabled(enabled:Boolean):void
 		{
-			_keyboardShortcutsEnabled = enabled;
+			_keyHandler.setKeyboardShortcutsEnabled(enabled);
 		}
+		
+		public function addKeyListener(keyCode:uint, func:Function):void
+		{
+			_keyHandler.addKeyListener(keyCode, func);
+		}
+		
+		public function removeKeyListener(keyCode:uint, func:Function):void
+		{
+			_keyHandler.removeKeyListener(keyCode, func);
+		}
+	
     }
 }
