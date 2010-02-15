@@ -60,6 +60,7 @@ import org.flowplayer.model.ClipEventType;
             }
 
             _previousUrl = _clip.url;
+            log.info("metaData parsed and injected to the clip");
             _clip.dispatch(ClipEventType.METADATA);
 		}
 
@@ -100,6 +101,7 @@ import org.flowplayer.model.ClipEventType;
         public function registerCallback(name:String):void {
             _clip.dispatchNetStreamEvent("registerCallback", name);
         }
+        
 //
 //        public function onCuePoint(infoObject:Object):void {
 //            _clip.dispatchNetStreamEvent("onCuePoint", infoObject);
