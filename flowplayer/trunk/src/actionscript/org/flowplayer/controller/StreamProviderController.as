@@ -49,7 +49,8 @@ package org.flowplayer.controller {
 			_controllerFactory = controllerFactory;
 			_config = config;
 			var filter:Function = function(clip:Clip):Boolean { 
-				return clip.type == ClipType.VIDEO || clip.type == ClipType.AUDIO; 
+				//allow for chromeless swf video players to be added into the filter
+				return clip.type == ClipType.VIDEO || clip.type == ClipType.AUDIO || clip.type == ClipType.CHROMELESS; 
 			};
 			playlist.onBegin(onBegin, filter, true);
 			playlist.onBufferFull(onBegin, filter, true);
@@ -67,6 +68,9 @@ package org.flowplayer.controller {
 				if (video && video is Video) { 
 					getProvider(clip).attachStream(video);
 					if (!video) throw new Error("No video object available for clip " + clip);
+					clip.setContent(video);
+				} else if (video) {
+					//we have a chromeless swf video player, add it's display object to the clip content
 					clip.setContent(video);
 				}
 			}

@@ -23,13 +23,16 @@ package org.flowplayer.model {
 	public class ClipType {
 
         private static const FLASH_VIDEO_EXTENSIONS:Array = ['f4b', 'f4p', 'f4v', 'flv'];
+        //new clip prefix chromeless: denotes a chromeless url with a video id reference
+        private static const CHROMELESS_PREFIX:String = 'chromeless:';
         private static const VIDEO_EXTENSIONS:Array = ['3g2', '3gp', 'aac', 'm4a', 'm4v', 'mov', 'mp4', 'vp6', 'mpeg4', 'video'];
         private static const IMAGE_EXTENSIONS:Array = ['png', 'jpg', 'jpeg', 'gif', 'swf', 'image'];
 
 		public static const VIDEO:ClipType = new ClipType("video");
 		public static const AUDIO:ClipType = new ClipType("audio");
 		public static const IMAGE:ClipType = new ClipType("image");
-
+		public static const CHROMELESS:ClipType = new ClipType("chromeless:");
+		
         private static var MIME_TYPE_MAPPING:Object = {
             'application/x-fcs': VIDEO,
             'application/x-shockwave-flash': IMAGE,
@@ -108,13 +111,16 @@ package org.flowplayer.model {
 		}
 
         public static function resolveType(type:String):ClipType {
+        	
 			if (VIDEO_EXTENSIONS.concat(FLASH_VIDEO_EXTENSIONS).indexOf(type) >= 0)
 				return ClipType.VIDEO;
+				//add support for chromeless swf player video types with a chromeless prefix and a video id as the url
+			if (type.indexOf(CHROMELESS_PREFIX) >= 0)
+				return ClipType.CHROMELESS;
 			if (IMAGE_EXTENSIONS.indexOf(type) >= 0)
 				return ClipType.IMAGE;
 			if (type == 'mp3')
 				return ClipType.AUDIO;
-			
 			return ClipType.VIDEO;
 		}
 

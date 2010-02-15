@@ -50,6 +50,9 @@ package org.flowplayer.view {
 			var display:DisplayObject;
 			if (clip.type == ClipType.VIDEO)
 				display = new VideoDisplay(clip);
+				//if we have a chromeless clip type display the chromeless display which collects the loader of the swf as a displayobject
+			if (clip.type == ClipType.CHROMELESS)
+				display = new ChromelessDisplay(clip);
 			if (clip.type == ClipType.IMAGE || clip.type == ClipType.AUDIO)
 				display = new ImageDisplay(clip);
 			return display;

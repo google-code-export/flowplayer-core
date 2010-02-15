@@ -64,7 +64,8 @@ package org.flowplayer.controller {
 
 		flow_internal function getMediaController(clip:Clip, playlist:Playlist):MediaController {
 			var clipType:ClipType = clip.type;
-			if (clipType == ClipType.VIDEO || clipType == ClipType.AUDIO) {
+			//allow for chromeless swf video players to be treated as video
+			if (clipType == ClipType.VIDEO || clipType == ClipType.AUDIO || clipType == ClipType.CHROMELESS) {
 				return getStreamProviderController(playlist, clip.isInStream);
 			}
 			if (clipType == ClipType.IMAGE) {
