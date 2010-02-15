@@ -14,6 +14,7 @@ Fixes:
 - fireErrorExternal() was not working properly with an error PlayerEvent
 - countPlugins() was throwing an error when a plugin was not found
 - external swf files were not scaled properly
+- the logo was unnecessary shown when going fullscreen if logo.displayTime was being used
 
 3.1.5
 -----

@@ -57,6 +57,7 @@ package org.flowplayer.view {
 		private var _panel:Panel;
 		private var _copyrightNotice:TextField;
         private var _preHideAlpha:Number = 1;
+        private var _hideTimer:Timer;
 
         public function LogoView(panel:Panel, player:Flowplayer) {
             _panel = panel;
@@ -228,6 +229,10 @@ package org.flowplayer.view {
 
 		private function onFullscreen(event:FullScreenEvent):void {
 			if (event.fullScreen) {
+                if ((_hideTimer && _hideTimer.running) || _model.displayTime > 0) {
+                    // hide timer is running or the hide time already passed
+                    return;
+                }
 				show();
 			} else {
 				if (_model.fullscreenOnly) {
@@ -251,15 +256,15 @@ package org.flowplayer.view {
 
 				if (_model.displayTime > 0) {
                     log.debug("show() creating hide timer");
-					var timer:Timer = new Timer(_model.displayTime * 1000, 1);
-					timer.addEventListener(TimerEvent.TIMER_COMPLETE,
+					_hideTimer = new Timer(_model.displayTime * 1000, 1);
+					_hideTimer.addEventListener(TimerEvent.TIMER_COMPLETE,
 
                             function(event:TimerEvent):void {
                                 log.debug("display time complete");
                                 hide(_model.fadeSpeed);
-                                timer.stop(); 
+                                _hideTimer.stop();
                             });
-					timer.start();
+					_hideTimer.start();
 				}
 			}
 //            else {
