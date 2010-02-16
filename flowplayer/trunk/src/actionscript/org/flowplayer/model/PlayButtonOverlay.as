@@ -47,7 +47,18 @@ package org.flowplayer.model {
 			_replayLabel = "Play again";
 		}
 
-		
+        override public function clone():Cloneable {
+            var copy:PlayButtonOverlay = new PlayButtonOverlay();
+            copy.fadeSpeed = this.fadeSpeed;
+            copy.rotateSpeed = this.rotateSpeed;
+            copy.url = this.url;
+            copy.label = this.label;
+            copy.replayLabel = this.replayLabel;
+            copy.buffering = this.buffering;
+            return copy;
+        }
+
+		[Value]
 		public function get url():String {
 			return _url;
 		}
@@ -56,6 +67,7 @@ package org.flowplayer.model {
 			_url = url;
 		}
 		
+        [Value]
 		public function get fadeSpeed():int {
 			return _fadeSpeed;
 		}
@@ -64,6 +76,7 @@ package org.flowplayer.model {
 			_fadeSpeed = fadeSpeed;
 		}
 		
+        [Value]
 		public function get rotateSpeed():int {
 			if (_rotateSpeed > 100) return 100;
 			return _rotateSpeed;
@@ -73,6 +86,7 @@ package org.flowplayer.model {
 			_rotateSpeed = rotateSpeed;
 		}
 		
+        [Value]
 		public function get label():String {
 			return _label;
 		}
@@ -81,6 +95,7 @@ package org.flowplayer.model {
 			_label = label;
 		}
 		
+        [Value]
 		public function get replayLabel():String {
 			return _replayLabel;
 		}
@@ -89,6 +104,7 @@ package org.flowplayer.model {
 			_replayLabel = replayLabel;
 		}
 		
+        [Value]
 		public function get buffering():Boolean {
 			return _buffering;
 		}

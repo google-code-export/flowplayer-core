@@ -146,6 +146,7 @@ package org.flowplayer.view {
                 } else {
                     removeLinkEventListener();
                 }
+                _player.pluginRegistry.update(_model);
             }
         }
 

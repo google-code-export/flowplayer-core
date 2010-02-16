@@ -56,19 +56,27 @@ package org.flowplayer.model {
 		public function set visible(visible:Boolean):void {
 			super.display = visible ? "block" : "none";
 		}
-		
-		public override function clone():Cloneable {
+
+        override protected function copyFields(from:DisplayProperties, to:DisplayPropertiesImpl):void {
+            super.copyFields(from, to);
+            DisplayPluginModelImpl(to).config = DisplayPluginModelImpl(from).config;
+            DisplayPluginModelImpl(to).methods = DisplayPluginModelImpl(from).methods;
+        }
+
+        public override function clone():Cloneable {
 			var copy:DisplayPluginModelImpl = new DisplayPluginModelImpl(getDisplayObject(), name);
-			super.copyFields(this, copy);
-			copy._config = _config;
-			copy._methods = _methods;
-			return copy;
+//            copyFields(copy);
+            return copy;
 		}
-		
-		public function get methods():Array {
-			return _methods;
-		}
-		
+
+        public function get methods():Array {
+            return _methods;
+        }
+
+        public function set methods(values:Array):void {
+            _methods = values;
+        }
+
 		[Value(name="methods")]
 		public function get methodNames():Array {
 			return PluginMethodHelper.methodNames(_methods);

@@ -172,6 +172,10 @@ package org.flowplayer.view {
 				_originalProps[props.name] = props.clone();
 			}
 		}
+        
+        public function update(plugin:PluginModel):void {
+            _plugins[plugin.name] = plugin.clone();
+        }
 		
 		internal function updateDisplayPropertiesForDisplay(view:DisplayObject, updated:Object):void {
 			var props:DisplayProperties = getPluginByDisplay(view);
