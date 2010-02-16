@@ -44,7 +44,21 @@ package org.flowplayer.model {
 
 			_linkWindow = "_self";
 		}
-		
+
+        override public function clone():Cloneable {
+            var copy:Logo = new Logo(getDisplayObject(), name);
+            copyFields(this, copy);
+            copy.url = _url;
+            copy.fullscreenOnly = _fullscreenOnly;
+            copy.fadeSpeed = _fadeSpeed;
+            copy.displayTime = _displayTime;
+            copy.scaleMaximum = _scaleMaximum;
+            copy.linkUrl = _linkUrl;
+            copy.linkWindow = _linkWindow;
+            return copy;
+        }
+
+        [Value]
 		public function get url():String {
 			return _url;
 		}
@@ -57,6 +71,7 @@ package org.flowplayer.model {
 //			}
 		}
 		
+        [Value]
 		public function get fullscreenOnly():Boolean {
 			return _fullscreenOnly;
 		}
@@ -64,6 +79,7 @@ package org.flowplayer.model {
 		public function set fullscreenOnly(fullscreenOnly:Boolean):void {
 			_fullscreenOnly = fullscreenOnly;
 		}
+        [Value]
 		public function get fadeSpeed():Number {
 			return _fadeSpeed;
 		}
@@ -72,6 +88,7 @@ package org.flowplayer.model {
 			_fadeSpeed = fadeSpeed;
 		}
 		
+        [Value]
 		public function get displayTime():int {
 			return _displayTime;
 		}
@@ -88,6 +105,7 @@ package org.flowplayer.model {
 			_scaleMaximum = scaleMaximum;
 		}
 		
+        [Value]
 		public function get linkUrl():String {
 			return _linkUrl;
 		}
@@ -96,6 +114,7 @@ package org.flowplayer.model {
 			_linkUrl = linkUrl;
 		}
 		
+        [Value]
 		public function get linkWindow():String {
 			return _linkWindow;
 		}

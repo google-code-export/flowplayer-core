@@ -82,6 +82,7 @@ import org.flowplayer.model.ClipEvent;
         public function set label(label:String):void {
             _play.label = label;
             switchLabel(label);
+            _pluginRegistry.update(_play);
         }
 
         private function switchLabel(label:String):void {
@@ -106,6 +107,7 @@ import org.flowplayer.model.ClipEvent;
             if (! _player) return;
             log.debug("set replayLabel '" + label + "'");
             _play.replayLabel = label;
+            _pluginRegistry.update(_play);
         }
 
         CONFIG::commercialVersion {
@@ -114,9 +116,10 @@ import org.flowplayer.model.ClipEvent;
                 log.debug("set image() will show? " + (_button.parent == this));
                 _play.url = url;
                 loadImage(url, null, _button.parent == this);
+                _pluginRegistry.update(_play);
             }
         }
-		
+
 		override public function set alpha(value:Number):void {
 			log.debug("setting alpha to " + value + " tween " + _tween);
 			super.alpha = value;
