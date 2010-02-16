@@ -299,10 +299,23 @@
             	<property name="swfremotedir" value="${swfremotedir}" />
             	<property name="aws-accessId" value="${aws-accessId}" />
                 <property name="aws-secretKey" value="${aws-secretKey}" />
+                <property name="keyfile" value="${keyfile}" />
                 <property name="url-file" value="${url-file}" />
             </subant>
         </sequential>
     </macrodef>
+
+    <target name="release-plugin" description="releases one plugin, specify the plugin name with -Dplugin=">
+        <ant antfile="../${plugin}/build.xml" target="release-remote" dir="../${plugin}">
+            <property name="remotedir" value="${remotedir}" />
+            <property name="all-swf-zip" value="${basedir}/dist/latest.zip" />
+            <property name="swfremotedir" value="${swfremotedir}" />
+            <property name="aws-accessId" value="${aws-accessId}" />
+            <property name="aws-secretKey" value="${aws-secretKey}" />
+            <property name="url-file" value="${url-file}" />
+            <property name="keyfile" value="${keyfile}" />
+        </ant>
+    </target>
 	
 	<target name="doc" description="generates the apidocs">
 		<exec executable="${asdoc_bin}" failonerror="true">
