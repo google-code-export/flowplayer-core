@@ -31,7 +31,6 @@ package org.flowplayer.model {
 		private var _fullscreenOnly:Boolean = true;
 		private var _fadeSpeed:Number;
 		private var _displayTime:int = 0;
-		private var _scaleMaximum:Number = 2;
 		private var _linkUrl:String;
 		private var _linkWindow:String;
 		
@@ -52,7 +51,6 @@ package org.flowplayer.model {
             copy.fullscreenOnly = _fullscreenOnly;
             copy.fadeSpeed = _fadeSpeed;
             copy.displayTime = _displayTime;
-            copy.scaleMaximum = _scaleMaximum;
             copy.linkUrl = _linkUrl;
             copy.linkWindow = _linkWindow;
             return copy;
@@ -95,14 +93,6 @@ package org.flowplayer.model {
 		
 		public function set displayTime(displayTime:int):void {
 			_displayTime = displayTime;
-		}
-		
-		public function get scaleMaximum():Number {
-			return _scaleMaximum;
-		}
-
-		public function set scaleMaximum(scaleMaximum:Number):void {
-			_scaleMaximum = scaleMaximum;
 		}
 		
         [Value]
