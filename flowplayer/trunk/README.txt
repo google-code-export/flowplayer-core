@@ -15,6 +15,7 @@ Fixes:
 - countPlugins() was throwing an error when a plugin was not found
 - external swf files were not scaled properly
 - the logo was unnecessary shown when going fullscreen if logo.displayTime was being used
+- added a loadPluginWithConfig method to FlowplayerBase, accessible from javascript. Fixed double onload callback call.
 
 3.1.5
 -----

@@ -154,11 +154,7 @@ import org.flowplayer.model.PlayerError;
         }
 
 		private function pluginLoad(name:String, url:String, properties:Object = null, callbackId:String = null):void {
-			var loadable:Loadable = new Loadable(name, _config, url);
-			if (properties) {
-				new PropertyBinder(loadable, "config").copyProperties(properties);
-			}
-			loadPluginLoadable(loadable, callbackId != null ? createCallback(callbackId) : null);
+			loadPluginWithConfig(name, url, properties, callbackId != null ? createCallback(callbackId) : null);
 		}
 
 		private static function addCallback(methodName:String, func:Function):void {
