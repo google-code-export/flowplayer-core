@@ -18,9 +18,10 @@
  */
 
 package org.flowplayer.model {
-	import org.flowplayer.util.Log;	
-	
-	/**
+	import org.flowplayer.util.Log;
+    import org.flowplayer.util.ObjectConverter;
+
+    /**
 	 * @author api
 	 */
 	internal class PluginMethodHelper {
@@ -44,7 +45,7 @@ package org.flowplayer.model {
 			}
 			if (method.isGetter) {
 				log.debug("calling getter '" + method.internalName + "', of callable object " + callable);
-				return plugin[method.internalName];
+				return convert(method, plugin[method.internalName]);
 			}
 			if (method.isSetter) {
 				log.debug("calling setter '" + method.internalName + "', of callable object " + callable);
@@ -52,8 +53,13 @@ package org.flowplayer.model {
 				return undefined;
 			}
 			log.debug("calling method '" + method.internalName + "', of callable object " + callable);
-			return plugin[method.internalName].apply(plugin, args);
+			return convert(method, plugin[method.internalName].apply(plugin, args));
 		}
+
+        private static function convert(method:PluginMethod, param:Object):Object {
+            log.debug(method.internalName + ", convertResult " + method.convertResult);
+            return method.convertResult ? new ObjectConverter(param).convert() : param;
+        }
 
 		public static function methodNames(_methods:Array):Array {
 			var result:Array = new Array();

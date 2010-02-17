@@ -48,18 +48,20 @@ package org.flowplayer.config {
 		
 		private static function addMethods(callable:Callable, exposedNode:XML, plugin:Object):void {
 			var methodName:String = exposedNode.@name;
-			log.debug("------------" + methodName + ", has return value " + (exposedNode.@returnType != "void"));
+            var convert:Boolean = exposedNode.metadata.arg.@key == "convert" ? exposedNode.metadata.arg.@value == "true" : false;
+            
+			log.debug("------------" + methodName + ", has return value " + (exposedNode.@returnType != "void") +", convertResult " + convert);
 			if (exposedNode.name() == "method") { 
-				callable.addMethod(PluginMethod.method(methodName, methodName, (exposedNode.@returnType != "void")));
+				callable.addMethod(PluginMethod.method(methodName, methodName, (exposedNode.@returnType != "void"), convert));
 				
 			} else if (exposedNode.name() == "accessor") {
 				var methodNameUppercased:String = methodName.charAt(0).toUpperCase() + methodName.substring(1);
 				if (exposedNode.@access == "readwrite") {
-					callable.addMethod(PluginMethod.getter("get" + methodNameUppercased, methodName));
+					callable.addMethod(PluginMethod.getter("get" + methodNameUppercased, methodName, convert));
 					callable.addMethod(PluginMethod.setter("set" + methodNameUppercased, methodName));
 					
 				} else if (exposedNode.@access == "readonly") {
-					callable.addMethod(PluginMethod.getter("get" + methodNameUppercased, methodName));
+					callable.addMethod(PluginMethod.getter("get" + methodNameUppercased, methodName, convert));
 					
 				} else {
 					callable.addMethod(PluginMethod.setter("set" + methodNameUppercased, methodName));
