@@ -483,6 +483,15 @@ package org.flowplayer.view {
 			loadPluginLoadable(new Loadable(pluginName, _config, url), callback);
 		}
 		
+		public function loadPluginWithConfig(name:String, url:String, properties:Object = null, callback:Function = null):void
+		{
+			var loadable:Loadable = new Loadable(name, _config, url);
+			if (properties) {
+				new PropertyBinder(loadable, "config").copyProperties(properties);
+			}
+			loadPluginLoadable(loadable, callback);
+		}
+		
 		/**
 		 * Creates a text field with default font. If the player configuration has a FontProvider
 		 * plugin configured, we'll use that. Otherwise platform fonts are used, the platform font
@@ -522,7 +531,7 @@ package org.flowplayer.view {
 					_playListController.addProvider(loadable.plugin as ProviderModel);
 				}
 				
-				if (callback != null) {
+				if (callback != null && loadable.plugin != null ) {
 					callback(loadable.plugin); 				
 				}
 			};
