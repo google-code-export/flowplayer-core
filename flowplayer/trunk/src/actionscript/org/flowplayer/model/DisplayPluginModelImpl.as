@@ -65,7 +65,7 @@ package org.flowplayer.model {
 
         public override function clone():Cloneable {
 			var copy:DisplayPluginModelImpl = new DisplayPluginModelImpl(getDisplayObject(), name);
-//            copyFields(copy);
+            copyFields(this, copy);
             return copy;
 		}
 
