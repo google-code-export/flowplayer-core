@@ -28,20 +28,22 @@ package org.flowplayer.model {
 		private var _isGetter:Boolean;
 		private var _isSetter:Boolean;
 		private var _hasReturnValue:Boolean;
+        private var _convertResult:Boolean;
 		
-		public static function method(externalName:String, pluginFunctionName:String, hasReturnValue:Boolean):PluginMethod {
-			return new PluginMethod(externalName, pluginFunctionName, false, false, hasReturnValue);
+		public static function method(externalName:String, pluginFunctionName:String, hasReturnValue:Boolean, convertResult:Boolean):PluginMethod {
+			return new PluginMethod(externalName, pluginFunctionName, false, false, hasReturnValue, convertResult);
 		}
 
 		public static function setter(externalName:String, pluginFunctionName:String):PluginMethod {
 			return new PluginMethod(externalName, pluginFunctionName, false, true);
 		}
 
-		public static function getter(externalName:String, pluginFunctionName:String):PluginMethod {
-			return new PluginMethod(externalName, pluginFunctionName, true, false, true);
+		public static function getter(externalName:String, pluginFunctionName:String, convertResult:Boolean):PluginMethod {
+			return new PluginMethod(externalName, pluginFunctionName, true, false, true, convertResult);
 		}		
 
-		public function PluginMethod(externalName:String, pluginFunctionName:String, isGetter:Boolean = false, isSetter:Boolean = false, hasReturnValue:Boolean = false) {
+		public function PluginMethod(externalName:String, pluginFunctionName:String, isGetter:Boolean = false,
+                                     isSetter:Boolean = false, hasReturnValue:Boolean = false, convertResult:Boolean = false) {
 			_externalName = externalName;
 			_internalName = pluginFunctionName;
 			if (_isGetter && isSetter) {
@@ -50,6 +52,7 @@ package org.flowplayer.model {
 			_isGetter = isGetter;
 			_isSetter = isSetter;
 			_hasReturnValue = hasReturnValue;
+            _convertResult = convertResult;
 		}
 
 		public function get externalName():String {
@@ -75,5 +78,9 @@ package org.flowplayer.model {
 		public function set hasReturnValue(hasReturnValue:Boolean):void {
 			_hasReturnValue = hasReturnValue;
 		}
-	}
+
+        public function get convertResult():Boolean {
+            return _convertResult;
+        }
+    }
 }
