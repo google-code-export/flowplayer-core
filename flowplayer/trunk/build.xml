@@ -1,5 +1,6 @@
 <project name="Flowplayer" default="build">
 	<property file="build.properties" />
+    <property file="build.generated.properties" /> 
 
 	<property name="version-1" value="3" />
 	<property name="version-2" value="1" />
@@ -301,6 +302,7 @@
                 <property name="aws-secretKey" value="${aws-secretKey}" />
                 <property name="keyfile" value="${keyfile}" />
                 <property name="url-file" value="${url-file}" />
+                <property name="devkit-dir" value="${devkit-dir}" />
             </subant>
         </sequential>
     </macrodef>
