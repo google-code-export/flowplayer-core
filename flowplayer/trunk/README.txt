@@ -16,6 +16,7 @@ Fixes:
 - external swf files were not scaled properly
 - the logo was unnecessary shown when going fullscreen if logo.displayTime was being used
 - added a loadPluginWithConfig method to FlowplayerBase, accessible from javascript. Fixed double onload callback call.
+- now handles cuepoint parameters injected using the Adobe Media Encoder
 
 3.1.5
 -----
