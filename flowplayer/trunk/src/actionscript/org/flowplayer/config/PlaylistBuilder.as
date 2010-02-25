@@ -173,10 +173,19 @@ package org.flowplayer.config {
 			if (cueObj is Number) return new Cuepoint(roundTime(cueObj as int, timeMultiplier), callbackId);
 			if (! cueObj.hasOwnProperty("time")) throw new Error("Cuepoint does not have time: " + cueObj);
 			var cue:Object = Cuepoint.createDynamic(roundTime(cueObj.time, timeMultiplier), callbackId);
-			for (var prop:String in cueObj) {
-				if (prop != "time") {
-					cue[prop] = cueObj[prop];
-				}
+            var parameters:Object = {};
+            for (var prop:String in cueObj) {
+                if (prop == "parameters") {
+
+                    for (var paramName:String in cueObj[prop]) {
+                        parameters[paramName] = cueObj[prop][paramName];
+                    }
+                    cue["parameters"] = parameters;
+                } else if (prop != "time") {
+                    cue[prop] = cueObj[prop];
+                    log.debug("added prop " + prop, cueObj[prop]);
+                }
+
 //				log.debug("added cynamic property " + prop + ", to value " + cue[prop]);
 			}
 			return cue;
