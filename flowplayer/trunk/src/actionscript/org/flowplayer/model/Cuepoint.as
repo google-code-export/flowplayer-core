@@ -25,10 +25,12 @@ import flash.utils.Dictionary;
 	 */
 	public class Cuepoint implements Cloneable {
 		private var _time:int;
-		private var _callbackId:String;
-		private var _lastFireTime:int = -1;
+        private var _callbackId:String;
+        private var _lastFireTime:int = -1;
+        private var _name:String;
+
         private var _parameters:Object = new Object();
-		
+
 		/**
 		 * Creates a new cuepoint.
 		 * @param time
@@ -42,7 +44,16 @@ import flash.utils.Dictionary;
 		public static function createDynamic(time:int, callbackId:String):Cuepoint {
 			return new DynamicCuepoint(time, callbackId);
 		}
-		
+
+        [Value]
+        public function get name():String {
+            return _name;
+        }
+
+        public function set name(name:String):void {
+            _name = name;
+        }
+
 		[Value]
 		public function get time():int {
 			return _time;
