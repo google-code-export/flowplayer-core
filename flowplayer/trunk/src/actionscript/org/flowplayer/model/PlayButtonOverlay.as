@@ -49,6 +49,7 @@ package org.flowplayer.model {
 
         override public function clone():Cloneable {
             var copy:PlayButtonOverlay = new PlayButtonOverlay();
+            copyFields(this, copy);
             copy.fadeSpeed = this.fadeSpeed;
             copy.rotateSpeed = this.rotateSpeed;
             copy.url = this.url;
