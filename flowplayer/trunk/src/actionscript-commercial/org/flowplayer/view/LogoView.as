@@ -201,7 +201,9 @@ package org.flowplayer.view {
 			log.debug("createLogoImage() logo shown in fullscreen only " + _model.fullscreenOnly);
 			if (! _model.fullscreenOnly) {
 				show();
-			}
+			} else {
+                hide(0);
+            }
             update();
 			onResize();
 		}
