@@ -72,11 +72,16 @@ package org.flowplayer.config {
             
             if (!clip.getCustomProperty("bitrates")) clip.setCustomProperty("bitrates", []);
             if (item.link) clip.linkUrl = item.link;
-        
         	
-
-            if (item.ym::group.ym::content.length()) {
-                parseMedia(item.ym::group, clip);
+        	//parse a group media:content items inside a media:group tag
+            if (item.ym::group.ym::content.length() > 0) {
+                parseMediaGroup(item.ym::group, clip);
+            }
+            
+            //parse a single media:content item
+            if (item.ym::content.length() > 0) {
+                parseMediaItem(XML(item.ym::content), clip);
+                addBitrateItems(XML(item.ym::content), clip);
             }
 
             if (item.fp::clip.attributes().length() > 0) {
@@ -145,8 +150,8 @@ package org.flowplayer.config {
             }
             return result;
         }
-
-        private function parseMedia(group:XMLList, clip:Clip):Boolean {
+		
+        private function parseMediaGroup(group:XMLList, clip:Clip):Boolean {
 
              var clipAdded:Boolean = false;
              
