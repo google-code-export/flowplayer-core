@@ -59,7 +59,7 @@ package org.flowplayer.util {
 			}
 		}
 
-		public static function addGradient(parent:DisplayObjectContainer, index:int, gradientAlphas:Array, borderRadius:Number, x:Number = 0, y:Number = 0):void {
+		public static function addGradient(parent:DisplayObjectContainer, index:int, gradientAlphas:Array, borderRadius:Number, x:Number = 0, y:Number = 0, height:Number = 0):void {
 			removeGradient(parent);
 			var gradientHolder:Shape = new Shape();
 			gradientHolder.name = "_gradient";
@@ -67,7 +67,7 @@ package org.flowplayer.util {
 				
 			gradientHolder.graphics.clear();
 			beginFill(gradientHolder.graphics, gradientAlphas, parent.width, parent.height);
-			GraphicsUtil.drawRoundRectangle(gradientHolder.graphics, x, y, parent.width, parent.height, borderRadius);
+			GraphicsUtil.drawRoundRectangle(gradientHolder.graphics, x, y, parent.width, (height != 0 ? height : parent.height), borderRadius);
 			gradientHolder.graphics.endFill();
 		}
 		
