@@ -17,6 +17,7 @@ Fixes:
 - the logo was unnecessary shown when going fullscreen if logo.displayTime was being used
 - added a loadPluginWithConfig method to FlowplayerBase, accessible from javascript. Fixed double onload callback call.
 - now handles cuepoint parameters injected using the Adobe Media Encoder
+- showPlugin was not working when config.play was null
 
 3.1.5
 -----
