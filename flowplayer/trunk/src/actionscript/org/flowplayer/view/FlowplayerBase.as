@@ -343,7 +343,7 @@ package org.flowplayer.view {
 				props.zIndex = newPluginZIndex;
 			}
 			log.debug("showPlugin, zIndex is " + props.zIndex);
-			if (disp == playButtonOverlay.getDisplayObject()) {
+			if (playButtonOverlay && disp == playButtonOverlay.getDisplayObject()) {
 				playButtonOverlay.getDisplayObject()["showButton"]();
 			} else {
 				_panel.addView(disp, null, props);
