@@ -562,9 +562,11 @@ import org.flowplayer.model.DisplayPluginModel;
 
 		private function isControlsAlwaysAutoHide():Boolean {
 			if (!_controlsModel) return false;
-			if (!_controlsModel.config) return false;
-			log.debug("controlsModel.config.auotoHide == always", (_controlsModel.config.autoHide == 'always'));
-			return  _controlsModel.config.autoHide == 'always';
+			if (!_controlsModel.pluginObject) return false;
+			if (!_controlsModel.pluginObject.config) return false;
+			
+			log.debug("controlsModel.config.auotoHide == always " +(_controlsModel.pluginObject.config.autoHide.state == 'always'?'true':'false'));
+			return  _controlsModel.pluginObject.config.autoHide.state == 'always';
 		}
 
 		private function createFlowplayer():void {
