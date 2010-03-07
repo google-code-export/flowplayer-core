@@ -50,7 +50,7 @@ package org.flowplayer.controller {
 			_config = config;
 			var filter:Function = function(clip:Clip):Boolean { 
 				//allow for chromeless swf video players to be added into the filter
-				return clip.type == ClipType.VIDEO || clip.type == ClipType.AUDIO || clip.type == ClipType.CHROMELESS; 
+				return clip.type == ClipType.VIDEO || clip.type == ClipType.AUDIO || clip.type == ClipType.API; 
 			};
 			playlist.onBegin(onBegin, filter, true);
 			playlist.onBufferFull(onBegin, filter, true);
