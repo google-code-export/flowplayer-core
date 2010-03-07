@@ -29,13 +29,13 @@ package org.flowplayer.view {
 	 * @author api
 	 * @author danielr
 	 */
-	internal class ChromelessDisplay extends AbstractSprite implements MediaDisplay {
+	internal class VideoApiDisplay extends AbstractSprite implements MediaDisplay {
 
 		private var video:DisplayObject;
 		private var _overlay:Sprite;
 		private var _clip:Clip;
 
-		public function ChromelessDisplay(clip:Clip) {
+		public function VideoApiDisplay(clip:Clip) {
 			_clip = clip;
 			createOverlay();
 		}
@@ -85,7 +85,7 @@ package org.flowplayer.view {
 		}
 		
 		override public function toString():String {
-			return "[ChromelessDisplay] for clip " + _clip;
+			return "[VideoApiDisplay] for clip " + _clip;
 		}
     }
 }
