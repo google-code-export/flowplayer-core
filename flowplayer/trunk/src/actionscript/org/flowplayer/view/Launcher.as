@@ -562,11 +562,9 @@ import org.flowplayer.model.DisplayPluginModel;
 
 		private function isControlsAlwaysAutoHide():Boolean {
 			if (!_controlsModel) return false;
-			if (!_controlsModel.pluginObject) return false;
-			if (!_controlsModel.pluginObject.config) return false;
-			
-			log.debug("controlsModel.config.auotoHide == always " +(_controlsModel.pluginObject.config.autoHide.state == 'always'?'true':'false'));
-			return  _controlsModel.pluginObject.config.autoHide.state == 'always';
+            var controls:DisplayObject = _controlsModel.getDisplayObject();
+			log.debug("controls.auotoHide " + controls["getAutoHide"]());
+			return  ! controls["getAutoHide"]()["fullscreenOnly"];
 		}
 
 		private function createFlowplayer():void {
