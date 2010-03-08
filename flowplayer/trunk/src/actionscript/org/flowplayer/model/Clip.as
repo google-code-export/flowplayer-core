@@ -436,28 +436,23 @@ import org.flowplayer.flow_internal;
 		public function set duration(value:Number):void {
 			this._duration = value;
 			log.info("clip duration set to " + value);
-//			if (! isCommon) {
-//				if (duration >= 0) {
-//					setNegativeCuepointTimes(value);
-//				}
-//				addCommonClipNegativeCuepoints();
-//			}
 		}
-		
-//		private function addCommonClipNegativeCuepoints():void {
-//			if (commonClip) {
-//				log.debug("adding negative cuepoints from commponClip");
-//				addCuepoints(commonClip.cuepointsInNegative);
-//			} else {
-//				log.error("there is no commonClip");
-//			}
-//		}
 
 		public function get durationFromMetadata():Number {
 			if (_metaData)
-				return _metaData.duration;
+				return decodeDuration(_metaData.duration);
 			return 0;
 		}
+
+        private function decodeDuration(duration:Object):Number {
+            var parts:Array = duration.split(".");
+
+            // for some reason duration can have 3 part value, for example "130.000.123"
+            if (parts.length >= 3) {
+                return Number(parts[0] + "." + parts[1]);
+            }
+            return duration as Number;
+        }
 		
 		public function set durationFromMetadata(value:Number):void {
 			if (! _metaData) {
