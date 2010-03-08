@@ -231,7 +231,7 @@ package org.flowplayer.view {
 							}
 						});
 				} else if (view.parent != _panel) {
-					_panel.addView(view);
+					_panel.addView(view, null, plugin);
 				}
 			} else {
 				log.debug("animateAlpha, view is not added/removed from panel");

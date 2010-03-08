@@ -18,6 +18,7 @@ Fixes:
 - added a loadPluginWithConfig method to FlowplayerBase, accessible from javascript. Fixed double onload callback call.
 - now handles cuepoint parameters injected using the Adobe Media Encoder
 - showPlugin was not working when config.play was null
+- handles 3-part duration values included in FLV metadata, like "500.123.123"
 
 3.1.5
 -----

@@ -189,7 +189,7 @@ package org.flowplayer.view {
 			return rootStyle["backgroundGradient"];
 		}
 		
-		private function decodeGradient(value:String):Array {
+		public static function decodeGradient(value:String):Array {
 			if (value == "none") return null;
 			if (value == "high") return [1, 0.5, 0, 0.1, .3];
 			if (value == "medium") return [.6, .21, .21];
