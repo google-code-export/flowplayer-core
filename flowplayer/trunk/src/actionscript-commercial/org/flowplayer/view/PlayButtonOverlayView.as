@@ -178,7 +178,7 @@ import org.flowplayer.model.ClipEvent;
 		}
 
 		private function addListeners(eventSupport:ClipEventSupport):void {
-			eventSupport.onConnect(showButton);
+			//eventSupport.onConnect(showButton); // bug #38
 			eventSupport.onConnect(startBuffering);
 
             // onBegin is here because onBeforeBegin is not dispatched when playing after a timed out and invalid netConnection
@@ -224,7 +224,7 @@ import org.flowplayer.model.ClipEvent;
 		
 		private function createChildren():void {			
 			_rotation = new RotatingAnimation();
-            addChild(_rotation);
+            //addChild(_rotation); // bug #38
 			createButton();
 		}
 		
