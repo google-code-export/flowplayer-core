@@ -651,7 +651,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			var screenModel:DisplayProperties = _config.getScreenProperties();
 			initView(_screen, screenModel, null, false);
 			if (_playButtonOverlay) {
-				PlayButtonOverlayView(_playButtonOverlay.getDisplayObject()).setScreen(_screen, hasClip);
+				PlayButtonOverlayView(_playButtonOverlay.getDisplayObject()).setScreen(_screen, hasClip && _config.useBufferingAnimation);
 			}
 //			addViewLiteners(_screen);
 		}

@@ -223,7 +223,7 @@ package org.flowplayer.config {
 			return config["showErrors"];  
 		}
 		
-		private function get useBufferingAnimation():Boolean {
+		public function get useBufferingAnimation():Boolean {
 			if (! config.hasOwnProperty("buffering")) return true;
 			return config["buffering"];
 		}
