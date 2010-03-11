@@ -665,6 +665,12 @@ import org.flowplayer.model.PluginModel;
                     clip.dispatchEvent(new ClipEvent(ClipEventType.BEGIN, _pauseAfterStart));
                 }
             } else if (event.info.code == "NetStream.Play.Stop") {
+				if ( clip.duration - _player.status.time < 1 )
+				{
+					// we need to send buffer full at end of the video
+					clip.dispatchEvent(new ClipEvent(ClipEventType.BUFFER_FULL)); // Bug #39
+				}	
+
 //				dispatchPlayEvent(ClipEventType.STOP);
             } else if (event.info.code == "NetStream.Seek.Notify") {
                 if (! silentSeek) {
