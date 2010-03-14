@@ -19,6 +19,8 @@ Fixes:
 - now handles cuepoint parameters injected using the Adobe Media Encoder
 - showPlugin was not working when config.play was null
 - handles 3-part duration values included in FLV metadata, like "500.123.123"
+- player wasn't always reaching end of video
+- fixed broken buffering: false
 
 3.1.5
 -----
