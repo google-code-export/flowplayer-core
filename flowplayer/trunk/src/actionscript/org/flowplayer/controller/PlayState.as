@@ -133,7 +133,8 @@ package org.flowplayer.controller {
                 }
 
             } else {
-                onEvent(ClipEventType.STOP, [closeStreamAndConnection]);
+				if ( canOnEvent(ClipEventType.STOP, [closeStreamAndConnection]) )
+                	onEvent(ClipEventType.STOP, [closeStreamAndConnection]);
 
                 if (closeStreamAndConnection && playList.current.parent != null) {
                     playList.setInStreamClip(null);
@@ -143,8 +144,9 @@ package org.flowplayer.controller {
         }
 		
 		internal function close(silent:Boolean):void {
-			if (onEvent(ClipEventType.STOP, [true, silent])) {
+			if (canOnEvent(ClipEventType.STOP, [true, silent])) {
 				changeState(waitingState);
+				onEvent(ClipEventType.STOP, [true, silent]);
 			}
 		}
 		
@@ -181,7 +183,7 @@ package org.flowplayer.controller {
 			return status;
 		}
 
-		protected function onEvent(eventType:ClipEventType, params:Array = null, beforeEventInfo:Object = null):Boolean {
+		protected function canOnEvent(eventType:ClipEventType, params:Array = null, beforeEventInfo:Object = null):Boolean {
             log.debug("onEvent() " + eventType.name + ", current clip " + playList.current);
 			Assert.notNull(eventType, "eventType must be non-null");
 			if (playList.current.isNullClip) return false;
@@ -195,9 +197,12 @@ package org.flowplayer.controller {
 			} else {
                 log.debug("event is not cancellable, will not dispatch before event");
             }
-			log.debug("calling onEvent(" + eventType.name + ") on media controller ");
-			 getMediaController().onEvent(eventType, params);
 			return true;
+		}
+		
+		protected function onEvent(eventType:ClipEventType, params:Array = null):void {
+			log.debug("calling onEvent(" + eventType.name + ") on media controller ");
+			getMediaController().onEvent(eventType, params);
 		}
 
 		protected function changeState(newState:PlayState):void {

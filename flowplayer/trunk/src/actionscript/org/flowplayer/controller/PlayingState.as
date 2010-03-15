@@ -58,15 +58,17 @@ package org.flowplayer.controller {
             stop();
             bufferingState.nextStateAfterBufferFull = playingState;
 
-            if (onEvent(ClipEventType.BEGIN, [false])) {
+            if (canOnEvent(ClipEventType.BEGIN, [false])) {
                 changeState(bufferingState);
                 playList.current.played = true;
+				onEvent(ClipEventType.BEGIN, [false]);
             }
         }
 
         internal override function switchStream(netStreamPlayOptions:Object = null):void {
             log.debug("cannot start playing in this state");
-            onEvent(ClipEventType.SWITCH, [netStreamPlayOptions]);
+			if ( canOnEvent(ClipEventType.SWITCH, [netStreamPlayOptions]) )
+            	onEvent(ClipEventType.SWITCH, [netStreamPlayOptions]);
         }
 
         override protected function setEventListeners(eventSupport:ClipEventSupport, add:Boolean = true):void {
@@ -131,13 +133,15 @@ package org.flowplayer.controller {
 		}
 
 		internal override function pause():void {
-			if (onEvent(ClipEventType.PAUSE)) {
+			if (canOnEvent(ClipEventType.PAUSE)) {
 				changeState(pausedState);
+				onEvent(ClipEventType.PAUSE);
 			}
 		}
 		
 		internal override function seekTo(seconds:Number):void {
-			onEvent(ClipEventType.SEEK, [seconds], seconds);
+			if ( canOnEvent(ClipEventType.SEEK, [seconds], seconds) )
+				onEvent(ClipEventType.SEEK, [seconds]);
 		}
 
         override protected function onClipStop(event:ClipEvent):void {

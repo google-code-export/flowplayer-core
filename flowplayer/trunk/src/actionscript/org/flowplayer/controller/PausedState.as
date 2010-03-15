@@ -51,8 +51,9 @@ import org.flowplayer.model.ClipEventType;
 		
 		internal override function resume():void {
 			log.debug("resume(), changing to stage " + playingState);
-			if (onEvent(ClipEventType.RESUME)) {
+			if (canOnEvent(ClipEventType.RESUME)) {
 				changeState(playingState);
+				onEvent(ClipEventType.RESUME);
 			}
 		} 
 
@@ -63,7 +64,8 @@ import org.flowplayer.model.ClipEventType;
 		}
 
 		internal override function seekTo(seconds:Number):void {
-			onEvent(ClipEventType.SEEK, [seconds], seconds);
+			if ( canOnEvent(ClipEventType.SEEK, [seconds], seconds))
+				onEvent(ClipEventType.SEEK, [seconds]);
 		}
 	}
 }
