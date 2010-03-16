@@ -445,9 +445,9 @@ import org.flowplayer.flow_internal;
 		}
 
         private function decodeDuration(duration:Object):Number {
-			if ( duration is Number )
-				return duration as Number;
-				
+            if (! duration) return 0;
+            if (duration is Number) return duration as Number;
+            if (! duration is String) return 0;
             var parts:Array = duration.split(".");
 
             // for some reason duration can have 3 part value, for example "130.000.123"
