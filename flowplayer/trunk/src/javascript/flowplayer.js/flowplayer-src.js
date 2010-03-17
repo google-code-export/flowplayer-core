@@ -457,8 +457,10 @@
 					if (evt.substring(0, 1) == "_") {
 						delete listeners[evt];  
 					} 
-            }         
-         } 					
+            }
+            
+            return self;
+         }
 			
 		});
 
@@ -524,45 +526,63 @@ function Player(wrapper, params, conf) {
 			return api && parseInt(api.style.height, 10) === 0;
 		},
 		
-		
 		load: function(fn) { 
 						
-			if (!api && self._fireEvent("onBeforeLoad") !== false) {
-			
+			if (!self.isLoaded() && self._fireEvent("onBeforeLoad") !== false) {
+						
+				var onPlayersUnloaded = function() 
+				{
+					html = wrapper.innerHTML;				
+				
+					// do not use splash as alternate content for flashembed
+					if (html && !flashembed.isSupported(params.version)) {
+						wrapper.innerHTML = "";					
+					}				  
+				
+					// install Flash object inside given container
+					flashembed(wrapper, params, {config: conf});
+				
+					// onLoad listener given as argument
+					if (fn) {
+						fn.cached = true;
+						bind(listeners, "onLoad", fn);	
+					}
+				};
+				
+				
 				// unload all instances
+				
+				var unloadedPlayersNb = 0;
 				each(players, function()  {
-					this.unload();		
+					this.unload(function()
+					{
+						if ( ++unloadedPlayersNb == players.length )
+							onPlayersUnloaded();
+					});		
 				});
-							
-				html = wrapper.innerHTML;				
-				
-				// do not use splash as alternate content for flashembed
-				if (html && !flashembed.isSupported(params.version)) {
-					wrapper.innerHTML = "";					
-				}				  
-				
-				// install Flash object inside given container
-				flashembed(wrapper, params, {config: conf});
-				
-				// onLoad listener given as argument
-				if (fn) {
-					fn.cached = true;
-					bind(listeners, "onLoad", fn);	
-				}
 			}
 			
 			return self;	
 		},
 		
-		unload: function() {
+		unload: function(fn) {
+			// if we are fullscreen on safari, we can't unload as it would crash the PluginHost, sorry
+			if ( this.isFullscreen() && /WebKit/i.test(navigator.userAgent) ) 
+			{
+				if ( fn ) fn(false);
+				return self;
+			}
+			
 			
 			// unload only if in splash state
 			if (html.replace(/\s/g,'') !== '') {
 				
 				if (self._fireEvent("onBeforeUnload") === false) {
+					if ( fn ) fn(false);
 					return self;
 				}	
 				
+				isUnloading = true;
 				// try closing
 				try {
 					if (api) { 
@@ -573,8 +593,15 @@ function Player(wrapper, params, conf) {
 					}				
 				} catch (error) {}				
 				
-				api = null;				
-				wrapper.innerHTML = html;				
+				var clean = function() {
+					api = null;				
+					wrapper.innerHTML = html;
+					isUnloading = false;
+					
+					if ( fn ) fn(true);
+				}
+				
+				setTimeout(clean, 50);			
 			} 
 			
 			return self;
@@ -616,8 +643,21 @@ function Player(wrapper, params, conf) {
 		}, 
 		
 		getControls: function() { 
-			return self.getPlugin("controls");
+			return self.getPlugin("controls")._fireEvent("onUpdate");
 		}, 
+		
+		// 3.2
+		getLogo: function() {
+			try {
+				return self.getPlugin("logo")._fireEvent("onUpdate");
+			} catch (ignored) {}
+		},
+		
+		// 3.2
+		getPlay: function() {
+			return self.getPlugin("play")._fireEvent("onUpdate");
+		},
+		
 
 		getConfig: function(copy) { 
 			return copy ? clone(conf) : conf;

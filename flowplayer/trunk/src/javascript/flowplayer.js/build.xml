@@ -3,7 +3,7 @@
 <project name="flowplayer" default="min">	
 	
 	<property name="BUILDER_HOME" value="../../../../builder"/>	
-	<import file="${BUILDER_HOME}/build.xml"/> 
+	<import file="${BUILDER_HOME}/js.xml"/> 
 	<property name="version" value="${v.js_core}"/>
 	<property name="flashembed-version" value="${v.flashembed}"/>
 	
