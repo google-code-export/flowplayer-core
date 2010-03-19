@@ -184,12 +184,12 @@ package org.flowplayer.controller {
 		}
 
 		protected function canOnEvent(eventType:ClipEventType, params:Array = null, beforeEventInfo:Object = null):Boolean {
-            log.debug("onEvent() " + eventType.name + ", current clip " + playList.current);
+            log.debug("canOnEvent() " + eventType.name + ", current clip " + playList.current);
 			Assert.notNull(eventType, "eventType must be non-null");
 			if (playList.current.isNullClip) return false;
 			
 			if (eventType.isCancellable) {
-                log.debug("onEvent(): dispatching before event for " + eventType.name);
+                log.debug("canOnEvent(): dispatching before event for " + eventType.name);
 				if (! playList.current.dispatchBeforeEvent(new ClipEvent(eventType, beforeEventInfo))) {
 					log.info("event default was prevented, will not execute a state change");
 					return false;

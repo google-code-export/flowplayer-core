@@ -21,6 +21,8 @@ Fixes:
 - handles 3-part duration values included in FLV metadata, like "500.123.123"
 - player wasn't always reaching end of video
 - fixed broken buffering: false
+- fixed event dispatching when embedding flowplayer without flowplayer.js (=without playlist config field)
+- fixed safari crashes when unloading player
 
 3.1.5
 -----
