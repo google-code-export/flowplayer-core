@@ -237,7 +237,6 @@
 			
 			// internal event for performing clip tasks. should be made private someday
 			_fireEvent: function(evt, arg1, arg2, target) { 				
-				
 				if (evt == 'onLoad') { 
 					each(cuepoints, function(key, val) {
 						if (val[0]) {
@@ -476,6 +475,7 @@ function Player(wrapper, params, conf) {
 	var 
 		self = this, 
 		api = null, 
+		isUnloading = false,
 		html, 
 		commonClip, 
 		playlist = [], 
@@ -503,7 +503,7 @@ function Player(wrapper, params, conf) {
 		}, 
 		
 		isLoaded: function() {
-			return (api !== null);	
+			return (api !== null && ! isUnloading);	
 		},
 		
 		getParent: function() {
@@ -512,24 +512,22 @@ function Player(wrapper, params, conf) {
 		
 		hide: function(all) {
 			if (all) { wrapper.style.height = "0px"; }
-			if (api) { api.style.height = "0px"; } 
+			if (self.isLoaded()) { api.style.height = "0px"; } 
 			return self;
 		},
 
 		show: function() {
 			wrapper.style.height = wrapperHeight + "px";
-			if (api) { api.style.height = swfHeight + "px"; }
+			if (self.isLoaded()) { api.style.height = swfHeight + "px"; }
 			return self;
 		}, 
 					
 		isHidden: function() {
-			return api && parseInt(api.style.height, 10) === 0;
+			return self.isLoaded() && parseInt(api.style.height, 10) === 0;
 		},
 		
 		load: function(fn) { 
-						
 			if (!self.isLoaded() && self._fireEvent("onBeforeLoad") !== false) {
-						
 				var onPlayersUnloaded = function() 
 				{
 					html = wrapper.innerHTML;				
@@ -551,10 +549,9 @@ function Player(wrapper, params, conf) {
 				
 				
 				// unload all instances
-				
 				var unloadedPlayersNb = 0;
 				each(players, function()  {
-					this.unload(function()
+					this.unload(function(wasUnloaded)
 					{
 						if ( ++unloadedPlayersNb == players.length )
 							onPlayersUnloaded();
@@ -603,6 +600,7 @@ function Player(wrapper, params, conf) {
 				
 				setTimeout(clean, 50);			
 			} 
+			else if ( fn ) fn(false);
 			
 			return self;
 		
@@ -689,26 +687,31 @@ function Player(wrapper, params, conf) {
 		
 		
 		getState: function() {
-			return api ? api.fp_getState() : -1;
+			return self.isLoaded() ? api.fp_getState() : -1;
 		},
 		
 		// "lazy" play
 		play: function(clip, instream) {
 			
-			function play() {
+			var p = function() {
 				if (clip !== undefined) {
 					self._api().fp_play(clip, instream);
 				} else {
 					self._api().fp_play();	
 				}
-			}
+			};
 			
-			if (api) {
-				play();
-				
-			} else {
+			if (self.isLoaded()) {
+				p();	
+			} else if ( isUnloading ) {
+				setTimeout(function() { 
+					self.play(clip, instream); 
+				}, 50);
+			}
+			else
+			{
 				self.load(function() { 
-					play();
+					p();
 				});
 			}
 			
@@ -717,7 +720,7 @@ function Player(wrapper, params, conf) {
 		
 		getVersion: function() {
 			var js = "flowplayer.js @VERSION";
-			if (api) {
+			if (self.isLoaded()) {
 				var ver = api.fp_getVersion();
 				ver.push(js);
 				return ver;
@@ -726,7 +729,7 @@ function Player(wrapper, params, conf) {
 		},
 		
 		_api: function() {
-			if (!api) {
+			if (!self.isLoaded()) {
 				throw "Flowplayer " +self.id()+ " not loaded when calling an API method";
 			}
 			return api;				
@@ -784,7 +787,7 @@ function Player(wrapper, params, conf) {
 			var name = this;
 			
 			self[name] = function(a1, a2) {
-				if (!api) { return self; }
+				if (!self.isLoaded()) { return self; }
 				var ret = null;
 				
 				// two arguments
@@ -814,7 +817,7 @@ function Player(wrapper, params, conf) {
 		if (conf.debug) { log(a); }				
 		
 		// internal onLoad
-		if (!api && evt == 'onLoad' && arg0 == 'player') {						
+		if (!self.isLoaded() && evt == 'onLoad' && arg0 == 'player') {						
 			
 			api = api || el(apiId); 
 			swfHeight = api.clientHeight;
@@ -1079,7 +1082,6 @@ function Player(wrapper, params, conf) {
 			if (wrapper.addEventListener) {
 				wrapper.addEventListener("click", stopEvent, false);	
 			}
-			
 			// load player
 			self.load();
 		}
