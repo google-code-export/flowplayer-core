@@ -126,12 +126,12 @@ package org.flowplayer.controller {
 
 		private function load(event:ClipEvent, clip:Clip, pauseAfterStart:Boolean = false):void {
 			clip.onPause(onPause);
-            clip.onBufferFull(onFufferFull);
+            clip.onBufferFull(onBufferFull);
             log.debug("calling doLoad");
 			doLoad(event, clip, pauseAfterStart);
 		}
 
-        private function onFufferFull(event:ClipEvent):void {
+        private function onBufferFull(event:ClipEvent):void {
             log.debug("buffer is full, creating and starting duration tracker");
             createDurationTracker(clip);
         }
