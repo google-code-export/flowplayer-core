@@ -57,11 +57,16 @@ package org.flowplayer.view {
         private function enterFrameHandler(evt:Event):void {
             log("enterFrameHandler() " + loaderInfo.bytesLoaded);
 
-            if (stage.stageWidth != 0 && stage.stageHeight != 0) {
-                if (loaderInfo.bytesLoaded == loaderInfo.bytesTotal) {
-                    initialize();
-                    removeEventListener(Event.ENTER_FRAME, enterFrameHandler);
-                }
+            if (loaderInfo.bytesLoaded == loaderInfo.bytesTotal) {
+                log("bytesLoaded == bytesTotal, stageWidth = " + stage.stageWidth + " , stageHeight = " + stage.stageHeight);
+                initialize();
+                removeEventListener(Event.ENTER_FRAME, enterFrameHandler);
+
+                // testing without stage size check                
+//                if (stage.stageWidth != 0 && stage.stageHeight != 0) {
+//                    initialize();
+//                    removeEventListener(Event.ENTER_FRAME, enterFrameHandler);
+//                }
             }
         }
 
