@@ -61,7 +61,7 @@ package org.flowplayer.config {
 			Assert.notNull(config, "No configuration provided.");
 			this.config = createConfigObject(config, builtInConfig);
 			_playerSwfName = playerSwfName;
-			_playlistBuilder = new PlaylistBuilder(playerId, config.playlist, config.clip);
+			_playlistBuilder = new PlaylistBuilder(playerId, this.config.playlist, this.config.clip);
 			_controlsVersion = controlsVersion;
 			_audioVersion = audioVersion;
             _builtInConfig = builtInConfig || new Object();
