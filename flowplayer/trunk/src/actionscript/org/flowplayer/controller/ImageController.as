@@ -52,6 +52,13 @@ package org.flowplayer.controller {
 		
 		override protected function doLoad(event:ClipEvent, clip:Clip, pauseAfterStart:Boolean = false):void {
 //			_durationlessClipPaused = false;
+
+			// reset the duration tracker, #45
+			if (durationTracker) {
+				durationTracker.stop();
+				durationTracker.time = 0;
+			}
+
 			log.info("Starting to load " + clip);
 			_loader.loadClip(clip, onLoadComplete);
 			dispatchPlayEvent(event);
