@@ -24,6 +24,7 @@ Fixes:
 - fixed event dispatching when embedding flowplayer without flowplayer.js (=without playlist config field)
 - fixed safari crashes when unloading player
 - fixed scrubber behaviour with a playlist containing 2 images (or swf) in a row
+- fixed errors in logs when using an RSS playlist
 
 3.1.5
 -----
