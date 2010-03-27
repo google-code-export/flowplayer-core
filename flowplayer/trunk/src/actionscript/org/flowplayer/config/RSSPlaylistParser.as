@@ -207,7 +207,8 @@ package org.flowplayer.config {
         private function addBitrateItems(elem:XML, clip:Clip):void {
 			if (elem.@bitrate && elem.@width)
 			{
-				clip.customProperties["bitrates"].push({"url":elem.@url, "bitrate": elem.@bitrate, "width": elem.@width, "height": elem.@height});
+				// need to explicitely cast attributes for external events, #47
+				clip.customProperties["bitrates"].push({url: new String(elem.@url), bitrate: new Number(elem.@bitrate), width: new Number(elem.@width), height: new Number(elem.@height)});
 			}
         }
     }
