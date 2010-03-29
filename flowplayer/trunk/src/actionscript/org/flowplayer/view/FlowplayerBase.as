@@ -511,7 +511,8 @@ package org.flowplayer.view {
          * @param props
          */
         public function addToPanel(displayObject:DisplayObject, props:Object, resizeListener:Function = null):void {
-            _panel.addView(displayObject, resizeListener, new PropertyBinder(new DisplayPropertiesImpl(), null).copyProperties(props) as DisplayProperties);
+            var properties:DisplayProperties = props is DisplayProperties ? props as DisplayProperties : new PropertyBinder(new DisplayPropertiesImpl(), null).copyProperties(props) as DisplayProperties;
+            _panel.addView(displayObject, resizeListener, properties);
         }
 
 		protected function loadPluginLoadable(loadable:Loadable, callback:Function = null):void {
