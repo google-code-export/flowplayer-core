@@ -7,6 +7,12 @@ public class BuiltInConfig {
 //    private var controls:org.flowplayer.controls.Controls;
 //    private var share:org.flowplayer.shareembed.ShareEmbed;
 
+    [Embed(source="../assets/play.png")]
+    public var PlayButton:Class;
+
+//    [Embed(source="../assets/play.png")]
+//    public var Logo:Class;
+
     public static const config:Object = { 
 //       "plugins": {
 //        "rtmp": {

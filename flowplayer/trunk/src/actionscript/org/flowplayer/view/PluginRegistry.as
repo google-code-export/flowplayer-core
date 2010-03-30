@@ -135,6 +135,7 @@ package org.flowplayer.view {
 		} 
 
 		public function registerDisplayPlugin(plugin:DisplayProperties, view:DisplayObject):void {
+            log.debug("registerDisplayPlugin() " + plugin.name);
 			plugin.setDisplayObject(view);
 			_plugins[plugin.name] = plugin;
 			_originalProps[plugin.name] = plugin.clone();

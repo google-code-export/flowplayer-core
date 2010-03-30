@@ -137,6 +137,7 @@ package org.flowplayer.view {
 		CONFIG::commercialVersion {
             [External]
             public function configure(props:Object):void {
+                _model = Logo(_player.pluginRegistry.getPlugin(_model.name));
                 new PropertyBinder(_model).copyProperties(props);
 
                 if (_model.url) {
@@ -257,7 +258,7 @@ package org.flowplayer.view {
 				_model.zIndex = 100;
 			}
 			if (! this.parent) {
-				log.debug("showing " + _model.dimensions);
+				log.debug("showing " + _model.dimensions + ", " + _model.position);
 //                _player.animationEngine.fadeIn(this);
                 _panel.addView(this, null, _model);
 
@@ -281,7 +282,7 @@ package org.flowplayer.view {
 
 		private function update():void {
             if (! this.parent) return;
-			log.debug("updating " + _model.dimensions);
+            log.debug("update() " + _model.dimensions + ", " + _model.position);
 			_panel.update(this, _model);
 			_panel.draw(this);
 
