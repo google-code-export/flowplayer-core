@@ -44,6 +44,7 @@ package org.flowplayer.view {
 	import flash.net.navigateToURL;
 	import flash.utils.Timer;
 
+    import org.flowplayer.view.BuiltInAssetHelper;
     import org.flowplayer.view.Flowplayer;
 
     /**
@@ -70,7 +71,10 @@ package org.flowplayer.view {
             setEventListeners();
 
             CONFIG::commercialVersion {
-                if (_model.url) {
+                if (BuiltInAssetHelper.hasLogo) {
+                    log.debug("Using built in logo image");
+                    initializeLogoImage(BuiltInAssetHelper.createLogo());
+                } else if (_model.url) {
                     load(_model.url, _model.fullscreenOnly);
                 }
             }
@@ -80,7 +84,7 @@ package org.flowplayer.view {
                 addChild(_copyrightNotice);
                 _model.width = "6.5%";
                 _model.height = "6.5%";
-                createLogoImage(new FlowplayerLogo());
+                initializeLogoImage(BuiltInAssetHelper.createLogo() || new FlowplayerLogo());
             }
 
             log.debug("LogoView() model dimensions " + _model.dimensions);
@@ -186,10 +190,10 @@ package org.flowplayer.view {
 		CONFIG::commercialVersion
 		private function onImageLoaded(loader:ResourceLoader):void {
 			log.debug("image loaded " + loader.getContent());
-			createLogoImage(loader.getContent() as DisplayObject);
+			initializeLogoImage(loader.getContent() as DisplayObject);
 		}
 		
-		private function createLogoImage(image:DisplayObject):void {
+		private function initializeLogoImage(image:DisplayObject):void {
 			_image = image;
 
             CONFIG::commercialVersion {
