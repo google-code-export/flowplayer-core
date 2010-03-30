@@ -19,31 +19,28 @@
  */
 
 package org.flowplayer.view {
-	import org.flowplayer.controller.ResourceLoader;
-    import org.flowplayer.model.Clip;
-import org.flowplayer.model.ClipEvent;
-	import org.flowplayer.model.ClipEventSupport;
-	import org.flowplayer.model.DisplayPluginModel;
-	import org.flowplayer.model.DisplayProperties;
-	import org.flowplayer.model.PlayButtonOverlay;
-	import org.flowplayer.model.Playlist;
-	import org.flowplayer.model.Plugin;
-	import org.flowplayer.model.PluginEventType;
-	import org.flowplayer.model.PluginModel;
-	import org.flowplayer.model.State;
-	import org.flowplayer.util.Arrange;
-	import org.flowplayer.view.AbstractSprite;
-	
-	import flash.display.DisplayObject;
-	import flash.display.Sprite;
-	import flash.events.MouseEvent;
-	import flash.events.TimerEvent;
-	import flash.utils.Timer;		
+    import flash.display.DisplayObject;
+    import flash.events.MouseEvent;
+    import flash.events.TimerEvent;
+    import flash.utils.getDefinitionByName;
 
-	/**
-	 * @author api
-	 */
-	public class PlayButtonOverlayView extends AbstractSprite implements Plugin {
+    import org.flowplayer.controller.ResourceLoader;
+    import org.flowplayer.model.Clip;
+    import org.flowplayer.model.ClipEvent;
+    import org.flowplayer.model.ClipEventSupport;
+    import org.flowplayer.model.DisplayPluginModel;
+    import org.flowplayer.model.DisplayProperties;
+    import org.flowplayer.model.PlayButtonOverlay;
+    import org.flowplayer.model.Playlist;
+    import org.flowplayer.model.Plugin;
+    import org.flowplayer.model.PluginEventType;
+    import org.flowplayer.model.PluginModel;
+    import org.flowplayer.model.State;
+    import org.flowplayer.util.Arrange;
+    import org.flowplayer.view.BuiltInAssetHelper;
+    import org.flowplayer.view.BuiltInAssetHelper;
+
+    public class PlayButtonOverlayView extends AbstractSprite implements Plugin {
 		
 		private var _button:DisplayObject;
 		private var _pluginRegistry:PluginRegistry;
@@ -157,7 +154,7 @@ import org.flowplayer.model.ClipEvent;
 			}
 			
 			CONFIG::commercialVersion {
-				if (useCustomImage()) {
+				if (useLoadedImage()) {
 					loadImage(_play.url, function():void {
                         _play.dispatch(PluginEventType.LOAD);
                     }, _showButtonInitially);
@@ -173,8 +170,8 @@ import org.flowplayer.model.ClipEvent;
 		}
 		
 		CONFIG::commercialVersion
-		private function useCustomImage():Boolean {
-			return _play.url && ! _play.label;
+		private function useLoadedImage():Boolean {
+			return Boolean(_play.url && ! _play.label && ! BuiltInAssetHelper.hasPlayButton);
 		}
 
 		private function addListeners(eventSupport:ClipEventSupport):void {
@@ -225,29 +222,22 @@ import org.flowplayer.model.ClipEvent;
 		private function createChildren():void {			
 			_rotation = new RotatingAnimation();
             //addChild(_rotation); // bug #38
-			createButton();
-		}
-		
-		CONFIG::commercialVersion
-		private function createButton():void {
-			if (! _play.label && ! _play.url) {
-				createStandardPlayButton();
+            
+			if (! _play.label) {
+				createInternalButton();
 			}
 		}
 
-		CONFIG::freeVersion
-		private function createButton():void {
-			if (! _play.label) {
-				createStandardPlayButton();
-			}
-		}
-		
-		private function createStandardPlayButton():void {
-			_button = new PlayOverlay();
+        private function createInternalButton():void {
+            _button = BuiltInAssetHelper.createPlayButton() || new PlayOverlay();
 			addButton();
 			onResize();
 		}
-		
+
+        private function getClass(name:String):Class {
+            return getDefinitionByName(name) as Class;
+        }
+
 		private function addButton():void {
 			log.debug("addButton");
 			if (model.visible) {
