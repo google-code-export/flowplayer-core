@@ -153,6 +153,11 @@ import flash.net.navigateToURL;
 		protected function onSetStyle(style:FlowStyleSheet):void {
 		}
 		
+		public function onBeforeCss(styleProps:Object = null):void 
+		{
+			
+		}
+		
 		public function css(styleProps:Object = null):Object {
 			_redrawing = true;
 			log.debug("css " +styleProps);
@@ -369,6 +374,12 @@ import flash.net.navigateToURL;
 		/**
 		 * Currently just returns the root style object.
 		 */
+		
+		public function onBeforeAnimate(styleProps:Object):void 
+		{
+
+		}
+		
 		public function animate(styleProps:Object):Object {
 			return _style.rootStyle;
 		}

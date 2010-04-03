@@ -236,6 +236,9 @@ import org.flowplayer.model.PlayerError;
 			checkPlugin(plugin, pluginName, DisplayPluginModel);
 			log.debug("going to animate plugin " + pluginName); 
 
+			if (plugin is DisplayProperties && DisplayProperties(plugin).getDisplayObject() is Styleable)
+				Styleable(DisplayProperties(plugin).getDisplayObject())[animate ? "onBeforeAnimate" : "onBeforeCss"](props);
+
 			var result:Object;
 			if (props) {
 				if (pluginName == 'play') {

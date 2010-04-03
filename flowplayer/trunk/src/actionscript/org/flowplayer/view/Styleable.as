@@ -25,6 +25,17 @@ package org.flowplayer.view {
 	public interface Styleable {
 
 		/**
+		 * Notifies new css properties.
+		 * 
+		 * @param styleProps and object containing the new properties. The propertis contained by this
+		 * object are added, if a specific object already exists it's overwritten. If the parameter is not specified
+		 * returns the current style properties.
+		 * @return void
+		 */		
+		function onBeforeCss(styleProps:Object = null):void;
+		
+
+		/**
 		 * Sets/adds css style properties.
 		 * 
 		 * @param styleProps and object containing the new properties. The propertis contained by this
@@ -33,6 +44,16 @@ package org.flowplayer.view {
 		 * @return the style props after setting the new properties
 		 */		
 		function css(styleProps:Object = null):Object;
+
+		
+		/**
+		 * Notifies a css properties animation.
+		 * 
+		 * @param styleProps and object containing the properties to be animated. The propertis contained by this
+		 * object are added, if a specific object already exists it's overwritten.
+		 * @return void
+		 */
+		function onBeforeAnimate(styleProps:Object):void;
 
 		/**
 		 * Animates css properties.
