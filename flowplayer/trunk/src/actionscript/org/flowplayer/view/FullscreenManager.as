@@ -63,8 +63,9 @@ package org.flowplayer.view {
 		
 		private function getFullscreenProperties():DisplayProperties {
 			var controls:DisplayPluginModel = _pluginRegistry.getPlugin("controls") as DisplayPluginModel;
-            log.debug("getFullscreenProperties(), controls.autoHide == " + controls.config.autoHide);
-			if (controls && controls.config.autoHide == 'never') {
+            log.debug("getFullscreenProperties(), controls.autoHide == " + controls.config.autoHide.state);
+			if ( controls && ! controls.config.autoHide.enabled )
+			{
 				log.debug("autoHiding disabled in fullscreen, calculating fullscreen display properties");
 				var controlsHeight:Number = controls.getDisplayObject().height;
 				var props:DisplayProperties = DisplayPropertiesImpl.fullSize("screen");
