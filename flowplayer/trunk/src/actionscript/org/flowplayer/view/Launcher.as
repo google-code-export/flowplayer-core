@@ -75,7 +75,6 @@ import org.flowplayer.model.DisplayPluginModel;
 	use namespace flow_internal;
 
 	public class Launcher extends StyleableSprite implements ErrorHandler {
-
 		private var _panel:Panel;
 		private var _screen:Screen;
 		private var _config:Config;
