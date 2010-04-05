@@ -385,7 +385,7 @@ package org.flowplayer.view {
 		}
 		
 		public function startBuffering(event:ClipEvent = null):void {
-			log.debug("startBuffering()");
+			log.debug("startBuffering()" + event);
             if (event && event.isDefaultPrevented()) return;
 			if (!_play.buffering) return;
 
@@ -394,6 +394,12 @@ package org.flowplayer.view {
 //				return;
 //			}
 			addChild(_rotation);
+			
+			// bug #62
+			if ( _tween && _player && _player.state == State.PLAYING ) {
+				removeChildIfAdded(_button);
+			}
+			
 			show();
 			_rotation.start();
 		}

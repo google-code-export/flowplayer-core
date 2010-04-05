@@ -25,6 +25,7 @@ Fixes:
 - fixed safari crashes when unloading player
 - fixed scrubber behaviour with a playlist containing 2 images (or swf) in a row
 - fixed errors in logs when using an RSS playlist
+- fixed OverlayPlayButton that was showing even if it shouldn't on some cases
 
 3.1.5
 -----
