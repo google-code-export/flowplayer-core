@@ -37,8 +37,12 @@
     <condition property="plugin-skin" value="${controls}" else="modern">
         <isset property="controls"/>
     </condition>
+    
     <condition property="has-slowmotion-buttons" value="true" else="false">
-        <equals arg1="controls" arg2="modern"/>
+        <or>
+            <equals arg1="controls" arg2="modern"/>
+            <not><isset property="controls" /></not>
+        </or>
     </condition>
 
     <condition property="plugin-libs" value="${controls-dir}/src/flash/${plugin-skin}" else="">
@@ -169,7 +173,7 @@
         <attribute name="license-lib"/>
         <attribute name="debug"/>
         <sequential>
-            <echo message="Building binary @{binary}"/>
+            <echo message="Building binary @{binary}, hasSlowMotion? ${has-slowmotion-buttons}"/>
             <exec executable="${mxmlc_bin}" failonerror="true">
                 <arg line="-define=CONFIG::commercialVersion,'@{commercial}'"/>
                 <arg line="-define+=CONFIG::freeVersion,'@{free}'"/>
@@ -180,7 +184,7 @@
                 <arg line="-define+=CONFIG::controlsVersion,${controls-version-info-quoted}"/>
                 <arg line="-define+=CONFIG::audioVersion,${audio-version-info-quoted}"/>
                 <arg line="-define+=CONFIG::skin,true"/>
-                <arg line="-define+=CONFIG::hasSlowMotion,${has-slowmotion-buttons}"/>
+                <arg line="-define+=CONFIG::hasSlowMotion,'${has-slowmotion-buttons}'"/>
                 <arg line="-keep-as3-metadata=Value,External"/>
                 <arg line="-source-path ${src-as} ${src-as-commercial} ${classpath} ${plugin-libs}"/>
                 <arg line="-library-path ${libs-path} ${src-flash} @{license-lib}"/>
