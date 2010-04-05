@@ -39,10 +39,7 @@
     </condition>
     
     <condition property="has-slowmotion-buttons" value="true" else="false">
-        <or>
-            <equals arg1="controls" arg2="modern"/>
-            <not><isset property="controls" /></not>
-        </or>
+        <equals arg1="${plugin-skin}" arg2="modern"/>
     </condition>
 
     <condition property="plugin-libs" value="${controls-dir}/src/flash/${plugin-skin}" else="">
