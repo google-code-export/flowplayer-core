@@ -55,7 +55,6 @@ package org.flowplayer.config {
 		private var _audioVersion:String;
 		private var _loadables:Array;
         private var _canvas:Canvas;
-        private var _builtInConfig:Object
 
 		public function Config(config:Object, builtInConfig:Object, playerSwfName:String, controlsVersion:String, audioVersion:String) {
 			Assert.notNull(config, "No configuration provided.");
@@ -64,7 +63,6 @@ package org.flowplayer.config {
 			_playlistBuilder = new PlaylistBuilder(playerId, this.config.playlist, this.config.clip);
 			_controlsVersion = controlsVersion;
 			_audioVersion = audioVersion;
-            _builtInConfig = builtInConfig || new Object();
 		}
 
         private function createConfigObject(configured:Object, builtInConfig:Object):Object {
