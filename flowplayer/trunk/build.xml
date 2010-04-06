@@ -274,10 +274,17 @@
             <srcfiles dir="${src-as-commercial}">
                 <include name="**/*.as"/>
             </srcfiles>
+            <srcfiles dir="${src-as-builtin}">
+                <include name="**/*.as"/>
+            </srcfiles>
             <srcfiles dir="${basedir}">
                 <include name="*.xml"/>
                 <include name="*.properties"/>
                 <include name="*.txt"/>
+            </srcfiles>
+            <srcfiles dir="${lib-dir}">
+                <include name="**/*.as"/>
+                <include name="**/*.swc"/>
             </srcfiles>
         </uptodate>
         <echo message="main up-to-date: ${uptodate.commercial}"/>
