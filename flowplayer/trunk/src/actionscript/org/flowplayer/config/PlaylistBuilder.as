@@ -77,7 +77,7 @@ package org.flowplayer.config {
             } else if (_clipObjects && _clipObjects.length > 0) {
                 playList.setClips(createClips(_clipObjects));
             } else if (_commonClip) {
-                playList.addClip(Clip.create(_commonClip.clipObject, _commonClip.url, _commonClip.baseUrl));
+                playList.addClip(createClip(_commonClipObject));
             }
 
             return playList;
