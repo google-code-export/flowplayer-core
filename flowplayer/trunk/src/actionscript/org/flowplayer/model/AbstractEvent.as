@@ -102,7 +102,7 @@ import org.flowplayer.util.ObjectConverter;
         }
 
 		flow_internal function fireExternal(playerId:String, beforePhase:Boolean = false):Boolean {
-            log.debug("fireExternal " + eventType.name + ", " + externalEventArgument + ", " + externalEventArgument2 + ", " + externalEventArgument3 + "," + externalEventArgument4 + ", " + externalEventArgument5);
+            log.debug("fireExternal " + getExternalName(eventType.name, beforePhase) + ", " + externalEventArgument + ", " + externalEventArgument2 + ", " + externalEventArgument3 + "," + externalEventArgument4 + ", " + externalEventArgument5);
 			if (!ExternalInterface.available) return true;
 			// NOTE: externalEventArgument3 is not converted!
             try {

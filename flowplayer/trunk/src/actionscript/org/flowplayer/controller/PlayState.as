@@ -251,6 +251,7 @@ package org.flowplayer.controller {
                     playListController.next(true, true, false);
                 } else {
                     stop(false, true);
+					changeState(waitingState);
                 }
             } else {
                 if (defaultAction) {
