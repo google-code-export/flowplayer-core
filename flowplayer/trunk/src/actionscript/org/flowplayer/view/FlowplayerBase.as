@@ -357,7 +357,7 @@ package org.flowplayer.view {
 		private function doHidePlugin(disp:DisplayObject):void {
 			if (disp.parent == screen && disp == playButtonOverlay.getDisplayObject()) {
 				playButtonOverlay.getDisplayObject()["hideButton"]();
-			} else {
+			} else if (disp.parent) {
 				disp.parent.removeChild(disp);
 			}
             var props:DisplayProperties = _pluginRegistry.getPluginByDisplay(disp);
