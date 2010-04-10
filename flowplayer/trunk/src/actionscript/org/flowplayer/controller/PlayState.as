@@ -101,6 +101,10 @@ package org.flowplayer.controller {
 			// overridden in subclasses
 		}
 
+        internal function get streamProvider():StreamProvider {
+            return _controllerFactory.getProvider(playList.current);
+        }
+
 		internal function get state():State {
 			return _stateCode;
 		}

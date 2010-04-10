@@ -30,6 +30,7 @@ package org.flowplayer.model {
 		private var _pluginObject:Object;
 		private var _name:String;
 		private var _config:Object;
+        private var _builtIn:Boolean;
 
 		public function PluginModelImpl(pluginObject:Object, name:String) {
 			_pluginObject = pluginObject;
@@ -93,5 +94,14 @@ package org.flowplayer.model {
 		public function toString():String {
 			return "[PluginModelImpl] '" + name + "'";
 		}
+
+        [Value(name="builtIn")]
+        public function get isBuiltIn():Boolean {
+            return _builtIn;
+        }
+
+        public function set isBuiltIn(value:Boolean):void {
+            _builtIn = value;
+        }
     }
 }

@@ -176,6 +176,7 @@ import flash.system.Security;
                     log.info("intitializeBuiltInPlugins(), instantiating from loadable " + loadable + ", with config ", loadable.config);
                     var instance:Object = loadable.instantiate();
                     var model:PluginModel = createPluginModel(loadable, instance);
+                    model.isBuiltIn = true;
 //                    if (instance.hasOwnProperty("onConfig")) {
 //                        instance.onConfig(model);
 //                    }

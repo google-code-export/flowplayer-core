@@ -46,6 +46,7 @@ package org.flowplayer.view {
 		}
 
 		public function resizeTo(sizingOption:MediaSize, force:Boolean = false):Boolean {
+            log.debug("resizeTo() " + sizingOption);
 			if (sizingOption == null)
 				sizingOption = _currentSizingOption;
 			
@@ -68,7 +69,7 @@ package org.flowplayer.view {
 				log.warn("resizeToFit: original sizes not available, will not resize");
 				return false;
 			}
-			log.debug("resize to fit");
+			log.debug("resize to fit, original size " + _clip.originalWidth + "x" + _clip.originalHeight);
 				
 			var xRatio:Number = _maxWidth / origWidth;
 			
@@ -118,6 +119,7 @@ package org.flowplayer.view {
             log.debug("resizing to " + newWidth + "x" + newHeight);
 			_clip.width = newWidth;
 			_clip.height = newHeight;			
+            log.debug("resized to " + _clip.width + "x" + _clip.height);
 		}
 	
 		public function get currentSize():MediaSize {

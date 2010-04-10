@@ -72,7 +72,7 @@ import org.flowplayer.model.DisplayPluginModel;
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;		
 	
-	use namespace flow_internal;
+	use namespace flow_internal; 
 
 	public class Launcher extends StyleableSprite implements ErrorHandler {
 		private var _panel:Panel;

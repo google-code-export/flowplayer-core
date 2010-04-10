@@ -18,7 +18,9 @@
  */
 
 package org.flowplayer.view {
-	import org.flowplayer.model.Clip;
+    import flash.display.DisplayObject;
+
+    import org.flowplayer.model.Clip;
 	import org.flowplayer.model.Cloneable;
 	import org.flowplayer.model.DisplayPluginModel;
 	import org.flowplayer.model.DisplayProperties;
@@ -62,12 +64,15 @@ package org.flowplayer.view {
 		}
 		
 		private function getFullscreenProperties():DisplayProperties {
-			var controls:DisplayPluginModel = _pluginRegistry.getPlugin("controls") as DisplayPluginModel;
-            log.debug("getFullscreenProperties(), controls.autoHide == " + controls.config.autoHide.state);
-			if ( controls && ! controls.config.autoHide.enabled )
-			{
+			var model:DisplayPluginModel = _pluginRegistry.getPlugin("controls") as DisplayPluginModel;
+            if (! model) return DisplayPropertiesImpl.fullSize("screen");
+
+            var controls:DisplayObject = model.getDisplayObject();
+			log.debug("controls.auotoHide " + controls["getAutoHide"]());
+
+			if ( controls && ! controls["getAutoHide"]().enabled ) {
 				log.debug("autoHiding disabled in fullscreen, calculating fullscreen display properties");
-				var controlsHeight:Number = controls.getDisplayObject().height;
+				var controlsHeight:Number = controls.height;
 				var props:DisplayProperties = DisplayPropertiesImpl.fullSize("screen");
 				props.bottom = controlsHeight;
 				props.height =  ((_stage.stageHeight - controlsHeight) / _stage.stageHeight) * 100 + "%";
