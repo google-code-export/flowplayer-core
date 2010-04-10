@@ -57,6 +57,10 @@ package org.flowplayer.controller {
 			_loader = loader;
 		}
 
+        flow_internal function get streamProvider():StreamProvider {
+            return _state.streamProvider;
+        }
+
 		flow_internal function set playerEventDispatcher(playerEventDispatcher:PlayerEventDispatcher):void {
 			PlayState.initStates(_playList, this, _providers, playerEventDispatcher, _config, _loader);
 		}

@@ -58,6 +58,7 @@ package org.flowplayer.config {
             _audioVersion = audioVersion;
             _loadables = [];
             updatePrototypedLoadableUrls();
+            log.debug("pluginObject ", _pluginObjects);
         }
 
 
@@ -70,7 +71,9 @@ package org.flowplayer.config {
             }
 
             log.debug("initializing default loadables: controls and audio if needed");
-            if (! isBuiltIn("controls")) {
+            var builtIn:Boolean = isBuiltIn("controls");
+            log.debug("controls is builtin? " + builtIn);
+            if (! builtIn) {
                 initLoadable("controls", _controlsVersion);
             }
             if (hasAudioClipsWithoutProvider(playlist) && ! isBuiltIn("audio")) {

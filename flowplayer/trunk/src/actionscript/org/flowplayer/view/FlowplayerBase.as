@@ -28,6 +28,7 @@ package org.flowplayer.view {
     import org.flowplayer.controller.PlayListController;
     import org.flowplayer.controller.ResourceLoader;
     import org.flowplayer.controller.ResourceLoaderImpl;
+    import org.flowplayer.controller.StreamProvider;
     import org.flowplayer.flow_internal;
     import org.flowplayer.model.Clip;
     import org.flowplayer.model.ClipEventType;
@@ -718,31 +719,33 @@ package org.flowplayer.view {
             _pluginLoader = val;
         }
 
-		public function set keyboardHandler(val:KeyboardHandler):void
-		{
+		public function set keyboardHandler(val:KeyboardHandler):void {
 			_keyHandler = val;
 			_keyHandler.player = this as Flowplayer;
 		}
 
-		public function isKeyboardShortcutsEnabled():Boolean
-		{
+		public function isKeyboardShortcutsEnabled():Boolean {
 			return _keyHandler.isKeyboardShortcutsEnabled();
 		}
 		
-		public function setKeyboardShortcutsEnabled(enabled:Boolean):void
-		{
+		public function setKeyboardShortcutsEnabled(enabled:Boolean):void {
 			_keyHandler.setKeyboardShortcutsEnabled(enabled);
 		}
 		
-		public function addKeyListener(keyCode:uint, func:Function):void
-		{
+		public function addKeyListener(keyCode:uint, func:Function):void {
 			_keyHandler.addKeyListener(keyCode, func);
 		}
 		
-		public function removeKeyListener(keyCode:uint, func:Function):void
-		{
+		public function removeKeyListener(keyCode:uint, func:Function):void {
 			_keyHandler.removeKeyListener(keyCode, func);
 		}
-	
+
+        /**
+         * Gets the StreamProvider of the current clip.
+         * @return
+         */
+        public function get streamProvider():StreamProvider {
+            return _playListController.streamProvider;
+        }
     }
 }

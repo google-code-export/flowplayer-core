@@ -25,7 +25,11 @@ package org.flowplayer.model {
 	 * @author api
 	 */
 	public interface PluginModel extends Identifiable, Callable, Cloneable {
-		
+
+        function get isBuiltIn():Boolean;
+
+        function set isBuiltIn(value:Boolean):void;
+
 		function dispatchOnLoad():void;
 		
 		function dispatchError(code:PluginError, info:Object = null):void;

@@ -28,7 +28,8 @@ package org.flowplayer.model {
 	public class DisplayPluginModelImpl extends DisplayPropertiesImpl implements DisplayPluginModel {
 		private var _config:Object;
 		private var _methods:Array = new Array();
-		
+        private var _builtIn:Boolean;
+
 		public function DisplayPluginModelImpl(disp:DisplayObject, name:String, setDefaults:Boolean = true):void {
 			super(disp, name, setDefaults);
 		}
@@ -89,5 +90,14 @@ package org.flowplayer.model {
 		public function set pluginObject(pluginObject:Object):void {
 			setDisplayObject(pluginObject as DisplayObject);
 		}
+
+        [Value(name="builtIn")]
+        public function get isBuiltIn():Boolean {
+            return _builtIn;
+        }
+
+        public function set isBuiltIn(value:Boolean):void {
+            _builtIn = value;
+        }
     }
 }
