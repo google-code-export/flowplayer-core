@@ -200,7 +200,7 @@ import org.flowplayer.model.PlayerError;
 			}
 		}
 		
-		private function css(pluginName:String, props:Object = null):Object {
+		public function css(pluginName:String, props:Object = null):Object {
 			log.debug("css, plugin " + pluginName);
 			if (pluginName == "canvas") {
 				_canvas.css(props);
