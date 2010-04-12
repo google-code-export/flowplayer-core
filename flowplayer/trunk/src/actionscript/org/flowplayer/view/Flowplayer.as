@@ -48,6 +48,7 @@ import org.flowplayer.model.PlayerError;
 	
 	import flash.display.Stage;
 	import flash.external.ExternalInterface;	
+	import flash.utils.*;
 	
 	use namespace flow_internal;
 
@@ -263,6 +264,10 @@ import org.flowplayer.model.PlayerError;
 		private function fadeOut(pluginName:String, durationMillis:Number = 400, listenerId:String = null):void {
 			var props:DisplayProperties = prepareFade(pluginName, false);
 			_animationEngine.fadeOut(props.getDisplayObject(), durationMillis, createCallback(listenerId, props));
+			// #68. If the controlbar was hidden by autoHide while the plugin is fading, the opacity was messed up
+			setTimeout(function():void { 
+				css(pluginName, {opacity: 0});
+			}, durationMillis);
 		}
 
 		private function fadeIn(pluginName:String, durationMillis:Number = 400, listenerId:String = null):void {
@@ -271,6 +276,10 @@ import org.flowplayer.model.PlayerError;
 				Screen(screen.getDisplayObject()).showPlay();
 			}
 			_animationEngine.fadeIn(props.getDisplayObject(), durationMillis, createCallback(listenerId, props), pluginName != "play");
+			// #68. If the controlbar was hidden by autoHide while the plugin is fading, the opacity was messed up
+			setTimeout(function():void { 
+				css(pluginName, {opacity: 1});
+			}, durationMillis);
 		}
 
 		private function fadeTo(pluginName:String, alpha:Number, durationMillis:Number = 400, listenerId:String = null):void {
@@ -279,6 +288,11 @@ import org.flowplayer.model.PlayerError;
 				Screen(screen.getDisplayObject()).showPlay();
 			}
 			_animationEngine.fadeTo(props.getDisplayObject(), alpha, durationMillis, createCallback(listenerId, props), pluginName != "play");
+			
+			// #68. If the controlbar was hidden by autoHide while the plugin is fading, the opacity was messed up
+			setTimeout(function():void { 
+				css(pluginName, {opacity: alpha});
+			}, durationMillis);
 		}
 		
 		private function prepareFade(pluginName:String, show:Boolean):DisplayProperties {
