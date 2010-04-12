@@ -82,9 +82,7 @@ package org.flowplayer.controller {
 			}
 		}
 		
-		private function onLoadComplete(loader:ClipImageLoader):void {
-			
-			
+		private function onLoadComplete(loader:ClipImageLoader):void {			
 			if ( loader.getContent() is Loader && ImageHolder.hasOffscreenContent(loader.getContent() as Loader ))
 			{
 				var holder:ImageHolder = new ImageHolder(loader.getContent() as Loader);
@@ -100,6 +98,7 @@ package org.flowplayer.controller {
 			}
 			log.info("image loaded " + clip + ", content " + loader.getContent() + ", width " + clip.originalWidth + ", height " + clip.originalHeight);
             clip.dispatch(ClipEventType.START);
+			clip.dispatch(ClipEventType.METADATA);
 			clip.dispatch(ClipEventType.BUFFER_FULL);
 			if (clip.duration == 0) {
 				clip.dispatchBeforeEvent(new ClipEvent(ClipEventType.FINISH));
