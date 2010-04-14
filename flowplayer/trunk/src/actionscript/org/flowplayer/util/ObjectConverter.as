@@ -15,7 +15,7 @@ import flash.utils.getQualifiedClassName;
 		}
 
         public static function copyProps(source:Object, target:Object):Object {
-            var value:Object;
+            var value:*;
             for (var key:String in source) {
                 value = source[key];
                 if (value != null && !(value is Function)) {
@@ -65,6 +65,9 @@ import flash.utils.getQualifiedClassName;
 				}
                 if (o is Clip) {
                     copyProps(Clip(o).customProperties, obj);
+//                    if (obj.hasOwnProperty("bitrates")) {
+//                        delete obj.bitrates;
+//                    }
                 }
 			}
 			return obj;
