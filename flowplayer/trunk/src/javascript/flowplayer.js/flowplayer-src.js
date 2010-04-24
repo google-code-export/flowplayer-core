@@ -552,10 +552,10 @@ function Player(wrapper, params, conf) {
 				// unload all instances
 				var unloadedPlayersNb = 0;
 				each(players, function()  {
-					this.unload(function(wasUnloaded)
-					{
-						if ( ++unloadedPlayersNb == players.length )
+					this.unload(function(wasUnloaded) {
+						if ( ++unloadedPlayersNb == players.length ) {
 							onPlayersUnloaded();
+						}
 					});		
 				});
 			}
@@ -568,7 +568,7 @@ function Player(wrapper, params, conf) {
 			
 			// if we are fullscreen on safari, we can't unload as it would crash the PluginHost, sorry
 			if (this.isFullscreen() && /WebKit/i.test(navigator.userAgent)) {
-				if ( fn ) fn(false);
+				if ( fn ) { fn(false); }
 				return self;
 			}
 			
@@ -577,7 +577,7 @@ function Player(wrapper, params, conf) {
 			if (html.replace(/\s/g,'') !== '') {
 				
 				if (self._fireEvent("onBeforeUnload") === false) {
-					if ( fn ) fn(false);
+					if ( fn ) { fn(false); }
 					return self;
 				}	
 				
@@ -597,12 +597,12 @@ function Player(wrapper, params, conf) {
 					wrapper.innerHTML = html;
 					isUnloading = false;
 					
-					if ( fn ) fn(true);
-				}
+					if ( fn ) { fn(true); }
+				};
 				
 				setTimeout(clean, 50);			
 			} 
-			else if ( fn ) fn(false);
+			else if ( fn ) { fn(false); }
 			
 			return self;
 		
@@ -717,13 +717,8 @@ function Player(wrapper, params, conf) {
 				setTimeout(function() { 
 					self.play(clip, instream); 
 				}, 50);
-			}
-			else
-			{
-=======
-			else
-			{
->>>>>>> .r455
+				
+			} else {
 				self.load(function() { 
 					p();
 				});
