@@ -5,15 +5,14 @@
 	<property name="BUILDER_HOME" value="../../../../builder"/>	
 	<import file="${BUILDER_HOME}/js.xml"/> 
 	<property name="version" value="${v.js_core}"/>
-	<property name="flashembed-version" value="${v.flashembed}"/>
 	
 	<!-- concat -->
 	<target name="concat">
 		<concat destfile="flowplayer.js">
 			<fileset dir="${basedir}" includes="flowplayer-src.js"/>
 			
-			<fileset dir="/opt/flowplayer/webapp/js/tools"
-				includes="tools.flashembed-${flashembed-version}.js"/> 
+			<fileset dir="/home/tipiirai/git/jquerytools/src/toolbox/"
+				includes="toolbox.flashembed.js"/> 
 		</concat>
 	</target>
 	

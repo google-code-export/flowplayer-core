@@ -105,8 +105,8 @@
 	function select(query) {
 		var index = query.indexOf("."); 
 		if (index != -1) {
-			var tag = query.substring(0, index) || "*";
-			var klass = query.substring(index + 1, query.length);
+			var tag = query.slice(0, index) || "*";
+			var klass = query.slice(index + 1, query.length);
 			var els = [];
 			each(document.getElementsByTagName(tag), function() {
 				if (this.className && this.className.indexOf(klass) != -1) {
@@ -141,7 +141,7 @@
 	
 	// generates an unique id
    function makeId() {
-      return "_" + ("" + Math.random()).substring(2, 10);   
+      return "_" + ("" + Math.random()).slice(2, 10);   
    }
 	
 //}}}	
@@ -152,9 +152,10 @@
 	var Clip = function(json, index, player) {
 		
 		// private variables
-		var self = this;
-		var cuepoints = {};
-		var listeners = {};  
+		var self = this,
+			 cuepoints = {},
+			 listeners = {};
+			 
 		self.index = index;
 		
 		// instance variables
@@ -172,8 +173,8 @@
 				
 			// before event
 			if (evt.indexOf("*") != -1) {
-				evt = evt.substring(0, evt.length -1); 
-				var before = "onBefore" + evt.substring(2); 
+				evt = evt.slice(0, evt.length -1); 
+				var before = "onBefore" + evt.slice(2); 
 				
 				self[before] = function(fn) {
 					bind(listeners, before, fn);
@@ -313,9 +314,9 @@
 		
 	var Plugin = function(name, json, player, fn) {
 	
-		var listeners = {};
-		var self = this;   
-		var hasMethods = false;
+		var self = this,
+			 listeners = {},
+			 hasMethods = false;
 	
 		if (fn) {
 			extend(listeners, fn);	
@@ -453,7 +454,7 @@
 					fn.apply(self, arg);
 					
 					// "one-shot" callback
-					if (evt.substring(0, 1) == "_") {
+					if (evt.slice(0, 1) == "_") {
 						delete listeners[evt];  
 					} 
             }
@@ -472,8 +473,7 @@
 function Player(wrapper, params, conf) {   
 	
 	// private variables (+ arguments)
-	var 
-		self = this, 
+	var self = this, 
 		api = null, 
 		isUnloading = false,
 		html, 
@@ -527,9 +527,10 @@ function Player(wrapper, params, conf) {
 		},
 		
 		load: function(fn) { 
+
 			if (!self.isLoaded() && self._fireEvent("onBeforeLoad") !== false) {
-				var onPlayersUnloaded = function() 
-				{
+				
+				var onPlayersUnloaded = function() {
 					html = wrapper.innerHTML;				
 				
 					// do not use splash as alternate content for flashembed
@@ -563,9 +564,10 @@ function Player(wrapper, params, conf) {
 		},
 		
 		unload: function(fn) {
+			
+			
 			// if we are fullscreen on safari, we can't unload as it would crash the PluginHost, sorry
-			if ( this.isFullscreen() && /WebKit/i.test(navigator.userAgent) ) 
-			{
+			if (this.isFullscreen() && /WebKit/i.test(navigator.userAgent)) {
 				if ( fn ) fn(false);
 				return self;
 			}
@@ -708,8 +710,20 @@ function Player(wrapper, params, conf) {
 					self.play(clip, instream); 
 				}, 50);
 			}
+			
+			if (self.isLoaded()) {
+				p();	
+			} else if ( isUnloading ) {
+				setTimeout(function() { 
+					self.play(clip, instream); 
+				}, 50);
+			}
 			else
 			{
+=======
+			else
+			{
+>>>>>>> .r455
 				self.load(function() { 
 					p();
 				});
@@ -742,16 +756,6 @@ function Player(wrapper, params, conf) {
 		
 		getIndex: function() {
 			return playerIndex;	
-		},
-		
-		setKeyboardShortcutsEnabled: function(enabled)
-		{
-			self._api().fp_setKeyboardShortcutsEnabled(enabled);	
-		},
-		
-		isKeyboardShortcutsEnabled: function()
-		{
-			return self._api().fp_isKeyboardShortcutsEnabled();
 		}
 		
 	}); 
@@ -764,8 +768,8 @@ function Player(wrapper, params, conf) {
 			
 			// before event
 			if (name.indexOf("*") != -1) {
-				name = name.substring(0, name.length -1); 
-				var name2 = "onBefore" + name.substring(2);
+				name = name.slice(0, name.length -1); 
+				var name2 = "onBefore" + name.slice(2);
 				self[name2] = function(fn) {
 					bind(listeners, name2, fn);	
 					return self;
@@ -782,7 +786,7 @@ function Player(wrapper, params, conf) {
 	
 	
 	// core API methods
-	each(("pause,resume,mute,unmute,stop,toggle,seek,getStatus,getVolume,setVolume,getTime,isPaused,isPlaying,startBuffering,stopBuffering,isFullscreen,toggleFullscreen,reset,close,setPlaylist,addClip,playFeed").split(","),		
+	each(("pause,resume,mute,unmute,stop,toggle,seek,getStatus,getVolume,setVolume,getTime,isPaused,isPlaying,startBuffering,stopBuffering,isFullscreen,toggleFullscreen,reset,close,setPlaylist,addClip,playFeed,setKeyboardShortcutsEnabled,isKeyboardShortcutsEnabled").split(","),		
 		function() {		 
 			var name = this;
 			
@@ -949,11 +953,6 @@ function Player(wrapper, params, conf) {
 		
 		wrapperHeight = parseInt(wrapper.style.height, 10) || wrapper.clientHeight;     
 		
-		// flashembed parameters
-		if (typeof params == 'string') {
-			params = {src: params};	
-		}    
-		
 		// playerId	
 		playerId = wrapper.id || "fp" + makeId();
 		apiId = params.id || playerId + "_api";
@@ -1044,17 +1043,7 @@ function Player(wrapper, params, conf) {
 		}
 		
 		// setup canvas as plugin
-		plugins.canvas = new Plugin("canvas", null, self);
-		
-		
-		// Flowplayer uses black background by default
-		params.bgcolor = params.bgcolor || "#000000";
-		
-		
-		// setup default settings for express install
-		params.version = params.version || [9, 0];		
-		params.expressInstall = 'http://www.flowplayer.org/swf/expressinstall.swf';
-		
+		plugins.canvas = new Plugin("canvas", null, self);		
 		
 		// click function
 		function doClick(e) { 
@@ -1180,9 +1169,23 @@ window.flowplayer = window.$f = function() {
 	// instance builder 
 	if (arguments.length > 1) {		
 
-		var swf = arguments[1];
-		var conf = (arguments.length == 3) ? arguments[2] : {};
-						
+		// flashembed parameters
+		var params = arguments[1],
+			 conf = (arguments.length == 3) ? arguments[2] : {};
+			 		
+		
+		if (typeof params == 'string') {
+			params = {src: params};	
+		} 
+		
+		params = extend({
+			bgcolor: "#000000",
+			version: [9, 0],
+			expressInstall: "http://static.flowplayer.org/swf/expressinstall.swf",
+			cachebusting: true
+			
+		}, params);		
+		
 		if (typeof arg == 'string') {
 			
 			// select arg by classname
@@ -1190,7 +1193,7 @@ window.flowplayer = window.$f = function() {
 				var instances = [];
 				
 				each(select(arg), function() { 
-					instances.push(new Player(this, clone(swf), clone(conf))); 		
+					instances.push(new Player(this, clone(params), clone(conf))); 		
 				});	
 				
 				return new Iterator(instances);
@@ -1198,13 +1201,13 @@ window.flowplayer = window.$f = function() {
 			// select node by id
 			} else {		
 				var node = el(arg);
-				return new Player(node !== null ? node : arg, swf, conf);  	
+				return new Player(node !== null ? node : arg, params, conf);  	
 			} 
 			
 			
 		// arg is a DOM element
 		} else if (arg) {
-			return new Player(arg, swf, conf);						
+			return new Player(arg, params, conf);						
 		}
 		
 	} 
@@ -1235,19 +1238,6 @@ extend(window.$f, {
 	
 });
 
-
-/* sometimes IE leaves sockets open (href="javascript:..." links break this)
-if (document.all) {
-	window.onbeforeunload = function(e) { 
-		$f("*").each(function() {
-			if (this.isLoaded()) {
-				this.close();	
-			}
-		});
-	};	
-}
-*/
-
 	
 //}}}
 
@@ -1256,7 +1246,7 @@ if (document.all) {
 
 if (typeof jQuery == 'function') {
 	
-	jQuery.prototype.flowplayer = function(params, conf) {  
+	jQuery.fn.flowplayer = function(params, conf) {  
 		
 		// select instances
 		if (!arguments.length || typeof arguments[0] == 'number') {
