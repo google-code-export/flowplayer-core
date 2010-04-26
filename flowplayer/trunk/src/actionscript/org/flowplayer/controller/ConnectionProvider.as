@@ -19,7 +19,7 @@
 
 package org.flowplayer.controller {
     import flash.events.NetStatusEvent;
-import org.flowplayer.model.Clip;
+	import org.flowplayer.model.Clip;
 	
 	/**
 	 * @author api

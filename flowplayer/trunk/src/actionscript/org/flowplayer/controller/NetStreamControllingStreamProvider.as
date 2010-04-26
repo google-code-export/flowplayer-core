@@ -748,9 +748,13 @@ import org.flowplayer.model.PluginModel;
 			}
 			dispatchEvent(event);
 		}
+		
+		protected function getExternalNetStream():NetStream	{
+			return null;
+		}
 
 		private function createNetStream():void {
-			_netStream = new NetStream(_connection);
+			_netStream = getExternalNetStream() || new NetStream(_connection);
 			netStream.client = new NetStreamClient(clip, _player.config, _streamCallbacks);
 			_netStream.bufferTime = clip.bufferLength;
 			_volumeController.netStream = _netStream;
