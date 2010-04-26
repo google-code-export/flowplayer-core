@@ -196,6 +196,7 @@ package org.flowplayer.view {
 		
 		private function initializeLogoImage(image:DisplayObject):void {
 			_image = image;
+            _image.alpha = _model.alpha;
 
             CONFIG::commercialVersion {
                 _model.width = image.width;
