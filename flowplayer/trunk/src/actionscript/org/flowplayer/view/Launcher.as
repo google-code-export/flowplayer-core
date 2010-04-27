@@ -377,12 +377,6 @@ import org.flowplayer.model.DisplayPluginModel;
 			// +1 comes from the playbuttonoverlay
 			return count + (_playButtonOverlay ? 1 : 0);
 		}
-		
-		private function playerSwfName():String {
-			var url:String = loaderInfo.url;
-			var lastSlash:Number = url.lastIndexOf("/");
-			return url.substring(lastSlash + 1, url.indexOf(".swf") + 4); 
-		}
 
 		private function validateLicenseKey():Boolean {
 			try {
@@ -591,6 +585,7 @@ import org.flowplayer.model.DisplayPluginModel;
 		}
 
 		private function createFlashVarsConfig():void {
+            log.debug("createFlashVarsConfig()");
 			if (! root.loaderInfo.parameters) {
 				return;
 			}
@@ -598,14 +593,14 @@ import org.flowplayer.model.DisplayPluginModel;
             var configObj:Object = configStr && configStr.indexOf("{") == 0 ? ConfigParser.parse(configStr) : {};
 
             if (! configStr || (configStr && configStr.indexOf("{") == 0 && ! configObj.hasOwnProperty("url"))) {
-                _config = ConfigParser.parseConfig(configObj, BuiltInConfig.config, playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion);
+                _config = ConfigParser.parseConfig(configObj, BuiltInConfig.config, loaderInfo.url, VersionInfo.controlsVersion, VersionInfo.audioVersion);
                 callAndHandleError(initPhase1, PlayerError.INIT_FAILED);
 
             } else {
                 ConfigParser.loadConfig(configObj.hasOwnProperty("url") ? String(configObj["url"]) : configStr, BuiltInConfig.config, function(config:Config):void {
                     _config = config;
                     callAndHandleError(initPhase1, PlayerError.INIT_FAILED);
-                }, new ResourceLoaderImpl(null, this), playerSwfName(), VersionInfo.controlsVersion, VersionInfo.audioVersion);
+                }, new ResourceLoaderImpl(null, this), loaderInfo.url, VersionInfo.controlsVersion, VersionInfo.audioVersion);
             }
 		}
 

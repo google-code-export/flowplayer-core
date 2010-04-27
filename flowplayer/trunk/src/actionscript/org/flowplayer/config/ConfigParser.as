@@ -36,10 +36,10 @@ import org.flowplayer.flow_internal;
             return JSON.decode(config);
         }
 
-        flow_internal static function parseConfig(config:Object, builtInConfig:Object, playerSwfName:String, controlsVersion:String, audioVersion:String):Config {
-            if (!config) return new Config({}, builtInConfig, playerSwfName, controlsVersion, audioVersion);
+        flow_internal static function parseConfig(config:Object, builtInConfig:Object, playerSwfUrl:String, controlsVersion:String, audioVersion:String):Config {
+            if (!config) return new Config({}, builtInConfig, playerSwfUrl, controlsVersion, audioVersion);
             var configObj:Object = config is String ? JSON.decode(config as String) : config;
-            return new Config(configObj, builtInConfig, playerSwfName, controlsVersion, audioVersion);
+            return new Config(configObj, builtInConfig, playerSwfUrl, controlsVersion, audioVersion);
         }
 
         flow_internal static function loadConfig(fileName:String, builtInConfig:Object, listener:Function, loader:ResourceLoader, playerSwfName:String, controlsVersion:String, audioVersion:String):void {
