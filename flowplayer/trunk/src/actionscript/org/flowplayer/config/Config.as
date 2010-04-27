@@ -50,16 +50,16 @@ package org.flowplayer.config {
 		private var _pluginBuilder:PluginBuilder;
 		private var _playlistBuilder:PlaylistBuilder;
 		public var logFilter:String;
-		private var _playerSwfName:String;
+		private var _playerSwfUrl:String;
 		private var _controlsVersion:String;
 		private var _audioVersion:String;
 		private var _loadables:Array;
         private var _canvas:Canvas;
 
-		public function Config(config:Object, builtInConfig:Object, playerSwfName:String, controlsVersion:String, audioVersion:String) {
+		public function Config(config:Object, builtInConfig:Object, playerSwfUrl:String, controlsVersion:String, audioVersion:String) {
 			Assert.notNull(config, "No configuration provided.");
 			this.config = createConfigObject(config, builtInConfig);
-			_playerSwfName = playerSwfName;
+			_playerSwfUrl = playerSwfUrl;
 			_playlistBuilder = new PlaylistBuilder(playerId, this.config.playlist, this.config.clip);
 			_controlsVersion = controlsVersion;
 			_audioVersion = audioVersion;
@@ -149,7 +149,7 @@ package org.flowplayer.config {
 		
 		private function get viewObjectBuilder():PluginBuilder {
 			if (_pluginBuilder == null) {
-				_pluginBuilder = new PluginBuilder(_playerSwfName, _controlsVersion, _audioVersion, this, config.plugins, config);
+				_pluginBuilder = new PluginBuilder(_playerSwfUrl, _controlsVersion, _audioVersion, this, config.plugins, config);
 			}
 			return _pluginBuilder;
 		}
@@ -251,8 +251,8 @@ package org.flowplayer.config {
             return config.playlist is String ? config.playlist : null;
         }
         
-        public function get playerSwfName():String {
-        	return _playerSwfName;
+        public function get playerSwfUrl():String {
+        	return _playerSwfUrl;
         }
 	}
 }
