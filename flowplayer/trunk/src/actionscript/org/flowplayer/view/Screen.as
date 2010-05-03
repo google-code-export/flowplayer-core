@@ -47,7 +47,7 @@ package org.flowplayer.view {
 		private var _playList:Playlist;
 		private var _prevClip:Clip;
 		private var _fullscreenManaer:FullscreenManager;
-		private var _animatioEngine:AnimationEngine;
+		private var _animationEngine:AnimationEngine;
 		private var _pluginRegistry:PluginRegistry;
 
 		public function Screen(playList:Playlist, animationEngine:AnimationEngine, play:PlayButtonOverlay, pluginRegistry:PluginRegistry) {
@@ -58,7 +58,7 @@ package org.flowplayer.view {
 			createDisplays(playList.clips.concat(playList.childClips));
 			addListeners(playList);
 			_playList = playList;
-			_animatioEngine = animationEngine;
+			_animationEngine = animationEngine;
 			_pluginRegistry = pluginRegistry;
 		}
 
@@ -186,12 +186,12 @@ package org.flowplayer.view {
 			if (visible) {
 				MediaDisplay(disp).init(clipNow);
 				disp.visible = true;
-				disp.alpha = 0;
+				//disp.alpha = 0; // fix for #84
 				log.debug("starting fadeIn for " + disp);
-				_animatioEngine.animateProperty(disp, "alpha", 1, clipNow.fadeInSpeed);
+				_animationEngine.animateProperty(disp, "alpha", 1, clipNow.fadeInSpeed);
 				Arrange.center(disp, width, height);
 			} else if (disp.visible) {
-				_animatioEngine.animateProperty(disp, "alpha", 0, clipNow.fadeOutSpeed, function():void { disp.visible = false; });
+				_animationEngine.animateProperty(disp, "alpha", 0, clipNow.fadeOutSpeed, function():void { disp.visible = false; });
 				return;
 			}
 		}

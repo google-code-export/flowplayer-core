@@ -29,6 +29,7 @@ Fixes:
 - fixed wrong behavior when onBeforeFinish was returning false within playlists
 - /!\ Don't use the fadeIn / fadeOut controlbar's API while using autoHide.
 - fixed play state button with images
+- fixed splash image flickering
 
 3.1.5
 -----
