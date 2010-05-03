@@ -709,14 +709,6 @@ function Player(wrapper, params, conf) {
 				setTimeout(function() { 
 					self.play(clip, instream); 
 				}, 50);
-			}
-			
-			if (self.isLoaded()) {
-				p();	
-			} else if ( isUnloading ) {
-				setTimeout(function() { 
-					self.play(clip, instream); 
-				}, 50);
 				
 			} else {
 				self.load(function() { 
