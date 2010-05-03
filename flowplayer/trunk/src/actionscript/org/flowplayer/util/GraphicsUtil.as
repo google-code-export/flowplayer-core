@@ -22,7 +22,7 @@ package org.flowplayer.util {
 	import flash.display.DisplayObjectContainer;
 	import flash.display.GradientType;
 	import flash.display.Graphics;
-	import flash.display.Shape;
+	import flash.display.*;
 	import flash.geom.Matrix;		
 
 	/**
@@ -36,19 +36,19 @@ package org.flowplayer.util {
 			matrix.createGradientBox(width, height, Math.PI/2);
 			
 			graphics.beginGradientFill(GradientType.LINEAR, colors, 
-				[alpha, alpha, alpha], [0, 128, 255], matrix);
+				[alpha, alpha, alpha], [0, 127, 255], matrix);
 		}
 			
-		public static function beginLinearGradientFill(graphics:Graphics, width:Number, height:Number, colors:Array, alphas:Array):void {
+		public static function beginLinearGradientFill(graphics:Graphics, width:Number, height:Number, colors:Array, alphas:Array, x:int, y:int):void {
 			var matrix:Matrix = new Matrix();
-			matrix.createGradientBox(width, height, Math.PI/2);
+			matrix.createGradientBox(width, height, Math.PI/2, x, y);
 			var ratios:Array = new Array();
-			var gap:int = 255/(colors.length - 1)
+			var gap:Number = 255/(colors.length-1)
 			for (var i:Number = 0; i < colors.length; i++) {
 				ratios.push(i*gap);
 			}
-			graphics.beginGradientFill(GradientType.LINEAR, colors, 
-				alphas, ratios, matrix);
+ 
+			graphics.beginGradientFill(GradientType.LINEAR, colors, alphas, ratios, matrix);
 		}
 		
 		public static function drawRoundRectangle(graphics:Graphics, x:Number, y:Number, width:Number, height:Number, borderRadius:Number):void {
@@ -66,7 +66,8 @@ package org.flowplayer.util {
 			parent.addChildAt(gradientHolder, index);
 				
 			gradientHolder.graphics.clear();
-			beginFill(gradientHolder.graphics, gradientAlphas, parent.width, parent.height);
+
+			beginFill(gradientHolder.graphics, gradientAlphas, parent.width, (height != 0 ? height : parent.height), x, y);
 			GraphicsUtil.drawRoundRectangle(gradientHolder.graphics, x, y, parent.width, (height != 0 ? height : parent.height), borderRadius);
 			gradientHolder.graphics.endFill();
 		}
@@ -78,12 +79,12 @@ package org.flowplayer.util {
 			}
 		}
 
-		private static function beginFill(graph:Graphics, alphas:Array, width:Number, height:Number):void {
+		private static function beginFill(graph:Graphics, alphas:Array, width:Number, height:Number, x:int, y:int):void {
 			var color:Array = new Array();
 			for (var i:Number = 0; i < alphas.length; i++) {
 				color.push(0xffffff);
 			}
-			beginLinearGradientFill(graph, width, height, color, alphas);
+			beginLinearGradientFill(graph, width, height, color, alphas, x, y);
 		}
 				
 	}
