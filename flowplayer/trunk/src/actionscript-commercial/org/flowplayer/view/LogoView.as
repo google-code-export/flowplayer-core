@@ -57,7 +57,7 @@ package org.flowplayer.view {
 		private var _image:DisplayObject;
 		private var _panel:Panel;
 		private var _copyrightNotice:TextField;
-        private var _preHideAlpha:Number = 1;
+        private var _preHideAlpha:Number = -1;
         private var _hideTimer:Timer;
 
         public function LogoView(panel:Panel, player:Flowplayer) {
@@ -89,7 +89,7 @@ package org.flowplayer.view {
 
             log.debug("LogoView() model dimensions " + _model.dimensions);
         }
-		
+
 		override protected function onResize():void {
 			if (_image) {
 				log.debug("onResize, " + _model.dimensions);
@@ -197,7 +197,6 @@ package org.flowplayer.view {
 		private function initializeLogoImage(image:DisplayObject):void {
             log.debug("initializeLogoImage(), setting logo alpha to " + _model.alpha);
             _image = image;
-            _image.alpha = _model.alpha;
 
             CONFIG::commercialVersion {
                 _model.width = image.width;
@@ -252,8 +251,10 @@ package org.flowplayer.view {
 		}
 
 		private function show():void {
-			this.alpha = _preHideAlpha;
-            _model.alpha = _preHideAlpha;
+            if (_preHideAlpha != -1) {
+                this.alpha = _preHideAlpha;
+                _model.alpha = _preHideAlpha;
+            }
             _model.visible = true;
 			this.visible = true;
 			CONFIG::freeVersion {
