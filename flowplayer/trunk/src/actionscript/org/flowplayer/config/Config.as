@@ -180,7 +180,7 @@ package org.flowplayer.config {
 		}
 		
 		public function get licenseKey():String {
-			return config.key;
+			return config.key || config.keys;
 		}
 		
 		public function get canvas():Canvas {
