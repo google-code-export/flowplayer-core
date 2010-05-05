@@ -1,0 +1,30 @@
+
+<!-- projet name is used as a base name for distribution files -->
+<project name="flowplayer" default="min">	
+	
+	<property name="BUILDER_HOME" value="../../../../builder"/>	
+	<import file="${BUILDER_HOME}/js.xml"/> 
+	<property name="version" value="${v.js_core}"/>
+	
+	<!-- concat -->
+	<target name="concat">
+		<concat destfile="flowplayer.js">
+			<fileset dir="${basedir}" includes="flowplayer-src.js"/>
+			
+			<fileset dir="/home/tipiirai/git/jquerytools/src/toolbox/"
+				includes="toolbox.flashembed.js"/> 
+		</concat>
+	</target>
+	
+	<target name="min" depends="concat">
+		<antcall target="build.xml.min"/>
+	</target>
+
+   <target name="lint">		
+		<java jar="${rhino}" fork="true">
+			<arg value="${BUILDER_HOME}/lib/jslint.js" />
+			<arg value="flowplayer-src.js" />
+		</java>		  		  
+	</target>	
+	
+</project>
