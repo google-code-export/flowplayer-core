@@ -1,6 +1,10 @@
 Version history:
 
-3.1.6
+3.2.1-dev
+---------
+- Support for RTMP redirects (tested with Wowza loadbalancing)
+
+3.2.0
 -----
 - canvas, controlbar and the content plugin backgound color and border color can be now given with rgb() and rgba() CSS style syntax
 - Added onMouseOver() and onMouseOut() listener registration methods to the Flowplayer API
