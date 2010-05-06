@@ -19,7 +19,9 @@
 
 package org.flowplayer.controller {
     import flash.events.NetStatusEvent;
-import org.flowplayer.controller.ConnectionProvider;
+    import flash.utils.setTimeout;
+
+    import org.flowplayer.controller.ConnectionProvider;
 	import org.flowplayer.model.Clip;
 	import org.flowplayer.util.Log;
 	
@@ -36,13 +38,25 @@ import org.flowplayer.controller.ConnectionProvider;
 		private var _failureListener:Function;
 		private var _connectionClient:Object;
         private var _provider:NetStreamControllingStreamProvider;
+        private var _connectionArgs:Array;
+        private var _clip:Clip;
 
-		public function connect(provider:StreamProvider, clip:Clip, successListener:Function, objectEndocing:uint, connectionArgs:Array):void {
+        private function doConnect(connectionArgs:Array, connectionUrl:String):void {
+            if (connectionArgs.length > 0) {
+                _connection.connect.apply(_connection, [connectionUrl].concat(connectionArgs));
+            } else {
+                _connection.connect(connectionUrl);
+            }
+        }
+
+        public function connect(provider:StreamProvider, clip:Clip, successListener:Function, objectEndocing:uint, connectionArgs:Array):void {
             _provider = provider as NetStreamControllingStreamProvider;
 			_successListener = successListener;
 			_connection = new NetConnection();
 			_connection.proxyType = "best";
             _connection.objectEncoding = objectEndocing;
+            _connectionArgs = connectionArgs;
+            _clip = clip;
 			
 			if (_connectionClient) {
 				_connection.client = _connectionClient;
@@ -51,13 +65,9 @@ import org.flowplayer.controller.ConnectionProvider;
 
             var connectionUrl:String = getNetConnectionUrl(clip);
             log.debug("netConnectionUrl is " + connectionUrl);
-			if (connectionArgs.length > 0) {
-                _connection.connect.apply(_connection, [ connectionUrl ].concat(connectionArgs));
-			} else {
-				_connection.connect(connectionUrl);
-			}
-		}
-		
+            doConnect(connectionArgs, connectionUrl);
+        }
+
 		protected function getNetConnectionUrl(clip:Clip):String {
 			return null;
 		}
@@ -66,7 +76,16 @@ import org.flowplayer.controller.ConnectionProvider;
             onConnectionStatus(event);
 			if (event.info.code == "NetConnection.Connect.Success" && _successListener != null) {
 				_successListener(_connection);
-			} else if (["NetConnection.Connect.Failed", "NetConnection.Connect.Rejected", "NetConnection.Connect.AppShutdown", "NetConnection.Connect.InvalidApp"].indexOf(event.info.code) >= 0) {
+                
+            } else if (event.info.code == "NetConnection.Connect.Rejected") {
+                if(event.info.ex.code == 302) {
+                    var redirectUrl:String = event.info.ex.redirect;
+                    log.debug("doing a redirect to " + redirectUrl);
+                    _clip.setCustomProperty("netConnectionUrl", redirectUrl);
+                    setTimeout(connect, 100, _provider, _clip, _successListener, _connection.objectEncoding, _connectionArgs);
+				}
+                
+            } else if (["NetConnection.Connect.Failed", "NetConnection.Connect.AppShutdown", "NetConnection.Connect.InvalidApp"].indexOf(event.info.code) >= 0) {
 				
 				if (_failureListener != null) {
 					_failureListener();
