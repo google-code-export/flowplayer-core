@@ -44,13 +44,13 @@ package org.flowplayer.config {
 		private var _pluginObjects:Object;
         private var _skinObjects:Object;
         private var _config:Config;
-        private var _playerSwfName:String;
+        private var _playerURL:String;
         private var _controlsVersion:String;
         private var _audioVersion:String;
         private var _loadables:Array;
 
         public function PluginBuilder(playerSwfName:String, controlsVersion:String, audioVersion:String, config:Config, pluginObjects:Object, skinObjects:Object) {
-            _playerSwfName = playerSwfName;
+            _playerURL = playerSwfName;
             _config = config;
             _pluginObjects = pluginObjects || new Object();
             _skinObjects = skinObjects || new Object();
@@ -175,6 +175,7 @@ package org.flowplayer.config {
 
 		private function getLoadableUrl(name:String, version:String):String {
 			var playerVersion:String = getPlayerVersion();
+            log.debug("player version detected from SWF name is " + playerVersion);
 			if (playerVersion) {
 				return "flowplayer." + name + "-" + version + ".swf";
 			} else {
@@ -184,15 +185,26 @@ package org.flowplayer.config {
 		
 		private function getPlayerVersion():String {
 			var version:String = getVersionFromSwfName("flowplayer");
-			if (version) return version;
-			return getVersionFromSwfName("flowplayer.commercial");
+            if (version) return version;
+
+            version = getVersionFromSwfName("flowplayer.commercial");
+            if (version) return version;
+
+            return getVersionFromSwfName("flowplayer.unlimited");
 		}
 		
 		private function getVersionFromSwfName(swfName:String):String {
-			if (_playerSwfName.indexOf(swfName) != 0) return null;
-			if (_playerSwfName.indexOf(".swf") < (swfName + "-").length) return null;
-			return _playerSwfName.substring(_playerSwfName.indexOf("-") + 1, _playerSwfName.indexOf(".swf"));
+            log.debug("getVersionFromSwfName() " + playerSwfName);
+			if (playerSwfName.indexOf(swfName) < 0) return null;
+			if (playerSwfName.indexOf(".swf") < (swfName + "-").length) return null;
+            return playerSwfName.substring(playerSwfName.indexOf("-") + 1, playerSwfName.indexOf(".swf"));
 		}
+
+        private function get playerSwfName():String {
+            var lastSlash:Number = _playerURL.lastIndexOf("/");
+            return _playerURL.substring(lastSlash + 1, _playerURL.indexOf(".swf") + 4); 
+        }
+
 
 		public function getDisplayProperties(conf:Object, name:String, DisplayPropertiesClass:Class = null):DisplayProperties {
 			if (isObjectDisabled(name, _skinObjects)) {

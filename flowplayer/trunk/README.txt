@@ -4,6 +4,10 @@ Version history:
 ---------
 - Support for RTMP redirects (tested with Wowza loadbalancing)
 
+Fixes:
+- Fix to correctly detect if the player SWF name contains a version number and if it does also use the version number
+when it automatically loads the controls plugin.
+
 3.2.0
 -----
 - canvas, controlbar and the content plugin backgound color and border color can be now given with rgb() and rgba() CSS style syntax
