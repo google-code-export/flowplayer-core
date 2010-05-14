@@ -438,7 +438,10 @@ import org.flowplayer.model.DisplayPluginModel;
 				// initialization is not complete, create a dispatches just to dispatch this error
 				new PlayerEventDispatcher().dispatchError(error, info);
 			}
-			doHandleError(error.code + ": " + error.message + ( info ? ": " + info : ""), throwError);
+			var stack:String = "";
+			if ( info is Error && info.getStackTrace() )
+				stack = info.getStackTrace();
+			doHandleError(error.code + ": " + error.message + ( info ? ": " + info + (stack ? " - Stack: "+ stack : "") : ""), throwError);
 		}
 
 		private function doHandleError(message:String, throwError:Boolean = true):void {
