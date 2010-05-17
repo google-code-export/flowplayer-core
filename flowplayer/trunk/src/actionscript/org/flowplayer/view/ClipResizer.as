@@ -19,7 +19,8 @@
 
 package org.flowplayer.view {
 	import flash.utils.Dictionary;
-	
+	import flash.events.TimerEvent;
+	import flash.utils.Timer;
 	import org.flowplayer.model.Clip;
 	import org.flowplayer.model.ClipType;
 	import org.flowplayer.model.MediaSize;
@@ -37,6 +38,7 @@ package org.flowplayer.view {
 		private var resizers:Dictionary;
 		private var screen:Screen;
         private var _playlist:Playlist;
+		private var _resizerTimer:Timer;
 
         public function ClipResizer(playList:Playlist, screen:Screen) {
             resizers = new Dictionary();
@@ -68,13 +70,40 @@ package org.flowplayer.view {
 		
 		public function resizeClipTo(clip:Clip, mediaSize:MediaSize, force:Boolean = false):void {
 			log.debug("resizeClipTo, clip " + clip);
+			if ( _resizerTimer ) {
+				log.debug("Killing old resize timer");
+				_resizerTimer.reset();
+				_resizerTimer = null;
+			}
+			
 			var resizer:MediaResizer = resizers[clip];
 			if (! resizer) {
 				log.warn("no resizer defined for " + clip);
 				return;
 			}
-			if (resizer.resizeTo(mediaSize, force)) {
-				screen.resized(clip);
+			
+			var resizingFunc:Function = function(event:TimerEvent = null):void {
+
+				if ( event && ! resizer.hasOrigSize() && Timer(event.target).currentCount < Timer(event.target).repeatCount )	{
+					log.debug("we don't have a size yet.. waiting for the video object to have a size");
+					return;
+				}
+
+				if (resizer.resizeTo(mediaSize, force)) {
+					screen.resized(clip);
+				}
+			};
+			
+			if ( resizer.hasOrigSize() ) {
+				log.debug("we have a size, resizing now !");
+				resizingFunc();
+			} else {
+				// delayed one
+				log.warn("we don't have a size now, delaying the resize");
+				_resizerTimer = new Timer(500, 5);
+				_resizerTimer.addEventListener(TimerEvent.TIMER, resizingFunc);
+				_resizerTimer.start();
+				
 			}
 		}
 

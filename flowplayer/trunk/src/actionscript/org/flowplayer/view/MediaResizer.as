@@ -65,7 +65,7 @@ package org.flowplayer.view {
 		}
 			
 		private function resizeToFit():Boolean {
-			if (origHeight == 0 || origHeight == 0) {
+			if (origWidth == 0 || origHeight == 0) {
 				log.warn("resizeToFit: original sizes not available, will not resize");
 				return false;
 			}
@@ -127,7 +127,7 @@ package org.flowplayer.view {
 		}
 		
 		public function hasOrigSize():Boolean {
-			return origHeight >= 0 && origWidth >= 0;
+			return origHeight > 0 && origWidth > 0;
 		}
 		
 		public function toString():String {

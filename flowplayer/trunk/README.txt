@@ -3,6 +3,7 @@ Version history:
 3.2.1-dev
 ---------
 - Support for RTMP redirects (tested with Wowza loadbalancing)
+- Fixed video size when no size in metadata nor in clip conf
 
 Fixes:
 - Fix to correctly detect if the player SWF name contains a version number and if it does also use the version number
