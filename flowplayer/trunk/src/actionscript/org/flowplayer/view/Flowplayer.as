@@ -18,39 +18,28 @@
  */
 
 package org.flowplayer.view {
-    import com.adobe.utils.StringUtil;
+    import flash.display.Stage;
+    import flash.external.ExternalInterface;
+    import flash.utils.*;
 
-    import org.flowplayer.model.ClipEvent;
-import org.flowplayer.model.PlayerError;
-	import org.flowplayer.controller.ResourceLoader;	
-	import org.flowplayer.config.Config;
-	import org.flowplayer.config.ExternalInterfaceHelper;
-	import org.flowplayer.controller.PlayListController;
-	import org.flowplayer.flow_internal;
-	import org.flowplayer.model.Callable;
-	import org.flowplayer.model.Clip;
-	import org.flowplayer.model.ClipEventType;
-	import org.flowplayer.model.DisplayPluginModel;
-	import org.flowplayer.model.DisplayProperties;
-	import org.flowplayer.model.DisplayPropertiesImpl;
-	import org.flowplayer.model.Loadable;
-	import org.flowplayer.model.Playlist;
-	import org.flowplayer.model.Plugin;
-	import org.flowplayer.model.PluginEvent;
-	import org.flowplayer.model.PluginEventType;
-	import org.flowplayer.model.PluginModel;
-	import org.flowplayer.model.Status;
-	import org.flowplayer.util.NumberUtil;
-	import org.flowplayer.util.ObjectConverter;
-	import org.flowplayer.util.PropertyBinder;
-	import org.flowplayer.view.FlowplayerBase;
-	import org.flowplayer.view.Styleable;
-	
-	import flash.display.Stage;
-	import flash.external.ExternalInterface;	
-	import flash.utils.*;
-	
-	use namespace flow_internal;
+    import org.flowplayer.config.Config;
+    import org.flowplayer.config.ExternalInterfaceHelper;
+    import org.flowplayer.controller.ResourceLoader;
+    import org.flowplayer.flow_internal;
+    import org.flowplayer.model.Callable;
+    import org.flowplayer.model.Clip;
+    import org.flowplayer.model.ClipEventType;
+    import org.flowplayer.model.DisplayPluginModel;
+    import org.flowplayer.model.DisplayProperties;
+    import org.flowplayer.model.PlayerError;
+    import org.flowplayer.model.PluginEvent;
+    import org.flowplayer.model.PluginEventType;
+    import org.flowplayer.model.PluginModel;
+    import org.flowplayer.util.NumberUtil;
+    import org.flowplayer.util.ObjectConverter;
+    import org.flowplayer.util.PropertyBinder;
+
+    use namespace flow_internal;
 
 	/**
 	 * @author api
@@ -74,7 +63,7 @@ import org.flowplayer.model.PlayerError;
 			_canvas = canvas;
 		}
 
-		public function initExternalInterface():void {
+        public function initExternalInterface():void {
 			if (!ExternalInterface.available)
 				log.info("ExternalInteface is not available in this runtime. JavaScript access will be disabled.");
 			try {
@@ -138,6 +127,7 @@ import org.flowplayer.model.PlayerError;
 				
 				addCallback("setKeyboardShortcutsEnabled", setKeyboardShortcutsEnabled);
 				addCallback("isKeyboardShortcutsEnabled", isKeyboardShortcutsEnabled);
+                addCallback("validateKey", validateKey);
 				
 			} catch (e:Error) {
 				handleError(PlayerError.INIT_FAILED, "Unable to add callback to ExternalInterface");
@@ -347,5 +337,10 @@ import org.flowplayer.model.PlayerError;
 				} 
 			};
 		}
+
+        private function validateKey(key:String, pageDomain:Boolean):Boolean {
+            var LicenseKey:Class = Class(getDefinitionByName("org.flowplayer.view.LicenseKey"));
+            return LicenseKey["validate"](_canvas.loaderInfo.url, version, key, pageDomain);
+        }
     }
 }
