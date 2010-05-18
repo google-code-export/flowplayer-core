@@ -26,7 +26,7 @@ package org.flowplayer.view {
 	}		
 
 	CONFIG::commercialVersion
-	internal class LicenseKey {
+	public class LicenseKey {
 		private static var log:Log = new Log("org.flowplayer.view::LicenseKey");
 
 		public static function validate(swfUrl:String, version:Array, configuredKey:String, externalInterfaceAvailable:Boolean):Boolean {
@@ -36,7 +36,7 @@ package org.flowplayer.view {
 	}
 	
 	CONFIG::freeVersion
-	internal class LicenseKey {
+	public class LicenseKey {
 
 		public static function validate(swfUrl:String, version:Array, configuredKey:String, externalInterfaceAvailable:Boolean):Boolean {
 			return true;
