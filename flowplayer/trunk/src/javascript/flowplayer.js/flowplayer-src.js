@@ -450,13 +450,15 @@
             // plugin callbacks
             var fn = listeners[evt];
 
-				if (fn) {
-					fn.apply(self, arg);
+			if (fn) {
+				var ret = fn.apply(self, arg);
 					
-					// "one-shot" callback
-					if (evt.slice(0, 1) == "_") {
-						delete listeners[evt];  
-					} 
+				// "one-shot" callback
+				if (evt.slice(0, 1) == "_") {
+					delete listeners[evt];  
+				} 
+				
+				return ret;
             }
             
             return self;
@@ -503,7 +505,7 @@ function Player(wrapper, params, conf) {
 		}, 
 		
 		isLoaded: function() {
-			return (api !== null && ! isUnloading);	
+			return (api !== null && api["fp_play"] != undefined && ! isUnloading);	
 		},
 		
 		getParent: function() {
@@ -844,13 +846,13 @@ function Player(wrapper, params, conf) {
          return;
       }
 
-		if (evt == 'onPluginEvent') { 
+		if (evt == 'onPluginEvent' || evt == 'onBeforePluginEvent') { 
 			var name = arg0.name || arg0;
 			var p = plugins[name];
 
 			if (p) {
 				p._fireEvent("onUpdate", arg0);
-				p._fireEvent(arg1, a.slice(3));		
+				return p._fireEvent(arg1, a.slice(3));		
 			}
 			return;
 		}		
