@@ -1,9 +1,14 @@
 Version history:
 
-3.2.1-dev
+3.2.2
+-----
+Fixes:
+- Now recognizes following kind of urls as audio clips: 'mp3:audiostreamname' (ulrs with mp3 prefix and no extension)
+
+3.2.1
 ---------
 - Support for RTMP redirects (tested with Wowza loadbalancing)
-- Fixed video size when no size in metadata nor in clip conf
+- Fixed video size when no size info available in clip metadata
 
 Fixes:
 - Fix to correctly detect if the player SWF name contains a version number and if it does also use the version number
