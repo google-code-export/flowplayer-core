@@ -197,7 +197,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			contextMenu = new ContextMenuBuilder(_config.playerId, _config.contextMenu).build();
 			
 			log.debug("initializing ExternalInterface");
-			if (useExternalInterfade()) {
+			if (useExternalInterface()) {
 				_flowplayer.initExternalInterface();
 			}
 
@@ -217,9 +217,8 @@ import org.flowplayer.model.DisplayPluginModel;
 			addPluginsToPanel(_pluginRegistry);
 			
 			log.debug("dispatching onLoad");
-			if (useExternalInterfade()) {
-				_flowplayer.dispatchEvent(PlayerEvent.load("player"));
-			} 
+			_flowplayer.dispatchEvent(PlayerEvent.load("player"));
+			
 			log.debug("starting configured streams");
             startStreams();
             arrangeScreen();
@@ -248,7 +247,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			arrangeCanvasLogo();
 		}
 
-		private function useExternalInterfade():Boolean {
+		private function useExternalInterface():Boolean {
 			log.debug("useExternalInteface: " + (_config.playerId != null));
 			return _config.playerId != null;
 		}
@@ -270,7 +269,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			var plugins:Array = _config.getLoadables();
 			log.debug("will load following plugins: ");
             logPluginInfo(plugins);
-			_pluginLoader = new PluginLoader(URLUtil.playerBaseUrl(loaderInfo), _pluginRegistry, this, useExternalInterfade());
+			_pluginLoader = new PluginLoader(URLUtil.playerBaseUrl(loaderInfo), _pluginRegistry, this, useExternalInterface());
             _pluginLoader.addEventListener(Event.COMPLETE, pluginLoadListener);
             _flowplayer.pluginLoader = _pluginLoader;
             if (plugins.length == 0) {
@@ -380,7 +379,7 @@ import org.flowplayer.model.DisplayPluginModel;
 
 		private function validateLicenseKey():Boolean {
 			try {
-				return LicenseKey.validate(root.loaderInfo.url, _flowplayer.version, _config.licenseKey, useExternalInterfade());
+				return LicenseKey.validate(root.loaderInfo.url, _flowplayer.version, _config.licenseKey, useExternalInterface());
 			} catch (e:Error) {
 				log.warn("License key not accepted, will show flowplayer logo");
 			}
