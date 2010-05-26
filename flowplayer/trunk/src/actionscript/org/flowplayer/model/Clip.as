@@ -390,14 +390,17 @@ import org.flowplayer.flow_internal;
 		}
 		
 		public function get type():ClipType {
+            if (_type) {
+                return _type;
+            }
+            if (_url && _url.indexOf("mp3:") >= 0) {
+                return ClipType.AUDIO;
+            }
 			if (! _type && _url) {
 				_type = ClipType.fromFileExtension(url);
 			}
 			if (_type) {
                 return _type;
-            }
-            if (_url && _url.indexOf("mp3:") >= 0) {
-                return ClipType.AUDIO;
             }
             return ClipType.VIDEO;
 		}
