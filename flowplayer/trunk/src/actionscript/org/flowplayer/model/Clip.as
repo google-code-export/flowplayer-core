@@ -548,7 +548,7 @@ import org.flowplayer.flow_internal;
 		}
 		
 		public function get originalWidth():int {
-			if (_type == ClipType.VIDEO) {
+			if (type == ClipType.VIDEO) {
 				if (_metaData && _metaData.width >= 0) {
 					return _metaData.width;
 				}
@@ -566,7 +566,7 @@ import org.flowplayer.flow_internal;
 		}
 		
 		public function get originalHeight():int {
-			if (_type == ClipType.VIDEO) {
+			if (type == ClipType.VIDEO) {
 				if (_metaData && _metaData.height >= 0) {
 					return _metaData.height;
 				}
