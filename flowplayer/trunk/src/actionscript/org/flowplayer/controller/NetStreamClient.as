@@ -49,6 +49,12 @@ import org.flowplayer.model.ClipEventType;
             log.debug("onMetaData, data for clip " + _clip + ":");
             var metaData:Object = new Object();
             for (var key:String in infoObject) {
+				if ( key == "duration" && ! isNewFile() && _clip && _clip.metaData && _clip.metaData.duration ) {
+					log.debug ("Already got duration, reusing old one");
+					metaData.duration = _clip.metaData.duration;
+					continue;
+				}
+	
                 log.debug(key + ": " + infoObject[key]);
                 metaData[key] = infoObject[key];
             }

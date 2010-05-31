@@ -4,6 +4,7 @@ Version history:
 -----
 Fixes:
 - Now recognizes following kind of urls as audio clips: 'mp3:audiostreamname' (ulrs with mp3 prefix and no extension)
+- Now ignores the duration from metadata if we already got one. Fix required for pseudostreaming
 
 3.2.1
 ---------
