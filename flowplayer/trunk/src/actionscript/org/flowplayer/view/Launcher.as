@@ -337,9 +337,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			
 			if (++_pluginsInitialized == numPlugins) {
 				log.info("all plugins initialized");
-				setTimeout(function():void {
-					callAndHandleError(initPhase4, PlayerError.INIT_FAILED);
-				}, 0); // please wait for next event loop
+				callAndHandleError(initPhase4, PlayerError.INIT_FAILED);
 			}
 			log.info(_pluginsInitialized + " out of " + numPlugins + " plugins initialized");
 		}
