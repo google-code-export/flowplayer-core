@@ -69,8 +69,7 @@ import org.flowplayer.model.DisplayPluginModel;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 
-	import flash.utils.Dictionary;
-	import flash.utils.Timer;		
+	import flash.utils.*;		
 	
 	use namespace flow_internal; 
 
@@ -338,7 +337,9 @@ import org.flowplayer.model.DisplayPluginModel;
 			
 			if (++_pluginsInitialized == numPlugins) {
 				log.info("all plugins initialized");
-				callAndHandleError(initPhase4, PlayerError.INIT_FAILED);
+				setTimeout(function():void {
+					callAndHandleError(initPhase4, PlayerError.INIT_FAILED);
+				}, 0); // please wait for next event loop
 			}
 			log.info(_pluginsInitialized + " out of " + numPlugins + " plugins initialized");
 		}
