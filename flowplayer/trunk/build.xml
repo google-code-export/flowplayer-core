@@ -182,6 +182,7 @@
                 <arg line="-define+=CONFIG::audioVersion,${audio-version-info-quoted}"/>
                 <arg line="-define+=CONFIG::skin,true"/>
                 <arg line="-define+=CONFIG::hasSlowMotion,'${has-slowmotion-buttons}'"/>
+				<arg line="-define+=CONFIG::debug,'@{debug}'"/>
                 <arg line="-keep-as3-metadata=Value,External"/>
                 <arg line="-source-path ${src-as} ${src-as-commercial} ${classpath} ${plugin-libs}"/>
                 <arg line="-library-path ${libs-path} ${src-flash} @{license-lib}"/>
@@ -218,6 +219,7 @@
             <arg line="-default-background-color=${bgcolor}"/>
             <arg line="-strict=true"/>
             <arg line="-incremental=true"/>
+			<arg line="-define+=CONFIG::debug,'false'"/>
         </exec>
     </target>
 
@@ -487,5 +489,15 @@
         <echo message="version-3: ${version-3}"/>
         <echo message="version-status: ${version-status}"/>
     </target>
+
+
+	<target name="debug-js">
+		 <get src="http://flowplayer.org/js/tools/tools.flashembed-1.0.4.js" dest="${dist-dir}/flowplayer-debug.js"/>
+		
+		<concat destfile="${dist-dir}/flowplayer-debug.js" append="true">
+
+			<fileset dir="${src-js}/flowplayer.js" includes="flowplayer-src.js"/>
+		</concat>
+	</target>
 
 </project>
