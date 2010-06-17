@@ -96,12 +96,23 @@ package org.flowplayer.controller {
 				clip.originalHeight = loader.getContent().height;
 				clip.originalWidth = loader.getContent().width;
 			}
-			log.info("image loaded " + clip + ", content " + loader.getContent() + ", width " + clip.originalWidth + ", height " + clip.originalHeight);
+			log.info("image loaded " + clip + ", content " + loader.getContent() + ", width " + clip.originalWidth + ", height " + clip.originalHeight + ", duration "+ clip.duration);
             clip.dispatch(ClipEventType.START);
 			clip.dispatch(ClipEventType.METADATA);
 			clip.dispatch(ClipEventType.BUFFER_FULL);
+			
 			if (clip.duration == 0) {
-				clip.dispatchBeforeEvent(new ClipEvent(ClipEventType.FINISH));
+								
+				//clip.autoPlayNext = true;				
+								
+				if ( playlist.nextClip )	
+					playlist.nextClip.autoPlayNext = true;
+					
+				clip.onResume(function(event:ClipEvent):void {
+					clip.dispatchBeforeEvent(new ClipEvent(ClipEventType.FINISH));
+				});
+				
+				clip.dispatchEvent(new ClipEvent(ClipEventType.RESUME));
 			}
 		}
 	}

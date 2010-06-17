@@ -26,6 +26,7 @@ package org.flowplayer.controller {
 	import org.flowplayer.controller.PlayListController;
 	import org.flowplayer.flow_internal;
 	import org.flowplayer.model.Clip;
+	import org.flowplayer.model.ClipType;
 	import org.flowplayer.model.ClipEvent;
 	import org.flowplayer.model.ClipEventSupport;
 	import org.flowplayer.model.ClipEventType;
@@ -248,7 +249,10 @@ package org.flowplayer.controller {
                 removeOneShotClip(clip);
                 return;
             }
-   
+			
+			var isLastSplashImage:Boolean = clip.duration == 0 && clip.type == ClipType.IMAGE && ! playList.hasNext();
+   			//log.debug("isLastSplashImage ? "+ (isLastSplashImage?"true":"false"));
+
             if (playList.hasNext(false)) {
                 if (defaultAction) {
                     log.debug("onClipDone, moving to next clip");
@@ -258,7 +262,8 @@ package org.flowplayer.controller {
 					changeState(waitingState);
                 }
             } else {
-                if (defaultAction) {
+				// #111, check if this is a post roll image so we can rewind
+                if (defaultAction && ! isLastSplashImage) {
                     stop(false, true);
                     changeState(waitingState);
                 } else {
