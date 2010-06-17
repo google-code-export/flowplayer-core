@@ -437,7 +437,7 @@ import org.flowplayer.model.DisplayPluginModel;
 				new PlayerEventDispatcher().dispatchError(error, info);
 			}
 			var stack:String = "";
-			if ( info is Error && info.getStackTrace() )
+			if ( CONFIG::debug && info is Error && info.getStackTrace() )
 				stack = info.getStackTrace();
 			doHandleError(error.code + ": " + error.message + ( info ? ": " + info + (stack ? " - Stack: "+ stack : "") : ""), throwError);
 		}

@@ -154,7 +154,18 @@ package org.flowplayer.model {
                     if (listener == null) {
                         log.error("found null listener");
                     }
-                    listener.notify(event);
+					
+					if ( CONFIG::debug ) {
+						try {
+							listener.notify(event);
+						}	catch(e:Error) {
+							log.error("Got error while dispatching " + event.eventType.name, e);
+						}					
+					} else {
+						listener.notify(event);
+					}
+
+                    
                     notified.push(listener);
                     if (event.isPropagationStopped()) {
                         return;
