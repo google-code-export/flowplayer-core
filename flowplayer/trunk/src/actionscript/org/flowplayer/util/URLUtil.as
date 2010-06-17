@@ -75,9 +75,11 @@ import flash.display.LoaderInfo;
             var endPos:int = url.indexOf("?");
             if (endPos > 0) {
                 endPos = url.substring(0, endPos).lastIndexOf("/");
+            } else if ( url.indexOf('#') != -1 ) {	// #112, when you have a / afer a #
+                endPos = url.substring(0, url.indexOf('#')).lastIndexOf("/");
             } else {
-                endPos = url.lastIndexOf("/");
-            }
+				endPos = url.lastIndexOf("/");
+			}
             if (endPos > 0) {
                 return [url.substring(0, endPos), url.substring(endPos + 1)];
             } else {
