@@ -4,8 +4,8 @@
 
     <property name="version-1" value="3"/>
     <property name="version-2" value="2"/>
-    <property name="version-3" value="2"/>
-    <property name="version-status" value=""/>
+    <property name="version-3" value="3"/>
+    <property name="version-status" value="dev"/>
     <property name="controls-version-info" value="3.2.1"/>
     <property name="audio-version-info" value="3.2.0"/>
     <property name="flowplayer-js-version-info" value="3.2.2"/>
@@ -352,6 +352,7 @@
             <arg line="-output ${apidoc-dir}"/>
             <arg line="-main-title 'FlowPlayer ${version-1}.${version-2}.${version-3} API documentation'"/>
             <arg line="-window-title 'FlowPlayer ${version-1}.${version-2}.${version-3} API documentation'"/>
+            <arg line="-define+=CONFIG::debug,'false'"/>
         </exec>
     </target>
 
