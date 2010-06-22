@@ -249,9 +249,9 @@ package org.flowplayer.controller {
                 removeOneShotClip(clip);
                 return;
             }
-			
-			var isLastSplashImage:Boolean = clip.duration == 0 && clip.type == ClipType.IMAGE && ! playList.hasNext();
-   			//log.debug("isLastSplashImage ? "+ (isLastSplashImage?"true":"false"));
+
+//            var isLastSplashImage:Boolean = clip.duration == 0 && clip.type == ClipType.IMAGE && ! playList.hasNext();
+//   			log.debug("isLastSplashImage ? "+ (isLastSplashImage?"true":"false"));
 
             if (playList.hasNext(false)) {
                 if (defaultAction) {
@@ -263,7 +263,8 @@ package org.flowplayer.controller {
                 }
             } else {
 				// #111, check if this is a post roll image so we can rewind
-                if (defaultAction && ! isLastSplashImage) {
+//                if (defaultAction && ! isLastSplashImage) {
+                if (defaultAction) {
                     stop(false, true);
                     changeState(waitingState);
                 } else {
