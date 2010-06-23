@@ -60,16 +60,33 @@ import flash.display.LoaderInfo;
 			return fileName.indexOf("://") > 0;
 		}
 		
-		public static function get pageUrl():String {
-			if (!ExternalInterface.available) return null;
-			try {
-				var href:String = ExternalInterface.call("self.location.href.toString");
-                return baseUrlAndRest(href)[0];
-			} catch (e:Error) {
-                _log.error("error in pageUrl(): " + e);
+
+        private static function detectPageUrl(functionName:String):String {
+            _log.debug("detectPageUrl() " + functionName);
+            try {
+                return ExternalInterface.call(functionName);
+            } catch (e:Error) {
+                _log.debug("Error in detectPageUrl() " + e);
             }
             return null;
         }
+
+        public static function get pageUrl():String {
+            if (!ExternalInterface.available) return null;
+
+            var href:String = detectPageUrl("window.location.href.toString");
+            if (! href || href == "") {
+                href = detectPageUrl("document.location.href.toString");
+            }
+            if (! href || href == "") {
+                href = detectPageUrl("document.URL.toString");
+            }
+			var endPos:int = href.indexOf("?");
+			if (endPos < 0) {
+				endPos = href.lastIndexOf("/");
+			}
+			return href.substring(0, endPos);
+		}
 
         public static function baseUrlAndRest(url:String):Array {
             var endPos:int = url.indexOf("?");
