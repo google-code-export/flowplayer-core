@@ -81,12 +81,8 @@ import flash.display.LoaderInfo;
             if (! href || href == "") {
                 href = detectPageUrl("document.URL.toString");
             }
-			var endPos:int = href.indexOf("?");
-			if (endPos < 0) {
-				endPos = href.lastIndexOf("/");
-			}
-			return href.substring(0, endPos);
-		}
+            return baseUrlAndRest(href)[0];
+        }
 
         public static function baseUrlAndRest(url:String):Array {
             var endPos:int = url.indexOf("?");
