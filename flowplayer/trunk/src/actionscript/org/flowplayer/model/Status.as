@@ -50,7 +50,7 @@ package org.flowplayer.model {
 		 * @return <code>true</code if the clip has been played,
 		 */
 		public function get ended():Boolean {
-			return _clip.duration == 0 || (_clip.played && (_clip.duration - _time <= 1));
+			return (_clip.type == ClipType.IMAGE && _clip.duration == 0) || (_clip.played && (_clip.duration - _time <= 1));
 		} 
 		
 		public function get clip():Clip {
