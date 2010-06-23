@@ -200,7 +200,7 @@ package org.flowplayer.controller {
 
 			// now we can move to next/previous in the playList
 			var clip:Clip = advanceFunction(skipPreAndPostroll) as Clip;
-			log.info("moved in playlist, current clip is " + _playList.current);
+			log.info("moved in playlist, current clip is " + _playList.current + ", next clip is " + clip);
 			
 			log.debug("moved in playlist, next clip autoPlay " + clip.autoPlay + ", autoBuffering " + clip.autoBuffering);
 			if (obeyClipPlaySettings) {
@@ -212,7 +212,11 @@ package org.flowplayer.controller {
 				} else if (clip.autoPlay) {
 					_state.play();
 				} else if (clip.autoBuffering) {
-					_state.startBuffering();
+                    if (clip.type == ClipType.IMAGE && clip.autoBuffering) {
+                        _state.play();
+                    }else {
+                        _state.startBuffering();
+                    }
 				}
 			} else {
 				log.debug("not obeying playlist settings");
