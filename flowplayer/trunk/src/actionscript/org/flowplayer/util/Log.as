@@ -147,5 +147,11 @@ package org.flowplayer.util {
 		public function set enabled(enabled:Boolean):void {
 			_enabled = enabled;
 		}
+		
+		public function debugStackTrace(msg:String = null):void{
+			if (!_enabled) return;
+			if (_level <= LEVEL_DEBUG)
+				try { throw new Error("StackTrace"); } catch (e:Error) { debug(msg, e.getStackTrace()); }
+		}
 	}
 }

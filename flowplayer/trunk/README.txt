@@ -1,5 +1,9 @@
 Version history:
 
+3.2.3
+-----
+ - added ability to dynamically change the scaling
+
 3.2.2
 -----
 Fixes:
