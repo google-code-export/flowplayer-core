@@ -29,6 +29,10 @@ package org.flowplayer.model {
 		public function dispatchBeforeEvent(event:AbstractEvent):Boolean {
 			return doDispatchBeforeEvent(event, false);
 		}
+		
+		public function onUpdate(listener:Function, clipFilter:Function = null, addToFront:Boolean = false):void {
+			setListener(ClipEventType.UPDATE, listener, clipFilter, false, addToFront);
+		}
 
 		public function onBeforeAll(listener:Function, clipFilter:Function = null):void {
 			setListener(null, listener, clipFilter, true);

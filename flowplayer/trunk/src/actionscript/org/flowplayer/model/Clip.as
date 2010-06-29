@@ -526,11 +526,15 @@ import org.flowplayer.flow_internal;
 		}
 
 		public function setScaling(scaling:String):void {
-			this._scaling = MediaSize.forName(scaling);
+			this.scaling = MediaSize.forName(scaling);
 		}
 		
 		public function set scaling(scaling:MediaSize):void {
 			this._scaling = scaling;
+			
+			log.warn("scaling : "+ scaling+", disptching update");
+			
+			_playlist.dispatch(ClipEventType.UPDATE);
 		}
 		
 		public function get scaling():MediaSize {

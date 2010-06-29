@@ -225,9 +225,15 @@ package org.flowplayer.view {
             eventSupport.onStart(onStart);
             eventSupport.onResume(onResume);
 
+			eventSupport.onUpdate(onUpdate);
+
             var oneShot:Function = function(clip:Clip):Boolean { return clip.isOneShot; };
             eventSupport.onStop(removeOneShotDisplay, oneShot);
             eventSupport.onFinish(removeOneShotDisplay, oneShot);
+		}
+		
+		private function onUpdate(event:ClipEvent):void {
+			onResize();
 		}
 
         private function removeOneShotDisplay(event:ClipEvent):void {
