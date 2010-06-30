@@ -62,7 +62,7 @@ package org.flowplayer.controller {
 			var timeNow:Number = getTimer();
 			var _timePassed:Number = _storedTime + (timeNow - _startTime)/1000;
 
-			if (_clip.type == ClipType.VIDEO) {
+			if (_clip.type == ClipType.VIDEO || _clip.type == ClipType.API) {
 				// this is a sanity check that we have played at least one second
 				if (getTimer() - _startTime < 2000) {
 					return _timePassed;
