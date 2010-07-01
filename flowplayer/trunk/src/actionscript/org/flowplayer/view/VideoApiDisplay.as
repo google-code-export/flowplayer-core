@@ -54,13 +54,6 @@ package org.flowplayer.view {
 		}
 
 		override public function set alpha(value:Number):void {
-			super.alpha = value;
-			if (video) {
-				video.alpha = value;
-				log.debug("display of + " + _clip + " new alpha " + video.alpha);
-			} else {
-				log.debug("set alpha() no video available");
-			}
 		}
 
 		public function init(clip:Clip):void {
