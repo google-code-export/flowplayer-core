@@ -759,7 +759,7 @@ protected function getExternalNetStream(connection:NetConnection):NetStream {
         }
 
         private function _createNetStream():void {
-            _netStream = createNetStream() || new NetStream(_connection);
+            _netStream = createNetStream(_connection) || new NetStream(_connection);
             netStream.client = new NetStreamClient(clip, _player.config, _streamCallbacks);
             _netStream.bufferTime = clip.bufferLength;
             _volumeController.netStream = _netStream;
@@ -767,7 +767,7 @@ protected function getExternalNetStream(connection:NetConnection):NetStream {
             _netStream.addEventListener(NetStatusEvent.NET_STATUS, _onNetStatus);
         }
 
-        protected function createNetStream():NetStream {
+        protected function createNetStream(connection:NetConnection):NetStream {
             return null;
         }
 
