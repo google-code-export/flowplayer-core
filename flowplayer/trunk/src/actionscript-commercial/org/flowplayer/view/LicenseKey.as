@@ -29,16 +29,16 @@ package org.flowplayer.view {
 	public class LicenseKey {
 		private static var log:Log = new Log("org.flowplayer.view::LicenseKey");
 
-		public static function validate(swfUrl:String, version:Array, configuredKey:String, externalInterfaceAvailable:Boolean):Boolean {
+		public static function validate(swfUrl:String, version:Array, configuredKeys:Object, externalInterfaceAvailable:Boolean):Boolean {
 			trace("using validator " + FlowplayerLicenseKey.id);
-			return FlowplayerLicenseKey.validate(swfUrl, version, configuredKey, externalInterfaceAvailable);
+			return FlowplayerLicenseKey.validate(swfUrl, version, configuredKeys, externalInterfaceAvailable);
 		}
 	}
 	
 	CONFIG::freeVersion
 	public class LicenseKey {
 
-		public static function validate(swfUrl:String, version:Array, configuredKey:String, externalInterfaceAvailable:Boolean):Boolean {
+		public static function validate(swfUrl:String, version:Array, configuredKeys:Object, externalInterfaceAvailable:Boolean):Boolean {
 			return true;
 		}
 	}
