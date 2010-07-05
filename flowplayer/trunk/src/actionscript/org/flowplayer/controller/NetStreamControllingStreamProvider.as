@@ -129,7 +129,7 @@ package org.flowplayer.controller {
             if (_startedClip && _startedClip == clip && _connection) {
                 log.info("playing previous clip again, reusing existing connection and resuming");
                 _started = false;
-                errorSafeLoad(clip);
+                replay(clip);
             } else {
                 log.debug("will create a new connection");
                 _startedClip = clip;
@@ -138,10 +138,13 @@ package org.flowplayer.controller {
             }
         }
 
-        private function errorSafeLoad(clip:Clip):void {
+        private function replay(clip:Clip):void {
             try {
+                seek(new ClipEvent(ClipEventType.SEEK, 0), 0);
                 netStream.resume();
-                start(null, _startedClip, _pauseAfterStart);
+                _started = true;
+                clip.dispatchEvent(new ClipEvent(ClipEventType.BEGIN, _pauseAfterStart));
+//                start(null, _startedClip, _pauseAfterStart);
             } catch (e:Error) {
                 if (e.errorID == 2154) {
                     log.debug("error when reusing existing netStream " + e);
@@ -591,7 +594,7 @@ package org.flowplayer.controller {
          * @return
          */
         protected function netStreamPlay(url:String):void {
-            log.debug("starting playback with resolved url " + url);
+            log.debug("netStreamPlay(): starting playback with resolved url " + url);
             _netStream.play(url);
         }
 
@@ -611,6 +614,10 @@ package org.flowplayer.controller {
         protected function getConnectionProvider(clip:Clip):ConnectionProvider {
             return _connectionProvider;
         }
+
+protected function getExternalNetStream(connection:NetConnection):NetStream {
+           return null;
+       }
 
         /* ---- Private methods ----- */
         /* -------------------------- */
@@ -697,7 +704,7 @@ package org.flowplayer.controller {
 
         private function onConnectionSuccess(connection:NetConnection):void {
             _connection = connection;
-            createNetStream();
+            _createNetStream();
             start(null, clip, _pauseAfterStart);
             dispatchPlayEvent(ClipEventType.CONNECT);
         }
@@ -751,17 +758,17 @@ package org.flowplayer.controller {
             dispatchEvent(event);
         }
 
-        protected function getExternalNetStream():NetStream {
-            return null;
-        }
-
-        private function createNetStream():void {
-            _netStream = getExternalNetStream() || new NetStream(_connection);
+        private function _createNetStream():void {
+            _netStream = createNetStream() || new NetStream(_connection);
             netStream.client = new NetStreamClient(clip, _player.config, _streamCallbacks);
             _netStream.bufferTime = clip.bufferLength;
             _volumeController.netStream = _netStream;
             clip.setNetStream(_netStream);
             _netStream.addEventListener(NetStatusEvent.NET_STATUS, _onNetStatus);
+        }
+
+        protected function createNetStream():NetStream {
+            return null;
         }
 
         protected function onMetaData(event:ClipEvent):void {
