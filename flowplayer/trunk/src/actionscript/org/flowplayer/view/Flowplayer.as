@@ -338,9 +338,10 @@ package org.flowplayer.view {
 			};
 		}
 
-        private function validateKey(key:String, pageDomain:Boolean):Boolean {
+        private function validateKey(key:Object, pageDomain:Boolean):Boolean {
             var LicenseKey:Class = Class(getDefinitionByName("org.flowplayer.view.LicenseKey"));
             return LicenseKey["validate"](_canvas.loaderInfo.url, version, key, pageDomain);
         }
+        
     }
 }

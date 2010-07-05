@@ -160,7 +160,7 @@ package org.flowplayer.model {
 							listener.notify(event);
 						}	catch(e:Error) {
 							log.error("Got error while dispatching " + event.eventType.name, e);
-						}					
+						}
 					} else {
 						listener.notify(event);
 					}

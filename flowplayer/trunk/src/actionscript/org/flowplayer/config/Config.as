@@ -179,7 +179,7 @@ package org.flowplayer.config {
 			return new PropertyBinder(new LogConfiguration(), null).copyProperties(config.log) as LogConfiguration;
 		}
 		
-		public function get licenseKey():String {
+		public function get licenseKey():Object {
 			return config.key || config.keys;
 		}
 		
