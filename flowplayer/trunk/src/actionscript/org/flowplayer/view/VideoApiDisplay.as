@@ -59,9 +59,9 @@ package org.flowplayer.view {
 		public function init(clip:Clip):void {
 			_clip = clip;
 			log.info("init " + _clip);
-			if (video)
-				removeChild(video);
+		
 			//get the display object from the chromeless video provider which is a loader of the external swf loading the video from
+			
 			video = clip.getContent();
 			if (video == null) {
 				log.warn("no video content in clip " + clip);
@@ -70,7 +70,6 @@ package org.flowplayer.view {
 			video.width = this.width;
 			video.height = this.height;
 			addChild(video);
-			swapChildren(_overlay, video);
 		}
 		
 		public function hasContent():Boolean {
