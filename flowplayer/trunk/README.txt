@@ -2,7 +2,8 @@ Version history:
 
 3.2.3
 -----
- - added ability to dynamically change the scaling
+- added ability to dynamically change the scaling
+- a new 'type' clip property exposed to JS
 Fixes:
 - fixed #112, wrong URL computation when using clip with relative URL on a page with a / after a # in its url
 - fixed #111, wrong behavior of pre/post roll images with duration 0
