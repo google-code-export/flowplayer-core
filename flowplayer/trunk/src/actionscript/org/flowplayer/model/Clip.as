@@ -389,6 +389,7 @@ import org.flowplayer.flow_internal;
 			return URLUtil.completeURL(_baseUrl, url);
 		}
 		
+        [Value]
 		public function get type():ClipType {
             if (_type) {
                 return _type;
