@@ -139,6 +139,7 @@ package org.flowplayer.view {
 				disp.y = 0;
 				return;
 			}
+			
 			Arrange.center(disp, width, height);
 		}
 
@@ -248,6 +249,7 @@ package org.flowplayer.view {
                 log.info("onBegin: clip.metaData == false, showing it");
                 handleStart(clip, event.info as Boolean);
             }
+            
             if (clip.getContent() && clip.metaData) {
                 handleStart(clip, event.info as Boolean );
             }
@@ -276,7 +278,7 @@ package org.flowplayer.view {
             if (pauseAfterStart && _playList.previousClip && _playList.previousClip.type == ClipType.IMAGE) {
                 log.debug("autoBuffering next clip on a splash image, will not show next display");
                 setDisplayVisibleIfHidden(_playList.previousClip);
-                if (clip.type == ClipType.AUDIO && clip.image) return;
+                if (clip.type == ClipType.AUDIO) return;
 
                 clip.onResume(onFirstFrameResume);
                 return;
@@ -291,6 +293,8 @@ package org.flowplayer.view {
                 _prevClip = clip;
                 return;
             }
+            
+            
             
             setDisplayVisibleIfHidden(clip);
             hideAllDisplays([_displays[clip]]);
