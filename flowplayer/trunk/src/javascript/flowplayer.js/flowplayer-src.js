@@ -1036,6 +1036,12 @@ function Player(wrapper, params, conf) {
 		
 		// click function
 		function doClick(e) { 
+			
+			// ipad/iPhone --> follow the link
+			if (/iPad|iPhone/.test(navigator.userAgent) && !/.flv$/i.test(playlist[0].url)) {
+				return true;	
+			}
+			
 			if (!self.isLoaded() && self._fireEvent("onBeforeClick") !== false) {
 				self.load();		
 			} 
