@@ -126,7 +126,7 @@ package org.flowplayer.controller {
 
             clip.startDispatched = false;
             log.debug("previously started clip " + _startedClip);
-            if (_startedClip && _startedClip == clip && _connection) {
+            if (_startedClip && _startedClip == clip && _connection && _netStream) {
                 log.info("playing previous clip again, reusing existing connection and resuming");
                 _started = false;
                 replay(clip);
@@ -169,6 +169,7 @@ package org.flowplayer.controller {
             if (! _netStream) return;
             log.debug("stopBuffering, closing netStream");
             _netStream.close();
+            _netStream = null;
             dispatchPlayEvent(ClipEventType.BUFFER_STOP);
         }
 
@@ -387,6 +388,12 @@ package org.flowplayer.controller {
          */
         protected function doPause(netStream:NetStream, event:ClipEvent = null):void {
             if (! netStream) return;
+//            if (clip.live) {
+//                log.debug("pausing a live stream, closing netStream");
+//                netStream.close();
+//            } else {
+//                netStream.pause();
+//            }
             netStream.pause();
             if (event) {
                 dispatchEvent(event);
@@ -735,12 +742,18 @@ protected function getExternalNetStream(connection:NetConnection):NetStream {
         protected function doStop(event:ClipEvent, netStream:NetStream, closeStreamAndConnection:Boolean = false):void {
             log.debug("doStop");
             _stopping = true;
-            if (closeStreamAndConnection) {
+
+            if (clip.live) {
+                _netStream.close();
+                _netStream = null;
+
+            } else if (closeStreamAndConnection) {
                 _startedClip = null;
                 log.debug("doStop(), closing netStream and connection");
 
                 try {
                     netStream.close();
+                    _netStream = null;
                 } catch (e:Error) {
                 }
 

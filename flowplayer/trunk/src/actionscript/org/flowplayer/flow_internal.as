@@ -18,8 +18,7 @@
  */
 
 package org.flowplayer {
-/**
- * @author api
- */
-public namespace flow_internal = "http://flowplayer.org/core/internal";
+
+    public namespace flow_internal = "http://flowplayer.org/core/internal";
+    
 }

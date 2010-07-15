@@ -134,6 +134,13 @@ package org.flowplayer.controller {
 
 		internal override function pause():void {
 			if (canOnEvent(ClipEventType.PAUSE)) {
+
+                // with a live stream we need to stop
+                if (playList.current.live) {
+                    stop();
+                    return;
+                }
+
 				changeState(pausedState);
 				onEvent(ClipEventType.PAUSE);
 			}

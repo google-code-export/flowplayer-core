@@ -6,8 +6,8 @@
     <property name="version-2" value="2"/>
     <property name="version-3" value="3"/>
     <property name="version-status" value="dev"/>
-    <property name="controls-version-info" value="3.2.1"/>
-    <property name="audio-version-info" value="3.2.0"/>
+    <property name="controls-version-info" value="3.2.2-dev"/>
+    <property name="audio-version-info" value="3.2.1-dev"/>
     <property name="flowplayer-js-version-info" value="3.2.2"/>
     <property name="source-dist-root-folder" value="flowplayer"/>
 
@@ -86,12 +86,22 @@
         <delete dir="${build-dir}/example"></delete>
     </target>
 
-    <target name="build" description="builds all" depends="check-uptodate, build-lib, plugins" unless="uptodate.main">
+    <target name="dobuild" depends="check-uptodate, build-lib, plugins" unless="uptodate.main">
         <antcall target="prepare"/>
         <property name="licenselib" value="${lib-dir}/licensekey"/>
         <antcall target="compile"/>
         <example player-swf="${player-binary-versioned}" example-dir="example-free"/>
     </target>
+
+    <target name="deploy" if="deploy.dir">
+        <copy todir="${deploy.dir}">
+            <fileset dir="${build-dir}">
+                <include name="*swf"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="build" description="builds all" depends="dobuild, deploy" />
 
     <target name="build-biz" description="builds all" depends="check-uptodate, build-lib, plugins"
             unless="uptodate.commercial">

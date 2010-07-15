@@ -28,7 +28,7 @@ package org.flowplayer.controller {
 	/**
 	 * StreamProviders are used to load video content into the player. They are used to 
 	 * integrate to different streaming servers and Content Delivery Networks (CDNs).
-	 * <p>
+	 * 
 	 * Usually in the Flash platform providers are implemented using 
 	 * <a href="flash.net.NetStream">http://livedocs.adobe.com/flash/9.0/ActionScriptLangRefV3/flash/net/NetStream.html</a>.
 	 */
@@ -38,7 +38,7 @@ package org.flowplayer.controller {
 		 * Starts loading the specivied clip. Once video data is available the provider
 		 * must set it to the clip using <code>clip.setContent()</code>. Typically the video
 		 * object passed to the clip is an instance of <a href="http://livedocs.adobe.com/flash/9.0/ActionScriptLangRefV3/flash/media/Video.html">flash.media.Video</a>.
-		 * <p>
+		 * 
 		 * @param event the event that this provider should dispatch once loading has successfully started,
 		 * once dispatched the player will call <code>getVideo()</code>
 		 * @param clip the clip to load
