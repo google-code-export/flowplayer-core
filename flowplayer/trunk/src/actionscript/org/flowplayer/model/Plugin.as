@@ -43,7 +43,7 @@ package org.flowplayer.model {
 		/**
 		 * Called when the player has been initialized. The interface is immediately ready to use, all
 		 * other plugins have been loaded and initialized when this gets called.
-		 * <p>
+		 *
 		 * After this method has been called the plugin will be placed on the stage (on
 		 * player's Panel).
 		 */

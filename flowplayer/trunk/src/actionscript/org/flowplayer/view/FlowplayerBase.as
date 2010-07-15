@@ -613,7 +613,7 @@ package org.flowplayer.view {
          * <li>position == 0, the clip is added as a preroll</li>
          * <li>position == -1, the clip is added as a postroll</li>
          * <li>position > 0, the clip is added as a midroll (linear instream)</li>
-         * <ul>
+         * </ul>
          * @param clip
          * @param index optional insertion point, if not given the clip is added to the end of the list.
          */

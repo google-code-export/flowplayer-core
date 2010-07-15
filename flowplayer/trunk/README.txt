@@ -7,6 +7,7 @@ Fixes:
 - fixed #112, wrong URL computation when using clip with relative URL on a page with a / after a # in its url
 - fixed #111, wrong behavior of pre/post roll images with duration 0
 - fixed multiple license keys logic
+- fixed resuming of live RTMP streams
 
 3.2.2
 -----
