@@ -196,7 +196,13 @@ package org.flowplayer.config {
 		}
 
         private function parse(document:String, playlist:Playlist, commonClipObj:Object):void {
-            new RSSPlaylistParser().parse(document, playlist, commonClipObj);
+			var playlist:Playlist = playlist;
+            if (document.indexOf("[") == 0) {
+            	var clips:Object = ConfigParser.parse(document);
+            	playlist.setClips(createClips(clips));
+            } else {
+            	new RSSPlaylistParser().parse(document, playlist, commonClipObj);
+            }
         }
 
         public function get playlistFeed():String {
