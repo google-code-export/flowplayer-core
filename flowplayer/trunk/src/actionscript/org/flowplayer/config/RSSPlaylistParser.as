@@ -72,7 +72,7 @@ package org.flowplayer.config {
             
             if (!clip.getCustomProperty("bitrates")) clip.setCustomProperty("bitrates", []);
             if (item.link) clip.linkUrl = item.link;
-        	
+
         	//parse a group media:content items inside a media:group tag
             if (item.ym::group.ym::content.length() > 0) {
                 parseMediaGroup(item.ym::group, clip);
@@ -83,11 +83,18 @@ package org.flowplayer.config {
                 parseMediaItem(XML(item.ym::content), clip);
                 addBitrateItems(XML(item.ym::content), clip);
             }
-
+            
+			//add flowplayer clip properties
             if (item.fp::clip.attributes().length() > 0) {
             	parseClipProperties(item.fp::clip, clip);
             }
-
+            
+            //add custom clip properties from default rss items with no namespace
+            for each (var childItem:XML in item.children()) {
+            	if (childItem.namespace().toString() == "") {
+            		addClipCustomProperty(clip, childItem, childItem.text().toString());
+            	}
+            }
 
             log.debug("created clip " + clip);
             return clip;
@@ -110,7 +117,7 @@ package org.flowplayer.config {
         }
         
         private function addClipCustomProperty(clip:Clip, elem:XML, value:Object):void {
-            log.debug("getting propety name for " + elem.localName() + " value is ", value);
+            log.debug("getting property name for " + elem.localName() + " value is ", value);
             var name:String = getCustomPropName(elem);
             var existing:Object = clip.getCustomProperty(name);
             if (existing) {
@@ -137,7 +144,7 @@ package org.flowplayer.config {
                 return elem.toString(); 
             }
             if (elem.children().length() == 1 && XML(elem.children()[0]).nodeKind() == "text" && elem.attributes().length() == 0) {
-                log.debug("has one text child onlye, retrieving it's contents");
+                log.debug("has one text child only, retrieving it's contents");
                 return elem.text().toString();
             }
             var result:Object = new Object();
