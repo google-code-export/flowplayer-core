@@ -162,22 +162,26 @@ package org.flowplayer.config {
 
              var clipAdded:Boolean = false;
              
-             for each (var item:XML in group.ym::content) {
-		     	if (item.@isDefault.toString() == "true" && !clipAdded) {
-		        	log.debug("parseMedia(): found default media item");
-		            if (parseMediaItem(item, clip)) {
-		            	log.debug("parseMedia(): using the default media item");
-		            	clipAdded  = true;
-		            }
-		        } else {
-		               if (!clipAdded) {
-		               		if (parseMediaItem(item, clip)) {
-		                        log.debug("adding item");
-		                        clipAdded = true;
-		                    }
-		               }
-		             
+             //obtain the first default item
+             var defaultItem:XMLList = group.ym::content.(hasOwnProperty('@isDefault') && @isDefault == 'true');
+
+             if (defaultItem[0]) {
+             	log.debug("parseMedia(): found default media item");
+		        if (parseMediaItem(defaultItem[0], clip)) {
+		        	log.debug("parseMedia(): using the default media item");
+		        	clipAdded = true;
 		        }
+             } else {
+             	//there are no default items obtain the first content item
+             	 var noDefaultItem:XML = XMLList(group.ym::content)[0];
+             	 if (parseMediaItem(noDefaultItem, clip)) {
+		         	log.debug("adding item");
+		         	clipAdded = true;
+		         }
+             }
+             
+             //add bitrate items
+             for each (var item:XML in group.ym::content) {
 		        addBitrateItems(item, clip);
 		     }
 		    
