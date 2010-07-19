@@ -111,7 +111,11 @@ package org.flowplayer.model {
 		}
 
         public static function resolveType(type:String):ClipType {
-        	
+            if (type == ClipType.VIDEO.type) return ClipType.VIDEO;
+            if (type == ClipType.AUDIO.type) return ClipType.AUDIO;
+            if (type == ClipType.IMAGE.type) return ClipType.IMAGE;
+            if (type == ClipType.API.type) return ClipType.API;
+
 			if (VIDEO_EXTENSIONS.concat(FLASH_VIDEO_EXTENSIONS).indexOf(type) >= 0)
 				return ClipType.VIDEO;
 				//add support for video api swf player video types with an api prefix and a video id as the url

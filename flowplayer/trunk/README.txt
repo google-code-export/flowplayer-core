@@ -3,11 +3,14 @@ Version history:
 3.2.3
 -----
 - a new 'type' clip property exposed to JS
+- changed the clip type property to better work as a read-write property. Now accepts 'video', 'audio',
+  'image' and 'api' as configuration values.
 Fixes:
 - fixed #112, wrong URL computation when using clip with relative URL on a page with a / after a # in its url
 - fixed #111, wrong behavior of pre/post roll images with duration 0
 - fixed multiple license keys logic
-- fixed resuming of live RTMP streams
+Fixes:
+- correct verification of license keys in *.ca domains
 
 3.2.2
 -----
