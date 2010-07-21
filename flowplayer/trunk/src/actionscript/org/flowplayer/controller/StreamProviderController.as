@@ -128,8 +128,9 @@ package org.flowplayer.controller {
 
 		override protected function onDurationReached():void {
 			// pause silently
-			log.debug("pausing silently");
-			getProvider().pause(null);
+            if (clip.durationFromMetadata > clip.duration) {
+                getProvider().pause(null);
+            }
 		}
 
 		public function getProvider(clipParam:Clip = null):StreamProvider {
