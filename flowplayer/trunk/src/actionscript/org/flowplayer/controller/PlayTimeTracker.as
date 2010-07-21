@@ -108,7 +108,7 @@ package org.flowplayer.controller {
 			if (clip.durationFromMetadata > clip.duration) {
 				return time >= clip.duration;
 			}
-			return clip.duration - time < 0.5;
+			return clip.duration - time < clip.endLimit;
 		}
 
 		private function checkAndFireCuepoints():void {

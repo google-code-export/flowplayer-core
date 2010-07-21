@@ -11,6 +11,7 @@ Fixes:
 - fixed multiple license keys logic
 Fixes:
 - correct verification of license keys in *.ca domains
+- fix to make playback to always reach end of video
 
 3.2.2
 -----
