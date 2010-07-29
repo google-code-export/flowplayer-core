@@ -46,7 +46,7 @@ package org.flowplayer.config {
 	public class Config { 
 
 		private var playList:Playlist;
-		private var config:Object;
+		private var _configObject:Object;
 		private var _pluginBuilder:PluginBuilder;
 		private var _playlistBuilder:PlaylistBuilder;
 		public var logFilter:String;
@@ -58,9 +58,9 @@ package org.flowplayer.config {
 
 		public function Config(config:Object, builtInConfig:Object, playerSwfUrl:String, controlsVersion:String, audioVersion:String) {
 			Assert.notNull(config, "No configuration provided.");
-			this.config = createConfigObject(config, builtInConfig);
+			this._configObject = createConfigObject(config, builtInConfig);
 			_playerSwfUrl = playerSwfUrl;
-			_playlistBuilder = new PlaylistBuilder(playerId, this.config.playlist, this.config.clip);
+			_playlistBuilder = new PlaylistBuilder(playerId, this._configObject.playlist, this._configObject.clip);
 			_controlsVersion = controlsVersion;
 			_audioVersion = audioVersion;
 		}
@@ -104,7 +104,7 @@ package org.flowplayer.config {
         }
 
 		public function get playerId():String {
-			return this.config.playerId;
+			return this._configObject.playerId;
 		}
 
 		public function createClip(clipObj:Object):Clip {
@@ -120,7 +120,7 @@ package org.flowplayer.config {
 		}
 
 		public function getPlaylist():Playlist {
-            if (config.playlist is String && ! _playlistBuilder.playlistFeed) {
+            if (_configObject.playlist is String && ! _playlistBuilder.playlistFeed) {
                 throw new Error("playlist queried but the playlist feed file has not been received yet");
             }
 			if (! playList) {
@@ -149,7 +149,7 @@ package org.flowplayer.config {
 		
 		private function get viewObjectBuilder():PluginBuilder {
 			if (_pluginBuilder == null) {
-				_pluginBuilder = new PluginBuilder(_playerSwfUrl, _controlsVersion, _audioVersion, this, config.plugins, config);
+				_pluginBuilder = new PluginBuilder(_playerSwfUrl, _controlsVersion, _audioVersion, this, _configObject.plugins, _configObject);
 			}
 			return _pluginBuilder;
 		}
@@ -171,16 +171,16 @@ package org.flowplayer.config {
 		}
 		
 		public function getObject(name:String):Object {
-			return config[name];
+			return _configObject[name];
 		}
 		
 		public function getLogConfiguration():LogConfiguration {
-			if (! config.log) return new LogConfiguration();
-			return new PropertyBinder(new LogConfiguration(), null).copyProperties(config.log) as LogConfiguration;
+			if (! _configObject.log) return new LogConfiguration();
+			return new PropertyBinder(new LogConfiguration(), null).copyProperties(_configObject.log) as LogConfiguration;
 		}
 		
 		public function get licenseKey():Object {
-			return config.key || config.keys;
+			return _configObject.key || _configObject.keys;
 		}
 		
 		public function get canvas():Canvas {
@@ -217,13 +217,13 @@ package org.flowplayer.config {
 		}
 		
 		public function get showErrors():Boolean {
-			if (! config.hasOwnProperty("showErrors")) return true;
-			return config["showErrors"];  
+			if (! _configObject.hasOwnProperty("showErrors")) return true;
+			return _configObject["showErrors"];
 		}
 		
 		public function get useBufferingAnimation():Boolean {
-			if (! config.hasOwnProperty("buffering")) return true;
-			return config["buffering"];
+			if (! _configObject.hasOwnProperty("buffering")) return true;
+			return _configObject["buffering"];
 		}
 		
 		public function createHttpProvider(name:String):ProviderModel {
@@ -240,19 +240,23 @@ package org.flowplayer.config {
 		}
 
         public function get streamCallbacks():Array {
-            return config["streamCallbacks"];
+            return _configObject["streamCallbacks"];
         }
 
         public function get connectionCallbacks():Array {
-            return config["connectionCallbacks"];
+            return _configObject["connectionCallbacks"];
         }
 
         public function get playlistFeed():String {
-            return config.playlist is String ? config.playlist : null;
+            return _configObject.playlist is String ? _configObject.playlist : null;
         }
         
         public function get playerSwfUrl():String {
         	return _playerSwfUrl;
         }
-	}
+
+        public function get configObject():Object {
+            return _configObject;
+        }
+    }
 }
