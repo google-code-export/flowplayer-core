@@ -51,6 +51,8 @@ package org.flowplayer.controller {
      */
     public class NetStreamControllingStreamProvider implements StreamProvider {
 
+		private var _ParrallelRTMPConnectionProviderDummyRef:ParallelRTMPConnectionProvider;
+
         protected var log:Log = new Log(this);
         private var _connection:NetConnection;
         private var _connectionArgs:Array;

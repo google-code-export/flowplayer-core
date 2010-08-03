@@ -5,6 +5,7 @@ Version history:
 - a new 'type' clip property exposed to JS
 - changed the clip type property to better work as a read-write property. Now accepts 'video', 'audio',
   'image' and 'api' as configuration values.
+- moved parallel rtmp connection mechanism from the RTMP plugin to Core so other plugins can use it (ie: securestreaming)
 Fixes:
 - fixed #112, wrong URL computation when using clip with relative URL on a page with a / after a # in its url
 - fixed #111, wrong behavior of pre/post roll images with duration 0
