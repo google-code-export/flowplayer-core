@@ -65,8 +65,7 @@ package org.flowplayer.controller {
         private var _seekTarget:Number;
         private var _model:ProviderModel;
         private var _connectionProvider:ConnectionProvider;
-        private var _defaultClipUrlResolver:ClipURLResolver;
-        private var _clipUrlResolver:ClipURLResolver;
+        private var _clipUrlResolverHelper:ClipURLResolverHelper;
         private var _player:Flowplayer;
 
         // state variables
@@ -567,7 +566,7 @@ package org.flowplayer.controller {
          * Resolves the url for the specified clip.
          */
         protected final function resolveClipUrl(clip:Clip, successListener:Function):void {
-            clipURLResolver.resolve(this, clip, successListener);
+            _clipUrlResolverHelper.resolveClipUrl(clip, successListener);
         }
 
         /**
@@ -624,19 +623,17 @@ package org.flowplayer.controller {
             return _connectionProvider;
         }
 
-protected function getExternalNetStream(connection:NetConnection):NetStream {
-           return null;
-       }
 
         /* ---- Private methods ----- */
         /* -------------------------- */
 
         private function createClipUrlResolver():void {
+			var defaultResolver:ClipURLResolver = null;
             if (_model.urlResolver) {
-                _defaultClipUrlResolver = PluginModel(_player.pluginRegistry.getPlugin(_model.urlResolver)).pluginObject as ClipURLResolver;
-            } else {
-                _defaultClipUrlResolver = getDefaultClipURLResolver();
-            }
+                defaultResolver = PluginModel(_player.pluginRegistry.getPlugin(_model.urlResolver)).pluginObject as ClipURLResolver;
+            } 
+
+			_clipUrlResolverHelper = new ClipURLResolverHelper(_player, this, defaultResolver);
         }
 
         private function createConnectionProvider():void {
@@ -657,7 +654,7 @@ protected function getExternalNetStream(connection:NetConnection):NetStream {
         private function _onNetStatus(event:NetStatusEvent):void {
             log.info("_onNetStatus, code: " + event.info.code);
 
-            if (! clipURLResolver.handeNetStatusEvent(event)) {
+            if (! _clipUrlResolverHelper.getClipURLResolver(clip).handeNetStatusEvent(event)) {
                 log.debug("clipURLResolver.handeNetStatusEvent returned false, ignoring this event");
                 return;
             }
@@ -823,37 +820,7 @@ protected function getExternalNetStream(connection:NetConnection):NetStream {
             }
         }
 
-        private function get clipURLResolver():ClipURLResolver {
-            log.debug("get clipURLResolver,  clip.urlResolver = " + clip.urlResolvers + ", _clipUrlResolver = " + _defaultClipUrlResolver);
-            if (! clip || (clip.urlResolvers && clip.urlResolvers[0] == null)) {
-                clip.urlResolverObjects = [_defaultClipUrlResolver];
-                return _defaultClipUrlResolver;
-            }
-
-            // defined in clip?
-            if (clip.urlResolvers) {
-                _clipUrlResolver = CompositeClipUrlResolver.createResolver(clip.urlResolvers, _player.pluginRegistry);
-            } else {
-                // get all resolvers from repository
-                var configured:Array = _player.pluginRegistry.getUrlResolvers();
-                if (configured && configured.length > 0) {
-                    log.debug("using configured URL resolvers", configured);
-                    _clipUrlResolver = CompositeClipUrlResolver.createResolver(configured, _player.pluginRegistry);
-                }
-            }
-
-            if (! _clipUrlResolver) {
-                _clipUrlResolver = _defaultClipUrlResolver;
-            }
-
-            _clipUrlResolver.onFailure = function(message:String = null):void {
-                log.error("clip URL resolving failed: " + message);
-                clip.dispatchError(ClipError.STREAM_LOAD_FAILED, "failed to resolve clip url" + (message ? ": " + message : ""));
-            };
-
-            clip.urlResolverObjects = _clipUrlResolver is CompositeClipUrlResolver ? CompositeClipUrlResolver(_clipUrlResolver).resolvers : [_clipUrlResolver];
-            return _clipUrlResolver;
-        }
+       
 
         private function get connectionProvider():ConnectionProvider {
             var provider:ConnectionProvider;
