@@ -62,6 +62,7 @@ package org.flowplayer.model {
             super.copyFields(from, to);
             DisplayPluginModelImpl(to).config = DisplayPluginModelImpl(from).config;
             DisplayPluginModelImpl(to).methods = DisplayPluginModelImpl(from).methods;
+            DisplayPluginModelImpl(to).isBuiltIn = DisplayPluginModelImpl(from).isBuiltIn;
         }
 
         public override function clone():Cloneable {
