@@ -114,7 +114,7 @@ package org.flowplayer.view {
 				addCallback("fadeIn", fadeIn);
 				addCallback("fadeOut", fadeOut);
 				addCallback("fadeTo", fadeTo);
-				addCallback("getPlugin", function(pluginName:String):Object { 
+				addCallback("getPlugin", function(pluginName:String):Object {
 					return new ObjectConverter(_pluginRegistry.getPlugin(pluginName)).convert();
 				});
 				addCallback("getRawPlugin", function(pluginName:String):Object { 
