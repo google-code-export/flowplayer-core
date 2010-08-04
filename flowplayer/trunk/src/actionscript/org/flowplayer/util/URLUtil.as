@@ -30,7 +30,7 @@ import flash.display.LoaderInfo;
 
 		
 		public static function completeURL(baseURL:String, fileName:String):String {
-			return addBaseURL(baseURL || pageUrl, fileName);
+			return addBaseURL(baseURL || pageUrl || playerBaseUrl, fileName);
 		}
 
 		public static function addBaseURL(baseURL:String, fileName:String):String {
@@ -80,6 +80,9 @@ import flash.display.LoaderInfo;
             }
             if (! href || href == "") {
                 href = detectPageUrl("document.URL.toString");
+            }
+            if (! href || href == "") {
+                return null;
             }
             return baseUrlAndRest(href)[0];
         }
