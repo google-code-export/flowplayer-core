@@ -100,6 +100,7 @@ import org.flowplayer.model.DisplayPluginModel;
 		[Frame(factoryClass="org.flowplayer.view.Preloader")]
 		public function Launcher() {
 			addEventListener(Event.ADDED_TO_STAGE, function(e:Event):void {
+                URLUtil.loaderInfo = loaderInfo;
                 trace("Launcher added to stage");
                 callAndHandleError(createFlashVarsConfig, PlayerError.INIT_FAILED);
             });
@@ -119,7 +120,7 @@ import org.flowplayer.model.DisplayPluginModel;
             initCustomClipEvents();
 
 			if (_config.playerId) {
-				Security.allowDomain(URLUtil.pageUrl);
+				Security.allowDomain(URLUtil.pageLocation);
 			}
 
 			loader = createNewLoader(); 
@@ -268,7 +269,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			var plugins:Array = _config.getLoadables();
 			log.debug("will load following plugins: ");
             logPluginInfo(plugins);
-			_pluginLoader = new PluginLoader(URLUtil.playerBaseUrl(loaderInfo), _pluginRegistry, this, useExternalInterface());
+			_pluginLoader = new PluginLoader(URLUtil.playerBaseUrl, _pluginRegistry, this, useExternalInterface());
             _pluginLoader.addEventListener(Event.COMPLETE, pluginLoadListener);
             _flowplayer.pluginLoader = _pluginLoader;
             if (plugins.length == 0) {
@@ -334,7 +335,6 @@ import org.flowplayer.model.DisplayPluginModel;
 		
 		private function checkPluginsInitialized():void {
 			var numPlugins:int = countPlugins();
-			
 			if (++_pluginsInitialized == numPlugins) {
 				log.info("all plugins initialized");
 				callAndHandleError(initPhase4, PlayerError.INIT_FAILED);
@@ -563,7 +563,7 @@ import org.flowplayer.model.DisplayPluginModel;
 
 		private function createFlowplayer():void {
 			_flowplayer = new Flowplayer(stage, _pluginRegistry, _panel, 
-				_animationEngine, this, this, _config, URLUtil.playerBaseUrl(loaderInfo));
+				_animationEngine, this, this, _config, URLUtil.playerBaseUrl);
 
 			_flowplayer.onBeforeFullscreen(onFullscreen);
 //			_flowplayer.onFullscreenExit(onFullscreen);
@@ -856,7 +856,7 @@ import org.flowplayer.model.DisplayPluginModel;
 		}
 		
 		private function createNewLoader():ResourceLoader {
-			return new ResourceLoaderImpl(_config.playerId ? null : URLUtil.playerBaseUrl(loaderInfo), this);
+			return new ResourceLoaderImpl(_config.playerId ? null : URLUtil.playerBaseUrl, this);
 		}
 
         private function initCustomClipEvents():void {
@@ -882,6 +882,7 @@ import org.flowplayer.model.DisplayPluginModel;
 
         private function callAndHandleError(func:Function, error:PlayerError):void {
             try {
+
                 func();
             } catch (e:Error) {
                 handleError(error, e, false);

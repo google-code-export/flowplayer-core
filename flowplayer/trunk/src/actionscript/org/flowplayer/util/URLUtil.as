@@ -27,10 +27,11 @@ import flash.display.LoaderInfo;
 	 */
 	public class URLUtil {
         private static var _log:Log = new Log("org.flowplayer.util::URLUtil");
+        private static var _loaderInfo:LoaderInfo;
 
 		
 		public static function completeURL(baseURL:String, fileName:String):String {
-			return addBaseURL(baseURL || pageUrl || playerBaseUrl, fileName);
+			return addBaseURL(baseURL || pageLocation || playerBaseUrl, fileName);
 		}
 
 		public static function addBaseURL(baseURL:String, fileName:String):String {
@@ -81,10 +82,12 @@ import flash.display.LoaderInfo;
             if (! href || href == "") {
                 href = detectPageUrl("document.URL.toString");
             }
-            if (! href || href == "") {
-                return null;
-            }
-            return baseUrlAndRest(href)[0];
+            return href;
+        }
+
+        public static function get pageLocation():String {
+            var url:String = pageUrl;
+            return url ? baseUrlAndRest(url)[0] : null;
         }
 
         public static function baseUrlAndRest(url:String):Array {
@@ -103,8 +106,8 @@ import flash.display.LoaderInfo;
             }
         }
 		
-		public static function playerBaseUrl(loaderInfo:LoaderInfo):String {
-			var url:String = loaderInfo.url;
+		public static function get playerBaseUrl():String {
+			var url:String = _loaderInfo.url;
 			var firstSwf:Number = url.indexOf(".swf");
 			url = url.substring(0, firstSwf);
 			var lastSlashBeforeSwf:Number = url.lastIndexOf("/");
@@ -120,5 +123,9 @@ import flash.display.LoaderInfo;
 			if (url.indexOf("/") == 0) return true;
 			return false;
 		}
-	}
+
+        public static function set loaderInfo(value:LoaderInfo):void {
+            _loaderInfo = value;
+        }
+    }
 }

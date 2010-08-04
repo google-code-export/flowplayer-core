@@ -140,7 +140,7 @@ package org.flowplayer.view {
 			_plugins[plugin.name] = plugin;
 			_originalProps[plugin.name] = plugin.clone();
 		}
-
+        
 		internal function registerProvider(model:ProviderModel):void {
 			log.info("registering provider " + model);
 			_providers[model.name] = model;
