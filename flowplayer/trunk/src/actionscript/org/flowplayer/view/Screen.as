@@ -166,7 +166,7 @@ package org.flowplayer.view {
 		}
 
 		private function fallbackDisplayBounds():Rectangle {
-			return new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
+			return new Rectangle(0, 0, Arrange.parentWidth, Arrange.parentHeight);
 		}
 
 		public function set mediaController(controller:MediaController):void {
