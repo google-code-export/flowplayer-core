@@ -94,7 +94,7 @@ package org.flowplayer.controller {
         }
 
 		protected function createConnector(url:String):ParallelRTMPConnector {
-			return new ParallelRTMPConnector(url, _connectionClient, onConnectorSuccess, onConnectorFailure);
+			return new ParallelRTMPConnector(url, connectionClient, onConnectorSuccess, onConnectorFailure);
 		}
 
         private function doConnect(connector1:ParallelRTMPConnector, proxyType:String, objectEncoding:uint, connectionArgs:Array):void {
@@ -159,6 +159,14 @@ package org.flowplayer.controller {
         public function set connectionClient(client:Object):void {
             log.debug("received connection client " + client);
             _connectionClient = client;
+        }
+
+        public function get connectionClient():Object {
+            if (! _connectionClient) {
+                _connectionClient = new NetConnectionClient();
+            }
+            log.debug("using connection client " + _connectionClient);
+            return _connectionClient;
         }
 
         public function set onFailure(listener:Function):void {
