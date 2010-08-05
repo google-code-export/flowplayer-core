@@ -160,7 +160,8 @@ package org.flowplayer.view {
                 log.debug("load(), " + url);
                 _model.url = url;
                 _model.fullscreenOnly = fullscreenOnly;
-                var playerBaseUrl:String = URLUtil.playerBaseUrl(_panel.loaderInfo);
+                //var playerBaseUrl:String = URLUtil.playerBaseUrl(_panel.loaderInfo);
+                var playerBaseUrl:String = URLUtil.playerBaseUrl;
                 if (! verifyLogoUrl(_model.url, playerBaseUrl)) return;
 
                 if (_image && _image.parent == this) {
