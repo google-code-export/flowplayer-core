@@ -24,7 +24,9 @@ package org.flowplayer.view {
     import flash.events.Event;
     import flash.events.ProgressEvent;
     import flash.utils.getDefinitionByName;
-
+    import flash.utils.*;
+    import flash.display.StageDisplayState;
+    
     import org.flowplayer.util.Arrange;
     import org.flowplayer.util.Log;
     import org.flowplayer.util.LogConfiguration;
@@ -46,11 +48,45 @@ package org.flowplayer.view {
             stop();
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
         }
+        
+        private function onStageResize(e:Event):void{
+          setParentDimensions();
+        }
 
+        private function setParentDimensions():void{
+          if(stage.displayState == StageDisplayState.FULL_SCREEN || (Arrange.set && !Arrange.hasParent)){
+            Arrange.parentWidth=stage.stageWidth;
+            Arrange.parentHeight=stage.stageHeight;
+            return;
+          }
+          if(Arrange.set && Arrange.hasParent){
+            Arrange.parentWidth  = Arrange.localWidth;
+            Arrange.parentHeight = Arrange.localHeight;
+            return;
+          } 
+          var p:Object = parent;
+          while(p){
+            if(p.width !=0 && p.height !=0 && getQualifiedClassName(p) != 'mx.controls::SWFLoader'){
+              Arrange.parentWidth =Arrange.localWidth  = p.width;
+              Arrange.parentHeight = Arrange.localHeight = p.height;
+              Arrange.hasParent = true;
+              break;
+            }
+            p=p.parent;
+          }
+          if(Arrange.parentWidth == 0 && Arrange.parentHeight == 0){
+            Arrange.parentWidth = stage.stageWidth;
+            Arrange.parentHeight = stage.stageHeight;
+          }
+          Arrange.set = true;
+        }
+        
         private function onAddedToStage(event:Event):void {
-            log("onAddedToStage(): stage size is " + stage.stageWidth + " x " + stage.stageHeight);
+            log("onAddedToStage(): stage size is " + Arrange.parentWidth + " x " + Arrange.parentHeight);
             log("onAddedToStage(), bytes loaded " + loaderInfo.bytesLoaded);
-
+            stage.addEventListener(Event.RESIZE, onStageResize, false, 1);
+            setParentDimensions();
+            
             addEventListener(Event.ENTER_FRAME, enterFrameHandler);
         }
 
@@ -58,8 +94,8 @@ package org.flowplayer.view {
             log("enterFrameHandler() " + loaderInfo.bytesLoaded);
 
             if (loaderInfo.bytesLoaded == loaderInfo.bytesTotal) {
-                log("bytesLoaded == bytesTotal, stageWidth = " + stage.stageWidth + " , stageHeight = " + stage.stageHeight);
-                if (stage.stageWidth != 0 && stage.stageHeight != 0) {
+                log("bytesLoaded == bytesTotal, stageWidth = " + Arrange.parentWidth + " , stageHeight = " + Arrange.parentHeight);
+                if (Arrange.parentWidth != 0 && Arrange.parentHeight != 0) {
                     initialize();
                     removeEventListener(Event.ENTER_FRAME, enterFrameHandler);
                 }

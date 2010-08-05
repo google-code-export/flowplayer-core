@@ -27,7 +27,12 @@ package org.flowplayer.util {
 	 * @author api
 	 */
 	public class Arrange {
-
+		public static var parentHeight:Number=0;
+		public static var parentWidth:Number=0;
+		public static var hasParent:Boolean=false;
+		public static var set:Boolean=false;
+		public static var localWidth:Number=0;
+		public static var localHeight:Number=0;
 		/**
 		 * Centers the specified display object to the specified area.
 		 * @param disp the object to center
@@ -114,10 +119,10 @@ package org.flowplayer.util {
 		}
 		
 		protected static function getStageDimension(stage:Stage, dimensionName:String):Number {
-			if (stage.displayState == StageDisplayState.FULL_SCREEN && stage.hasOwnProperty("fullScreenSourceRect") && stage.fullScreenSourceRect) {
-				return stage.fullScreenSourceRect[dimensionName];
+			if (stage.displayState == StageDisplayState.FULL_SCREEN) {
+				return dimensionName == "height" ? stage.stageHeight : stage.stageWidth;
 			}
-			return dimensionName == "height" ? stage.stageHeight : stage.stageWidth;
+			return dimensionName == "height" ? parentHeight : parentWidth;
 		}
 
         public static function fixPositionSettings(props:DisplayProperties, defaults:Object):void {

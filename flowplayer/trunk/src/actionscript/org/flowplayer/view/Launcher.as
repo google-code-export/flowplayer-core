@@ -128,7 +128,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			rootStyle = _config.canvas.style;
             stage.addEventListener(Event.RESIZE, onStageResize);
             stage.addEventListener(Event.RESIZE, arrangeScreen);
-			setSize(stage.stageWidth, stage.stageHeight);
+			setSize(Arrange.parentWidth, Arrange.parentHeight);
 
 			if (! VersionInfo.commercial) {
 				log.debug("Adding logo to canvas");
@@ -253,14 +253,14 @@ import org.flowplayer.model.DisplayPluginModel;
 		}
 
 		private function onStageResize(event:Event = null):void {
-			setSize(stage.stageWidth, stage.stageHeight);
+			setSize(Arrange.parentWidth, Arrange.parentHeight);
 			arrangeCanvasLogo();
 		}
 
 		private function arrangeCanvasLogo():void {
 			if (!_canvasLogo) return;
 			_canvasLogo.x = 15;
-			_canvasLogo.y = stage.stageHeight - (_controlsModel ? _controlsModel.dimensions.height.toPx(stage.stageHeight) + 10 : 10) - _canvasLogo.height - _copyrightNotice.height;
+			_canvasLogo.y = Arrange.parentHeight - (_controlsModel ? _controlsModel.dimensions.height.toPx(Arrange.parentHeight) + 10 : 10) - _canvasLogo.height - _copyrightNotice.height;
 			_copyrightNotice.x = 12;
 			_copyrightNotice.y  = _canvasLogo.y + _canvasLogo.height;
 		}
@@ -406,8 +406,8 @@ import org.flowplayer.model.DisplayPluginModel;
 			_error.wordWrap = true;
 			_error.text = message;
 			_error.selectable = true;
-			_error.width = stage.stageWidth - 40;
-			Arrange.center(_error, stage.stageWidth, stage.stageHeight);
+			_error.width = Arrange.parentWidth - 40;
+			Arrange.center(_error, Arrange.parentWidth, Arrange.parentHeight);
 			addChild(_error);
 			
 			createErrorMessageHideTimer();
@@ -507,7 +507,7 @@ import org.flowplayer.model.DisplayPluginModel;
 						heightPct = 100 - Math.abs(50 - (screen.position.top.pct >= 0 ? screen.position.top.pct : screen.position.bottom.pct))*2; 
 						setScreenBottomAndHeight(screen, heightPct, controlsHeight);
 					} else {
-						heightPct = ((stage.stageHeight - occupiedHeight) / stage.stageHeight) * 100;
+						heightPct = ((Arrange.parentHeight - occupiedHeight) / Arrange.parentHeight) * 100;
 						setScreenBottomAndHeight(screen, heightPct, controlsHeight);
 					}
 				}
@@ -524,8 +524,8 @@ import org.flowplayer.model.DisplayPluginModel;
 
 		private function getScreenTopOrBottomPx(screen:DisplayProperties):Number {
 			var screenConf:Object = _config.getObject("screen");
-			if (screenConf.hasOwnProperty("top")) return screen.position.top.toPx(stage.stageHeight);
-			if (screenConf.hasOwnProperty("bottom")) return screen.position.bottom.toPx(stage.stageHeight);
+			if (screenConf.hasOwnProperty("top")) return screen.position.top.toPx(Arrange.parentHeight);
+			if (screenConf.hasOwnProperty("bottom")) return screen.position.bottom.toPx(Arrange.parentHeight);
 			return 0;
 		}
 
@@ -709,7 +709,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			
 			// add some color so that the ROLL_OVER/ROLL_OUT events are always triggered
 			graphics.beginFill(0, 0);
-			graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
+			graphics.drawRect(0, 0, Arrange.parentWidth, Arrange.parentHeight);
 			graphics.endFill();
 		}
 		
@@ -873,11 +873,11 @@ import org.flowplayer.model.DisplayPluginModel;
         }
 //
 //        private function get stageWidth():Number {
-//            return Math.max(stage.stageWidth, Preloader.stageWidth);
+//            return Math.max(Arrange.parentWidth, Preloader.stageWidth);
 //        }
 //
 //        private function get stageHeight():Number {
-//            return Math.max(stage.stageHeight, Preloader.stageHeight);
+//            return Math.max(Arrange.parentHeight, Preloader.stageHeight);
 //        }
 
         private function callAndHandleError(func:Function, error:PlayerError):void {
