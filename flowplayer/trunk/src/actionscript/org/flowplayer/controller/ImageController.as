@@ -102,12 +102,7 @@ package org.flowplayer.controller {
 			clip.dispatch(ClipEventType.BUFFER_FULL);
 			
 			if (clip.duration == 0) {
-								
-				//clip.autoPlayNext = true;				
-								
-				if ( playlist.nextClip )	
-					playlist.nextClip.autoPlayNext = true;
-					
+				
 				clip.onResume(function(event:ClipEvent):void {
 					clip.dispatchBeforeEvent(new ClipEvent(ClipEventType.FINISH));
 				});
