@@ -20,6 +20,8 @@
 package org.flowplayer.controller {
     import flash.net.NetConnection;
     import flash.net.NetStream;
+    import flash.utils.Dictionary;
+
     import org.flowplayer.model.Clip;
 	import org.flowplayer.model.ClipEvent;
 	import org.flowplayer.model.Playlist;
@@ -158,6 +160,12 @@ package org.flowplayer.controller {
          * @see ClipEventType.NETSTREAM_EVENT
          */
         function addStreamCallback(name:String, listener:Function):void;
+
+        /**
+         * Get the current stream callbacks.
+         * @return a dictionary of callbacks, keyed using callback names and values being the callback functions
+         */
+        function get streamCallbacks():Dictionary;
 
         /**
          * Gets the underlying NetStream object.

@@ -28,7 +28,7 @@ import org.flowplayer.model.ClipEventType;
 	/**
 	 * @author api
 	 */
-	internal dynamic class NetStreamClient implements NetStreamCallbacks {
+	public dynamic class NetStreamClient implements NetStreamCallbacks {
 
 		private var log:Log = new Log(this);
 		private var _config:Config;

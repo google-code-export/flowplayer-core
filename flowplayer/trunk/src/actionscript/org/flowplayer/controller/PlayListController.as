@@ -206,7 +206,8 @@ package org.flowplayer.controller {
 			if (obeyClipPlaySettings) {
 				log.debug("obeying clip autoPlay & autoBuffeing");
 				// autoPlayNext is used when rewinding
-				if (clip.autoPlayNext) {
+                log.debug("autoPlayNext? " + clip.autoPlayNext + ", autoPlay? " + clip.autoPlay + ", autoBuffering? " + clip.autoBuffering);
+                if (clip.autoPlayNext) {
 					clip.autoPlayNext = false;
 					_state.play();
 				} else if (clip.autoPlay) {

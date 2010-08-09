@@ -26,7 +26,7 @@ package org.flowplayer.controller {
 	/**
 	 * @author api
 	 */
-	internal dynamic class NetConnectionClient implements ConnectionCallbacks {
+	public dynamic class NetConnectionClient implements ConnectionCallbacks {
 		private var log:Log = new Log(this);
 		private var _clip:Clip;
 //

@@ -34,14 +34,14 @@ package org.flowplayer.controller {
     import org.flowplayer.model.Clip;
     import org.flowplayer.util.Log;
 
-    /** 
-	 * @author api
-	 */
-	public class ParallelRTMPConnectionProvider implements ConnectionProvider {
+    /**
+     * @author api
+     */
+    public class ParallelRTMPConnectionProvider implements ConnectionProvider {
 
         protected var log:Log = new Log(this);
-//		private var _config:Config;
-				
+        //		private var _config:Config;
+
         protected var _successListener:Function;
         protected var _failureListener:Function;
         protected var _connectionClient:Object;
@@ -50,17 +50,17 @@ package org.flowplayer.controller {
         protected var _connection:NetConnection;
 
         protected var _netConnectionUrl:String;
-		protected var _proxyType:String;
-		protected var _failOverDelay:int;
-		
+        protected var _proxyType:String;
+        protected var _failOverDelay:int;
+
         public function ParallelRTMPConnectionProvider(netConnectionUrl:String, proxyType:String = "best", failOverDelay:int = 250) {
             _netConnectionUrl = netConnectionUrl;
-			_proxyType = proxyType;
-			_failOverDelay = failOverDelay;
+            _proxyType = proxyType;
+            _failOverDelay = failOverDelay;
         }
 
-        public function connect(ignored:StreamProvider, clip:Clip, successListener:Function, objectEncoding: uint, connectionArgs:Array):void {
-            
+        public function connect(ignored:StreamProvider, clip:Clip, successListener:Function, objectEncoding:uint, connectionArgs:Array):void {
+
             _successListener = successListener;
             _connection = null;
 
@@ -71,11 +71,11 @@ package org.flowplayer.controller {
             var parts:Array = getUrlParts(configuredUrl);
             var connArgs:Array = (clip.getCustomProperty("connectionArgs") as Array) || connectionArgs;
 
-            if (parts && (parts[0] == 'rtmp' || parts[0] == 'rtmpe') ) {
+            if (parts && (parts[0] == 'rtmp' || parts[0] == 'rtmpe')) {
 
                 log.debug("will connect using RTMP and RTMPT in parallel, connectionClient " + _connectionClient);
                 _connector1 = createConnector((parts[0] == 'rtmp' ? 'rtmp' : 'rtmpe') + '://' + parts[1]);
-                _connector2 = createConnector((parts[0] == 'rtmp' ? 'rtmpt' : 'rtmpte') +'://' + parts[1]);
+                _connector2 = createConnector((parts[0] == 'rtmp' ? 'rtmpt' : 'rtmpte') + '://' + parts[1]);
 
                 doConnect(_connector1, _proxyType, objectEncoding, connArgs);
 
@@ -87,15 +87,15 @@ package org.flowplayer.controller {
                 delay.start();
 
             } else {
-                log.debug("connecting to URL "+ configuredUrl);
+                log.debug("connecting to URL " + configuredUrl);
                 _connector1 = createConnector(configuredUrl);
                 doConnect(_connector1, _proxyType, objectEncoding, connArgs);
             }
         }
 
-		protected function createConnector(url:String):ParallelRTMPConnector {
-			return new ParallelRTMPConnector(url, connectionClient, onConnectorSuccess, onConnectorFailure);
-		}
+        protected function createConnector(url:String):ParallelRTMPConnector {
+            return new ParallelRTMPConnector(url, connectionClient, onConnectorSuccess, onConnectorFailure);
+        }
 
         private function doConnect(connector1:ParallelRTMPConnector, proxyType:String, objectEncoding:uint, connectionArgs:Array):void {
             if (connectionArgs.length > 0) {
@@ -109,7 +109,7 @@ package org.flowplayer.controller {
             log.debug(connector + " established a connection");
             if (_connection) return;
             _connection = connection;
-            
+
             if (connector == _connector2 && _connector1) {
                 _connector1.stop();
             } else if (_connector2) {
@@ -137,20 +137,20 @@ package org.flowplayer.controller {
             return null;
         }
 
-		protected function getNetConnectionUrl(clip:Clip):String {
-			if (isRtmpUrl(clip.completeUrl)) {
+        protected function getNetConnectionUrl(clip:Clip):String {
+            if (isRtmpUrl(clip.completeUrl)) {
                 log.debug("clip has complete rtmp url");
-				var url:String = clip.completeUrl;
-				var lastSlashPos:Number = url.lastIndexOf("/");
-				return url.substring(0, lastSlashPos);
-			}
-			if (clip.customProperties && clip.customProperties.netConnectionUrl) {
+                var url:String = clip.completeUrl;
+                var lastSlashPos:Number = url.lastIndexOf("/");
+                return url.substring(0, lastSlashPos);
+            }
+            if (clip.customProperties && clip.customProperties.netConnectionUrl) {
                 log.debug("clip has netConnectionUrl as a property " + clip.customProperties.netConnectionUrl);
-				return clip.customProperties.netConnectionUrl;
-			}
+                return clip.customProperties.netConnectionUrl;
+            }
             log.debug("using netConnectionUrl from config" + _netConnectionUrl);
-			return _netConnectionUrl;
-		}
+            return _netConnectionUrl;
+        }
 
         protected function isRtmpUrl(url:String):Boolean {
             return url && url.toLowerCase().indexOf("rtmp") == 0;

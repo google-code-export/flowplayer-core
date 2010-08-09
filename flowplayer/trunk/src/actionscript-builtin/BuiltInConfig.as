@@ -19,8 +19,8 @@ public class BuiltInConfig {
 //            "url": 'org.flowplayer.rtmp.RTMPStreamProvider'
 //        },
 //        "controls": {
-//            "url": 'org.flowplayer.controls.Controls', bottom: '31pct'
-//        }
+//            "url": 'org.flowplayer.controls.Controls'
+//		        }
 //           viral: {
 //               url: 'org.flowplayer.shareembed.ShareEmbed'
            }

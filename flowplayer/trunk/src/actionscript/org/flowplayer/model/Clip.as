@@ -533,9 +533,11 @@ import org.flowplayer.flow_internal;
 		public function set scaling(scaling:MediaSize):void {
 			this._scaling = scaling;
 			
-			log.warn("scaling : "+ scaling+", disptching update");
-			
-			_playlist.dispatch(ClipEventType.UPDATE);
+			log.debug("scaling : " + scaling + ", disptching update");
+
+            if (_playlist) {
+                _playlist.dispatch(ClipEventType.UPDATE);
+            }
 		}
 		
 		public function get scaling():MediaSize {
