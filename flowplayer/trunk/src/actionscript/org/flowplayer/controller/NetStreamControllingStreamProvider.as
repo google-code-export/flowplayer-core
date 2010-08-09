@@ -331,6 +331,13 @@ package org.flowplayer.controller {
             return _connection;
         }
 
+        /**
+         * @inheritDoc
+         */
+        public function get streamCallbacks():Dictionary {
+            return _streamCallbacks;
+        }
+
         /* ---- Methods that can be overridden ----- */
         /* ----------------------------------------- */
 
@@ -846,6 +853,5 @@ package org.flowplayer.controller {
         public function get type():String {
             return "http";
         }
-
     }
 }
