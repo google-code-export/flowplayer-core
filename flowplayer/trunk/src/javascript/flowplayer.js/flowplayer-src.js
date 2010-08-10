@@ -237,7 +237,7 @@
 			
 			
 			// internal event for performing clip tasks. should be made private someday
-			_fireEvent: function(evt, arg1, arg2, target) { 				
+			_fireEvent: function(evt, arg1, arg2, target) { 
 				if (evt == 'onLoad') { 
 					each(cuepoints, function(key, val) {
 						if (val[0]) {
@@ -529,9 +529,7 @@ function Player(wrapper, params, conf) {
 		},
 		
 		load: function(fn) { 
-
 			if (!self.isLoaded() && self._fireEvent("onBeforeLoad") !== false) {
-				
 				var onPlayersUnloaded = function() {
 					html = wrapper.innerHTML;				
 				
@@ -539,7 +537,7 @@ function Player(wrapper, params, conf) {
 					if (html && !flashembed.isSupported(params.version)) {
 						wrapper.innerHTML = "";					
 					}				  
-				
+					
 					// install Flash object inside given container
 					flashembed(wrapper, params, {config: conf});
 				
@@ -789,8 +787,9 @@ function Player(wrapper, params, conf) {
 					
 				} else { 
 					ret = (a1 === undefined) ? api["fp_" + name]() : api["fp_" + name](a1);
+					
 				}
-				
+							
 				return ret === 'undefined' || ret === undefined ? self : ret;
 			};			 
 		}
@@ -806,7 +805,6 @@ function Player(wrapper, params, conf) {
 		if (typeof a == 'string') { a = [a]; }
 		
 		var evt = a[0], arg0 = a[1], arg1 = a[2], arg2 = a[3], i = 0;  		
-		
 		if (conf.debug) { log(a); }				
 		
 		// internal onLoad
@@ -896,7 +894,6 @@ function Player(wrapper, params, conf) {
 			} 
 			
 			if (!clip || ret !== false) {
-
 				// clip argument is given for common clip, because it behaves as the target
 				ret = commonClip._fireEvent(evt, arg1, arg2, clip);	
 			}  
@@ -927,7 +924,6 @@ function Player(wrapper, params, conf) {
 // {{{ init
 	
    function init() {
-		
 		// replace previous installation 
 		if ($f(wrapper)) {
 			$f(wrapper).getParent().innerHTML = ""; 
@@ -1034,11 +1030,13 @@ function Player(wrapper, params, conf) {
 		// setup canvas as plugin
 		plugins.canvas = new Plugin("canvas", null, self);		
 		
+		html = wrapper.innerHTML;
+		
 		// click function
 		function doClick(e) { 
 			
-			// ipad/iPhone --> follow the link
-			if (/iPad|iPhone/.test(navigator.userAgent) && !/.flv$/i.test(playlist[0].url)) {
+			// ipad/iPhone --> follow the link if plugin not installed
+			if (/iPad|iPhone/.test(navigator.userAgent) && !/.flv$/i.test(playlist[0].url) && self['ipad'] == undefined ) {
 				return true;	
 			}
 			
@@ -1048,27 +1046,32 @@ function Player(wrapper, params, conf) {
 			return stopEvent(e);					
 		}
 		
-		// defer loading upon click
-		html = wrapper.innerHTML;
-		if (html.replace(/\s/g, '') !== '') {	 
-			
-			if (wrapper.addEventListener) {
-				wrapper.addEventListener("click", doClick, false);	
-				
-			} else if (wrapper.attachEvent) {
-				wrapper.attachEvent("onclick", doClick);	
+		function installPlayer() {
+			// defer loading upon click
+			if (html.replace(/\s/g, '') !== '') {	 
+
+				if (wrapper.addEventListener) {
+					wrapper.addEventListener("click", doClick, false);	
+
+				} else if (wrapper.attachEvent) {
+					wrapper.attachEvent("onclick", doClick);	
+				}
+
+			// player is loaded upon page load 
+			} else {
+
+				// prevent default action from wrapper. (fixes safari problems)
+				if (wrapper.addEventListener) {
+					wrapper.addEventListener("click", stopEvent, false);	
+				}
+				// load player
+				self.load();
 			}
-			
-		// player is loaded upon page load 
-		} else {
-			
-			// prevent default action from wrapper. (fixes safari problems)
-			if (wrapper.addEventListener) {
-				wrapper.addEventListener("click", stopEvent, false);	
-			}
-			// load player
-			self.load();
 		}
+		
+		// now that the player is initialized, wait for the plugin chain to finish
+		// before actually changing the dom
+		setTimeout(installPlayer, 0);
 	}
 
 	// possibly defer initialization until DOM get's loaded
@@ -1080,7 +1083,7 @@ function Player(wrapper, params, conf) {
 				throw "Flowplayer cannot access element: " + wrapper;	
 			} else {
 				wrapper = node; 
-				init();					
+				init();
 			} 
 		});
 		
@@ -1118,7 +1121,6 @@ function Iterator(arr) {
 
 // these two variables are the only global variables
 window.flowplayer = window.$f = function() {
-
 	var instance = null;
 	var arg = arguments[0];	
 	
@@ -1230,7 +1232,6 @@ extend(window.$f, {
 	each: each,
 	
 	extend: extend
-	
 });
 
 	
