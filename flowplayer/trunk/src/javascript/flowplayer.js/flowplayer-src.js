@@ -505,7 +505,7 @@ function Player(wrapper, params, conf) {
 		}, 
 		
 		isLoaded: function() {
-			return (api !== null && api["fp_play"] != undefined && ! isUnloading);	
+			return (api !== null && api.fp_play !== undefined && !isUnloading);	
 		},
 		
 		getParent: function() {
@@ -1036,7 +1036,7 @@ function Player(wrapper, params, conf) {
 		function doClick(e) { 
 			
 			// ipad/iPhone --> follow the link if plugin not installed
-			if (/iPad|iPhone/.test(navigator.userAgent) && !/.flv$/i.test(playlist[0].url) && self['ipad'] == undefined ) {
+			if (/iPad|iPhone/.test(navigator.userAgent) && !/.flv$/i.test(playlist[0].url) && self.ipad === undefined ) {
 				return true;	
 			}
 			
