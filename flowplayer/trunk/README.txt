@@ -1,5 +1,6 @@
 Version history:
 
+
 3.2.3
 -----
 - a new 'type' clip property exposed to JS
