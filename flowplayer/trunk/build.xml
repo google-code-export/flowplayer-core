@@ -204,7 +204,7 @@
                 <arg line="-frame 'player' org.flowplayer.view.Launcher"/>
                 <arg line="-file-specs '${src-as}/org/flowplayer/view/Preloader.as'"/>
                 <arg line="-output '${build-dir}/@{binary}'"/>
-                <arg line="-target-player '10.0.0'"/>
+                <arg line="-target-player '10.1.0'"/>
             </exec>
         </sequential>
     </macrodef>
