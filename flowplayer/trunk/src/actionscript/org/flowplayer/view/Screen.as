@@ -275,6 +275,7 @@ package org.flowplayer.view {
         private function handleStart(clip:Clip, pauseAfterStart:Boolean):void {
             if (clip.isNullClip) return;
             log.debug("handleStart(), previous clip " + _playList.previousClip);
+            // TODO: remove this playlist based cover image thing completely, just relay on coverImage property of audio clips
             if (pauseAfterStart && _playList.previousClip && _playList.previousClip.type == ClipType.IMAGE) {
                 log.debug("autoBuffering next clip on a splash image, will not show next display");
                 setDisplayVisibleIfHidden(_playList.previousClip);
@@ -285,8 +286,13 @@ package org.flowplayer.view {
             }
 
             if (_playList.previousClip && clip.type == ClipType.AUDIO) {
+
+                // TODO: remove this playlist based cover image thing completely, just relay on coverImage property of audio clips
                 if (onAudioWithRelatedImage(clip)) {
                     setDisplayVisibleIfHidden(_playList.previousClip);
+                } else if (clip.type == ClipType.AUDIO && clip.getCustomProperty("coverImage")) {
+                    setDisplayVisibleIfHidden(clip);
+                    hideAllDisplays([_displays[clip]]);
                 } else {
                     hideAllDisplays();
                 }
