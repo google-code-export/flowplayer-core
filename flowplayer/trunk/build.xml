@@ -8,7 +8,7 @@
     <property name="version-status" value=""/>
     <property name="controls-version-info" value="3.2.2"/>
     <property name="audio-version-info" value="3.2.1"/>
-    <property name="flowplayer-js-version-info" value="3.2.2"/>
+    <property name="flowplayer-js-version-info" value="3.2.3"/>
     <property name="source-dist-root-folder" value="flowplayer"/>
 
     <property name="version-status-quoted" value="&quot;&#39;${version-status}&#39;&quot;"/>
@@ -180,7 +180,7 @@
         <attribute name="license-lib"/>
         <attribute name="debug"/>
         <sequential>
-            <echo message="Building binary @{binary}, hasSlowMotion? ${has-slowmotion-buttons}"/>
+            <echo message="Building binary @{binary}, mxmlc is ${mxmlc_bin}"/>
             <exec executable="${mxmlc_bin}" failonerror="true">
                 <arg line="-define=CONFIG::commercialVersion,'@{commercial}'"/>
                 <arg line="-define+=CONFIG::freeVersion,'@{free}'"/>
@@ -195,13 +195,21 @@
 				<arg line="-define+=CONFIG::debug,'@{debug}'"/>
                 <arg line="-keep-as3-metadata=Value,External"/>
                 <arg line="-source-path ${src-as} ${src-as-commercial} ${classpath} ${plugin-libs}"/>
+
+                <!--<arg line="-library-path ${flex-libs-path} ${mxmlc-library-path}" />-->
+
+                <!--<arg line="-library-path '/Users/api/flex_sdk_4/frameworks/libs' '/Users/api/flex_sdk_4/frameworks/libs/player/10.1' ${src-flash} @{license-lib}"/>-->
                 <arg line="-library-path ${libs-path} ${src-flash} @{license-lib}"/>
+
                 <arg line="-default-frame-rate=${framerate}"/>
                 <arg line="-default-background-color=${bgcolor}"/>
                 <arg line="-strict=true"/>
                 <arg line="-incremental=true"/>
                 <arg line="-debug=@{debug}"/>
+
                 <arg line="-frame 'player' org.flowplayer.view.Launcher"/>
+                <!--<arg line="-static-link-runtime-shared-libraries true" />-->
+                
                 <arg line="-file-specs '${src-as}/org/flowplayer/view/Preloader.as'"/>
                 <arg line="-output '${build-dir}/@{binary}'"/>
                 <arg line="-target-player '10.1.0'"/>
