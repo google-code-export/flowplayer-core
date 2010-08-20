@@ -743,6 +743,10 @@ function Player(wrapper, params, conf) {
 		
 		getIndex: function() {
 			return playerIndex;	
+		},
+		
+		_swfHeight: function() {
+			return api.clientHeight;
 		}
 		
 	}); 
@@ -811,7 +815,7 @@ function Player(wrapper, params, conf) {
 		if (!self.isLoaded() && evt == 'onLoad' && arg0 == 'player') {						
 			
 			api = api || el(apiId); 
-			swfHeight = api.clientHeight;
+			swfHeight = self._swfHeight();
 			
 			each(playlist, function() {
 				this._fireEvent("onLoad");		
@@ -1036,7 +1040,7 @@ function Player(wrapper, params, conf) {
 		function doClick(e) { 
 			
 			// ipad/iPhone --> follow the link if plugin not installed
-			if (/iPad|iPhone/.test(navigator.userAgent) && !/.flv$/i.test(playlist[0].url) && self.ipad === undefined ) {
+			if (/iPad|iPhone|iPod/i.test(navigator.userAgent) && !/.flv$/i.test(playlist[0].url) && self.ipad === undefined ) {
 				return true;	
 			}
 			
