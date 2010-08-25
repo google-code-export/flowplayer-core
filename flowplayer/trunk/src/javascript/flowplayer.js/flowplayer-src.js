@@ -538,14 +538,14 @@ function Player(wrapper, params, conf) {
 						wrapper.innerHTML = "";					
 					}				  
 					
-					// install Flash object inside given container
-					flashembed(wrapper, params, {config: conf});
-				
 					// onLoad listener given as argument
 					if (fn) {
 						fn.cached = true;
 						bind(listeners, "onLoad", fn);	
 					}
+					
+					// install Flash object inside given container
+					flashembed(wrapper, params, {config: conf});
 				};
 				
 				
