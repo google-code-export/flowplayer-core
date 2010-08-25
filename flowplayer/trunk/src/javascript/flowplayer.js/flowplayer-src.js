@@ -1040,7 +1040,8 @@ function Player(wrapper, params, conf) {
 		function doClick(e) { 
 			
 			// ipad/iPhone --> follow the link if plugin not installed
-			if (/iPad|iPhone|iPod/i.test(navigator.userAgent) && !/.flv$/i.test(playlist[0].url) && self.ipad === undefined ) {
+			var hasiPadSupport = self.hasiPadSupport && self.hasiPadSupport();
+			if (/iPad|iPhone|iPod/i.test(navigator.userAgent) && !/.flv$/i.test(playlist[0].url) && ! hasiPadSupport ) {
 				return true;	
 			}
 			
