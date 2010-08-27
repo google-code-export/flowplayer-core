@@ -1,5 +1,8 @@
 Version history:
 
+3.2.4
+-----
+- new flowplayer.js version, with Apple iDevice fixes
 
 3.2.3
 -----
