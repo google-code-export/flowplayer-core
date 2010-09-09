@@ -28,14 +28,16 @@ package org.flowplayer.model {
 		public static const FITTED_PRESERVING_ASPECT_RATIO:MediaSize = new MediaSize("fit");
 		public static const HALF_FROM_ORIGINAL:MediaSize = new MediaSize("half");
 		public static const ORIGINAL:MediaSize = new MediaSize("orig");
-		public static const FILLED_TO_AVAILABLE_SPACE:MediaSize = new MediaSize("scale");
-		
-		public static var ALL_VALUES:Dictionary = new Dictionary();
-		{
-		ALL_VALUES[FITTED_PRESERVING_ASPECT_RATIO._value] = FITTED_PRESERVING_ASPECT_RATIO;
-		ALL_VALUES[HALF_FROM_ORIGINAL._value] = HALF_FROM_ORIGINAL;
-		ALL_VALUES[ORIGINAL._value] = ORIGINAL;
-		ALL_VALUES[FILLED_TO_AVAILABLE_SPACE._value] = FILLED_TO_AVAILABLE_SPACE;
+        public static const FILLED_TO_AVAILABLE_SPACE:MediaSize = new MediaSize("scale");
+        public static const CROP_TO_AVAILABLE_SPACE:MediaSize = new MediaSize("crop");
+
+        public static var ALL_VALUES:Dictionary = new Dictionary();
+        {
+            ALL_VALUES[FITTED_PRESERVING_ASPECT_RATIO._value] = FITTED_PRESERVING_ASPECT_RATIO;
+            ALL_VALUES[HALF_FROM_ORIGINAL._value] = HALF_FROM_ORIGINAL;
+            ALL_VALUES[ORIGINAL._value] = ORIGINAL;
+            ALL_VALUES[FILLED_TO_AVAILABLE_SPACE._value] = FILLED_TO_AVAILABLE_SPACE;
+            ALL_VALUES[CROP_TO_AVAILABLE_SPACE._value] = CROP_TO_AVAILABLE_SPACE;
 		}
 
 		private static var enumCreated:Boolean;

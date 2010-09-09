@@ -1,5 +1,9 @@
 Version history:
 
+3.2.5
+-----
+- added new scaling option 'crop' that resizes to fill all available space, cropping on top/bottom or left/right
+
 3.2.4
 -----
 - new flowplayer.js version, with Apple iDevice fixes

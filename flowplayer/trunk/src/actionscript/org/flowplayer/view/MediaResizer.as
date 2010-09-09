@@ -57,30 +57,33 @@ package org.flowplayer.view {
 				resized = resizeToHalfAvailableSize();
 			} else if (sizingOption == MediaSize.ORIGINAL) {
 				resized = resizeToOrig(force);
-			} else if (sizingOption == MediaSize.FILLED_TO_AVAILABLE_SPACE) {
-				resized = resizeToMax();
-			}
+            } else if (sizingOption == MediaSize.FILLED_TO_AVAILABLE_SPACE) {
+                resized = resizeToMax();
+            } else if (sizingOption == MediaSize.CROP_TO_AVAILABLE_SPACE) {
+                resized = resizeToFit(true);
+            }
 			_currentSizingOption = sizingOption;
 			return resized;
 		}
-			
-		private function resizeToFit():Boolean {
-			if (origWidth == 0 || origHeight == 0) {
-				log.warn("resizeToFit: original sizes not available, will not resize");
-				return false;
-			}
-			log.debug("resize to fit, original size " + _clip.originalWidth + "x" + _clip.originalHeight);
-				
-			var xRatio:Number = _maxWidth / origWidth;
-			
-			if (xRatio * origHeight <= _maxHeight) {
-				scale(xRatio);
-			} else {
-				scale(_maxHeight / origHeight);
-			}
-			return true;
-		}
-			
+
+        private function resizeToFit(allowCrop:Boolean = false):Boolean {
+            if (origWidth == 0 || origHeight == 0) {
+                log.warn("resizeToFit: original sizes not available, will not resize");
+                return false;
+            }
+            log.debug("resize to fit, original size " + _clip.originalWidth + "x" + _clip.originalHeight + ", will crop? " + allowCrop);
+
+            var xRatio:Number = _maxWidth / origWidth;
+            var useXRatio:Boolean = allowCrop ? xRatio * origHeight > _maxHeight : xRatio * origHeight <= _maxHeight;
+
+            if (useXRatio) {
+                scale(xRatio);
+            } else {
+                scale(_maxHeight / origHeight);
+            }
+            return true;
+        }
+
 		public function scale(scalingFactor:Number):void {
 			resize(scalingFactor * origWidth, scalingFactor * origHeight);
 		}
