@@ -172,12 +172,14 @@ package org.flowplayer.config {
 		        	clipAdded = true;
 		        }
              } else {
-             	//there are no default items obtain the first content item
-             	 var noDefaultItem:XML = XMLList(group.ym::content)[0];
-             	 if (parseMediaItem(noDefaultItem, clip)) {
-		         	log.debug("adding item");
-		         	clipAdded = true;
-		         }
+             	//there are no default items obtain the first content that is streamable
+                for each (var itm:XML in group.ym::content) {
+                  if (parseMediaItem(itm, clip)) {
+                    trace("adding item");
+                    clipAdded = true;
+                    break;
+                  }
+                }
              }
              
              //add bitrate items
