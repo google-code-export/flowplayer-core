@@ -91,9 +91,7 @@ package org.flowplayer.config {
             
             //add custom clip properties from default rss items with no namespace
             for each (var childItem:XML in item.children()) {
-            	if (childItem.name() != 'http://search.yahoo.com/mrss/::group') {
-            		addClipCustomProperty(clip, childItem, parseCustomProperty(childItem));
-            	}
+                addClipCustomProperty(clip, childItem, parseCustomProperty(childItem));
             }
 
             log.debug("created clip " + clip);
