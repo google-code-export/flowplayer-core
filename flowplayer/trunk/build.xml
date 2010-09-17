@@ -6,7 +6,7 @@
     <property name="version-2" value="2"/>
     <property name="version-3" value="5"/>
     <property name="version-status" value="dev"/>
-    <property name="controls-version-info" value="3.2.2"/>
+    <property name="controls-version-info" value="3.2.3-dev"/>
     <property name="audio-version-info" value="3.2.1"/>
     <property name="flowplayer-js-version-info" value="3.2.4"/>
     <property name="source-dist-root-folder" value="flowplayer"/>
@@ -225,7 +225,6 @@
     <target name="compile-lib">
         <exec executable="${compc_bin}" failonerror="true">
             <arg line="-source-path ${src-as} ${src-as-commercial} ${classpath}"/>
-            <!-- arg line="-include-classes ${classes-for-lib}" -->
             <arg line="-compute-digest=false"/>
             <arg line="-output '${build-dir}/${library-binary}'"/>
             <arg line="-namespace http://flowplayer.org/flowplayer/2008 ${basedir}/manifest.xml -include-namespaces http://flowplayer.org/flowplayer/2008"/>
@@ -359,16 +358,16 @@
     </target>
 
     <target name="doc" description="generates the apidocs">
-        <exec executable="${asdoc_bin}" failonerror="true">
-            <arg line="-source-path ${src-as} ${classpath}"/>
-            <arg line="-library-path ${libs-path} ${src-flash}"/>
-            <arg line="-doc-classes ${doc-classes}"/>
-            <arg line="-exclude-dependencies"/>
-            <arg line="-output ${apidoc-dir}"/>
-            <arg line="-main-title 'FlowPlayer ${version-1}.${version-2}.${version-3} API documentation'"/>
-            <arg line="-window-title 'FlowPlayer ${version-1}.${version-2}.${version-3} API documentation'"/>
-            <arg line="-define+=CONFIG::debug,'false'"/>
-        </exec>
+        <!--<exec executable="${asdoc_bin}" failonerror="true">-->
+            <!--<arg line="-source-path ${src-as} ${classpath}"/>-->
+            <!--<arg line="-library-path ${libs-path} ${src-flash}"/>-->
+            <!--<arg line="-doc-classes ${doc-classes}"/>-->
+            <!--<arg line="-exclude-dependencies"/>-->
+            <!--<arg line="-output ${apidoc-dir}"/>-->
+            <!--<arg line="-main-title 'FlowPlayer ${version-1}.${version-2}.${version-3} API documentation'"/>-->
+            <!--<arg line="-window-title 'FlowPlayer ${version-1}.${version-2}.${version-3} API documentation'"/>-->
+            <!--<arg line="-define+=CONFIG::debug,'false'"/>-->
+        <!--</exec>-->
     </target>
 
     <target name="zip" description="creates a distribution zip package" depends="build">
