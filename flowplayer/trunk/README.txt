@@ -3,6 +3,8 @@ Version history:
 3.2.5
 -----
 - added new scaling option 'crop' that resizes to fill all available space, cropping on top/bottom or left/right
+- improvements to RSS file parsing
+- Now displays a hand cursor when a linkUrl is used in clips
 
 3.2.4
 -----

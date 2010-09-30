@@ -89,7 +89,7 @@ package org.flowplayer.config {
             	parseClipProperties(item.fp::clip, clip);
             }
             
-            //add custom clip properties from default rss items with no namespace
+            //add custom clip properties from rss elements
             for each (var childItem:XML in item.children()) {
                 addClipCustomProperty(clip, childItem, parseCustomProperty(childItem));
             }

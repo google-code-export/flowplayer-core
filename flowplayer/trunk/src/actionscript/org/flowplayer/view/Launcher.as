@@ -763,8 +763,13 @@ import org.flowplayer.model.DisplayPluginModel;
 		private function addPlayListListeners():void {
 			var playlist:Playlist = _config.getPlaylist();
 			playlist.onError(onClipError);
+            playlist.onBegin(onBegin);
 		}
-		
+
+        private function onBegin(event:ClipEvent):void {
+            this.buttonMode = Boolean(Clip(event.target).linkUrl);
+        }
+        
 		private function onClipError(event:ClipEvent):void {
             if (event.isDefaultPrevented()) return;
 			doHandleError(event.error.code + ", " + event.error.message + ", " + event.info2 + ", clip: '" + Clip(event.target) + "'");
