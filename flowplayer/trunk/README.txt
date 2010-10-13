@@ -23,6 +23,7 @@ Fixes:
 Fixes:
 - correct verification of license keys in *.ca domains
 - fix to make playback to always reach end of video
+- fixed resuming of live streams
 
 3.2.2
 -----
