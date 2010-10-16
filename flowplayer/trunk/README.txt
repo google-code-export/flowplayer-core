@@ -1,5 +1,11 @@
 Version history:
 
+3.2.6
+-----
+fixes:
+- fix to preserve the infoObject for custom netStream and netConnection clients in cases where the infoObject is a
+  primitive object without properties
+
 3.2.5
 -----
 - added new scaling option 'crop' that resizes to fill all available space, cropping on top/bottom or left/right
