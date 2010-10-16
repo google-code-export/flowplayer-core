@@ -708,6 +708,9 @@ package org.flowplayer.view {
         }
 
         private function createInfo(infoObj:Object):Object {
+            if (infoObj is Number || infoObj is String || infoObj is Boolean) {
+                return infoObj;
+            }
             var result:Object = {};
             for (var prop:String in infoObj) {
                 result[prop] = infoObj[prop];
