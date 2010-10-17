@@ -76,12 +76,19 @@ package org.flowplayer.view {
             var xRatio:Number = _maxWidth / origWidth;
             var useXRatio:Boolean = allowCrop ? xRatio * origHeight > _maxHeight : xRatio * origHeight <= _maxHeight;
 
+            log.debug("using " + (useXRatio ? "x-ratio" : "y-ratio"));
             if (useXRatio) {
-                scale(xRatio);
+                resize(_maxWidth, calculateFittedDimension(_maxHeight, origHeight, xRatio));
             } else {
-                scale(_maxHeight / origHeight);
+                var yRatio:Number = _maxHeight / origHeight;
+                resize(calculateFittedDimension(_maxWidth, origWidth, yRatio), _maxHeight);
             }
             return true;
+        }
+
+        private function calculateFittedDimension(maxLength:int, origLength:int,  scalingFactor:Number):int {
+            var result:int = Math.ceil(scalingFactor * origLength);
+            return result > maxLength ? maxLength : result;
         }
 
 		public function scale(scalingFactor:Number):void {
