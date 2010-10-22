@@ -447,7 +447,7 @@ import org.flowplayer.model.DisplayPluginModel;
 				Logger.error(message);
 			}
 			showError(message);
-			if (throwError && Capabilities.isDebugger) {
+			if (throwError && Capabilities.isDebugger && _config.showErrors) {
 				throw new Error(message);
 			}
 		}
