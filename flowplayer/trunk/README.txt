@@ -5,6 +5,7 @@ Version history:
 fixes:
 - fix to preserve the infoObject for custom netStream and netConnection clients in cases where the infoObject is a
   primitive object without properties
+- does not show the error dialog in the debugger player when showErrors: false
 
 3.2.5
 -----
