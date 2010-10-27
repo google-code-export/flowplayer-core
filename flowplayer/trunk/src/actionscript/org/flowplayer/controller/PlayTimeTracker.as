@@ -124,12 +124,14 @@ package org.flowplayer.controller {
 			}
 			for (var i:Number = 0; i < points.length; i++) {
 				var cue:Cuepoint = points[i];
-//				log.info("cuePointReached: " + cue);
+				log.info("cuePointReached: " + cue);
 				if (! alreadyFired(cue)) {
-					trace("firing cuepoint with time " + cue.time);
+					log.debug("firing cuepoint with time " + cue.time);
 					_clip.dispatch(ClipEventType.CUEPOINT, cue);
 					cue.lastFireTime = getTimer();
-				}
+				} else {
+                    log.debug("this cuepoint already fired");
+                }
 			}
 		}
 		

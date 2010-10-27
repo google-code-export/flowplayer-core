@@ -33,7 +33,9 @@ package org.flowplayer.model {
 			for (var prop:String in this) {
                 try {
                     clone[prop] = this[prop];
-                } catch (e:Error) {}
+                } catch (e:Error) {
+                    log.error("Error when cloning cuepoint " + e);
+                }
             }
 		}
 	}
