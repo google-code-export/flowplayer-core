@@ -348,6 +348,7 @@ package org.flowplayer.view {
         }
 
         private function updateClip(clipObj:Object, clipIndex:int):void {
+            log.debug("updateClip()", clipObj);
             var clip:Clip = _playListController.playlist.getClip(clipIndex);
             new PropertyBinder(clip, "customProperties").copyProperties(clipObj);
             clip.dispatch(ClipEventType.UPDATE);

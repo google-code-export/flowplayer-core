@@ -40,6 +40,7 @@ package org.flowplayer.view {
     import org.flowplayer.model.Loadable;
     import org.flowplayer.model.PlayerError;
     import org.flowplayer.model.PlayerEvent;
+    import org.flowplayer.model.PlayerEventType;
     import org.flowplayer.model.Playlist;
     import org.flowplayer.model.Plugin;
     import org.flowplayer.model.PluginFactory;
@@ -247,6 +248,7 @@ package org.flowplayer.view {
 		 */
 		public function close():FlowplayerBase {
 			log.debug("close()");
+            dispatch(PlayerEventType.UNLOAD, null, false);
 			_playListController.close(true);
 			return this;
 		}
