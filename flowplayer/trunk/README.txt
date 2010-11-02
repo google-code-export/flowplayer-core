@@ -3,6 +3,7 @@ Version history:
 3.2.6
 -----
 - Added new onUnload event, can be only listened in Flash and not triggered to JS
+- API: Added new url property to plugin objects
 fixes:
 - fix to preserve the infoObject for custom netStream and netConnection clients in cases where the infoObject is a
   primitive object without properties

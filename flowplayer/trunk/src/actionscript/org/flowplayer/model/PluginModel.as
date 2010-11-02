@@ -26,6 +26,10 @@ package org.flowplayer.model {
 	 */
 	public interface PluginModel extends Identifiable, Callable, Cloneable {
 
+        function get url():String;
+
+        function set url(url:String):void;
+
         function get isBuiltIn():Boolean;
 
         function set isBuiltIn(value:Boolean):void;

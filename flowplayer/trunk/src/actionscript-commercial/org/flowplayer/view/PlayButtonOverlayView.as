@@ -40,7 +40,8 @@ package org.flowplayer.view {
     import org.flowplayer.view.BuiltInAssetHelper;
     import org.flowplayer.view.BuiltInAssetHelper;
 
-    public class PlayButtonOverlayView extends AbstractSprite implements Plugin {
+    public class
+    PlayButtonOverlayView extends AbstractSprite implements Plugin {
 		
 		private var _button:DisplayObject;
 		private var _pluginRegistry:PluginRegistry;
