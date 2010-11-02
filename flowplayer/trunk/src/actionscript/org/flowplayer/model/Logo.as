@@ -27,7 +27,6 @@ package org.flowplayer.model {
 	 */
 	public class Logo extends DisplayPluginModelImpl {
 		
-		private var _url:String;
 		private var _fullscreenOnly:Boolean = true;
 		private var _fadeSpeed:Number;
 		private var _displayTime:int = 0;
@@ -47,7 +46,7 @@ package org.flowplayer.model {
         override public function clone():Cloneable {
             var copy:Logo = new Logo(getDisplayObject(), name);
             copyFields(this, copy);
-            copy.url = _url;
+            copy.url = url;
             copy.fullscreenOnly = _fullscreenOnly;
             copy.fadeSpeed = _fadeSpeed;
             copy.displayTime = _displayTime;
@@ -56,19 +55,6 @@ package org.flowplayer.model {
             return copy;
         }
 
-        [Value]
-		public function get url():String {
-			return _url;
-		}
-		
-		public function set url(url:String):void {
-			_url = url;
-//			if (_url && _url.indexOf(".swf") > 0) {
-//				width = "6.5%";
-//				height = "6.5%";
-//			}
-		}
-		
         [Value]
 		public function get fullscreenOnly():Boolean {
 			return _fullscreenOnly;

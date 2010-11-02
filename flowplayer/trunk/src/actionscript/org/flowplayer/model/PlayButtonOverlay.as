@@ -27,7 +27,6 @@ package org.flowplayer.model {
 
 		private var _fadeSpeed:int;
 		private var _rotateSpeed:int;
-		private var _url:String;
 		private var _label:String;
 		private var _replayLabel:String;
 		private var _buffering:Boolean;
@@ -59,15 +58,6 @@ package org.flowplayer.model {
             return copy;
         }
 
-		[Value]
-		public function get url():String {
-			return _url;
-		}
-		
-		public function set url(url:String):void {
-			_url = url;
-		}
-		
         [Value]
 		public function get fadeSpeed():int {
 			return _fadeSpeed;
