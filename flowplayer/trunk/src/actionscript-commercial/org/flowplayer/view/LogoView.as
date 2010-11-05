@@ -199,10 +199,10 @@ package org.flowplayer.view {
             log.debug("initializeLogoImage(), setting logo alpha to " + _model.alpha);
             _image = image;
 
-            CONFIG::commercialVersion {
-                _model.width = image.width;
-                _model.height = image.height;
-            }
+//            CONFIG::commercialVersion {
+//                _model.width = image.width;
+//                _model.height = image.height;
+//            }
 
 			addChild(_image);
 			log.debug("createLogoImage() logo shown in fullscreen only " + _model.fullscreenOnly);
