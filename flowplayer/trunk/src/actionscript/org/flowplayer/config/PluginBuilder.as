@@ -64,7 +64,7 @@ package org.flowplayer.config {
 
         public function createLoadables(playlist:Playlist):Array {
             for (var name:String in _pluginObjects) {
-                if (! isObjectDisabled(name, _pluginObjects)) {
+                if (! isObjectDisabled(name, _pluginObjects) && (_pluginObjects[name].hasOwnProperty("url") || name == "controls" || name == "audio")) {
                     log.debug("creating loadable for '" + name + "', " + _pluginObjects[name]);
                     _loadables.push(newLoadable(_pluginObjects, name));
                 }
