@@ -8,7 +8,10 @@ fixes:
 - fix to preserve the infoObject for custom netStream and netConnection clients in cases where the infoObject is a
   primitive object without properties
 - does not show the error dialog in the debugger player when showErrors: false
-
+- fixed to correctly handle xx.ca subdomains when validating the license key
+- a custom logo is now sized correctly according to the configured size
+- does not show the buffer animation any more when the player receives the onBufferEmpty message from the netStream.
+  The animation was unnecessarily shown in some situations.
 3.2.5
 -----
 - added new scaling option 'crop' that resizes to fill all available space, cropping on top/bottom or left/right
