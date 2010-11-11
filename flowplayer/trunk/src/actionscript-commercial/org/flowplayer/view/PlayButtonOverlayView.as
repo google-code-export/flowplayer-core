@@ -40,8 +40,7 @@ package org.flowplayer.view {
     import org.flowplayer.view.BuiltInAssetHelper;
     import org.flowplayer.view.BuiltInAssetHelper;
 
-    public class
-    PlayButtonOverlayView extends AbstractSprite implements Plugin {
+    public class PlayButtonOverlayView extends AbstractSprite implements Plugin {
 		
 		private var _button:DisplayObject;
 		private var _pluginRegistry:PluginRegistry;
@@ -197,8 +196,10 @@ package org.flowplayer.view {
 			// onBeforeFinish: call stopBuffering first and then showButton (stopBuffering hides the button)
 			eventSupport.onBeforeFinish(stopBuffering);
 			eventSupport.onBeforeFinish(showReplayButton, isParentClipOrPostroll);
-			
-			eventSupport.onBufferEmpty(startBuffering);
+
+            // showing the buffer animation on buffer empty causes trouble with live streams and also on other cases
+//			eventSupport.onBufferEmpty(startBuffering);
+
 			eventSupport.onBufferFull(stopBuffering);
 			
 			eventSupport.onBeforeSeek(startBuffering);
