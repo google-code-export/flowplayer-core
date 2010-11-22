@@ -107,7 +107,7 @@ package org.flowplayer.config {
         }
 
         private function parseClipProperties(elem:XMLList, clip:Clip):void {
-            var binder:PropertyBinder = new PropertyBinder(clip);
+            var binder:PropertyBinder = new PropertyBinder(clip, "customProperties");
             for each (var attr:XML in elem.attributes()) {
                 log.debug("parseClipProperties(), initializing clip property '" + attr.name() + "' to value " + attr.toString());
                 binder.copyProperty(attr.name().toString(), attr.toString(), true);
