@@ -1,5 +1,9 @@
 Version history:
 
+3.2.7
+-----
+- linkUrl should now work better with popup blockers: http://code.google.com/p/flowplayer-core/issues/detail?id=31
+
 3.2.6
 -----
 - Added new onUnload event, can be only listened in Flash and not triggered to JS
@@ -12,6 +16,7 @@ fixes:
 - a custom logo is now sized correctly according to the configured size
 - does not show the buffer animation any more when the player receives the onBufferEmpty message from the netStream.
   The animation was unnecessarily shown in some situations.
+
 3.2.5
 -----
 - added new scaling option 'crop' that resizes to fill all available space, cropping on top/bottom or left/right

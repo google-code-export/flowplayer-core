@@ -17,7 +17,9 @@
  *    along with Flowplayer.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.flowplayer.view {
-	import org.flowplayer.config.Config;
+    import flash.external.ExternalInterface;
+
+    import org.flowplayer.config.Config;
 	import org.flowplayer.config.ConfigParser;
 	import org.flowplayer.config.ExternalInterfaceHelper;
 	import org.flowplayer.config.VersionInfo;
@@ -87,7 +89,6 @@ import org.flowplayer.model.DisplayPluginModel;
 		private var _pluginLoader:PluginLoader;
 		private var _error:TextField;
 		private var _pluginsInitialized:Number = 0;
-		private var _numLoadablePlugins:int = -1;
 		private var _enteringFullscreen:Boolean;
 		private var _copyrightNotice:TextField;
         private var _playlistLoader:ResourceLoader;
@@ -790,13 +791,6 @@ import org.flowplayer.model.DisplayPluginModel;
         private function onSingleClick(event:MouseEvent):void {
             if (isParent(DisplayObject(event.target), _screen)) {
                 log.debug("screen clicked");
-                var clip:Clip = _flowplayer.playlist.current;
-                if (clip.linkUrl) {
-                    log.debug("opening linked page");
-                    _flowplayer.pause();
-                    navigateToURL(new URLRequest(clip.linkUrl), clip.linkWindow);
-                    return;
-                }
                 _flowplayer.toggle();
             }
         }
@@ -809,14 +803,25 @@ import org.flowplayer.model.DisplayPluginModel;
             if (_playButtonOverlay && isParent(DisplayObject(event.target), _playButtonOverlay.getDisplayObject())) {
                 _flowplayer.toggle();
                 return;
-            }
-
-            if (_clickCount == 0) {
-                _clickEvent = event;
+            } else {
+                // if using linkUrl, no doubleclick to fullscreen
+                var clip:Clip = _flowplayer.playlist.current;
+                if (clip.linkUrl) {
+                    log.debug("opening linked page");
+                    _flowplayer.pause();
+                    if (ExternalInterface.available) {
+                        // using JS to open the page as it bypasses popup blockers: http://code.google.com/p/flowplayer-core/issues/detail?id=31
+                        ExternalInterface.call('window.open("' + clip.linkUrl + '","' + clip.linkWindow + '")');
+                    } else {
+                        navigateToURL(new URLRequest(clip.linkUrl), clip.linkWindow);
+                    }
+                    return;
+                }
             }
             if (++_clickCount == 2) {
                 onDoubleClick(event);
             } else {
+                _clickEvent = event;
                 _clickTimer.start();
             }
         }
@@ -876,14 +881,6 @@ import org.flowplayer.model.DisplayPluginModel;
                 new ClipEventType(callbacks[i], true);
             }
         }
-//
-//        private function get stageWidth():Number {
-//            return Math.max(Arrange.parentWidth, Preloader.stageWidth);
-//        }
-//
-//        private function get stageHeight():Number {
-//            return Math.max(Arrange.parentHeight, Preloader.stageHeight);
-//        }
 
         private function callAndHandleError(func:Function, error:PlayerError):void {
             try {

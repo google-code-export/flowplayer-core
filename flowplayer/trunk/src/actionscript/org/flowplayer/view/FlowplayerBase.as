@@ -752,5 +752,9 @@ package org.flowplayer.view {
         public function get streamProvider():StreamProvider {
             return _playListController.streamProvider;
         }
+
+        public function get panel():Panel {
+            return _panel;
+        }
     }
 }
