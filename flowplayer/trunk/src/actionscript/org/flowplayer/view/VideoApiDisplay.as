@@ -50,8 +50,15 @@ package org.flowplayer.view {
 		}
 
 		override protected function onResize():void {
-			Arrange.sameSize(_overlay, this);
+			//Arrange.sameSize(_overlay, this);
+			//Arrange.
+			_overlay.width = this.width;
+			_overlay.height = this.height - 100;
 		}
+		
+		override public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void {
+             _overlay.addEventListener(type, listener, useCapture, priority, useWeakReference);
+         }
 
 		override public function set alpha(value:Number):void {
 		}
@@ -70,6 +77,7 @@ package org.flowplayer.view {
 			video.width = this.width;
 			video.height = this.height;
 			addChild(video);
+			swapChildren(_overlay, video);
 		}
 		
 		public function hasContent():Boolean {
