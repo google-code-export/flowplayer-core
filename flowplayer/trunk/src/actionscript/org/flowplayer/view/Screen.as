@@ -61,6 +61,22 @@ package org.flowplayer.view {
 			_animationEngine = animationEngine;
 			_pluginRegistry = pluginRegistry;
 		}
+		
+		override public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void {
+             
+             //super.addEventListener(type, listener, useCapture, priority, useWeakReference);
+             displayEventHandlers(_playList.clips.concat(_playList.childClips), type, listener);
+         }
+	     
+	     private function displayEventHandlers(clips:Array, type:String, listener:Function):void {
+            for (var i:Number = 0; i < clips.length; i++) {
+                var clip:Clip = clips[i];
+                if (! clip.isNullClip) {
+                    var display:DisplayObject = _displays[clip];
+                    display.addEventListener(type, listener);
+                }
+            }
+         }
 
 		private function createDisplays(clips:Array):void {
 			for (var i:Number = 0; i < clips.length; i++) {
@@ -284,8 +300,9 @@ package org.flowplayer.view {
                 clip.onResume(onFirstFrameResume);
                 return;
             }
-
-            if (_playList.previousClip && clip.type == ClipType.AUDIO) {
+			
+			//only show the image playlist for mp3 clips with no display
+            if (_playList.previousClip && clip.type == ClipType.AUDIO && !clip.getContent()) {
 
                 // TODO: remove this playlist based cover image thing completely, just relay on coverImage property of audio clips
                 if (onAudioWithRelatedImage(clip)) {
