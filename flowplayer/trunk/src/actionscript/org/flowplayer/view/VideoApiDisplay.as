@@ -50,8 +50,6 @@ package org.flowplayer.view {
 		}
 
 		override protected function onResize():void {
-			//Arrange.sameSize(_overlay, this);
-			//Arrange.
 			_overlay.width = this.width;
 			_overlay.height = this.height - 100;
 		}
