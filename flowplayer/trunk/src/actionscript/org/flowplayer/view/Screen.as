@@ -17,7 +17,9 @@
  *    along with Flowplayer.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.flowplayer.view {
-	import org.flowplayer.controller.MediaController;
+    import flash.events.MouseEvent;
+
+    import org.flowplayer.controller.MediaController;
 	import org.flowplayer.flow_internal;
 	import org.flowplayer.model.Clip;
 	import org.flowplayer.model.ClipEvent;
@@ -63,12 +65,10 @@ package org.flowplayer.view {
 		}
 		
 		override public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void {
-             
-             //super.addEventListener(type, listener, useCapture, priority, useWeakReference);
-             displayEventHandlers(_playList.clips.concat(_playList.childClips), type, listener);
+            addEventListenerToDisplays(_playList.clips.concat(_playList.childClips), type, listener);
          }
 	     
-	     private function displayEventHandlers(clips:Array, type:String, listener:Function):void {
+	     private function addEventListenerToDisplays(clips:Array, type:String, listener:Function):void {
             for (var i:Number = 0; i < clips.length; i++) {
                 var clip:Clip = clips[i];
                 if (! clip.isNullClip) {
