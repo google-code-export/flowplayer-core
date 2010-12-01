@@ -546,6 +546,7 @@ import org.flowplayer.flow_internal;
 
 		[Value(name="scaling")]
 		public function get scalingStr():String {
+            if (! _scaling) return MediaSize.FILLED_TO_AVAILABLE_SPACE.value;
 			return this._scaling.value;
 		}
 
