@@ -205,9 +205,11 @@ package org.flowplayer.view {
 				disp.visible = true;
 				//disp.alpha = 0; // fix for #84
 				log.debug("starting fadeIn for " + disp);
+                _animationEngine.cancel(disp);
 				_animationEngine.animateProperty(disp, "alpha", 1, clipNow.fadeInSpeed);
 				Arrange.center(disp, width, height);
 			} else if (disp.visible) {
+                _animationEngine.cancel(disp);
 				_animationEngine.animateProperty(disp, "alpha", 0, clipNow.fadeOutSpeed, function():void { disp.visible = false; });
 				return;
 			}
