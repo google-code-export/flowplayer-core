@@ -20,7 +20,6 @@
 package org.flowplayer.model {
 	import flash.utils.Dictionary;
 	
-import mx.messaging.messages.AcknowledgeMessage;
 import org.flowplayer.flow_internal;
 
 	public class ClipEventType extends EventType {
@@ -48,6 +47,7 @@ import org.flowplayer.flow_internal;
 
         public static const PLAYLIST_REPLACE:ClipEventType = new ClipEventType("onPlaylistReplace");
         public static const CLIP_ADD:ClipEventType = new ClipEventType("onClipAdd");
+        public static const CLIP_RESIZED:ClipEventType = new ClipEventType("onClipResized");
 
 		private static var _allValues:Dictionary;
         private static var _cancellable:Dictionary = new Dictionary();
