@@ -3,6 +3,7 @@ Version history:
 3.2.7
 -----
 - linkUrl should now work better with popup blockers: http://code.google.com/p/flowplayer-core/issues/detail?id=31
+- added new onClipResized event
 
 3.2.6
 -----
