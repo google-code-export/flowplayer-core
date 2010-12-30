@@ -48,10 +48,14 @@ package org.flowplayer.view {
 			_overlay.graphics.drawRect(0, 0, 10, 10);
 			_overlay.graphics.endFill();
 		}
+		
+		public function get overlay():Sprite {
+			return _overlay;
+		}
 
 		override protected function onResize():void {
 			_overlay.width = this.width;
-			_overlay.height = this.height - 100;
+			_overlay.height = this.height;
 		}
 		
 		override public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void {

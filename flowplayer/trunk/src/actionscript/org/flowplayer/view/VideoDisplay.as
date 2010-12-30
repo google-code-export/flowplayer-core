@@ -47,6 +47,10 @@ package org.flowplayer.view {
 			_overlay.graphics.drawRect(0, 0, 10, 10);
 			_overlay.graphics.endFill();
 		}
+		
+		public function get overlay():Sprite {
+            return _overlay;
+        }
 
 		override protected function onResize():void {
 			Arrange.sameSize(_overlay, this);
