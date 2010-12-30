@@ -25,6 +25,7 @@ package org.flowplayer.view {
 	import org.flowplayer.model.ClipEvent;
 	import org.flowplayer.model.ClipEventSupport;
 	import org.flowplayer.model.ClipType;
+	import org.flowplayer.model.ClipEventType;
 	import org.flowplayer.model.DisplayProperties;
 	import org.flowplayer.model.MediaSize;
 	import org.flowplayer.model.PlayButtonOverlay;
@@ -96,6 +97,12 @@ package org.flowplayer.view {
             log.debug("created display " + display);
             _displays[clip] = display;
         }
+        
+        public function setVideoApiOverlaySize(width:Number, height:Number):void {
+            var display:Object = _displays[_playList.current];
+           display.overlay.width = width;
+           display.overlay.height = height;
+        }
 
 		public function set fullscreenManager(manager:FullscreenManager):void {
 			_fullscreenManaer = manager;
@@ -149,6 +156,7 @@ package org.flowplayer.view {
 			var disp:DisplayObject = _displays[clip];
             disp.width = clip.width;
 			disp.height = clip.height;
+
 			if (clip.accelerated && _fullscreenManaer.isFullscreen) {
 				log.debug("in hardware accelerated fullscreen, will not center the clip");
 				disp.x = 0;
@@ -157,6 +165,9 @@ package org.flowplayer.view {
 			}
 			
 			Arrange.center(disp, width, height);
+			
+			//dispatch resized noticed for plugins to manage
+            clip.dispatchEvent(new ClipEvent(ClipEventType.CLIP_RESIZED));
 		}
 
 		public function getDisplayBounds():Rectangle {
