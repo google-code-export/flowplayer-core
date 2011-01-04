@@ -991,6 +991,7 @@ import org.flowplayer.flow_internal;
         	_encoding = value;
         }
         
+        [Value]
         public function get urlEncoding():Boolean {
         	return _encoding;
         }
