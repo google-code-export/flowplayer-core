@@ -987,11 +987,11 @@ import org.flowplayer.flow_internal;
             _endLimit = value;
         }
         
-        public function set encoding(value:Boolean):void {
+        public function set urlEncoding(value:Boolean):void {
         	_encoding = value;
         }
         
-        public function get encoding():Boolean {
+        public function get urlEncoding():Boolean {
         	return _encoding;
         }
     }
