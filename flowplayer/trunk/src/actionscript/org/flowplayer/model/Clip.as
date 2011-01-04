@@ -391,7 +391,7 @@ import org.flowplayer.flow_internal;
 		 */
 		[Value]
 		public function get completeUrl():String {
-			return this.getCustomProperty("encoding") ? uriEncode(URLUtil.completeURL(_baseUrl, url)) : URLUtil.completeURL(_baseUrl, url);
+			return this.getCustomProperty("encoding") ? encodeURI(URLUtil.completeURL(_baseUrl, url)) : URLUtil.completeURL(_baseUrl, url);
 		}
 
 		public function get type():ClipType {
