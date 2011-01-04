@@ -385,9 +385,12 @@ import org.flowplayer.flow_internal;
             _urlsByResolver = [];
         }
 
+		/*
+		 * If the custom property encoding is set ie utf8, uri encode for ut8 urls
+		 */
 		[Value]
 		public function get completeUrl():String {
-			return URLUtil.completeURL(_baseUrl, url);
+			return this.getCustomProperty("encoding") ? uriEncode(URLUtil.completeURL(_baseUrl, url)) : URLUtil.completeURL(_baseUrl, url);
 		}
 
 		public function get type():ClipType {
