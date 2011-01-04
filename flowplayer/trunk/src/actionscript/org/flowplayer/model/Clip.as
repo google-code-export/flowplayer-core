@@ -387,6 +387,7 @@ import org.flowplayer.flow_internal;
 
 		/*
 		 * If the custom property encoding is set ie utf8, uri encode for ut8 urls
+		 * TODO: Needs checking
 		 */
 		[Value]
 		public function get completeUrl():String {
