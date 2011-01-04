@@ -86,6 +86,7 @@ import org.flowplayer.flow_internal;
         private var _startDispatched:Boolean;
         private var _currentTime:Number = 0;
         private var _endLimit:Number = 0.5;
+        private var _encoding:Boolean = false;
 
         public function Clip() {
             _childPlaylist = new TimedPlaylist();
@@ -386,12 +387,11 @@ import org.flowplayer.flow_internal;
         }
 
 		/*
-		 * If the custom property encoding is set ie utf8, uri encode for ut8 urls
-		 * TODO: Needs checking
+		 * If the encoding is set property, uri encode for ut8 urls
 		 */
 		[Value]
 		public function get completeUrl():String {
-			return this.getCustomProperty("encoding") ? encodeURI(URLUtil.completeURL(_baseUrl, url)) : URLUtil.completeURL(_baseUrl, url);
+			return encoding ? encodeURI(URLUtil.completeURL(_baseUrl, url)) : URLUtil.completeURL(_baseUrl, url);
 		}
 
 		public function get type():ClipType {
@@ -985,6 +985,14 @@ import org.flowplayer.flow_internal;
 
         public function set endLimit(value:Number):void {
             _endLimit = value;
+        }
+        
+        public function set encoding(value:Boolean):void {
+        	_encoding = value;
+        }
+        
+        public function get encoding():Boolean {
+        	return _encoding;
         }
     }
 }
