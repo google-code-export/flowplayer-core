@@ -4,7 +4,7 @@ Version history:
 -----
 - linkUrl should now work better with popup blockers: http://code.google.com/p/flowplayer-core/issues/detail?id=31
 - added new onClipResized event
-- fixed #155. added new encoding property to Clip for url encoding ut8 urls 
+- fixed #155. added new urlEncoding property to Clip for url ncoding ut8 urls 
 
 3.2.6
 -----
