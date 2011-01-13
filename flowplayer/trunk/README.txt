@@ -3,6 +3,7 @@ Version history:
 3.2.7
 -----
 - linkUrl should now work better with popup blockers: http://code.google.com/p/flowplayer-core/issues/detail?id=31
+- new linkWindow value "_popup" opens the linked page in a popup browser window
 - added new onClipResized event
 - fixed #155. added new urlEncoding property to Clip for url ncoding ut8 urls 
 

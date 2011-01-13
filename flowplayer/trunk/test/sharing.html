@@ -18,13 +18,28 @@
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.sharing.*' },
+        log: { level: 'debug', filter: 'org.flowplayer.sharing.*, org.flowplayer.util.URLUtil' },
 
+        clip: {
+            linkUrl: "http://twitter.com",
+            linkWindow: '_popup'
+        },
         plugins:
         {
             sharing: {
                 url: 'flowplayer.sharing.swf',
-                facebook: false
+                twitter: {
+                    shareWindow: '_blank'
+                },
+                email: {
+                    message: "haloo haloo haloo"
+                }
+            },
+            dock: {
+                left: 10,
+                horizontal: true,
+                autoHide: false
+
             }
         }
 

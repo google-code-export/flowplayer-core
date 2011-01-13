@@ -807,14 +807,9 @@ import org.flowplayer.model.DisplayPluginModel;
                 // if using linkUrl, no doubleclick to fullscreen
                 var clip:Clip = _flowplayer.playlist.current;
                 if (clip.linkUrl) {
-                    log.debug("opening linked page");
+                    log.debug("opening linked page " + clip.linkUrl);
                     _flowplayer.pause();
-                    if (ExternalInterface.available) {
-                        // using JS to open the page as it bypasses popup blockers: http://code.google.com/p/flowplayer-core/issues/detail?id=31
-                        ExternalInterface.call('window.open("' + clip.linkUrl + '","' + clip.linkWindow + '")');
-                    } else {
-                        navigateToURL(new URLRequest(clip.linkUrl), clip.linkWindow);
-                    }
+                    URLUtil.openPage(clip.linkUrl, clip.linkWindow);
                     return;
                 }
             }
