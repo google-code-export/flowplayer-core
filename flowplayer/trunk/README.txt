@@ -1,17 +1,14 @@
 Version history:
 
-3.2.7
+3.2.6
 -----
 - linkUrl should now work better with popup blockers: http://code.google.com/p/flowplayer-core/issues/detail?id=31
 - new linkWindow value "_popup" opens the linked page in a popup browser window
 - added new onClipResized event
-- fixed #155. added new urlEncoding property to Clip for url ncoding ut8 urls 
-
-3.2.6
------
 - Added new onUnload event, can be only listened in Flash and not triggered to JS
 - API: Added new url property to plugin objects
-fixes:
+Fixes:
+- it was not possible to call play() in an onFinish listener
 - fix to preserve the infoObject for custom netStream and netConnection clients in cases where the infoObject is a
   primitive object without properties
 - does not show the error dialog in the debugger player when showErrors: false
@@ -19,6 +16,7 @@ fixes:
 - a custom logo is now sized correctly according to the configured size
 - does not show the buffer animation any more when the player receives the onBufferEmpty message from the netStream.
   The animation was unnecessarily shown in some situations.
+- fixed #155. added new urlEncoding property to Clip for url ncoding ut8 urls
 
 3.2.5
 -----

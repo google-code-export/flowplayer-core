@@ -75,7 +75,10 @@ package org.flowplayer.controller {
 		}
 
 		private function checkProgress(event:TimerEvent):void {
-			if (!_timer) return;
+			if (!_timer) {
+                log.debug("no timer running");
+                return;
+            }
 			checkAndFireCuepoints();
 			
 			if (_clip.live) return;
@@ -114,7 +117,7 @@ package org.flowplayer.controller {
 		private function checkAndFireCuepoints():void {
 			var streamTime:Number = _controller.time;
 			var timeRounded:Number = Math.round(streamTime*10) * 100;
-//			log.debug("checkAndFireCuepoints, rounded stream time is " + timeRounded);			
+//			log.debug("checkAndFireCuepoints, rounded stream time is " + timeRounded);
 			
 			// also get the points from previous rounds, just to make sure we are not skipping any
 			var points:Array = collectCuepoints(_clip, timeRounded);
