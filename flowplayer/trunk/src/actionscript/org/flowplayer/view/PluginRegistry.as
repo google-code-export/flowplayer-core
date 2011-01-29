@@ -195,7 +195,15 @@ package org.flowplayer.view {
 		}
 
 		private function setPlayerToPlugins(plugins:Dictionary):void {
-			for each (var model:Object in plugins) {
+			// we need to create a copy because any change to the 
+			// dictionary during the foreach makes it start again, 
+			// which causes double onLoad calls
+			
+			var transientCopy:Dictionary = new Dictionary();
+			for ( var name:String in plugins )
+				transientCopy[name] = plugins[name];
+			
+			for each (var model:Object in transientCopy) {
 				setPlayerToPlugin(model);
 			}
 		}
