@@ -1081,16 +1081,10 @@ function Player(wrapper, params, conf) {
 
 	// possibly defer initialization until DOM get's loaded
 	if (typeof wrapper == 'string') { 
-		flashembed.domReady(function() {
-			var node = el(wrapper); 
-			
-			if (!node) {
-				throw "Flowplayer cannot access element: " + wrapper;	
-			} else {
-				wrapper = node; 
-				init();
-			} 
-		});
+		var node = el(wrapper); 		
+		if (!node) { throw "Flowplayer cannot access element: " + wrapper; }
+		wrapper = node; 
+		init();
 		
 	// we have a DOM element so page is already loaded
 	} else {		
@@ -1184,7 +1178,7 @@ window.flowplayer = window.$f = function() {
 			bgcolor: "#000000",
 			version: [9, 0],
 			expressInstall: "http://static.flowplayer.org/swf/expressinstall.swf",
-			cachebusting: true
+			cachebusting: false
 			
 		}, params);		
 		
