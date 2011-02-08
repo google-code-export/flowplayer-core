@@ -167,55 +167,45 @@ package org.flowplayer.view {
 		 * @param currentAnimation if specified all other animations except the specified one will be canceled
 		 */
 		public function cancel(view:DisplayObject, currentAnimation:Animation = null):void {
-			log.debug("cancel() cancelling animation for " + view);
-			for (var viewObj:Object in _runningPlayablesByView) {
-                log.debug("cancel(), currently running animation for " + viewObj);
-				var viewWithRunningAnimation:DisplayObject = viewObj as DisplayObject;
-				if (viewWithRunningAnimation == view) {
-					var anim:Animation = _runningPlayablesByView[viewWithRunningAnimation] as Animation;
-					
-					if (anim && (currentAnimation && anim != currentAnimation || ! currentAnimation)) {
-						if (currentAnimation && currentAnimation.tweenProperty == anim.tweenProperty || ! currentAnimation) {
-							log.info("tween for property " + anim.tweenProperty + " was canceled on view " + view);
-							_canceledByPlayable[anim] = true;
-                            delete _runningPlayablesByView[view];
-							anim.stop();
-						}
-					}
-				}
-			}
+            log.debug("cancel() cancelling animation for " + view);
+            var action:Function = function(myAnim:Animation):void {
+                _canceledByPlayable[myAnim] = true;
+                delete _runningPlayablesByView[view];
+                myAnim.stop();
+                log.info("tween for property " + myAnim.tweenProperty + " was canceled on view " + view);
+            };
+            processAction(action, view, currentAnimation);
 		}
-		
-		public function pause(view:DisplayObject, currentAnimation:Animation = null):void {
-            log.debug("pause() cancelling animation for " + view);
-            for (var viewObj:Object in _runningPlayablesByView) {
-                log.debug("pause(), currently running animation for " + viewObj);
-                var viewWithRunningAnimation:DisplayObject = viewObj as DisplayObject;
-                if (viewWithRunningAnimation == view) {
-                    var anim:Animation = _runningPlayablesByView[viewWithRunningAnimation] as Animation;
-                    
-                    if (anim && (currentAnimation && anim != currentAnimation || ! currentAnimation)) {
-                        if (currentAnimation && currentAnimation.tweenProperty == anim.tweenProperty || ! currentAnimation) {
-                            log.info("tween for property " + anim.tweenProperty + " was paused on view " + view);
-                            anim.pause();
-                        }
-                    }
-                }
-            }
+
+
+        public function pause(view:DisplayObject, currentAnimation:Animation = null):void {
+            log.debug("pause() pausing animation for " + view);
+            var action:Function = function(myAnim:Animation):void {
+                myAnim.pause();
+                log.info("tween for property " + myAnim.tweenProperty + " was paused on view " + view);
+            };
+            processAction(action, view, currentAnimation);
         }
-        
+
         public function resume(view:DisplayObject, currentAnimation:Animation = null):void {
-            log.debug("resume() cancelling animation for " + view);
+            log.debug("resume() resuming animation for " + view);
+            var action:Function = function(myAnim:Animation):void {
+                myAnim.resume();
+                log.info("tween for property " + myAnim.tweenProperty + " was resumed on view " + view);
+            };
+            processAction(action, view, currentAnimation);
+        }
+
+        private function processAction(action:Function, view:DisplayObject, currentAnimation:Animation = null):void {
             for (var viewObj:Object in _runningPlayablesByView) {
-                log.debug("resume(), currently running animation for " + viewObj);
+                log.debug("cancel(), currently running animation for " + viewObj);
                 var viewWithRunningAnimation:DisplayObject = viewObj as DisplayObject;
                 if (viewWithRunningAnimation == view) {
                     var anim:Animation = _runningPlayablesByView[viewWithRunningAnimation] as Animation;
-                    
+
                     if (anim && (currentAnimation && anim != currentAnimation || ! currentAnimation)) {
                         if (currentAnimation && currentAnimation.tweenProperty == anim.tweenProperty || ! currentAnimation) {
-                            log.info("tween for property " + anim.tweenProperty + " was resumed on view " + view);
-                            anim.resume();
+                            action(anim);
                         }
                     }
                 }
