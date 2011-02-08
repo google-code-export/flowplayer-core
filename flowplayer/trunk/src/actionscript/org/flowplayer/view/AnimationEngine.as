@@ -185,6 +185,42 @@ package org.flowplayer.view {
 				}
 			}
 		}
+		
+		public function pause(view:DisplayObject, currentAnimation:Animation = null):void {
+            log.debug("pause() cancelling animation for " + view);
+            for (var viewObj:Object in _runningPlayablesByView) {
+                log.debug("pause(), currently running animation for " + viewObj);
+                var viewWithRunningAnimation:DisplayObject = viewObj as DisplayObject;
+                if (viewWithRunningAnimation == view) {
+                    var anim:Animation = _runningPlayablesByView[viewWithRunningAnimation] as Animation;
+                    
+                    if (anim && (currentAnimation && anim != currentAnimation || ! currentAnimation)) {
+                        if (currentAnimation && currentAnimation.tweenProperty == anim.tweenProperty || ! currentAnimation) {
+                            log.info("tween for property " + anim.tweenProperty + " was paused on view " + view);
+                            anim.pause();
+                        }
+                    }
+                }
+            }
+        }
+        
+        public function resume(view:DisplayObject, currentAnimation:Animation = null):void {
+            log.debug("resume() cancelling animation for " + view);
+            for (var viewObj:Object in _runningPlayablesByView) {
+                log.debug("resume(), currently running animation for " + viewObj);
+                var viewWithRunningAnimation:DisplayObject = viewObj as DisplayObject;
+                if (viewWithRunningAnimation == view) {
+                    var anim:Animation = _runningPlayablesByView[viewWithRunningAnimation] as Animation;
+                    
+                    if (anim && (currentAnimation && anim != currentAnimation || ! currentAnimation)) {
+                        if (currentAnimation && currentAnimation.tweenProperty == anim.tweenProperty || ! currentAnimation) {
+                            log.info("tween for property " + anim.tweenProperty + " was resumed on view " + view);
+                            anim.resume();
+                        }
+                    }
+                }
+            }
+        }
 
         public function hasAnimationRunning(view:DisplayObject):Boolean {
             for (var viewObj:Object in _runningPlayablesByView) {
