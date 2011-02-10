@@ -18,11 +18,12 @@
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.sharing.*, org.flowplayer.util.URLUtil' },
+        log: { level: 'debug', filter: 'org.flowplayer.ui.Dock' },
 
         clip: {
-            linkUrl: "http://twitter.com",
-            linkWindow: '_popup'
+//            linkUrl: "http://twitter.com",
+//            linkWindow: '_popup',
+            autoPlay: false
         },
         plugins:
         {
@@ -34,13 +35,14 @@
                 email: {
                     message: "haloo haloo haloo"
                 }
-            },
-            dock: {
-                left: 10,
-                horizontal: true,
-                autoHide: false
-
             }
+//            ,
+//            dock: {
+//                autoHide: false,
+//                right: 10,
+//                horizontal: false,
+//                width: '10%'
+//            }
         }
 
     });

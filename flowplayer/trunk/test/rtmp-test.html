@@ -18,7 +18,7 @@
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.bwcheck.*' },
+        log: { level: 'debug', filter: 'org.flowplayer.rtmp.*' },
         onStart: function() {
             console.log("onStart");
         },
@@ -35,9 +35,19 @@
             console.log("onResume");
         },
 
-        // Videos to be played:
-       clip: "http://content.tv3.ie/content/videos/0138/Amnews_Tv3_16x9_1_31861.mp4"
 
+        clip: {
+            url: 'Venice.flv',
+            provider: 'rtmp'
+        },
+
+        plugins: {
+            rtmp: {
+                url: 'flowplayer.rtmp-3.2.3.swf',
+                netConnectionUrl: 'rtmp://wcvid001/flash',
+                objectEncoding: 0
+            }
+        }
     });
 </script>
 	</div>
