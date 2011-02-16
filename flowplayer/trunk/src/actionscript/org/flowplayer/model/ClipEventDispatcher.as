@@ -149,7 +149,7 @@ package org.flowplayer.model {
             setListener(ClipEventType.CLIP_ADD, listener, null, false, addToFront);
         }
         
-        public function onClipResized(listener:Function, addToFront:Boolean = false):void {
+        public function onResized(listener:Function, addToFront:Boolean = false):void {
             setListener(ClipEventType.CLIP_RESIZED, listener, null, false, addToFront);
         }
 
