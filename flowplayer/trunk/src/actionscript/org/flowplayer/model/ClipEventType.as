@@ -1,6 +1,5 @@
 /*    
- *    Copyright (c) 2008, 2009 Flowplayer Oy
- *
+ *    Copyright (c) 2008-2011 Flowplayer Oy *
  *    This file is part of Flowplayer.
  *
  *    Flowplayer is free software: you can redistribute it and/or modify
@@ -47,7 +46,7 @@ import org.flowplayer.flow_internal;
 
         public static const PLAYLIST_REPLACE:ClipEventType = new ClipEventType("onPlaylistReplace");
         public static const CLIP_ADD:ClipEventType = new ClipEventType("onClipAdd");
-        public static const CLIP_RESIZED:ClipEventType = new ClipEventType("onClipResized");
+        public static const CLIP_RESIZED:ClipEventType = new ClipEventType("onResized");
 
 		private static var _allValues:Dictionary;
         private static var _cancellable:Dictionary = new Dictionary();

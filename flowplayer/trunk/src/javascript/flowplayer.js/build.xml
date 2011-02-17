@@ -11,8 +11,8 @@
 		<concat destfile="flowplayer.js">
 			<fileset dir="${basedir}" includes="flowplayer-src.js"/>
 			
-			<fileset dir="/home/tipiirai/git/jquerytools/src/toolbox/"
-				includes="toolbox.flashembed.js"/> 
+			<fileset dir="/Users/api/code/core/build/"
+				includes="tools.flashembed-1.0.4.js"/> 
 		</concat>
 	</target>
 	
