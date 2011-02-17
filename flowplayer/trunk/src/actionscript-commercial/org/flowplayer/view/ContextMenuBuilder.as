@@ -104,7 +104,7 @@ package org.flowplayer.view {
 			});
 			// 1-3 Required by the GPL license
 			// 1 copyright notice
-			addItem(menu, new ContextMenuItem("Copyright © 2008-2010 Flowplayer Oy", true, false));
+			addItem(menu, new ContextMenuItem("Copyright © 2008-2011 Flowplayer Oy", true, false));
 			// 2 NO WARRANTY
 			addItem(menu, new ContextMenuItem("Flowplayer comes without any warranty", false, false));
 			// 3 Link to license
