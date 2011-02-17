@@ -5,10 +5,10 @@
     <property name="version-1" value="3"/>
     <property name="version-2" value="2"/>
     <property name="version-3" value="6"/>
-    <property name="version-status" value="dev"/>
-    <property name="controls-version-info" value="3.2.4-dev"/>
-    <property name="audio-version-info" value="3.2.1"/>
-    <property name="flowplayer-js-version-info" value="3.2.4"/>
+    <property name="version-status" value=""/>
+    <property name="controls-version-info" value="3.2.4"/>
+    <property name="audio-version-info" value="3.2.2"/>
+    <property name="flowplayer-js-version-info" value="3.2.6"/>
     <property name="source-dist-root-folder" value="flowplayer"/>
 
     <property name="version-status-quoted" value="&quot;&#39;${version-status}&#39;&quot;"/>
@@ -48,7 +48,7 @@
 
     <property name="libs-path" value="${flex3libsdir} ${lib-dir}/thunderbolt ${plugin-libs} ${plugin-swc}"/>
     <property name="classes-for-lib"
-              value="org.flowplayer.view.Flowplayer org.flowplayer.util.PropertyBinder org.flowplayer.util.Arrange org.flowplayer.util.Assert org.flowplayer.model.PluginEvent org.flowplayer.util.TextUtil org.flowplayer.view.AbstractSprite org.flowplayer.view.AnimationEngine org.flowplayer.controller.NetStreamControllingStreamProvider"/>
+              value="org.flowplayer.view.Flowplayer org.flowplayer.util.PropertyBinder org.flowplayer.util.Arrange org.flowplayer.util.Assert org.flowplayer.model.PluginEvent org.flowplayer.util.TextUtil org.flowplayer.view.AbstractSprite org.flowplayer.view.AnimationEngine org.flowplayer.controller.NetStreamControllingStreamProvider org.flowplayer.controller.NetStreamClient org.flowplayer.controller.NetConnectionClient"/>
     <property name="doc-classes"
               value="${classes-for-lib} org.flowplayer.view.FlowplayerBase org.flowplayer.view.StyleableSprite org.flowplayer.model.Plugin org.flowplayer.model.PluginModel org.flowplayer.model.DisplayPluginModel org.flowplayer.model.ProviderModel org.flowplayer.model.Cloneable org.flowplayer.model.DisplayProperties org.flowplayer.model.Identifiable org.flowplayer.model.Callable org.flowplayer.model.Clip org.flowplayer.model.Playlist org.flowplayer.model.AbstractEvent org.flowplayer.model.ClipEvent org.flowplayer.model.PlayerEvent org.flowplayer.model.PluginEvent org.flowplayer.model.ClipEventDispatcher org.flowplayer.model.ClipEventSupport org.flowplayer.model.EventType org.flowplayer.model.ClipEventType org.flowplayer.model.PlayerEventType org.flowplayer.model.PluginEventType org.flowplayer.view.Styleable org.flowplayer.controller.StreamProvider org.flowplayer.model.PluginFactory org.flowplayer.controller.ClipURLResolver org.flowplayer.controller.ConnectionProvider org.flowplayer.util.Log"/>
 
