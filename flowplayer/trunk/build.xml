@@ -192,7 +192,8 @@
                 <arg line="-define+=CONFIG::audioVersion,${audio-version-info-quoted}"/>
                 <arg line="-define+=CONFIG::skin,true"/>
                 <arg line="-define+=CONFIG::hasSlowMotion,'${has-slowmotion-buttons}'"/>
-				<arg line="-define+=CONFIG::debug,'@{debug}'"/>
+                <arg line="-define+=CONFIG::debug,'@{debug}'"/>
+                <arg line="-define+=CONFIG::enableByteRange,'false'"/>
                 <arg line="-keep-as3-metadata=Value,External"/>
                 <arg line="-source-path ${src-as} ${src-as-commercial} ${classpath} ${plugin-libs}"/>
                 <arg line="-static-link-runtime-shared-libraries=true" />
