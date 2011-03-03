@@ -1,5 +1,10 @@
 Version history:
 
+3.2.7
+-----
+
+- Loads the new controlbar plugin version 3.2.5. No other functional changes.
+
 3.2.6
 -----
 - linkUrl should now work better with popup blockers: http://code.google.com/p/flowplayer-core/issues/detail?id=31
