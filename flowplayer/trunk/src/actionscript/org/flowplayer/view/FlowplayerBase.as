@@ -24,6 +24,7 @@ package org.flowplayer.view {
     import flash.utils.getDefinitionByName;
 
     import org.flowplayer.config.Config;
+    import org.flowplayer.controller.NetConnectionClient;
     import org.flowplayer.controller.PlayListController;
     import org.flowplayer.controller.ResourceLoader;
     import org.flowplayer.controller.ResourceLoaderImpl;
@@ -97,8 +98,9 @@ package org.flowplayer.view {
 			var style:FlowStyleSheet;
 			var styleable:StyleableSprite;
 			var animation:Animation;
-			var version:VersionUtil;
-			
+            var version:VersionUtil;
+            var client:NetConnectionClient;
+
 			if (_instance) {
 				log.error("Flowplayer already instantiated");
 				throw new Error("Flowplayer already instantiated");

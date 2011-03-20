@@ -4,6 +4,8 @@ Version history:
 -----
 
 - Loads the new controlbar plugin version 3.2.5. No other functional changes.
+Fixes:
+- Fixed 'orig' scaling in fullscreen: http://flowplayer.org/forum/2/10274#post-52646
 
 3.2.6
 -----
