@@ -72,6 +72,7 @@ package org.flowplayer.view {
                 addCallback("getPlaylist", function():Array {
                     return convert(playlist.clips) as Array;
                 });
+
                 addCallback("getId", function():String {
                     return id;
                 });

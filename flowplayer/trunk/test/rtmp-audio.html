@@ -11,16 +11,25 @@
 
 	<div id="page">
         <a
-                     href="../build/flowplayer.flv"
+                     href="mp3:fake_empire"
                      style="display:block;width:440px;height:247px"
                      id="player">
                 </a>
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.bwcheck.*' },
+        log: { level: 'debug', filter: 'org.flowplayer.rtmp.*' },
+        onBegin: function() {
+            console.log("onBegin");
+        },
+        onBeforeBegin: function() {
+            console.log("onBeforeBegin");
+        },
         onStart: function() {
             console.log("onStart");
+        },
+        onMetaData: function() {
+            console.log("onMetaData");
         },
 
         onFinish: function() {
@@ -35,18 +44,25 @@
             console.log("onResume");
         },
 
-        clip: {
-        },
         plugins: {
-            viral: {
-                url: 'flowplayer.viralvideos.swf'
+            rtmp: {
+                url: 'flowplayer.rtmp.swf',
+                netConnectionUrl: 'rtmp://cyzy7r959.rtmphost.com/flowplayer',
 
+                // make the rtmp plugin query the stream length from the server
+                durationFunc: 'getStreamLength'
+            },
+            controls: {
+                fullscreen: false,
+                height: 30,
+                autoHide: false
             }
-//            dock: {
-//                left: 10
-//            }
+        },
+        clip: {
+            // it's possible to stream audio by using the RTMP plugin
+            provider: 'rtmp',
+            autoPlay: false
         }
-
     });
 </script>
 	</div>

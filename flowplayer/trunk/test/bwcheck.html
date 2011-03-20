@@ -30,7 +30,7 @@
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.bwcheck.*, org.osmf.net.*' },
+        log: { level: 'debug', filter: 'org.flowplayer.ui.buttons.*,org.flowplayer.bwcheck.ui.buttons.*' },
 
 
         // The playlist is loaded from the RSS file
@@ -41,19 +41,11 @@
             // use smil and bwcheck when resolving the clip URL
             urlResolvers: 'bwcheck',
 
-            qos: ["bwUp", "bwDown", "buffer"],
+//            qos: ["bwUp", "bwDown", "buffer"],
 
             bitrates: [
-                {
-                    url: "mp4:bbb-400", width: 320, height: 180, bitrate: 400,
-                    // this is the default bitrate, the playback kicks off with this and after that
-                    // Quality Of Service monitoring adjusts to the most appropriate bitrate
-                    isDefault: true,
-                    normal: true
-                },
-                { url: "mp4:bbb-800", width: 480, bitrate: 800, hd: true },
-                { url: "mp4:bbb-1200", width: 720, bitrate: 1200 },
-                { url: "mp4:bbb-1600", width: 1080, bitrate: 1600 }
+                { url: "mp4:bbb-800", width: 480, bitrate: 800, normal: true },
+                { url: "mp4:bbb-1200", width: 720, bitrate: 1200, hd: true, isDefault: true }
             ]
         },
 
@@ -63,6 +55,9 @@
                 url: 'flowplayer.rtmp-3.2.3.swf',
                 netConnectionUrl: 'rtmp://s3b78u0kbtx79q.cloudfront.net/cfx/st'
             },
+//            sharing: {
+//                url: 'flowplayer.sharing.swf'
+//            },
             // bandwidth check plugin
             bwcheck: {
                 url: 'flowplayer.bwcheck.swf',
@@ -71,9 +66,14 @@
 
                 // we use dynamic switching, the appropriate bitrate is switched on the fly
 //                dynamic: true,
+//                hdButton: "both",
+                hdButton: {
+                    place: 'both',
+                    onLabel: 'PÄÄLLÄ',
+                    offLabel: 'POIES'
+                },
 
-                hdButton: true,
-
+                netConnectionUrl: 'rtmp://s3b78u0kbtx79q.cloudfront.net/cfx/st',
 //                  netConnectionUrl: 'rtmp://vod01.netdna.com/play',
 
                 // show the selected file in the content box. This is not used in real installations.
@@ -85,7 +85,15 @@
                    $f().getPlugin('content').setHtml("Switched to: " + newItem.streamName);
                 }
             },
-
+            controls: {
+                url: 'flowplayer.controls-air.swf',backgroundGradient: 'none',
+                tooltips: {
+                    buttons: true
+                    ,
+                    hd: "HD is off",
+                    sd: "HD is on"
+                }
+            },
             // a content box so that we can see the selected bitrate. This is not normally
             // used in real installations.
             content: {

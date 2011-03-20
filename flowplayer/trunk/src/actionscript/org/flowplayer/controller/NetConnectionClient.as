@@ -28,7 +28,8 @@ package org.flowplayer.controller {
 	public dynamic class NetConnectionClient implements ConnectionCallbacks {
 		private var log:Log = new Log(this);
 		private var _clip:Clip;
-//
+
+
 //		public function onBWCheck(...rest):void {
 //			log.debug("received onBWCheck " + _clip);
 //			_clip.dispatch(ClipEventType.CONNECTION_EVENT, "onBWCheck");

@@ -142,15 +142,13 @@ package org.flowplayer.view {
 			}
 			if (clip && clip.getContent()) {
 				if (_fullscreenManaer.isFullscreen) {
-					var nonHwScaled:MediaSize = clip.scaling == MediaSize.ORIGINAL ? MediaSize.FITTED_PRESERVING_ASPECT_RATIO : clip.scaling;
-					_resizer.resizeClipTo(clip, clip.accelerated ? MediaSize.ORIGINAL : nonHwScaled);
+					_resizer.resizeClipTo(clip, clip.accelerated ? MediaSize.ORIGINAL : clip.scaling);
 				} else {
 					_resizer.resizeClipTo(clip, clip.scaling);
 				}
 			}
 		}
 
-		// resized is called when the clip has been resized
 		internal function resized(clip:Clip):void {
 			var disp:DisplayObject = _displays[clip];
             disp.width = clip.width;
