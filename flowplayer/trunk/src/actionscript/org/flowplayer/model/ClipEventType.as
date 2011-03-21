@@ -48,6 +48,8 @@ import org.flowplayer.flow_internal;
         public static const CLIP_ADD:ClipEventType = new ClipEventType("onClipAdd");
         public static const CLIP_RESIZED:ClipEventType = new ClipEventType("onResized");
 
+		public static const STAGE_VIDEO_STATE_CHANGE:ClipEventType = new ClipEventType("onStageVideoStateChange");
+
 		private static var _allValues:Dictionary;
         private static var _cancellable:Dictionary = new Dictionary();
         {
