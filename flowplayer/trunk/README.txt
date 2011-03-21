@@ -3,7 +3,8 @@ Version history:
 3.2.7
 -----
 
-- Loads the new controlbar plugin version 3.2.5. No other functional changes.
+- Loads the new controlbar plugin version 3.2.5.
+- Adds support of StageVideo
 Fixes:
 - Fixed 'orig' scaling in fullscreen: http://flowplayer.org/forum/2/10274#post-52646
 
