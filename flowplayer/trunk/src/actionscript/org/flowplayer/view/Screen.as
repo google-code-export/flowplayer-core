@@ -31,6 +31,7 @@ package org.flowplayer.view {
 	import org.flowplayer.model.Playlist;
 	import org.flowplayer.util.Arrange;
 	import org.flowplayer.util.Log;
+	import org.flowplayer.util.VersionUtil;
 	import org.flowplayer.view.MediaDisplay;
 
 	import flash.display.DisplayObject;
@@ -48,7 +49,7 @@ package org.flowplayer.view {
 		private var _resizer:ClipResizer;
 		private var _playList:Playlist;
 		private var _prevClip:Clip;
-		private var _fullscreenManaer:FullscreenManager;
+		private var _fullscreenManager:FullscreenManager;
 		private var _animationEngine:AnimationEngine;
 		private var _pluginRegistry:PluginRegistry;
 
@@ -104,7 +105,7 @@ package org.flowplayer.view {
         }
 
 		public function set fullscreenManager(manager:FullscreenManager):void {
-			_fullscreenManaer = manager;
+			_fullscreenManager = manager;
 		}
 
 		protected override function onResize():void {
@@ -141,8 +142,8 @@ package org.flowplayer.view {
 				log.warn("clip does not have content, cannot resize. Clip " + clip);
 			}
 			if (clip && clip.getContent()) {
-				if (_fullscreenManaer.isFullscreen) {
-					_resizer.resizeClipTo(clip, clip.accelerated ? MediaSize.ORIGINAL : clip.scaling);
+				if (_fullscreenManager.isFullscreen) {
+					_resizer.resizeClipTo(clip, clip.useHWScaling ? MediaSize.ORIGINAL : clip.scaling);
 				} else {
 					_resizer.resizeClipTo(clip, clip.scaling);
 				}
@@ -154,7 +155,7 @@ package org.flowplayer.view {
             disp.width = clip.width;
 			disp.height = clip.height;
 
-			if (clip.accelerated && _fullscreenManaer.isFullscreen) {
+			if (clip.useHWScaling && _fullscreenManager.isFullscreen) {
 				log.debug("in hardware accelerated fullscreen, will not center the clip");
 				disp.x = 0;
 				disp.y = 0;

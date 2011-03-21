@@ -15,8 +15,8 @@ package org.flowplayer.model {
 	public class ClipEventDispatcher extends EventDispatcher {
 		
 		public function dispatch(eventType:ClipEventType, info:Object = null, info2:Object = null, info3:Object = null):void {
-                doDispatchEvent(new ClipEvent(eventType, info, info2, info3), false);
-            }
+        	doDispatchEvent(new ClipEvent(eventType, info, info2, info3), false);
+        }
 
 		public function dispatchError(error:ClipError, info:Object = null):void {
 			doDispatchErrorEvent(new ClipEvent(error.eventType, error, info), false);
@@ -152,6 +152,15 @@ package org.flowplayer.model {
         public function onResized(listener:Function, addToFront:Boolean = false):void {
             setListener(ClipEventType.CLIP_RESIZED, listener, null, false, addToFront);
         }
+
+		/**
+		 * Adds a StageVideo state change event listener. The event is fired when the player uses or discards StageVideo
+		 * @param listener
+		 * @see PlayerEventType
+		 */
+		public function onStageVideoStateChange(listener:Function, addToFront:Boolean = false):void {
+			setListener(ClipEventType.STAGE_VIDEO_STATE_CHANGE, listener, null, false, addToFront);
+		}
 
 		override protected function get cancellableEvents():Dictionary {
 			return ClipEventType.cancellable;

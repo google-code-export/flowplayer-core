@@ -34,6 +34,7 @@ package org.flowplayer.controller {
     import org.flowplayer.util.Assert;
     import org.flowplayer.util.Log;
     import org.flowplayer.view.Flowplayer;
+    import org.flowplayer.view.StageVideoWrapper;
 
     import flash.display.DisplayObject;
     import flash.errors.IOError;
@@ -43,6 +44,7 @@ package org.flowplayer.controller {
     import flash.net.NetConnection;
     import flash.net.NetStream;
     import flash.utils.Timer;
+
 
     /**
      * A StreamProvider that does it's job using the Flash's NetStream class.
@@ -272,17 +274,22 @@ package org.flowplayer.controller {
         /**
          * @inheritDoc
          */
-        public function getVideo(clip:Clip):DisplayObject {
-            var video:Video = new Video();
-            video.smoothing = clip.smoothing;
-            return video;
+        public function getVideo(clip:Clip):DisplayObject {	
+			var video:Video;
+			if ( clip.useStageVideo )
+				video = new StageVideoWrapper(clip);
+			else {
+				video = new Video();
+				video.smoothing = clip.smoothing;
+			}
+	        return video;	            
         }
 
         /**
          * @inheritDoc
          */
         public function attachStream(video:DisplayObject):void {
-            Video(video).attachNetStream(_netStream);
+			Object(video).attachNetStream(_netStream);
         }
 
         /**

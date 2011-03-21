@@ -60,6 +60,8 @@ import org.flowplayer.model.DisplayPluginModel;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
+	import flash.display.BlendMode;
+	import flash.media.StageVideo;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
@@ -97,6 +99,8 @@ import org.flowplayer.model.DisplayPluginModel;
         private var _clickTimer:Timer = new Timer(200, 1);
         private var _clickEvent:MouseEvent;
 
+		private var _screenMask:Sprite;
+
 		[Frame(factoryClass="org.flowplayer.view.Preloader")]
 		public function Launcher() {
 			addEventListener(Event.ADDED_TO_STAGE, function(e:Event):void {
@@ -128,6 +132,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			rootStyle = _config.canvas.style;
             stage.addEventListener(Event.RESIZE, onStageResize);
             stage.addEventListener(Event.RESIZE, arrangeScreen);
+
 			setSize(Arrange.parentWidth, Arrange.parentHeight);
 
 			if (! VersionInfo.commercial) {
@@ -221,7 +226,9 @@ import org.flowplayer.model.DisplayPluginModel;
 			
 			log.debug("starting configured streams");
             startStreams();
-            arrangeScreen();
+			
+			createScreenMask();
+            arrangeScreen();		
 			
             addListeners();
 
@@ -238,6 +245,20 @@ import org.flowplayer.model.DisplayPluginModel;
 //                event.preventDefault();
 //            });
 //            lookupSlowMotionPlugin(_flowplayer);
+		}
+
+		private function createScreenMask():void {
+			blendMode = BlendMode.LAYER;
+			
+			_screenMask = new Sprite();
+			_screenMask.graphics.beginFill(0xff0000);
+			_screenMask.graphics.drawRect(0, 0, 1, 1);
+			_screenMask.blendMode = BlendMode.ERASE;
+			
+			_screenMask.x = 0;
+			_screenMask.y = 0;
+			_screenMask.width = 100;
+			_screenMask.height = 100;
 		}
 
 		private function resizeCanvasLogo():void {
@@ -485,7 +506,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			_panel.addView(screen.getDisplayObject(), null, screen);
 		}
 		
-		private function arrangeScreen(event:Event = null):void {
+		private function arrangeScreen(event:Event = null):void {		
             log.debug("arrangeScreen(), already arranged " + _screenArrangeCount);
             if (_screenArrangeCount > 1) return;
             if (! _pluginRegistry) return;
@@ -518,7 +539,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			screen.getDisplayObject().visible = true;
 			_pluginRegistry.updateDisplayProperties(screen, true);
 			_panel.update(screen.getDisplayObject(), screen);
-			_panel.draw(screen.getDisplayObject());
+			_panel.draw(screen.getDisplayObject());			
             _screenArrangeCount++;
 		}
 
@@ -711,6 +732,8 @@ import org.flowplayer.model.DisplayPluginModel;
 			graphics.beginFill(0, 0);
 			graphics.drawRect(0, 0, Arrange.parentWidth, Arrange.parentHeight);
 			graphics.endFill();
+			
+			_flowplayer.playlist.onStageVideoStateChange(onStageVideoStateChange);
 		}
 		
 		private function onMouseOut(event:MouseEvent):void {
@@ -719,6 +742,29 @@ import org.flowplayer.model.DisplayPluginModel;
 
 		private function onMouseOver(event:MouseEvent):void {
 			_flowplayer.dispatchEvent(PlayerEvent.mouseOver());
+		}
+		
+		private function onStageVideoStateChange(event:ClipEvent):void {
+			var stageVideo:StageVideo = event.info as StageVideo;
+			log.info("stage video state changed " + stageVideo);
+
+			if ( stageVideo ) {
+				
+				_screenMask.width  = stageVideo.viewPort.width;
+				_screenMask.height = stageVideo.viewPort.height;
+				_screenMask.x = stageVideo.viewPort.x;
+				_screenMask.y = stageVideo.viewPort.y;
+				
+				if ( ! contains(_screenMask) ) {
+					addChildAt(_screenMask, 0);
+					log.debug("adding mask");
+				}
+			} else {
+				if ( contains(_screenMask) ) {
+					log.debug("removing mask")
+					removeChild(_screenMask);
+				}
+			}			
 		}
 
 		private function createPanel():void {

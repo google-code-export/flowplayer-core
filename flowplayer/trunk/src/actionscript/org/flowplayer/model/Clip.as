@@ -26,6 +26,7 @@ import org.flowplayer.flow_internal;
 	import org.flowplayer.util.ArrayUtil;
 	import org.flowplayer.util.Log;
 	import org.flowplayer.util.URLUtil;
+	import org.flowplayer.util.VersionUtil;
 	
 	import flash.display.DisplayObject;
 	import flash.media.Video;
@@ -104,6 +105,7 @@ import org.flowplayer.flow_internal;
 			_image = true;
 			_cuepointMultiplier = 1000;
             _seekableOnBegin = null;
+			_accelerated = VersionUtil.hasStageVideo();
 		}
 
 		public static function create(clipObj:Object, url:String, baseUrl:String = null):Clip {
@@ -684,6 +686,14 @@ import org.flowplayer.flow_internal;
 		[Value]
 		public function get accelerated():Boolean {
 			return _accelerated;
+		}
+		
+		public function get useHWScaling():Boolean {
+			return _accelerated && ! VersionUtil.hasStageVideo();
+		}
+		
+		public function get useStageVideo():Boolean {
+			return _accelerated && VersionUtil.hasStageVideo();
 		}
 
 		public function get isNullClip():Boolean {
