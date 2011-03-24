@@ -1,5 +1,6 @@
 <project name="Flowplayer" default="build">
     <property file="build.generated.properties"/>
+    <property file="${user.home}/core.properties" />
     <property file="build.properties"/>
 
     <property name="version-1" value="3"/>
@@ -210,7 +211,7 @@
                 
                 <arg line="-file-specs '${src-as}/org/flowplayer/view/Preloader.as'"/>
                 <arg line="-output '${build-dir}/@{binary}'"/>
-                <arg line="-target-player '10.1.0'"/>
+                <!--<arg line="-target-player '10.1.0'"/>-->
             </exec>
         </sequential>
     </macrodef>

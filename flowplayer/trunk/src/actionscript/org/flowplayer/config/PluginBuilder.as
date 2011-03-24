@@ -254,7 +254,8 @@ package org.flowplayer.config {
 					if (! (config && config.hasOwnProperty("opacity")) && defaults.hasOwnProperty("opacity")) {
 						plugin.opacity = defaults["opacity"];
 					}
-					plugin = new PropertyBinder(plugin, "config").copyProperties(defaults, false) as DisplayPluginModel;
+
+					plugin = new PropertyBinder(plugin, "config").copyProperties(defaults, true) as DisplayPluginModel;
 					log.debug(name + " position after applying defaults " + plugin.position + ", zIndex " + plugin.zIndex);
 				}
 			}
