@@ -106,6 +106,14 @@ import flash.display.LoaderInfo;
                 return [null, url];
             }
         }
+
+        public static function baseUrl(url:String):String {
+            return url.substr(0, url.lastIndexOf("/"));
+        }
+
+        public static function isRtmpUrl(url:String):Boolean {
+            return (url.indexOf("rtmp://") == 0);
+        }
 		
 		public static function get playerBaseUrl():String {
 			var url:String = _loaderInfo.url;
