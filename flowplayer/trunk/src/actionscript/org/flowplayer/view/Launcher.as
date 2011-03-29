@@ -756,7 +756,7 @@ import org.flowplayer.model.DisplayPluginModel;
 				_screenMask.y = stageVideo.viewPort.y;
 				
 				if ( ! contains(_screenMask) ) {
-					addChildAt(_screenMask, 0);
+					addChildAt(_screenMask, _canvasLogo ? getChildIndex(_canvasLogo) + 1 : 1);
 					log.debug("adding mask");
 				}
 			} else {
@@ -764,7 +764,7 @@ import org.flowplayer.model.DisplayPluginModel;
 					log.debug("removing mask")
 					removeChild(_screenMask);
 				}
-			}			
+			}
 		}
 
 		private function createPanel():void {
