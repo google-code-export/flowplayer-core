@@ -52,8 +52,11 @@ package org.flowplayer.controller {
 				return clip.type == ClipType.VIDEO || clip.type == ClipType.AUDIO || clip.type == ClipType.API; 
 			};
 			playlist.onBegin(onBegin, filter, true);
-			playlist.onBufferFull(onBegin, filter, true);
-			playlist.onStart(onBegin, filter, true);
+
+            // commenting these out for now. To fix this: http://code.google.com/p/flowplayer-core/issues/detail?id=204
+            // we will see in testing if this causes trouble :-)
+//			playlist.onBufferFull(onBegin, filter, true);
+//			playlist.onStart(onBegin, filter, true);
 		}
 
 		private function onBegin(event:ClipEvent):void {
