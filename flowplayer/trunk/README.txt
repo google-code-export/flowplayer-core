@@ -3,7 +3,7 @@ Version history:
 3.2.8
 -----
 - Adds support for StageVideo
-- Tries to reload two times if the stream is not initially found.
+- Tries to reload two times if the stream is not initially found. Also does 3 connection attempts if the connection fails with RTMP.
 
 3.2.7
 -----
