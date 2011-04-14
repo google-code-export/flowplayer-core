@@ -78,6 +78,7 @@ package org.flowplayer.controller {
         private var _streamCallbacks:Dictionary = new Dictionary();
         private var _timeProvider:TimeProvider;
         private var _seeking:Boolean;
+        private var _attempts:int;
 
         public function NetStreamControllingStreamProvider() {
             _connectionClient = new NetConnectionClient();
@@ -115,9 +116,15 @@ package org.flowplayer.controller {
          * @inheritDoc
          */
         public final function load(event:ClipEvent, clip:Clip, pauseAfterStart:Boolean = false):void {
+            _load(clip, pauseAfterStart);
+        }
+
+        private function _load(clip:Clip, pauseAfterStart:Boolean, attempts:int = 3):void {
+            Assert.notNull(clip, "load(clip): clip cannot be null");
             _paused = false;
             _stopping = false;
-            Assert.notNull(clip, "load(clip): clip cannot be null");
+            _attempts = attempts;
+
             if (pauseAfterStart) {
                 log.info("this clip will pause after start");
             }
@@ -128,7 +135,7 @@ package org.flowplayer.controller {
 
             clip.startDispatched = false;
             log.debug("previously started clip " + _startedClip);
-            if (_startedClip && _startedClip == clip && _connection && _netStream) {
+            if (attempts == 3 && _startedClip && _startedClip == clip && _connection && _netStream) {
                 log.info("playing previous clip again, reusing existing connection and resuming");
                 _started = false;
                 replay(clip);
@@ -713,7 +720,11 @@ package org.flowplayer.controller {
                     event.info.code == "NetConnection.Connect.Rejected" ||
                     event.info.code == "NetConnection.Connect.Failed") {
 
-                if (canDispatchStreamNotFound()) {
+                log.info("load attempts left " + (_attempts - 1));
+                if (--_attempts > 0) {
+                    log.info("retrying _load()");
+                    _load(clip, _pauseAfterStart, _attempts);
+                } else if (canDispatchStreamNotFound()) {
                     clip.dispatchError(ClipError.STREAM_NOT_FOUND, event.info.code);
                 }
             }

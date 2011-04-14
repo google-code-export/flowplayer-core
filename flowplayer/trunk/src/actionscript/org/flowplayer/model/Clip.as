@@ -467,6 +467,9 @@ import org.flowplayer.flow_internal;
         }
 		
 		public function set durationFromMetadata(value:Number):void {
+            if (_metaData is Boolean && ! _metaData) {
+                return;
+            }
 			if (! _metaData) {
 				_metaData = new Object();
 			}
