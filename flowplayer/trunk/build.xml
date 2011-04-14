@@ -7,7 +7,7 @@
     <property name="version-2" value="2"/>
     <property name="version-3" value="8"/>
     <property name="version-status" value="dev"/>
-    <property name="controls-version-info" value="3.2.5"/>
+    <property name="controls-version-info" value="3.2.6-dev"/>
     <property name="audio-version-info" value="3.2.2"/>
     <property name="flowplayer-js-version-info" value="3.2.6"/>
     <property name="source-dist-root-folder" value="flowplayer"/>
@@ -211,7 +211,7 @@
                 
                 <arg line="-file-specs '${src-as}/org/flowplayer/view/Preloader.as'"/>
                 <arg line="-output '${build-dir}/@{binary}'"/>
-                <!--<arg line="-target-player '10.1.0'"/>-->
+                <arg line="-target-player '10.2.0'"/>
             </exec>
         </sequential>
     </macrodef>
