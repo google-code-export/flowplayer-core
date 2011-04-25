@@ -37,6 +37,7 @@ package org.flowplayer.view {
     import org.flowplayer.model.DisplayProperties;
     import org.flowplayer.model.DisplayPropertiesImpl;
     import org.flowplayer.model.ErrorCode;
+    import org.flowplayer.model.EventDispatcher;
     import org.flowplayer.model.Loadable;
     import org.flowplayer.model.PlayerError;
     import org.flowplayer.model.PlayerEvent;
@@ -633,6 +634,14 @@ package org.flowplayer.view {
          */
         public function createClips(clips:Array):Array {
             return _config.createClips(clips);
+        }
+
+        public function set silent(value:Boolean):void {
+            EventDispatcher.silent = value;
+        }
+
+        public function get silent():Boolean {
+            return EventDispatcher.silent;
         }
 
 		private function resetPlugin(pluginName:String, speed:Number = 500):void {
