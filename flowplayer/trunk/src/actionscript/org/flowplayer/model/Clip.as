@@ -67,7 +67,8 @@ import org.flowplayer.flow_internal;
 		private var _content:DisplayObject;
 		private var _originalWidth:int;
 		private var _originalHeight:int;
-		private var _bufferLength:int;
+        private var _bufferLength:int;
+        private var _backBufferLength:int;
 		private var _played:Boolean;
 		private var _provider:String;
 		private var _customProperties:Object;
@@ -96,6 +97,7 @@ import org.flowplayer.flow_internal;
             _urlsByResolver = [];
 			_start = 0;
 			_bufferLength = 3;
+            _backBufferLength = 30;
 			_scaling = MediaSize.FILLED_TO_AVAILABLE_SPACE;
 			_provider = "http";
 			_smoothing = true;
@@ -640,15 +642,24 @@ import org.flowplayer.flow_internal;
 			return _content.height;
 		}
 		
-		[Value]
-		public function get bufferLength():int {
-			return _bufferLength;
-		}
+        [Value]
+        public function get bufferLength():int {
+            return _bufferLength;
+        }
 		
-		public function set bufferLength(bufferLength:int):void {
-			_bufferLength = bufferLength;
-		}
-		
+        public function set bufferLength(bufferLength:int):void {
+            _bufferLength = bufferLength;
+        }
+
+        [Value]
+        public function get backBufferLength():int {
+            return _backBufferLength;
+        }
+
+        public function set backBufferLength(bufferLength:int):void {
+            _backBufferLength = bufferLength;
+        }
+
 		public function get played():Boolean {
 			return _played;
 		}

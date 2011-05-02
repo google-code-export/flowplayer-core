@@ -2,8 +2,10 @@ Version history:
 
 3.2.8
 -----
+- Added new property clip.backBufferLength, to be used with FMS 3.5
 - Adds support for StageVideo
 - Tries to reload two times if the stream is not initially found. Also does 3 connection attempts if the connection fails with RTMP.
+- Support for FMS slow motion
 
 3.2.7
 -----
