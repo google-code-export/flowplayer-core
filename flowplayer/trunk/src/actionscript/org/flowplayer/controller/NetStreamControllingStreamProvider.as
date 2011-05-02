@@ -495,7 +495,7 @@ package org.flowplayer.controller {
 
         /**
          * Can we dispatch the start event now? This class uses this method every time
-         * before it's about to dispatch the start event. The event is only dispatched
+         * before it's about to dispatch the begin event. The event is only dispatched
          * if this method returns <code>true</code>.
          *
          * @return <code>true</code> if the start event can be dispatched
@@ -801,6 +801,11 @@ package org.flowplayer.controller {
             _volumeController.netStream = _netStream;
             clip.setNetStream(_netStream);
             _netStream.addEventListener(NetStatusEvent.NET_STATUS, _onNetStatus);
+            onNetStreamCreated(_netStream);
+        }
+
+        protected function onNetStreamCreated(netStream:NetStream):void {
+            // allows for subclasses to set custom buffer lengths, for example
         }
 
         protected function createNetStream(connection:NetConnection):NetStream {
