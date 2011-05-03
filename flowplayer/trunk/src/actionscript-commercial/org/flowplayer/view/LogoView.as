@@ -105,7 +105,7 @@ package org.flowplayer.view {
 //				Arrange.center(_image, width, height);
 				_image.x = width - _image.width;
 				_image.y = 0;
-                log.debug("image: " + Arrange.describeBounds(_image));
+                // log.debug("image: " + Arrange.describeBounds(_image));
 
 				CONFIG::freeVersion {
 					_copyrightNotice.y = _image.height;
@@ -238,13 +238,19 @@ package org.flowplayer.view {
 
 		private function onFullscreen(event:FullScreenEvent):void {
 			if (event.fullScreen) {
-                if ((_hideTimer && _hideTimer.running) || _model.displayTime > 0) {
+				
+                if ( (_hideTimer && _hideTimer.running) || _model.displayTime < 1) {
                     // hide timer is running or the hide time already passed
                     return;
                 }
+
 				show();
 			} else {
 				if (_model.fullscreenOnly) {
+					if(_hideTimer && _hideTimer.running) {
+						_hideTimer.reset();
+						_hideTimer = null;
+					}
 					hide(0);
 				}
 			}
@@ -267,15 +273,7 @@ package org.flowplayer.view {
 
 				if (_model.displayTime > 0) {
                     log.debug("show() creating hide timer");
-					_hideTimer = new Timer(_model.displayTime * 1000, 1);
-					_hideTimer.addEventListener(TimerEvent.TIMER_COMPLETE,
-
-                            function(event:TimerEvent):void {
-                                log.debug("display time complete");
-                                hide(_model.fadeSpeed);
-                                _hideTimer.stop();
-                            });
-					_hideTimer.start();
+					startTimer();
 				}
 			}
 //            else {
@@ -307,9 +305,21 @@ package org.flowplayer.view {
 		private function removeFromPanel():void {
             log.debug("removeFromPanel() " + this.parent);
 			if (this.parent) {
-                log.debug("removing logo from panel");
+                // log.debug("removing logo from panel");
 				_panel.removeChild(this);
             }
+		}
+		
+		private function startTimer():void {
+
+			_hideTimer = new Timer(_model.displayTime * 1000, 1);
+			_hideTimer.addEventListener(TimerEvent.TIMER_COMPLETE,
+							function(event:TimerEvent):void {
+                                log.debug("display time complete");
+                                hide(_model.fadeSpeed);
+                                _hideTimer.stop();
+                            });
+			_hideTimer.start();
 		}
 		
 		CONFIG::freeVersion
