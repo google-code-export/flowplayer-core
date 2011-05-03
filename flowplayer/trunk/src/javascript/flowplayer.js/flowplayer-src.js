@@ -946,7 +946,6 @@ function Player(wrapper, params, conf) {
 		playerId = wrapper.id || "fp" + makeId();
 		apiId = params.id || playerId + "_api";
 		params.id = apiId;
-		conf.playerId = playerId;
 		
 
 		// plain url is given as config
@@ -954,9 +953,7 @@ function Player(wrapper, params, conf) {
 			conf = {clip:{url:conf}};	
 		} 
 		
-		if (typeof conf.clip == 'string') {
-			conf.clip = {url: conf.clip};	
-		}
+		conf.playerId = playerId;
 		
 		// common clip is always there
 		conf.clip = conf.clip || {};  
