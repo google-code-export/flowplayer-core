@@ -5,9 +5,9 @@
 
     <property name="version-1" value="3"/>
     <property name="version-2" value="2"/>
-    <property name="version-3" value="8"/>
-    <property name="version-status" value="dev"/>
-    <property name="controls-version-info" value="3.2.6-dev"/>
+    <property name="version-3" value="7"/>
+    <property name="version-status" value=""/>
+    <property name="controls-version-info" value="3.2.5"/>
     <property name="audio-version-info" value="3.2.2"/>
     <property name="flowplayer-js-version-info" value="3.2.6"/>
     <property name="source-dist-root-folder" value="flowplayer"/>
@@ -333,9 +333,11 @@
 
     <macrodef name="iterate-plugins">
         <attribute name="target"/>
+        <attribute name="buildfiles" default="${plugin.buildfiles}"/>
+        <attribute name="basedirectory" default="${plugins.dir}"/>
         <sequential>
             <subant target="@{target}">
-                <fileset dir="${plugins.dir}" includes="${plugin.buildfiles}"/>
+                <fileset dir="@{basedirectory}" includes="@{buildfiles}"/>
                 <property name="remotedir" value="${remotedir}"/>
                 <property name="all-swf-zip" value="${basedir}/dist/latest.zip"/>
                 <property name="swfremotedir" value="${swfremotedir}"/>
@@ -343,6 +345,7 @@
                 <property name="aws-secretKey" value="${aws-secretKey}"/>
                 <property name="keyfile" value="${keyfile}"/>
                 <property name="url-file" value="${url-file}"/>
+                <property name="yaml-file" value="${yaml-file}"/>
                 <property name="devkit-dir" value="${devkit-dir}"/>
             </subant>
         </sequential>
@@ -376,12 +379,16 @@
     <target name="zip" description="creates a distribution zip package" depends="build">
         <zip-player zip-name="${dist-name}" player-swf-dir="${build-dir}" player-swf="${player-binary-versioned}"
                     license="LICENSE.txt" example-dir="example-free"/>
+        <copy file="${dist-dir}/${dist-name}" tofile="${dist-dir}/flowplayer.zip" />
     </target>
 
     <target name="zip-biz" description="creates a Commercial distribution zip package" depends="build-biz">
         <zip-player zip-name="${commercial-dist-name}" player-swf-dir="${build-dir}"
                     player-swf="${commercial-player-binary-versioned}" license="LICENSE_COMMERCIAL.txt"
                     example-dir="example-biz"/>
+        <copy file="${dist-dir}/${commercial-dist-name}" tofile="${dist-dir}/flowplayer.commercial.zip" />
+
+
         <zip-player zip-name="${multidomain-dist-name}" player-swf-dir="${build-dir}"
                     player-swf="${commercial-player-binary-versioned}" license="LICENSE_MULTIDOMAIN.txt"
                     example-dir="example-biz"/>
@@ -430,6 +437,7 @@
                 <include name="build.properties"/>
             </zipfileset>
         </zip>
+        <copy file="${dist-dir}/${source-dist-name}" tofile="${dist-dir}/flowplayer-src.zip" />
     </target>
 
     <macrodef name="verify-zip">
@@ -480,6 +488,14 @@
 
     <target name="dist" description="Create distribution packages">
         <iterate-plugins target="dist"/>
+        <ant target="zip"/>
+        <ant target="zip-biz"/>
+        <ant target="zip-devkit"/>
+        <ant target="source-dist"/>
+    </target>
+
+    <target name="all-dist" description="Create distribution packages for all plugins">
+        <iterate-plugins target="dist" buildfiles="${allplugins.buildfiles}" />
         <ant target="zip"/>
         <ant target="zip-biz"/>
         <ant target="zip-devkit"/>
