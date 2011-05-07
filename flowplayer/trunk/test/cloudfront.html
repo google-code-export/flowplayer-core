@@ -11,14 +11,14 @@
 
 	<div id="page">
         <a
-                     href="http://pseudo01.hddn.com/vod/demo.flowplayervod/flowplayer-700.flv"
+                     href="honda_accord"
                      style="display:block;width:440px;height:247px"
                      id="player">
                 </a>
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.controls.config.Config' },
+        log: { level: 'info', filter: 'org.flowplayer.rtmp.*' },
         onStart: function() {
             console.log("onStart");
         },
@@ -34,19 +34,23 @@
         onResume: function() {
             console.log("onResume");
         },
-        canvas: {
-            backgroundColor: 0,
-            backgroundGradient: 'none'
-        },
-        clip: {
-        },
-        plugins:
-        {
-            controls: {
-                backgroundColor: '#ff0000',
-                autoHide: false
-            }
-        }
+
+        // configure the required plugins
+plugins:  {
+
+    // the RTMP plugin
+    rtmp: {
+        url: 'flowplayer.rtmp.swf',
+
+        // netConnectionUrl has our CloudFront domain name + 'cfx/st'
+        netConnectionUrl: 'rtmp://s3b78u0kbtx79q.cloudfront.net/cfx/st'
+    }
+},
+
+clip: {
+    // use the RTMP plugin
+    provider: 'rtmp'
+}
 
     });
 </script>

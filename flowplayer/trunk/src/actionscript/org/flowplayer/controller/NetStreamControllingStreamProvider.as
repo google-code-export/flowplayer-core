@@ -784,7 +784,7 @@ package org.flowplayer.controller {
                     _connection.close();
                     _connection = null;
                 }
-                clip.setContent(null);
+//                clip.setContent(null);
             } else {
                 silentSeek = true;
                 netStream.client = new NullNetStreamClient();

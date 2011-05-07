@@ -11,16 +11,25 @@
 
 	<div id="page">
         <a
-                     href="N9m/See/N9mSeeexq.flv"
+                     href="livestream"
                      style="display:block;width:440px;height:247px"
                      id="player">
                 </a>
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.rtmp.*, org.flowplayer.controller.*' },
+        log: { level: 'debug', filter: 'org.flowplayer.rtmp.*,org.flowplayer.controller.ParallelRTMPConnector' },
+        onBegin: function() {
+            console.log("onBegin");
+        },
+        onBeforeBegin: function() {
+            console.log("onBeforeBegin");
+        },
         onStart: function() {
             console.log("onStart");
+        },
+        onMetaData: function() {
+            console.log("onMetaData");
         },
 
         onFinish: function() {
@@ -35,17 +44,19 @@
             console.log("onResume");
         },
 
-
-        clip: {
-            url: 'cached_media/0001/0001911/0001911244/1911244.flv',
-            provider: 'rtmp'
-        },
-
         plugins: {
             rtmp: {
                 url: 'flowplayer.rtmp.swf',
-                netConnectionUrl: 'rtmp://media.ramp.com/video'
+                netConnectionUrl: 'rtmfp://172.16.39.132/multicast'
             }
+        },
+        clip: {
+            // it's possible to stream audio by using the RTMP plugin
+            autoPlay: false,
+            provider: 'rtmp',
+
+            // G:010121050f20a8005b5675e80bf8b6d89d24096c4bb0d0285eb884a74603920a9caecb8a010c0e0e6d79437573746f6d47726f7570011b00070ae00000fe75300d156d7953656372657450617373
+            p2pGroupSpec: 'G:010121050f20a8005b5675e80bf8b6d89d24096c4bb0d0285eb884a74603920a9caecb8a010c0e0e6d79437573746f6d47726f7570011b00070ae00000fe75300d156d7953656372657450617373'
         }
     });
 </script>

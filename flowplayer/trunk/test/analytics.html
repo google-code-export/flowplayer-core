@@ -18,7 +18,7 @@
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.controls.config.Config' },
+        log: { level: 'debug', filter: 'org.flowplayer.analytics.*' },
         onStart: function() {
             console.log("onStart");
         },
@@ -34,17 +34,16 @@
         onResume: function() {
             console.log("onResume");
         },
-        canvas: {
-            backgroundColor: 0,
-            backgroundGradient: 'none'
-        },
-        clip: {
-        },
+
+        playlist: [
+            "../build/honda_accord.flv",
+            "../build/play.png"
+        ],
         plugins:
         {
-            controls: {
-                backgroundColor: '#ff0000',
-                autoHide: false
+            analytics: {
+                url: 'flowplayer.analytics.swf',
+                clipTypes: [ "image" ]
             }
         }
 

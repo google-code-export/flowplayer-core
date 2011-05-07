@@ -18,7 +18,10 @@
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.controls.config.Config' },
+        log: { level: 'debug', filter: 'org.flowplayer.audio.*' },
+        onBegin: function() {
+            console.log("onBegin");
+        },
         onStart: function() {
             console.log("onStart");
         },
@@ -34,20 +37,20 @@
         onResume: function() {
             console.log("onResume");
         },
-        canvas: {
-            backgroundColor: 0,
-            backgroundGradient: 'none'
-        },
+
         clip: {
+            url:'../build/fake_empire.mp3',
+            autoPlay: false,
+            provider: 'audio'
         },
-        plugins:
-        {
+        plugins: {
+            audio: {
+                url: 'flowplayer.audio.swf'
+            },
             controls: {
-                backgroundColor: '#ff0000',
-                autoHide: false
+                stop:true
             }
         }
-
     });
 </script>
 	</div>

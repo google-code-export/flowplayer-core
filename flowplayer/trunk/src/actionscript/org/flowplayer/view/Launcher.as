@@ -451,12 +451,12 @@ import org.flowplayer.model.DisplayPluginModel;
 		}
 
 		public function handleError(error:ErrorCode, info:Object = null, throwError:Boolean = true):void {
-			if (_flowplayer) {
-				_flowplayer.dispatchError(error, info);
-			} else {
-				// initialization is not complete, create a dispatches just to dispatch this error
-				new PlayerEventDispatcher().dispatchError(error, info);
-			}
+            if (_flowplayer) {
+                _flowplayer.dispatchError(error, info);
+            } else {
+                // initialization is not complete, create a dispatcher just to dispatch this error
+                new PlayerEventDispatcher().dispatchError(error, info);
+            }
 			var stack:String = "";
 			if ( CONFIG::debug && info is Error && info.getStackTrace() )
 				stack = info.getStackTrace();
@@ -754,7 +754,10 @@ import org.flowplayer.model.DisplayPluginModel;
 				_screenMask.height = stageVideo.viewPort.height;
 				_screenMask.x = stageVideo.viewPort.x;
 				_screenMask.y = stageVideo.viewPort.y;
-				
+
+                log.debug("mask dimensions " + _screenMask.width + " x " + _screenMask.height);
+                log.debug("mask pos " + _screenMask.x + ", " + _screenMask.y);
+
 				if ( ! contains(_screenMask) ) {
 					addChildAt(_screenMask, _canvasLogo ? getChildIndex(_canvasLogo) + 1 : 1);
 					log.debug("adding mask");

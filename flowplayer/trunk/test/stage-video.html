@@ -18,7 +18,7 @@
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.controls.config.Config' },
+        log: { level: 'debug', filter: 'org.flowplayer.view.Launcher' },
         onStart: function() {
             console.log("onStart");
         },
@@ -34,18 +34,16 @@
         onResume: function() {
             console.log("onResume");
         },
-        canvas: {
-            backgroundColor: 0,
-            backgroundGradient: 'none'
-        },
-        clip: {
-        },
+
+        playlist: [
+                "http://pseudo01.hddn.com/vod/demo.flowplayervod/flowplayer-700.flv",
+            {
+                url: "http://pseudo01.hddn.com/vod/demo.flowplayervod/flowplayer-700.flv",
+                accelerated: false
+            }
+        ],
         plugins:
         {
-            controls: {
-                backgroundColor: '#ff0000',
-                autoHide: false
-            }
         }
 
     });

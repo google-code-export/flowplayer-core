@@ -11,16 +11,16 @@
 
 	<div id="page">
         <a
-                     href="http://pseudo01.hddn.com/vod/demo.flowplayervod/flowplayer-700.flv"
+                     href="http://e1h13.simplecdn.net/flowplayer/flowplayer.flv"
                      style="display:block;width:440px;height:247px"
                      id="player">
                 </a>
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.controls.config.Config' },
-        onStart: function() {
-            console.log("onStart");
+        log: { level: 'debug', filter: 'org.flowplayer.controller.NetStreamControllingStreamProvider' },
+        onStart: function(clip) {
+            console.log("onStart: " + clip.url);
         },
 
         onFinish: function() {
@@ -34,23 +34,28 @@
         onResume: function() {
             console.log("onResume");
         },
-        canvas: {
-            backgroundColor: 0,
-            backgroundGradient: 'none'
-        },
-        clip: {
-        },
-        plugins:
-        {
+
+        // Videos to be played:
+       clip: {
+           baseUrl: '../build',
+           accelerated: false
+       },
+        playlist: [
+                'honda_accord.flv',
+            'http://activepitch.com/artist_data/hayes_macarthur/clips/p20128-150.flv',
+            'http://activepitch.com/artist_data/hayes_macarthur/clips/p20129-150.flv',
+            'http://activepitch.com/artist_data/hayes_macarthur/clips/p20127-150.flv'
+        ],
+        plugins: {
             controls: {
-                backgroundColor: '#ff0000',
-                autoHide: false
+                autoHide: false,
+                playlist: true
             }
         }
 
     });
 </script>
 	</div>
-	
-	
+
+
 </body></html>

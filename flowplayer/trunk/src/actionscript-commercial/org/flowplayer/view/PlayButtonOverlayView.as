@@ -179,7 +179,8 @@ package org.flowplayer.view {
 
             // onBegin is here because onBeforeBegin is not dispatched when playing after a timed out and invalid netConnection
             eventSupport.onStart(hideButton);
-            
+            eventSupport.onStart(stopBuffering);
+
             eventSupport.onBeforeBegin(hideButton);
 			eventSupport.onBeforeBegin(startBuffering);
 			

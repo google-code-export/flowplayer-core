@@ -214,6 +214,7 @@ package org.flowplayer.view {
                 disp.visible = true;
                 //disp.alpha = 0; // fix for #84
                 log.debug("starting fadeIn for " + disp);
+//                disp.alpha = 1;
                 _animationEngine.cancel(disp);
 				_animationEngine.animateProperty(disp, "alpha", 1, clipNow.fadeInSpeed);
 				Arrange.center(disp, width, height);

@@ -11,14 +11,14 @@
 
 	<div id="page">
         <a
-                     href="http://e1h13.simplecdn.net/flowplayer/flowplayer.flv"
+                     href="../build/flowplayer.flv"
                      style="display:block;width:440px;height:247px"
                      id="player">
                 </a>
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.bwcheck.*' },
+        log: { level: 'error', filter: 'org.flowplayer.controls.scrubber.ScrubberSlider, org.flowplayer.controls.scrubber.ScrubberController' },
         onStart: function() {
             console.log("onStart");
         },
@@ -35,11 +35,16 @@
             console.log("onResume");
         },
 
-        // Videos to be played:
-       clip: {
-           url: "http://content.tv3.ie/content/videos/0138/Amnews_Tv3_16x9_1_31861.mp4",
-           scaling: 'orig'
-       }
+        onSeek: function() {
+            console.log("onSeek");
+        },
+
+        clip: {
+        },
+
+        plugins: {
+//            controls: { tooltips: false }
+        }
 
     });
 </script>

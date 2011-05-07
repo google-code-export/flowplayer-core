@@ -18,7 +18,7 @@
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.controls.scrubber.*, org.flowplayer.ui.tooltips.*' },
+        log: { level: 'info', filter: 'org.flowplayer.controller.*, org.flowplayer.pseudostreaming.*' },
         onStart: function() {
             console.log("onStart");
         },
