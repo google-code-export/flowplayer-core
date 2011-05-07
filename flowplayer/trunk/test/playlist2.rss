@@ -1,0 +1,18 @@
+<rss version="2.0"
+  xmlns:media="http://search.yahoo.com/mrss/"
+  xmlns:fp="http://flowplayer.org/fprss/">
+  <channel>
+     <title>Playlist</title>
+
+      <item>
+          <media:content url="../build/flowplayer.flv" type="video/x-flv" />
+          <fp:clip duration="3.8" />
+      </item>
+
+      <item>
+          <media:content url="../build/honda_accord.flv" type="video/x-flv" />
+          <fp:clip duration="3.8" />
+      </item>
+
+  </channel>
+</rss>

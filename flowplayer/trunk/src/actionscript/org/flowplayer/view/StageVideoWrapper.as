@@ -85,9 +85,6 @@ package org.flowplayer.view {
 		}
 
 		private function useStageVideo(availableNow:Boolean):void {
-		//	if ( availableNow == _hasStageVideo )
-		//		return;
-				
 			log.debug("useStageVideo : "+ availableNow);
 				
 			_hasStageVideo = availableNow;
@@ -134,6 +131,7 @@ package org.flowplayer.view {
 		}
 	
 		override public function set visible(value:Boolean):void {
+            log.debug("set visible " + value);
 			_visible = value;
 			if ( hasStageVideo ) {
 				_updateStageVideo();

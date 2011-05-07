@@ -207,12 +207,12 @@ package org.flowplayer.view {
 			if (state == State.PAUSED) {
 				resume();
 				return true;
-			} else if (state == State.PLAYING) {
+            } else if (state == State.WAITING) {
+                play();
+                return true;
+			} else {
 				pause();
 				return false;
-			} else if (state == State.WAITING) {
-				play();
-				return true;
 			}
 			return false;
 		}

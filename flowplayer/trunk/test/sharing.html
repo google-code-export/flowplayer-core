@@ -16,36 +16,28 @@
                      id="player">
                 </a>
 <script>
-    flowplayer("player", "../build/flowplayer.swf",
+flowplayer("player", "../build/flowplayer.swf",
+{
+    log: { level: 'debug', filter: 'org.flowplayer.ui.Dock' },
+
+    clip: {
+        autoPlay: false,
+        pageUrl: 'http://google.com'
+    },
+    plugins:
     {
-        log: { level: 'debug', filter: 'org.flowplayer.ui.Dock' },
-
-        clip: {
-//            linkUrl: "http://twitter.com",
-//            linkWindow: '_popup',
-            autoPlay: false
-        },
-        plugins:
-        {
-            sharing: {
-                url: 'flowplayer.sharing.swf',
-                twitter: {
-                    shareWindow: '_blank'
-                }
-//                ,
-//                email: false,
-//                embed: false
+        sharing: {
+            url: 'flowplayer.sharing.swf',
+            twitter: {
+                description: 'twitter foobar'
+            },
+            facebook: {
+                description: 'foobar'
             }
-//            ,
-//            dock: {
-//                autoHide: false,
-//                right: 10,
-//                horizontal: false,
-//                width: '10%'
-//            }
         }
+    }
 
-    });
+});
 </script>
 	</div>
 	
