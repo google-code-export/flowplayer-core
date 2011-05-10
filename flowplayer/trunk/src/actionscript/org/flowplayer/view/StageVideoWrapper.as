@@ -63,11 +63,17 @@ package org.flowplayer.view {
 			
 			_clip = clip;
 			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+			addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
 		}
 		
 		private function onAddedToStage(event:Event):void {
 			_stage = stage;
 			_stage.addEventListener(StageVideoAvailabilityEvent.STAGE_VIDEO_AVAILABILITY, onAvailabilityChanged);
+		}
+		
+		private function onRemovedFromStage(event:Event):void {
+			_stage.removeEventListener(StageVideoAvailabilityEvent.STAGE_VIDEO_AVAILABILITY, onAvailabilityChanged);
+			_stage = null;
 		}
 
 		public function get stageVideo():StageVideo {
