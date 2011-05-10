@@ -34,6 +34,7 @@ package org.flowplayer.view {
 	
 	import flash.events.Event;
 	import flash.events.StageVideoAvailabilityEvent;
+	import flash.events.StageVideoEvent;
 
 	import org.flowplayer.model.Clip;
 	import org.flowplayer.model.ClipEventType;
@@ -104,21 +105,31 @@ package org.flowplayer.view {
 			_netStream = netStream;
 			if ( hasStageVideo ) {
 				log.info("Attaching netstream to stageVideo");
-				stageVideo.attachNetStream(_netStream);
-				super.attachNetStream(null);
 				
-			}
-			else {
+				stageVideo.attachNetStream(_netStream);
+				stageVideo.addEventListener(StageVideoEvent.RENDER_STATE, _displayStageVideo);
+				
+			} else {
 				log.info("Attaching netstream to video");
 				
 				super.attachNetStream(_netStream);
 				
 				if ( _stageVideo != null ) 
 					_stageVideo.attachNetStream(null);
+					
+				visible = _visible;
+				_clip.dispatch(ClipEventType.STAGE_VIDEO_STATE_CHANGE, stageVideo);
 			}
+		}
+		
+		private function _displayStageVideo(event:StageVideoEvent):void {
+			if(event.status != 'software')
+				return;
+				
+			stageVideo.removeEventListener(StageVideoEvent.RENDER_STATE, _displayStageVideo);
+			super.attachNetStream(null);
 			
 			visible = _visible;
-			
 			_clip.dispatch(ClipEventType.STAGE_VIDEO_STATE_CHANGE, stageVideo);
 		}
 		
