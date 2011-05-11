@@ -194,7 +194,7 @@ package org.flowplayer.config {
 		
 		private function getVersionFromSwfName(swfName:String):String {
             log.debug("getVersionFromSwfName() " + playerSwfName);
-			if (playerSwfName.indexOf(swfName) < 0) return null;
+			if (playerSwfName.indexOf(swfName + "-") < 0) return null;
 			if (playerSwfName.indexOf(".swf") < (swfName + "-").length) return null;
             return playerSwfName.substring(playerSwfName.indexOf("-") + 1, playerSwfName.indexOf(".swf"));
 		}
