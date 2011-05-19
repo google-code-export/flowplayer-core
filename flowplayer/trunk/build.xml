@@ -79,6 +79,13 @@
     <property name="apidoc-dist-name" value="flowplayer.asdoc-${version-info}.zip"/>
     <property name="source-dist-name" value="flowplayer-${version-info}-src.zip"/>
 
+    <property name="dist-name-dev" value="flowplayer.zip"/>
+    <property name="commercial-dist-name-dev" value="flowplayer.commercial.zip"/>
+    <property name="multidomain-dist-name-dev" value="flowplayer.multidomain.zip"/>
+    <property name="devkit-dist-name-dev" value="flowplayer.devkit.zip"/>
+    <property name="apidoc-dist-name-dev" value="flowplayer.asdoc.zip"/>
+    <property name="source-dist-name-dev" value="flowplayer-src.zip"/>
+
     <target name="clean" depends="clean-plugins">
         <delete dir="${build-dir}">
             <include name="*swf"/>
