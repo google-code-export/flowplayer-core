@@ -22,7 +22,7 @@
         flowplayer("player", "../build/flowplayer.swf",
         {
 //            log: { level: 'info', filter: 'org.flowplayer.view.VideoDisplay, org.flowplayer.controller.StreamProviderController' },
-            log: { level: 'debug', filter: 'org.flowplayer.slowmotion.*' },
+            log: { level: 'error', filter: 'org.flowplayer.slowmotion.*' },
             onStart: function() {
                 console.log("onStart");
             },
@@ -32,7 +32,7 @@
             },
 
             onFinish: function() {
-                console.log("onFinish");
+                $f().play('honda_accord');
             },
 
             onPause: function() {
@@ -94,13 +94,14 @@
             clip: {
                 // use the RTMP plugin
                 provider: 'rtmp',
-                bufferLength: 10
+                bufferLength: 10,
+                url: 'Extremists'
 //                ,
 //                baseUrl: 'vod/demo.flowplayervod'
-            },
-            playlist: [
-                    'Extremists', 'honda_accord', 'metacafe'
-            ]
+            }
+//            playlist: [
+//                    'Extremists', 'honda_accord', 'metacafe'
+//            ]
         });
 
 

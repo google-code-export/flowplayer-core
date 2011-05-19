@@ -11,12 +11,12 @@
 
 	<div id="page">
         <a
-                     href="http://pseudo01.hddn.com/vod/demo.flowplayervod/flowplayer-700.flv"
+                     href="../build/flowplayer-700.mp4"
                      style="display:block;width:440px;height:247px"
                      id="player">
                 </a>
 <script>
-    flowplayer("player", "../build/flowplayer.swf",
+    flowplayer("player", { src: "../build/flowplayer.swf", wmode: 'direct' },
     {
         log: { level: 'debug', filter: 'org.flowplayer.view.Launcher' },
         onStart: function() {
@@ -34,14 +34,15 @@
         onResume: function() {
             console.log("onResume");
         },
-
-        playlist: [
-                "http://pseudo01.hddn.com/vod/demo.flowplayervod/flowplayer-700.flv",
-            {
-                url: "http://pseudo01.hddn.com/vod/demo.flowplayervod/flowplayer-700.flv",
-                accelerated: false
-            }
-        ],
+        clip: { accelerated: true },
+//        playlist: [
+//                "http://pseudo01.hddn.com/vod/demo.flowplayervod/flowplayer-700.flv",
+//            {
+//                url: "http://pseudo01.hddn.com/vod/demo.flowplayervod/flowplayer-700.flv"
+//                ,
+//                accelerated: true
+//            }
+//        ],
         plugins:
         {
         }

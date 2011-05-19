@@ -18,7 +18,7 @@
 <script>
 flowplayer("player", "../build/flowplayer.swf",
 {
-    log: { level: 'debug', filter: 'org.flowplayer.ui.Dock' },
+    log: { level: 'debug', filter: 'org.flowplayer.sharing.Sharing' },
 
     clip: {
         autoPlay: false,
@@ -31,8 +31,17 @@ flowplayer("player", "../build/flowplayer.swf",
             twitter: {
                 description: 'twitter foobar'
             },
+
             facebook: {
-                description: 'foobar'
+                // facebook sharing is opened to the current browser window
+                shareWindow: '_self'
+            },
+            twitter: {
+                // tweeting also happens in the current browser window
+                shareWindow: '_self'
+            },
+            embed: {
+                notification: 'copied that sucker'
             }
         }
     }

@@ -17,7 +17,7 @@ public class BuiltInConfig {
 //    public var Logo:Class;
 
     public static const config:Object = { 
-//       "plugins": {
+       "plugins": {
 //           "psuedo": {
 //               "url": 'org.flowplayer.psuedostreaming.PseudoStreamProvider'
 //           }
@@ -26,10 +26,10 @@ public class BuiltInConfig {
 //        },
 //        "controls": {
 //            "url": 'org.flowplayer.controls.Controls'
-//		        }
+//		}
 //           viral: {
 //               url: 'org.flowplayer.shareembed.ShareEmbed'
-//           }
+           }
        }
     }; 
 }

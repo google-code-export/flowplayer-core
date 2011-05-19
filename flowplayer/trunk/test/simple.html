@@ -16,9 +16,12 @@
                      id="player">
                 </a>
 <script>
-    flowplayer("player", "../build/flowplayer.swf",
+    flowplayer("player", "../build/flowplayer.commercial.swf",
     {
-        log: { level: 'error', filter: 'org.flowplayer.controls.scrubber.ScrubberSlider, org.flowplayer.controls.scrubber.ScrubberController' },
+        log: { level: 'debug', filter: 'org.flowplayer.config.PluginBuilder' },
+
+        key: '#$b6223bfbd646c621758',
+
         onStart: function() {
             console.log("onStart");
         },
@@ -43,7 +46,7 @@
         },
 
         plugins: {
-//            controls: { tooltips: false }
+            controls: { autoHide: false }
         }
 
     });

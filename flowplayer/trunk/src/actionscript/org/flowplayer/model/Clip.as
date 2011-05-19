@@ -21,7 +21,7 @@ package org.flowplayer.model {
 
     import org.flowplayer.controller.ClipURLResolver;
     import org.flowplayer.controller.ConnectionProvider;
-import org.flowplayer.flow_internal;
+    import org.flowplayer.flow_internal;
 	import org.flowplayer.model.ClipEvent;
 	import org.flowplayer.util.ArrayUtil;
 	import org.flowplayer.util.Log;
@@ -107,7 +107,7 @@ import org.flowplayer.flow_internal;
 			_image = true;
 			_cuepointMultiplier = 1000;
             _seekableOnBegin = null;
-			_accelerated = VersionUtil.hasStageVideo();
+			_accelerated = false;
 		}
 
 		public static function create(clipObj:Object, url:String, baseUrl:String = null):Clip {
