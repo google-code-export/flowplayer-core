@@ -34,6 +34,8 @@ import org.flowplayer.flow_internal;
 		public static const CUEPOINT:ClipEventType = new ClipEventType("onCuepoint");
         public static const SEEK:ClipEventType = new ClipEventType("onSeek");
         public static const SWITCH:ClipEventType = new ClipEventType("onSwitch");
+        public static const SWITCH_FAILED:ClipEventType = new ClipEventType("onSwitchFailed");
+        public static const SWITCH_COMPLETE:ClipEventType = new ClipEventType("onSwitchComplete");
 
 		public static const BUFFER_EMPTY:ClipEventType = new ClipEventType("onBufferEmpty");
 		public static const BUFFER_FULL:ClipEventType = new ClipEventType("onBufferFull");
@@ -43,6 +45,7 @@ import org.flowplayer.flow_internal;
 		public static const ERROR:ClipEventType = new ClipEventType("onError");
 		public static const NETSTREAM_EVENT:ClipEventType = new ClipEventType("onNetStreamEvent");
 		public static const CONNECTION_EVENT:ClipEventType = new ClipEventType("onConnectionEvent");
+        public static const PLAY_STATUS:ClipEventType = new ClipEventType("onPlayStatus");
 
         public static const PLAYLIST_REPLACE:ClipEventType = new ClipEventType("onPlaylistReplace");
         public static const CLIP_ADD:ClipEventType = new ClipEventType("onClipAdd");
