@@ -6,6 +6,8 @@ Version history:
 - Adds support for StageVideo. To enable it set clip.accelerated to true.
 - Tries to reload two times if the stream is not initially found. Also does 3 connection attempts if the connection fails with RTMP.
 - Support for FMS slow motion
+- Added onPlayStatus clip event handler on NetStreamClient.
+- Added new clip events for stream switching onSwitchFailed and onSwitchComplete
 
 3.2.7
 -----

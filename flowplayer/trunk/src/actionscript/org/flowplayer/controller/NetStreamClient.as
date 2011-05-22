@@ -18,6 +18,8 @@
  */
 
 package org.flowplayer.controller {
+
+
 import flash.utils.Dictionary;
 import org.flowplayer.util.Log;
 import org.flowplayer.config.Config;
@@ -98,6 +100,12 @@ import org.flowplayer.model.ClipEventType;
 		public function onTextData(infoObject:Object):void {
 			_clip.dispatchNetStreamEvent("onTextData", infoObject);
 		}
+
+        public function onPlayStatus(...rest):void {
+            //some wowza servers use different arguments.
+            var info:Object = rest.length > 1 ? rest[2] : rest[0];
+            _clip.dispatch(ClipEventType.PLAY_STATUS, info);
+        }
 
         private function addStreamCallback(name:String, listener:Function):void {
             log.debug("registering callback " + name);

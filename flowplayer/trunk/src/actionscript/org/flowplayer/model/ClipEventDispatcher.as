@@ -153,6 +153,22 @@ package org.flowplayer.model {
             setListener(ClipEventType.CLIP_RESIZED, listener, null, false, addToFront);
         }
 
+        public function onPlayStatus(listener:Function, addToFront:Boolean = false):void {
+            setListener(ClipEventType.PLAY_STATUS, listener, null, false, addToFront);
+        }
+
+        public function onSwitch(listener:Function, addToFront:Boolean = false):void {
+            setListener(ClipEventType.SWITCH, listener, null, false, addToFront);
+        }
+
+        public function onSwitchFailed(listener:Function, addToFront:Boolean = false):void {
+            setListener(ClipEventType.SWITCH_FAILED, listener, null, false, addToFront);
+        }
+
+        public function onSwitchComplete(listener:Function, addToFront:Boolean = false):void {
+            setListener(ClipEventType.SWITCH_COMPLETE, listener, null, false, addToFront);
+        }
+
 		/**
 		 * Adds a StageVideo state change event listener. The event is fired when the player uses or discards StageVideo
 		 * @param listener
