@@ -228,7 +228,7 @@ import flash.net.navigateToURL;
 		}
 		
 		private function loadOrDrawBackground():void {
-			if (_style.backgroundImage) {
+			if (_style.backgroundImage && _style.backgroundImage != "none") {
 				log.debug("stylesheet specified a background image " + _style.backgroundImage);
 				loadBackgroundImage();
 			} else {
