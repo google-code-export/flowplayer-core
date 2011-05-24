@@ -86,7 +86,7 @@ package org.flowplayer.model {
         private var _netStream:NetStream;
         private var _startDispatched:Boolean;
         private var _currentTime:Number = 0;
-        private var _endLimit:Number = 0.5;
+        private var _endLimit:Number = 0;
         private var _encoding:Boolean = false;
 
         public function Clip() {
