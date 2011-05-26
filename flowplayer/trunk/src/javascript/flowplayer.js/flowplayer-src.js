@@ -531,8 +531,6 @@ function Player(wrapper, params, conf) {
 		load: function(fn) { 
 			if (!self.isLoaded() && self._fireEvent("onBeforeLoad") !== false) {
 				var onPlayersUnloaded = function() {
-					html = wrapper.innerHTML;				
-				
 					// do not use splash as alternate content for flashembed
 					if (html && !flashembed.isSupported(params.version)) {
 						wrapper.innerHTML = "";					
@@ -584,23 +582,24 @@ function Player(wrapper, params, conf) {
 				isUnloading = true;
 				// try closing
 				try {
-					if (api) { 
+					if (api) {
 						api.fp_close();
 						
 						// fire unload only when API is present
 						self._fireEvent("onUnload");
 					}				
-				} catch (error) {}				
+				} catch (error) {}
 				
 				var clean = function() {
-					api = null;				
+					api = null;
 					wrapper.innerHTML = html;
 					isUnloading = false;
 					
 					if ( fn ) { fn(true); }
 				};
-				
-				setTimeout(clean, 50);			
+
+                clean();
+//				setTimeout(clean, 50);
 			} 
 			else if ( fn ) { fn(false); }
 			
@@ -946,7 +945,8 @@ function Player(wrapper, params, conf) {
 		playerId = wrapper.id || "fp" + makeId();
 		apiId = params.id || playerId + "_api";
 		params.id = apiId;
-		
+        html = wrapper.innerHTML;
+
 
 		// plain url is given as config
 		if (typeof conf == 'string') {

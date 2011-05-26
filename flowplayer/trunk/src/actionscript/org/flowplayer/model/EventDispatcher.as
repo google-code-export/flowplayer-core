@@ -130,10 +130,13 @@ package org.flowplayer.model {
             if (event.target == null) {
                 event.target = this;
             }
+
+            // First dispatch internal to flash and then to JS. This way the internal state
+            // is correct when the event gets to the JS event listeners.
+            _dispatchEvent(event, _listeners);
             if (fireExternal) {
                 dispatchExternalEvent(event);
             }
-            _dispatchEvent(event, _listeners);
         }
 
         /**
