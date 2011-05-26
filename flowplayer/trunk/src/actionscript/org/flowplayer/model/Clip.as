@@ -17,22 +17,18 @@
  */
 
 package org.flowplayer.model {
+    import flash.display.DisplayObject;
+    import flash.media.Video;
     import flash.net.NetStream;
+    import flash.utils.Dictionary;
 
     import org.flowplayer.controller.ClipURLResolver;
-    import org.flowplayer.controller.ConnectionProvider;
     import org.flowplayer.flow_internal;
-	import org.flowplayer.model.ClipEvent;
-	import org.flowplayer.util.ArrayUtil;
-	import org.flowplayer.util.Log;
-	import org.flowplayer.util.URLUtil;
-	import org.flowplayer.util.VersionUtil;
-	
-	import flash.display.DisplayObject;
-	import flash.media.Video;
-	import flash.utils.Dictionary;		
-	
-	use namespace flow_internal;		
+    import org.flowplayer.util.ArrayUtil;
+    import org.flowplayer.util.URLUtil;
+    import org.flowplayer.util.VersionUtil;
+
+    use namespace flow_internal;
 
 	/**
 	 * @inheritDoc
@@ -48,7 +44,6 @@ package org.flowplayer.model {
 
 		private var _cuepoints:Dictionary;
 		private var _cuepointsInNegative:Array;
-//		private var _previousPositives:Array;
 		private var _baseUrl:String;
 		private var _url:String;
         private var _urlsByResolver:Array;
@@ -615,7 +610,6 @@ package org.flowplayer.model {
 		
 		private function getWidth():int {
 			if (! _content) {
-//				log.warn("Getting width from a clip that does not have content loaded yet, returning zero");
 				return 0;
 			}
 			return _content.width;

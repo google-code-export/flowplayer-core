@@ -43,42 +43,47 @@ package org.flowplayer.config {
 
      		
 	            	try {
-	                   	var clip:Clip = parseClip(item, commonClipObject);
 						if(item.ym::content.length() > 0 && item.ym::thumbnail.length() > 0) {
-							var thumbnail:Clip = parseThumbnail(item, commonClipObject);
-						}
-	                } catch (e:Error) {
+                            var thumbnail:Clip = parseThumbnail(item, commonClipObject);
+                        } else {
+                            thumbnail = null;
+                        }
+                        var clip:Clip = parseClip(item, commonClipObject, thumbnail != null);
+                    } catch (e:Error) {
 	                        if (e.errorID == UNSUPPORTED_TYPE) {
 	                        	log.info("unsupported media type, ignoring this item");
 	                        } else {
 	                        	throw e;
 	                        }
 	                }
-	
-					if (thumbnail) {
-	                	log.info("created clip " + thumbnail);
-	                    result.push(thumbnail);
-	                    if (playlist) {
-	                        playlist.addClip(thumbnail, -2 , true);
-	                    }
-	                }
-	                
-	                if (clip) {
-	                	log.info("created clip " + clip);
-	                    result.push(clip);
-	                    if (playlist) {
-	                        playlist.addClip(clip, -1 , true);
-	                    }
-	                }
-	               
+
+                     if (clip) {
+                         log.info("created clip " + clip);
+                         result.push(clip);
+                         if (playlist) {
+                             playlist.addClip(clip, -1 , true);
+                         }
+                     }
+                     if (thumbnail) {
+                         log.info("created thumbnail clip " + thumbnail);
+                         log.info("clip.index == " + playlist.indexOf(clip));
+                         result.push(thumbnail);
+                         if (playlist) {
+                             playlist.addClip(thumbnail, playlist.indexOf(clip), true);
+                         }
+                     }
+
  	           	}
             }
-            
+            playlist.toIndex(0);
             return result;
         }
         
-        private function parseClip(item:XML, commonClipObject:Object):Clip {
+        private function parseClip(item:XML, commonClipObject:Object, hasThumbnail:Boolean = false):Clip {
             var clip:Clip =  new Clip();
+            if (hasThumbnail) {
+                clip.autoPlay = false;
+            }
             new PropertyBinder(clip, "customProperties").copyProperties(commonClipObject) as Clip;
             
             if (!clip.getCustomProperty("bitrates")) clip.setCustomProperty("bitrates", []);
@@ -117,8 +122,8 @@ package org.flowplayer.config {
             }
 
 			//add flowplayer clip properties
-            if (item.fp::clip.attributes().length() > 0) {
-            	parseClipProperties(item.fp::clip, clip);
+            if (item.fp::thumbnail.attributes().length() > 0) {
+            	parseClipProperties(item.fp::thumbnail, clip);
             }
             
             //add custom clip properties from rss elements
