@@ -138,19 +138,20 @@ import flash.display.LoaderInfo;
         }
 
         public static function openPage(url:String, linkWindow:String = "_blank", popUpDimensions:Array = null):void {
-            if (linkWindow == "_popup" && ExternalInterface.available) {
-                _log.debug("openPage(), opening popup");
+            try {
+                ExternalInterface.call(getJSOpenPageCallString(linkWindow, popUpDimensions, url));
+            } catch (e:Error) {
+                navigateToURL(new URLRequest(url), linkWindow);
+            }
+        }
+
+        private static function getJSOpenPageCallString(linkWindow:String, popUpDimensions:Array, url:String):String {
+            if (linkWindow == "_popup") {
+                _log.debug("getJSOpenPageCallString(), will use a popup");
                 var dimensions:Array = popUpDimensions || [800,600];
-                ExternalInterface.call("window.open('" + url + "','PopUpWindow','width=" + dimensions[0] + ",height=" + dimensions[1] + ",toolbar=yes,scrollbars=yes')");
+                return "window.open('" + url + "','PopUpWindow','width=" + dimensions[0] + ",height=" + dimensions[1] + ",toolbar=yes,scrollbars=yes')";
             } else {
-                // Use JS to bypass popup blockers if ExternalInterface is available
-                var window:String = linkWindow == "_popup" ? "_blank" : linkWindow;
-                if (ExternalInterface.available) {
-                    ExternalInterface.call('window.open("' + url + '","' + window + '")');
-                } else {
-                    //request a blank page
-                    navigateToURL(new URLRequest(url), window);
-                }
+                return 'window.open("' + url + '","' + linkWindow + '")';
             }
         }
     }
