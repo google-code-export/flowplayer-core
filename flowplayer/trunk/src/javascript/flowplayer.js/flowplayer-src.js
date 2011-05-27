@@ -562,15 +562,7 @@ function Player(wrapper, params, conf) {
 		},
 		
 		unload: function(fn) {
-			
-			
-			// if we are fullscreen on safari, we can't unload as it would crash the PluginHost, sorry
-			if (this.isFullscreen() && /WebKit/i.test(navigator.userAgent)) {
-				if ( fn ) { fn(false); }
-				return self;
-			}
-			
-			
+
 			// unload only if in splash state
 			if (html.replace(/\s/g,'') !== '') {
 				
@@ -599,8 +591,7 @@ function Player(wrapper, params, conf) {
 				};
 
                 clean();
-//				setTimeout(clean, 50);
-			} 
+			}
 			else if ( fn ) { fn(false); }
 			
 			return self;
