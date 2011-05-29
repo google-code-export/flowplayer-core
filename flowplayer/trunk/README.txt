@@ -6,8 +6,11 @@ Version history:
 - Adds support for StageVideo. To enable it set clip.accelerated to true.
 - Tries to reload two times if the stream is not initially found. Also does 3 connection attempts if the connection fails with RTMP.
 - Support for FMS slow motion
+- Support for thumbnails in RSS files
 - Added onPlayStatus clip event handler on NetStreamClient.
 - Added new clip events for stream switching onSwitchFailed and onSwitchComplete
+Fixes:
+- fixed to dispatch onStart also when replaying the previous clip, now the JS controlbar again works when replaying
 
 3.2.7
 -----
