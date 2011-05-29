@@ -153,7 +153,7 @@ package org.flowplayer.controller {
                 netStream.resume();
                 _started = true;
                 clip.dispatchEvent(new ClipEvent(ClipEventType.BEGIN, _pauseAfterStart));
-//                start(null, _startedClip, _pauseAfterStart);
+                clip.dispatchEvent(new ClipEvent(ClipEventType.START));
             } catch (e:Error) {
                 if (e.errorID == 2154) {
                     log.debug("error when reusing existing netStream " + e);
