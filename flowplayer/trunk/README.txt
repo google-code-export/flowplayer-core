@@ -12,6 +12,10 @@ Version history:
 Fixes:
 - fixed to dispatch onStart also when replaying the previous clip, now the JS controlbar again works when replaying
 - cuepoints were fired multiple times when there is a playlist with several clips. Issue #150.
+- fixed XML parsing error when metadata's keys contains dashes
+- backgroundImage css property can now be set to "none" to be removed
+- fixed the facts that clips in a playlist were cut off by a fraction in the end
+- fullScreenOnly now works in conjunction with displayTime
 
 3.2.7
 -----
