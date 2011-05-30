@@ -72,11 +72,6 @@ import org.flowplayer.model.ClipEventType;
             _clip.dispatch(ClipEventType.METADATA);
             log.info("metaData parsed and injected to the clip");
         }
-//
-//        private function isNewFile():Boolean {
-//            if (! _previousUrl) return true;
-//            return _clip.url != _previousUrl;
-//        }
 
 		public function onXMPData(infoObject:Object):void {
 			_clip.dispatchNetStreamEvent("onXMPData", infoObject);
