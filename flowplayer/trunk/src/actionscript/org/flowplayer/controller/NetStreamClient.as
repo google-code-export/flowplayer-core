@@ -26,6 +26,7 @@ import org.flowplayer.config.Config;
 import org.flowplayer.controller.NetStreamCallbacks;
 import org.flowplayer.model.Clip;
 import org.flowplayer.model.ClipEventType;
+import org.flowplayer.util.ObjectConverter;
 
 	/**
 	 * @author api
@@ -50,27 +51,62 @@ import org.flowplayer.model.ClipEventType;
 
             log.debug("onMetaData, data for clip " + _clip + ":");
             var metaData:Object = new Object();
-            for (var key:String in infoObject) {
+			 for (var key:String in infoObject) {
 				if ( key == "duration" && _clip && _clip.metaData && _clip.metaData.duration ) {
 					log.debug ("Already got duration, reusing old one");
 					metaData.duration = _clip.metaData.duration;
-					continue;
+				} else {
+					var cKey:String = new ObjectConverter(key).convertKey();
+					
+					metaData[cKey] = new Object();
+					if(infoObject[key] is Array)
+						metaData[cKey] = new Array();
+					
+					if(needsRecursing (infoObject[key])) {
+						for(var subKey:String in infoObject[key]) {
+							var cSubKey:String = new ObjectConverter(subKey).convertKey();
+							metaData[cKey][cSubKey] = 
+								(needsRecursing(infoObject[key][subKey])) 
+									? checkChild(infoObject[key][subKey])
+									: infoObject[key][subKey];
+						}
+					} else {
+						metaData[cKey] = infoObject[key];
+					}	
 				}
-	
-                log.debug(key + ": " + infoObject[key]);
-                metaData[key] = infoObject[key];
             }
+
+            log.debug("metaData : ", metaData);
+            _clip.metaData = metaData;
 
             if (metaData.cuePoints && _clip.cuepoints.length == 0) {
                 log.debug("clip has embedded cuepoints");
                 _clip.addCuepoints(_config.createCuepoints(metaData.cuePoints, "embedded", _clip.cuepointMultiplier));
             }
 
-            _clip.metaData = metaData;
-
             _previousUrl = _clip.url;
+			
             _clip.dispatch(ClipEventType.METADATA);
             log.info("metaData parsed and injected to the clip");
+        }
+
+		private function checkChild(obj:Object):Object {
+			var objToReturn:Object = new Object();
+			if(obj is Array)
+				objToReturn = new Array();
+
+			for(var key:String in obj) {
+				var cKey:String = new ObjectConverter(key).convertKey();
+				if(needsRecursing(obj[key]))
+					objToReturn[cKey] = checkChild(obj[key]);
+				else
+					objToReturn[cKey] = obj[key];
+			}
+			return objToReturn;
+		}
+		
+		private function needsRecursing(newVal:*):Boolean {
+            return ! (newVal is Number || newVal is String || newVal is Boolean);
         }
 
 		public function onXMPData(infoObject:Object):void {
