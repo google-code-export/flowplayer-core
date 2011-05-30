@@ -41,7 +41,6 @@ package org.flowplayer.model {
         private var _preroll:Clip;
         private var _postroll:Clip;
         private var _parent:Clip;
-
 		private var _cuepoints:Dictionary;
 		private var _cuepointsInNegative:Array;
 		private var _baseUrl:String;
@@ -681,8 +680,11 @@ package org.flowplayer.model {
 		[Value]
 		public function get cuepoints():Array {
 			var cues:Array = new Array();
-			for each (var cue:Object in _cuepoints) {
-				cues.push(cue);
+			for each (var value:Object in _cuepoints) {
+                var cues2:Array = value as Array;
+                for each (var cue:Object in cues2) {
+                    cues.push(cue);
+                }
 			}
 			return cues;
 		}

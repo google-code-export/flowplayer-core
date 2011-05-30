@@ -51,7 +51,7 @@ import org.flowplayer.model.ClipEventType;
             log.debug("onMetaData, data for clip " + _clip + ":");
             var metaData:Object = new Object();
             for (var key:String in infoObject) {
-				if ( key == "duration" && ! isNewFile() && _clip && _clip.metaData && _clip.metaData.duration ) {
+				if ( key == "duration" && _clip && _clip.metaData && _clip.metaData.duration ) {
 					log.debug ("Already got duration, reusing old one");
 					metaData.duration = _clip.metaData.duration;
 					continue;
@@ -60,22 +60,23 @@ import org.flowplayer.model.ClipEventType;
                 log.debug(key + ": " + infoObject[key]);
                 metaData[key] = infoObject[key];
             }
-            _clip.metaData = metaData;
 
-            if (metaData.cuePoints && isNewFile()) {
+            if (metaData.cuePoints && _clip.cuepoints.length == 0) {
                 log.debug("clip has embedded cuepoints");
                 _clip.addCuepoints(_config.createCuepoints(metaData.cuePoints, "embedded", _clip.cuepointMultiplier));
             }
+
+            _clip.metaData = metaData;
 
             _previousUrl = _clip.url;
             _clip.dispatch(ClipEventType.METADATA);
             log.info("metaData parsed and injected to the clip");
         }
-
-        private function isNewFile():Boolean {
-            if (! _previousUrl) return true;
-            return _clip.url != _previousUrl;
-        }
+//
+//        private function isNewFile():Boolean {
+//            if (! _previousUrl) return true;
+//            return _clip.url != _previousUrl;
+//        }
 
 		public function onXMPData(infoObject:Object):void {
 			_clip.dispatchNetStreamEvent("onXMPData", infoObject);
