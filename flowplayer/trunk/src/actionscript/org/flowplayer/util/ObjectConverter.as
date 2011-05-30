@@ -1,10 +1,13 @@
 package org.flowplayer.util {
+
 	import flash.utils.describeType;
-import flash.utils.getQualifiedClassName;
+	import flash.utils.getQualifiedClassName;
     import org.flowplayer.model.Clip;
+	import org.flowplayer.util.Log;
 	
 	public class ObjectConverter {
 		private var _input:Object;
+		protected var log:Log = new Log(this);
 
 		public function ObjectConverter(value:*) {
 			_input = value;
@@ -51,6 +54,7 @@ import flash.utils.getQualifiedClassName;
 		private function convertObject(o:Object):Object {
 			var obj:Object = new Object();
 			var classInfo:XML = describeType(o);
+			log.debug("classInfo : " + classInfo.@name.toString());
 			
 			if (classInfo.@name.toString() == "Object") {
                 copyProps(o, obj);
@@ -71,6 +75,11 @@ import flash.utils.getQualifiedClassName;
                 }
 			}
 			return obj;
+		}
+		
+		public function convertKey():String {
+			var reg:RegExp = /-/g;
+			return _input.replace(reg, '_');
 		}
 
 		
