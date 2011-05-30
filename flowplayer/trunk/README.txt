@@ -11,6 +11,7 @@ Version history:
 - Added new clip events for stream switching onSwitchFailed and onSwitchComplete
 Fixes:
 - fixed to dispatch onStart also when replaying the previous clip, now the JS controlbar again works when replaying
+- cuepoints were fired multiple times when there is a playlist with several clips. Issue #150.
 
 3.2.7
 -----
