@@ -1185,13 +1185,13 @@ window.flowplayer = window.$f = function() {
 			// select node by id
 			} else {		
 				var node = el(arg);
-				return new Player(node !== null ? node : arg, params, conf);  	
+				return new Player(node !== null ? node : clone(arg), clone(params), clone(conf));  	
 			} 
 			
 			
 		// arg is a DOM element
 		} else if (arg) {
-			return new Player(arg, params, conf);						
+			return new Player(clone(arg), clone(params), clone(conf));						
 		}
 		
 	} 
