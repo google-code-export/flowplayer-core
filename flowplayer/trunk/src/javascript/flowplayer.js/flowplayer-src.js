@@ -1104,6 +1104,16 @@ function Iterator(arr) {
 	this.size = function() {
 		return arr.length;	
 	};	
+	
+	var self = this;
+	for(name in Player.prototype) {
+	  self[name] = function() {
+ 	    var args = arguments;
+	    self.each(function() {
+    	  this[name].apply(this, args);
+	    });
+	  };
+  	}
 }
 
 // these two variables are the only global variables
