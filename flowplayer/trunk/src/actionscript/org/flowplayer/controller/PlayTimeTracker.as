@@ -102,8 +102,8 @@ package org.flowplayer.controller {
 			checkCompletelyPlayed(_clip);
 			
 			if (! _onLastSecondDispatched && timePassed >= _clip.duration - 1) {
-				_clip.dispatch(ClipEventType.LAST_SECOND);
 				_onLastSecondDispatched = true;
+				_clip.dispatch(ClipEventType.LAST_SECOND);
 			}
 		}
 		
