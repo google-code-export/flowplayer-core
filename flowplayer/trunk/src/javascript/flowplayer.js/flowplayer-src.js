@@ -727,6 +727,12 @@ function Player(wrapper, params, conf) {
 		},
 		
 		setClip: function(clip) {
+			each(clip, function(key, val) {
+				if (typeof val == 'function') {
+					bind(listeners, key, val);	
+					delete clip[key];	
+				}
+			});
 			self.setPlaylist([clip]);
 			return self;
 		},
