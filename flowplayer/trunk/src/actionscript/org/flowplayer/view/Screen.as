@@ -33,6 +33,7 @@ package org.flowplayer.view {
     import org.flowplayer.util.Log;
     import org.flowplayer.util.VersionUtil;
     import org.flowplayer.view.MediaDisplay;
+	import org.flowplayer.util.URLUtil;
 
     import flash.display.DisplayObject;
     import flash.events.Event;
@@ -52,10 +53,14 @@ package org.flowplayer.view {
         private var _fullscreenManager:FullscreenManager;
         private var _animationEngine:AnimationEngine;
         private var _pluginRegistry:PluginRegistry;
+		private var _addDisplayListeners:Dictionary;
+		private var _removeDisplayListeners:Dictionary;
 
         public function Screen(playList:Playlist, animationEngine:AnimationEngine, play:PlayButtonOverlay, pluginRegistry:PluginRegistry) {
             log.debug("in constructor");
             _displays = new Dictionary();
+			_addDisplayListeners = new Dictionary();
+			_removeDisplayListeners = new Dictionary();
             _displayFactory = new MediaDisplayFactory(playList);
             _resizer = new ClipResizer(playList, this);
             createDisplays(playList.clips.concat(playList.childClips));
@@ -67,6 +72,15 @@ package org.flowplayer.view {
 
         override public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void {
             addEventListenerToDisplays(_playList.clips.concat(_playList.childClips), type, listener);
+ 
+			// Sauvegarde du Listener
+			_addDisplayListeners[type] = function(display:DisplayObject):void {
+				display.addEventListener(type, listener);
+			}
+			_removeDisplayListeners[type] = function(display:DisplayObject):void {
+				display.removeEventListener(type, listener);
+			}
+
         }
 
         private function addEventListenerToDisplays(clips:Array, type:String, listener:Function):void {
@@ -96,6 +110,9 @@ package org.flowplayer.view {
             addChild(display);
             log.debug("created display " + display);
             _displays[clip] = display;
+			for(var key:Object in _addDisplayListeners)
+				_addDisplayListeners[key](display);
+			_addDisplayListeners = new Dictionary();
         }
 
         public function setVideoApiOverlaySize(width:Number, height:Number):void {
@@ -228,6 +245,7 @@ package org.flowplayer.view {
         private function onPlaylistChanged(event:ClipEvent):void {
             log.info("onPlaylistChanged()");
             _prevClip = null;
+
             removeDisplays(ClipEventSupport(event.info).clips);
             createDisplays(Playlist(event.target).clips);
         }
@@ -242,7 +260,10 @@ package org.flowplayer.view {
         private function removeDisplays(clips:Array):void {
             for (var i:Number = 0; i < clips.length; i++) {
                 removeChild(_displays[clips[i]]);
+				for(var key:Object in _removeDisplayListeners)
+					_removeDisplayListeners[key](_displays[clips[i]]);
             }
+			_removeDisplayListeners = new Dictionary();
         }
 
         private function addListeners(eventSupport:ClipEventSupport):void {
