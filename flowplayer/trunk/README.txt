@@ -16,6 +16,10 @@ Fixes:
 - backgroundImage css property can now be set to "none" to be removed
 - fixed the facts that clips in a playlist were cut off by a fraction in the end
 - fullScreenOnly now works in conjunction with displayTime
+- JS plugins now handles grouped syntax like flowplayer("a.player" /*...*/ )
+- JS function setClip can now be used to add listeners on the new Clip
+- different players with the same configuration stored in a variable can now use JS plugins
+- using linkUrl now works when calling JS function setClip
 
 3.2.7
 -----
