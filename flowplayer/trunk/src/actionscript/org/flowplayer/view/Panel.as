@@ -17,19 +17,19 @@
  */
 
 package org.flowplayer.view {
-	import org.flowplayer.model.DisplayPropertiesImpl;	
-	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.geom.Rectangle;
+	import flash.system.Capabilities;
 	import flash.utils.Dictionary;
 	
 	import org.flowplayer.layout.DrawWrapper;
 	import org.flowplayer.layout.Layout;
 	import org.flowplayer.layout.MarginLayout;
 	import org.flowplayer.model.DisplayProperties;
-	import org.flowplayer.util.Log;	
+	import org.flowplayer.model.DisplayPropertiesImpl;
+	import org.flowplayer.util.Log;
 
 	/**
 	 * @author anssi
@@ -38,10 +38,12 @@ package org.flowplayer.view {
 
 		private var log:Log = new Log(this);
 		private var layout:Layout;
+		private var zIndexes:Array;
 //		private var displayProperties:Dictionary = new Dictionary();
 
 		public function Panel() {
 			addEventListener(Event.ADDED_TO_STAGE, createLayout);
+			zIndexes = new Array();
 		}
 
 		public function addView(view:DisplayObject, resizeListener:Object = null, properties:DisplayProperties = null):void {
@@ -94,27 +96,46 @@ package org.flowplayer.view {
 		}
 		
 		private function addChildView(properties:DisplayProperties):void {
-			log.info("updating Z index of " + properties + ", target Z index is " + properties.zIndex + ", numChildreb " + numChildren);
+			log.info("updating Z index of " + properties + ", target Z index is " + properties.zIndex + ", numChildren " + numChildren);
 
 			for (var i:int = 0; i < numChildren; i++) {
 				log.debug(getChildAt(i) + " at " + i);
 			}
 
-			if (properties.zIndex < numChildren) {
-				log.debug("adding child at " + properties.zIndex);
-				var currentChild:DisplayObject = getChildAt(properties.zIndex);
-				addChildAt(properties.getDisplayObject(), properties.zIndex);
+			var index:Number;
+			if(numChildren > 0 )
+				log.debug("top index : ", zIndexes);
+			if (numChildren > 0 && properties.zIndex < zIndexes[zIndexes.length -1]) {
+				log.debug("adding child at " + index);
+				index = getPositionToAddByZIndex(properties.zIndex, zIndexes.length - 1);
+				addChildAt(properties.getDisplayObject(), index);
 			} else {
+				index = numChildren;
 				addChild(properties.getDisplayObject());
 			}
-			properties.zIndex = getChildIndex(properties.getDisplayObject());
-			log.debug("Z index updated to  " + properties.zIndex);
+			
+			if(zIndexes.length == 0)
+				zIndexes.push(properties.zIndex);
+			else
+				zIndexes.splice(index, 0, properties.zIndex);
+			log.debug("zIndexes[" + index + "] : " + zIndexes[index]);
 			
 			log.debug("child indexes are now: ");
 
 			for (var j:int = 0; j < numChildren; j++) {
 				log.debug(getChildAt(j) + " at " + j);
 			}
+		}
+		
+		private function getPositionToAddByZIndex(zIndex:int, index:int):int {
+			
+			for(var i:int = 0; i < zIndexes.length; ++i)
+				if(zIndexes[i] > zIndex) {
+					index = i;
+					break;
+				}
+		
+			return index;
 		}
 
 		public function getZIndex(view:DisplayObject):int {
@@ -127,10 +148,10 @@ package org.flowplayer.view {
 		}
 
 		public function update(view:DisplayObject, properties:DisplayProperties):Rectangle {
-			log.debug("updating zIndex to " + properties.zIndex);
+			/*log.debug("updating zIndex to " + properties.zIndex);
 			if (properties.zIndex >= 0) {
 				setChildIndex(view, properties.zIndex < numChildren ? properties.zIndex : numChildren - 1);
-			}
+			}*/
 			return layout.update(view, properties);
 		}
 
