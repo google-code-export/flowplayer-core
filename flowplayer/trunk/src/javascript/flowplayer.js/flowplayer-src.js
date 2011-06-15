@@ -590,7 +590,11 @@ function Player(wrapper, params, conf) {
 					if ( fn ) { fn(true); }
 				};
 
-                clean();
+				if (this.isFullscreen() && /Safari/i.test(navigator.userAgent) && ! /Chrome/i.test(navigator.userAgent)) {
+					setTimeout(clean, 0);
+				} else {
+					clean();
+				}
 			}
 			else if ( fn ) { fn(false); }
 			
