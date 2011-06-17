@@ -27,7 +27,8 @@ package org.flowplayer.view {
 	import org.flowplayer.layout.DrawWrapper;
 	import org.flowplayer.layout.Layout;
 	import org.flowplayer.layout.MarginLayout;
-	import org.flowplayer.model.DisplayProperties;
+    import org.flowplayer.model.DisplayProperties;
+    import org.flowplayer.model.DisplayProperties;
 	import org.flowplayer.model.DisplayPropertiesImpl;
 	import org.flowplayer.util.Log;
 
@@ -38,12 +39,11 @@ package org.flowplayer.view {
 
 		private var log:Log = new Log(this);
 		private var layout:Layout;
-		private var zIndexes:Array;
-//		private var displayProperties:Dictionary = new Dictionary();
+		private var childProps:Array;
 
 		public function Panel() {
 			addEventListener(Event.ADDED_TO_STAGE, createLayout);
-			zIndexes = new Array();
+			childProps = new Array();
 		}
 
 		public function addView(view:DisplayObject, resizeListener:Object = null, properties:DisplayProperties = null):void {
@@ -103,22 +103,22 @@ package org.flowplayer.view {
 			}
 
 			var index:Number;
-			if(numChildren > 0 )
-				log.debug("top index : ", zIndexes);
-			if (numChildren > 0 && properties.zIndex < zIndexes[zIndexes.length -1]) {
-				log.debug("adding child at " + index);
-				index = getPositionToAddByZIndex(properties.zIndex, zIndexes.length - 1);
-				addChildAt(properties.getDisplayObject(), index);
+
+			if (numChildren > 0 && properties.zIndex < childProps[childProps.length -1]) {
+				index = getPositionToAddByZIndex(properties.zIndex);
+                log.debug("adding child at " + index);
+                addChildAt(properties.getDisplayObject(), index);
 			} else {
 				index = numChildren;
 				addChild(properties.getDisplayObject());
 			}
 			
-			if(zIndexes.length == 0)
-				zIndexes.push(properties.zIndex);
+			if(childProps.length == 0)
+				childProps.push(properties);
 			else
-				zIndexes.splice(index, 0, properties.zIndex);
-			log.debug("zIndexes[" + index + "] : " + zIndexes[index]);
+				childProps.splice(index, 0, properties);
+
+			log.debug("childProps[" + index + "] : " + DisplayProperties(childProps[index]).zIndex);
 			
 			log.debug("child indexes are now: ");
 
@@ -127,15 +127,16 @@ package org.flowplayer.view {
 			}
 		}
 		
-		private function getPositionToAddByZIndex(zIndex:int, index:int):int {
+		private function getPositionToAddByZIndex(zIndex:int):int {
 			
-			for(var i:int = 0; i < zIndexes.length; ++i)
-				if(zIndexes[i] > zIndex) {
-					index = i;
+			for(var i:int = 0; i < childProps.length; ++i) {
+                var props:DisplayProperties = childProps[i];
+				if(props.zIndex > zIndex) {
+					return i;
 					break;
 				}
-		
-			return index;
+            }
+			return childProps.length - 1;
 		}
 
 		public function getZIndex(view:DisplayObject):int {
@@ -160,6 +161,14 @@ package org.flowplayer.view {
 			if (! getChildByName(view.name)) {
 				return;
 			}
+            for(var i:int = 0; i < childProps.length; ++i) {
+                var props:DisplayProperties = childProps[i];
+                if(props.getDisplayObject() == view) {
+                    childProps.splice(i, 1);
+                    break;
+                }
+            }
+
 			super.removeChild(view);
 			layout.removeView(view);
 		}
