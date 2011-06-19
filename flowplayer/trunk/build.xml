@@ -101,12 +101,13 @@
         <example player-swf="${player-binary-versioned}" example-dir="example-free"/>
     </target>
 
-    <target name="deploy" if="deploy.dir">
-        <copy todir="${deploy.dir}">
+    <target name="deploy" if="deploy.dir" description="copies swf and js to deploy dirs" depends="minify-js-plugins">
+        <copy todir="${deploy.dir}" overwrite="true">
             <fileset dir="${build-dir}">
                 <include name="*swf"/>
             </fileset>
         </copy>
+        <iterate-plugins target="deploy" buildfiles="${jsplugins.buildfiles}" basedirectory="../jsplugins" />
     </target>
 
     <target name="build" description="builds all" depends="dobuild, deploy" />
@@ -354,6 +355,7 @@
                 <property name="url-file" value="${url-file}"/>
                 <property name="yaml-file" value="${yaml-file}"/>
                 <property name="devkit-dir" value="${devkit-dir}"/>
+                <property name="js.deploy.dir" value="${js.deploy.dir}"/>
             </subant>
         </sequential>
     </macrodef>
@@ -531,6 +533,9 @@
         <echo message="version-status: ${version-status}"/>
     </target>
 
+    <target name="minify-js-plugins">
+        <iterate-plugins target="min" buildfiles="${jsplugins.buildfiles}" basedirectory="../jsplugins"/>
+    </target>
 
 	<target name="debug-js">
 		 <get src="http://flowplayer.org/js/tools/tools.flashembed-1.0.4.js" dest="${dist-dir}/flowplayer-debug.js"/>
