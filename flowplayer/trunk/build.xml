@@ -416,6 +416,7 @@
                 <zipfileset prefix="flowplayer" dir=".">
                     <include name="@{license}"/>
                     <include name="README.txt"/>
+                    <include name="flowplayer-${flowplayer-js-version-info}.min.js"/>
                 </zipfileset>
                 <zipfileset prefix="flowplayer" dir="@{player-swf-dir}">
                     <include name="@{player-swf}"/>
@@ -465,7 +466,7 @@
                     <available file="${dist-dir}/flowplayer/README.txt"/>
                     <available file="${dist-dir}/flowplayer/example/index.html"/>
                     <available file="${dist-dir}/flowplayer/example/style.css"/>
-                    <available file="${dist-dir}/flowplayer/example/flowplayer-${flowplayer-js-version-info}.min.js"/>
+                    <available file="${dist-dir}/flowplayer/flowplayer-${flowplayer-js-version-info}.min.js"/>
                 </and>
             </condition>
             <fail unless="${resources-available}" message="Not all required resources present in @{zip-name}"/>
