@@ -18,7 +18,7 @@
 
 package org.flowplayer.util {
     import com.adobe.utils.StringUtil;
-import flash.display.LoaderInfo;
+	import flash.display.LoaderInfo;
 	import flash.external.ExternalInterface;
     import flash.net.URLRequest;
     import flash.net.navigateToURL;
@@ -33,6 +33,11 @@ import flash.display.LoaderInfo;
 		
 		public static function completeURL(baseURL:String, fileName:String):String {
 			return addBaseURL(baseURL || pageLocation || playerBaseUrl, fileName);
+		}
+		
+		public static function isValid(URL:String):Boolean {
+			var regex:RegExp = /^http(s)?:\/\/((\d+\.\d+\.\d+\.\d+)|(([\w-]+\.)+([a-z,A-Z][\w-]*)))(:[1-9][0-9]*)?(\/([\w-.\/:%+@&=]+[\w- .\/?:%+@&=]*)?)?(#(.*))?$/i;
+			return regex.test(URL);
 		}
 
 		public static function addBaseURL(baseURL:String, fileName:String):String {
