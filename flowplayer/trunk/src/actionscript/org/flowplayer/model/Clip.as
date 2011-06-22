@@ -132,7 +132,7 @@ package org.flowplayer.model {
             clip._url = url;
             clip._baseUrl = baseUrl;
             clip._autoPlay = true;
-            return clip;
+			return clip;
         }
 
         public function getParentPlaylist():Playlist {
@@ -798,7 +798,8 @@ package org.flowplayer.model {
 		}
 		
 		public function set linkUrl(linkUrl:String):void {
-			_linkUrl = linkUrl;
+			if(URLUtil.isValid(linkUrl))
+				_linkUrl = linkUrl;
 		}
 		
 		[Value]		
