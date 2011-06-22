@@ -62,6 +62,10 @@ package org.flowplayer.config {
 			_playlistBuilder = new PlaylistBuilder(playerId, this._configObject.playlist, this._configObject.clip);
 			_controlsVersion = controlsVersion;
 			_audioVersion = audioVersion;
+			if(new RegExp("config={").exec(playerSwfUrl))
+				_configObject.callType = "URL";
+			else
+				_configObject.callType = "default";
 		}
 
         private function createConfigObject(configured:Object, builtInConfig:Object):Object {
@@ -257,5 +261,6 @@ package org.flowplayer.config {
         public function get configObject():Object {
             return _configObject;
         }
+
     }
 }
