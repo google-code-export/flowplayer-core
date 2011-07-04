@@ -20,7 +20,9 @@ Fixes:
 - JS function setClip can now be used to add listeners on the new Clip
 - different players with the same configuration stored in a variable can now use JS plugins
 - using linkUrl now works when calling JS function setClip
-- zIndex for plugins works fine now
+- zIndex for plugins works fine now, issue #302
+- onLastSecond was fired twice, issue #300
+- fixed license key verification on subdomains, issue #318
 
 3.2.7
 -----

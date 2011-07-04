@@ -443,6 +443,19 @@ package org.flowplayer.model {
 			log.info("clip duration set to " + value);
 		}
 
+        [Value]
+        public function get duration():Number {
+            if (_duration > 0) {
+                return _duration;
+            }
+            var metadataDur:Number = durationFromMetadata;
+            if (_start > 0 && metadataDur > _start) {
+                return metadataDur - _start;
+            }
+            return metadataDur || 0;
+        }
+
+        [Value]
 		public function get durationFromMetadata():Number {
 			if (_metaData)
 				return decodeDuration(_metaData.duration);
@@ -473,28 +486,12 @@ package org.flowplayer.model {
 		}
 
 		[Value]
-		public function get duration():Number {
-			if (_duration > 0) {
-				return _duration;
-			}
-			var metadataDur:Number = durationFromMetadata;
-			if (_start > 0 && metadataDur > _start) {
-				return metadataDur - _start;
-			}
-			return metadataDur || 0;
-		}
-
-		[Value]
 		public function get metaData():Object {
 			return _metaData;
 		}
 		
 		public function set metaData(metaData:Object):void {
 			this._metaData = metaData;
-//			if (! (_duration >= 0) && metaData && metaData.duration) {
-//				setNegativeCuepointTimes(metaData.duration);
-//				addCommonClipNegativeCuepoints();
-//			}
 		}
 		
 		[Value]
