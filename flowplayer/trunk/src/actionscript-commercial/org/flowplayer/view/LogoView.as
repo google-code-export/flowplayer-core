@@ -161,7 +161,6 @@ package org.flowplayer.view {
                 _model.fullscreenOnly = fullscreenOnly;
                 //var playerBaseUrl:String = URLUtil.playerBaseUrl(_panel.loaderInfo);
                 var playerBaseUrl:String = URLUtil.playerBaseUrl;
-                if (! verifyLogoUrl(_model.url, playerBaseUrl)) return;
 
                 if (_image && _image.parent == this) {
                     removeChild(_image);
@@ -171,21 +170,6 @@ package org.flowplayer.view {
                 var loader:ResourceLoader = new ResourceLoaderImpl(playerBaseUrl, _player);
                 loader.load(url, onImageLoaded);
             }
-        }
-
-        CONFIG::commercialVersion
-        private function verifyLogoUrl(configuredUrl:String, playerBaseUrl:String):Boolean {
-            if  (! URLUtil.isCompleteURLWithProtocol(configuredUrl)) return true;
-            if (URLUtil.localDomain(playerBaseUrl)) return true;
-
-            var playerDomain:String = KeyUtil.parseDomain(playerBaseUrl, true);
-            if (playerDomain == "flowplayer.org") return true;
-
-            if (KeyUtil.parseDomain(configuredUrl, true) != playerDomain) {
-                log.error("cannot load logo from domain " + KeyUtil.parseDomain(configuredUrl, true));
-                return false;
-            }
-            return true;
         }
 
 		CONFIG::commercialVersion
