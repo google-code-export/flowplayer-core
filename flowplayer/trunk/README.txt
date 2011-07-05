@@ -23,6 +23,7 @@ Fixes:
 - zIndex for plugins works fine now, issue #302
 - onLastSecond was fired twice, issue #300
 - fixed license key verification on subdomains, issue #318
+- fixed XSS vulnerability with linkUrls. Thank you Szymon Gruszecki for discovering and reporting this to us. Issue #329.
 
 3.2.7
 -----
