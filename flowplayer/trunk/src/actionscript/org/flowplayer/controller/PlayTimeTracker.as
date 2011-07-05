@@ -23,7 +23,7 @@ package org.flowplayer.controller {
 		private var log:Log = new Log(this);
 		private var _clip:Clip;
 		private var _startTime:int;
-		private var _timer:Timer;
+		private var _progressTimer:Timer;
 		private var _storedTime:int = 0;
 		private var _onLastSecondDispatched:Boolean;
 		private var _controller:MediaController;
@@ -37,22 +37,22 @@ package org.flowplayer.controller {
 		}
 		
 		public function start():void {
-			if (_timer && _timer.running)
+			if (_progressTimer && _progressTimer.running)
 				stop();
-			_timer = new Timer(30);
-			_timer.addEventListener(TimerEvent.TIMER, checkProgress);
+			_progressTimer = new Timer(30);
+			_progressTimer.addEventListener(TimerEvent.TIMER, checkProgress);
 			_startTime = getTimer();
 			log.debug("started at time " + time);
-			_timer.start();
+			_progressTimer.start();
 			_onLastSecondDispatched = false;
 			
 			_endDetectTimer = new Timer(100);
 		}
 
 		public function stop():void {
-			if (!_timer) return;
+			if (!_progressTimer) return;
 			_storedTime = time;
-			_timer.stop();
+			_progressTimer.stop();
 			log.debug("stopped at time " + _storedTime);
 		}
 
@@ -63,7 +63,7 @@ package org.flowplayer.controller {
 		}
 
 		public function get time():Number {
-			if (! _timer) return 0;
+			if (! _progressTimer) return 0;
 			
 			var timeNow:Number = getTimer();
 			var _timePassed:Number = _storedTime + (timeNow - _startTime)/1000;
@@ -76,12 +76,12 @@ package org.flowplayer.controller {
 				return _controller.time;
 			}
 			
-			if (! _timer.running) return _storedTime;
+			if (! _progressTimer.running) return _storedTime;
 			return _timePassed;
 		}
 
 		private function checkProgress(event:TimerEvent):void {
-			if (!_timer) {
+			if (!_progressTimer) {
                 // log.debug("no timer running");
                 return;
             }
@@ -94,7 +94,7 @@ package org.flowplayer.controller {
 				// Duration may become available once it's loaded from metadata.
 				if (timePassed > 5) {
 					log.debug("durationless clip, stopping duration tracking");
-					_timer.stop();					
+					_progressTimer.stop();
 				}
 				return;
 			}
@@ -108,29 +108,35 @@ package org.flowplayer.controller {
 		}
 		
 		private function checkCompletelyPlayed(clip:Clip):void {
-
-			if ((clip.durationFromMetadata > clip.duration || _clip.endLimit != 0) && time >= clip.duration)
+            // _clip.endLimit is used by the AdSense plugin for some workarounds
+			if ((clip.durationFromMetadata > clip.duration || _clip.endLimit != 0) && time >= clip.duration) {
 				completelyPlayed();
-			else if (clip.duration - time < 2 && !_endDetectTimer.running)
+
+            } else if (clip.durationFromMetadata == 0 && time >= clip.duration) {
+                // durationFromMetadata is zero for images
+                completelyPlayed();
+
+            } else if (clip.duration - time < 2 && !_endDetectTimer.running) {
 				startEndTimer(clip);
-				
+            }
 		}
 		
 		private function startEndTimer(clip:Clip):void {
 		
 			bindEndListeners();
-			_endDetectTimer.addEventListener(TimerEvent.TIMER, 
-				function(event:TimerEvent):void {
-					if(time == _lastTimeDetected && _endDetectTimer.running) {
-						log.debug("clip has reached his end, timer stopped");
-						_endDetectTimer.reset();
-				        completelyPlayed();
-					}
-					_lastTimeDetected = time;
-				}
+            _endDetectTimer.addEventListener(TimerEvent.TIMER,
+                    function(event:TimerEvent):void {
+                        log.debug("last time detected == " + _lastTimeDetected);
+                        if(time == _lastTimeDetected && _endDetectTimer.running) {
+                            log.debug("clip has reached his end, timer stopped");
+                            _endDetectTimer.reset();
+                            completelyPlayed();
+                        }
+                        _lastTimeDetected = time;
+                    }
 			);
 			
-			log.debug("starting timer");
+			log.debug("starting end detect timer");
 			_endDetectTimer.start();
 			
 		}
