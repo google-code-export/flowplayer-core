@@ -109,10 +109,7 @@ package org.flowplayer.controller {
 		
 		private function checkCompletelyPlayed(clip:Clip):void {
             // _clip.endLimit is used by the AdSense plugin for some workarounds
-			if ((clip.durationFromMetadata > clip.duration || _clip.endLimit != 0) && time >= clip.duration) {
-				completelyPlayed();
-
-            } else if (clip.durationFromMetadata == 0 && time >= clip.duration) {
+			if (durationReached) {
                 // durationFromMetadata is zero for images
                 completelyPlayed();
 
@@ -120,14 +117,21 @@ package org.flowplayer.controller {
 				startEndTimer(clip);
             }
 		}
-		
+
+        public function get durationReached():Boolean {
+            if (_clip.durationFromMetadata > _clip.duration) {
+                return time >= _clip.duration;
+            }
+            return _clip.duration - time < _clip.endLimit;
+        }
+
 		private function startEndTimer(clip:Clip):void {
 		
 			bindEndListeners();
             _endDetectTimer.addEventListener(TimerEvent.TIMER,
                     function(event:TimerEvent):void {
                         log.debug("last time detected == " + _lastTimeDetected);
-                        if(time == _lastTimeDetected && _endDetectTimer.running) {
+                        if(time == _lastTimeDetected && _endDetectTimer.running || durationReached) {
                             log.debug("clip has reached his end, timer stopped");
                             _endDetectTimer.reset();
                             completelyPlayed();
@@ -222,10 +226,10 @@ package org.flowplayer.controller {
 			_clip.unbind(stopTimer);
 			_clip.unbind(killTimer);
 		}
-
-		public function get durationReached():Boolean {
-			return _clip.duration > 0 && time >= _clip.duration;
-		}
+//
+//		public function get durationReached():Boolean {
+//			return _clip.duration > 0 && time >= _clip.duration;
+//		}
 		
 	}
 }
