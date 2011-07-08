@@ -55,6 +55,7 @@ package org.flowplayer.view {
     import org.flowplayer.util.LogConfiguration;
     import org.flowplayer.util.PropertyBinder;
     import org.flowplayer.util.TextUtil;
+    import org.flowplayer.util.TimeUtil;
     import org.flowplayer.util.VersionUtil;
     import org.flowplayer.util.URLUtil;
 	import org.flowplayer.view.KeyboardHandler;
@@ -102,6 +103,7 @@ package org.flowplayer.view {
 			var animation:Animation;
             var version:VersionUtil;
             var client:NetConnectionClient;
+            var time:TimeUtil;
 
 			if (_instance) {
 				log.error("Flowplayer already instantiated");

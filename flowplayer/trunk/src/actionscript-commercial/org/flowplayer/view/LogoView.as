@@ -17,34 +17,20 @@
  */
 
 package org.flowplayer.view {
-	import flash.text.TextField;
+    import flash.display.DisplayObject;
+    import flash.events.FullScreenEvent;
+    import flash.events.MouseEvent;
+    import flash.events.TimerEvent;
+    import flash.net.URLRequest;
+    import flash.net.navigateToURL;
+    import flash.text.TextField;
+    import flash.utils.Timer;
 
-    import org.flowplayer.KeyUtil;
     import org.flowplayer.controller.ResourceLoader;
-    import org.flowplayer.model.Plugin;
-    import org.flowplayer.model.PluginModel;
+    import org.flowplayer.controller.ResourceLoaderImpl;
+    import org.flowplayer.model.Logo;
     import org.flowplayer.util.PropertyBinder;
     import org.flowplayer.util.URLUtil;
-	import org.flowplayer.controller.ResourceLoaderImpl;
-	import org.flowplayer.model.DisplayProperties;
-	import org.flowplayer.model.Logo;
-	import org.flowplayer.model.PlayerEvent;
-	import org.flowplayer.util.Arrange;
-	import org.flowplayer.view.AbstractSprite;
-	
-	import flash.display.DisplayObject;
-	import flash.display.StageDisplayState;
-	import flash.events.Event;
-	import flash.events.FullScreenEvent;
-	import flash.events.MouseEvent;
-	import flash.events.TimerEvent;
-	import flash.geom.Rectangle;
-	import flash.net.URLRequest;
-	import flash.net.navigateToURL;
-	import flash.utils.Timer;
-
-    import org.flowplayer.view.BuiltInAssetHelper;
-    import org.flowplayer.view.Flowplayer;
 
     /**
 	 * @author api
@@ -221,9 +207,11 @@ package org.flowplayer.view {
         }
 
 		private function onFullscreen(event:FullScreenEvent):void {
+            log.debug("onFullscreen(), " + (event.fullScreen ? "enter fullscreen" : "exit fullscreen"));
 			if (event.fullScreen) {
 				
-                if ( (_hideTimer && _hideTimer.running) || _model.displayTime < 1) {
+                if ( (_hideTimer && _hideTimer.running)) {
+                    log.debug("onFullscreen(), hide timer is running -> returning")
                     // hide timer is running or the hide time already passed
                     return;
                 }
@@ -241,6 +229,7 @@ package org.flowplayer.view {
 		}
 
 		private function show():void {
+            log.debug("show()");
             if (_preHideAlpha != -1) {
                 this.alpha = _preHideAlpha;
                 _model.alpha = _preHideAlpha;
