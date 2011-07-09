@@ -66,5 +66,12 @@ import org.flowplayer.model.ClipEventType;
 			if ( canOnEvent(ClipEventType.SEEK, [seconds], seconds))
 				onEvent(ClipEventType.SEEK, [seconds]);
 		}
+
+        //fix for #279, switchStream method missing for paused state
+        internal override function switchStream(netStreamPlayOptions:Object = null):void {
+            log.debug("switchStream()");
+            if (canOnEvent(ClipEventType.SWITCH, [netStreamPlayOptions]))
+                onEvent(ClipEventType.SWITCH, [netStreamPlayOptions]);
+        }
 	}
 }
