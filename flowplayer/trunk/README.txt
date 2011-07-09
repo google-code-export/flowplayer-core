@@ -24,6 +24,7 @@ Fixes:
 - onLastSecond was fired twice, issue #300
 - fixed license key verification on subdomains, issue #318
 - fixed XSS vulnerability with linkUrls. Thank you Szymon Gruszecki for discovering and reporting this to us. Issue #329.
+- fixed switch stream api support in paused state. #279.
 
 3.2.7
 -----
