@@ -78,6 +78,7 @@ package org.flowplayer.controller {
         private var _streamCallbacks:Dictionary = new Dictionary();
         private var _timeProvider:TimeProvider;
         private var _seeking:Boolean;
+        private var _switching:Boolean;
         private var _attempts:int;
 
         public function NetStreamControllingStreamProvider() {
@@ -222,6 +223,7 @@ package org.flowplayer.controller {
         public final function switchStream(event:ClipEvent, clip:Clip, netStreamPlayOptions:Object = null):void {
             log.debug("switchStream called");
             if (! _netStream) return;
+            _switching = true;
             //clip.currentTime = 0;
             doSwitchStream(event, _netStream, clip, netStreamPlayOptions);
         }
@@ -453,6 +455,17 @@ package org.flowplayer.controller {
 
         protected final function get silentSeek():Boolean {
             return _silentSeek;
+        }
+
+        /**
+         * Are we switching a stream ?
+         */
+        protected final function get switching():Boolean {
+            return _switching;
+        }
+
+        protected final function set switching(value:Boolean):void {
+            _switching = value;
         }
 
         /**
@@ -828,6 +841,8 @@ package org.flowplayer.controller {
                 dispatchPlayEvent(ClipEventType.PAUSE);
                 _pauseAfterStart = false;
             }
+
+            _switching = false;
         }
 
         private function start(event:ClipEvent, clip:Clip, pauseAfterStart:Boolean = false):void {
