@@ -186,18 +186,18 @@ package org.flowplayer.view {
 		/**
 		 * Pauses the current clip.
 		 */
-		public function pause():FlowplayerBase {
+		public function pause(silent:Boolean = false):FlowplayerBase {
 			log.debug("pause()");
-			_playListController.pause();
+			_playListController.pause(silent);
 			return this;
 		}
 		
 		/**
 		 * Resumes playback of the current clip.
 		 */
-		public function resume():FlowplayerBase {
+		public function resume(silent:Boolean = false):FlowplayerBase {
 			log.debug("resume()");
-			_playListController.resume();
+			_playListController.resume(silent);
 			return this;
 		}
 		
@@ -403,9 +403,9 @@ package org.flowplayer.view {
 		/**
 		 * Seeks to the specified target second value in the clip's timeline.
 		 */
-		public function seek(seconds:Number):FlowplayerBase {
+		public function seek(seconds:Number, silent:Boolean = false):FlowplayerBase {
 			log.debug("seek to " + seconds + " seconds");
-			_playListController.seekTo(seconds);
+			_playListController.seekTo(seconds, silent);
 			return this;
 		}
 		
@@ -413,9 +413,9 @@ package org.flowplayer.view {
 		 * Seeks to the specified point.
 		 * @param the point in the timeline, between 0 and 100
 		 */
-		public function seekRelative(value:Number):FlowplayerBase {
+		public function seekRelative(value:Number, silent:Boolean = false):FlowplayerBase {
 			log.debug("seekRelative " + value + "%, clip is " + playlist.current);
-			seek(playlist.current.duration * (value/100));
+			seek(playlist.current.duration * (value/100), silent);
 			return this;
 		}
 
@@ -637,14 +637,6 @@ package org.flowplayer.view {
          */
         public function createClips(clips:Array):Array {
             return _config.createClips(clips);
-        }
-
-        public function set silent(value:Boolean):void {
-            EventDispatcher.silent = value;
-        }
-
-        public function get silent():Boolean {
-            return EventDispatcher.silent;
         }
 
 		private function resetPlugin(pluginName:String, speed:Number = 500):void {

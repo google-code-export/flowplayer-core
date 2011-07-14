@@ -17,10 +17,10 @@
  */
 
 package org.flowplayer.config {
+
     import org.flowplayer.controller.ResourceLoader;
-import org.flowplayer.flow_internal;
+    import org.flowplayer.flow_internal;
 	import org.flowplayer.util.Log;
-	
 	import com.adobe.serialization.json.JSON;
 
     use namespace flow_internal;

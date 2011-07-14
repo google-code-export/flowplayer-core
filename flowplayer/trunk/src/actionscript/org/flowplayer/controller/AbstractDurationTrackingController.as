@@ -47,16 +47,25 @@ package org.flowplayer.controller {
 		}
 
 		public final function onEvent(event:ClipEventType, params:Array = null):void {
+            var silent:Boolean = false;
 			if (event == ClipEventType.BEGIN) {
 				load(new ClipEvent(event), clip, params ? params[0] : false);
+
             } else if (event == ClipEventType.PAUSE) {
-                pause(new ClipEvent(event));
+                silent = params[0] as Boolean;
+                pause(silent ? null : new ClipEvent(event));
+
             } else if (event == ClipEventType.RESUME) {
-                resume(new ClipEvent(event));
+                silent = params[0] as Boolean;
+                resume(silent ? null : new ClipEvent(event));
+
             } else if (event == ClipEventType.STOP) {
                 stop(new ClipEvent(event), params ? params[0] : null, params ? params[1] : null);
+
             } else if (event == ClipEventType.SEEK) {
-                seekTo(new ClipEvent(event), params[0]);
+                silent = params[1] as Boolean;
+                seekTo(silent ? null : new ClipEvent(event), params[0]);
+
             } else if (event == ClipEventType.SWITCH) {
 				doSwitchStream(new ClipEvent(event), clip, params ? params[0] : null);
             }
