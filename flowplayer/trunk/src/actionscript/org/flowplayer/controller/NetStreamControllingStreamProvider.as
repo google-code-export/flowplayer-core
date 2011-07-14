@@ -430,6 +430,7 @@ package org.flowplayer.controller {
          * @param event the event that is dispatched after resuming
          */
         protected function doResume(netStream:NetStream, event:ClipEvent):void {
+            log.debug("doResume");
             try {
                 _volumeController.netStream = netStream;
                 netStream.resume();
@@ -450,10 +451,11 @@ package org.flowplayer.controller {
          */
         protected final function set silentSeek(value:Boolean):void {
             _silentSeek = value;
-            log.info("silent mode was set to " + _silentSeek);
+            log.info("silentSeek was set to " + _silentSeek);
         }
 
         protected final function get silentSeek():Boolean {
+            log.debug("silentSeek == " + _silentSeek);
             return _silentSeek;
         }
 
@@ -496,6 +498,11 @@ package org.flowplayer.controller {
          */
         protected function doSeek(event:ClipEvent, netStream:NetStream, seconds:Number):void {
             // the seek event is dispatched when we recevive the seek notification from netStream
+            log.debug("doSeek(), event == " + event);
+            if (Math.abs(seconds - time) > 0.2) {
+                log.debug("current time within 0.2 range from the seek target --> will not seek");
+                dispatchEvent(event);
+            }
             log.debug("calling netStream.seek(" + seconds + ")");
             _seeking = true;
             netStream.seek(seconds);
@@ -535,6 +542,10 @@ package org.flowplayer.controller {
          */
         protected final function dispatchEvent(event:ClipEvent):void {
             if (! event) return;
+            if (silentSeek && event.eventType.name == ClipEventType.SEEK.name) {
+                log.debug("dispatchEvent(), in silentSeek mode --> will not dispatch SEEK");
+                return;
+            }
             log.debug("dispatching " + event + " on clip " + clip);
             clip.dispatchEvent(event);
         }
@@ -727,7 +738,6 @@ package org.flowplayer.controller {
                 } else {
                     _seeking = false;
                 }
-                silentSeek = false;
 
             } else if (event.info.code == "NetStream.Seek.InvalidTime") {
 

@@ -58,7 +58,7 @@ package org.flowplayer.controller {
             stop();
             bufferingState.nextStateAfterBufferFull = playingState;
 
-            if (canOnEvent(ClipEventType.BEGIN, [false])) {
+            if (dispatchBeforeEvent(ClipEventType.BEGIN, [false])) {
                 changeState(bufferingState);
                 playList.current.played = true;
                 onEvent(ClipEventType.BEGIN, [false]);
@@ -67,7 +67,7 @@ package org.flowplayer.controller {
 
         internal override function switchStream(netStreamPlayOptions:Object = null):void {
             log.debug("cannot start playing in this state");
-            if (canOnEvent(ClipEventType.SWITCH, [netStreamPlayOptions]))
+            if (dispatchBeforeEvent(ClipEventType.SWITCH, [netStreamPlayOptions]))
                 onEvent(ClipEventType.SWITCH, [netStreamPlayOptions]);
         }
 
@@ -132,8 +132,8 @@ package org.flowplayer.controller {
             getMediaController().stopBuffering();
         }
 
-        internal override function pause():void {
-            if (canOnEvent(ClipEventType.PAUSE)) {
+        internal override function pause(silent:Boolean = false):void {
+            if (silent || dispatchBeforeEvent(ClipEventType.PAUSE, [silent])) {
 
                 // with a live stream we need to stop
                 if (playList.current.live) {
@@ -142,13 +142,13 @@ package org.flowplayer.controller {
                 }
 
                 changeState(pausedState);
-                onEvent(ClipEventType.PAUSE);
+                onEvent(ClipEventType.PAUSE, [silent]);
             }
         }
 
-        internal override function seekTo(seconds:Number):void {
-            if (canOnEvent(ClipEventType.SEEK, [seconds], seconds))
-                onEvent(ClipEventType.SEEK, [seconds]);
+        internal override function seekTo(seconds:Number, silent:Boolean = false):void {
+            if (silent || dispatchBeforeEvent(ClipEventType.SEEK, [seconds, silent], seconds))
+                onEvent(ClipEventType.SEEK, [seconds, silent]);
         }
 
         override protected function onClipStop(event:ClipEvent):void {

@@ -32,7 +32,6 @@ package org.flowplayer.model {
 		private var _beforeListeners:Dictionary = new Dictionary();
 		private var _listeners:Dictionary = new Dictionary();
 		protected static var _playerId:String;
-        private static var _silent:Boolean;
 
 		/**
 		 * Unbinds the specified listener.
@@ -96,10 +95,6 @@ package org.flowplayer.model {
 		 * @return false if event propagation was stopped
 		 */
 		flow_internal final function doDispatchBeforeEvent(event:AbstractEvent, fireExternal:Boolean):Boolean {
-            if (_silent) {
-                log.info("in silent mode, returning");
-                return true;
-            }
 			log.debug("doDispatchBeforeEvent, fireExternal " + fireExternal);
 			if (! event.isCancellable()) {
 				log.debug("event is not cancellable, will not fire event, propagation is allowed");
@@ -119,10 +114,6 @@ package org.flowplayer.model {
          * Dispatches the event to the action phase listeners.
          */
         flow_internal final function doDispatchEvent(event:AbstractEvent, fireExternal:Boolean):void {
-            if (_silent) {
-                log.info("in silent mode, returning");
-                return;
-            }
             if (event.info is ErrorCode) {
                 doDispatchErrorEvent(event, fireExternal);
                 return;
@@ -143,10 +134,6 @@ package org.flowplayer.model {
          * Dispatches an error event to the action phase listeners.
          */
         flow_internal final function doDispatchErrorEvent(event:AbstractEvent, fireExternal:Boolean):void {
-            if (_silent) {
-                log.info("in silent mode, returning");
-                return;
-            }
             if (event.target == null) {
                 event.target = this;
             }
@@ -230,13 +217,5 @@ package org.flowplayer.model {
 		public static function set playerId(playerId:String):void {
 			_playerId = playerId;
 		}
-
-        public static function set silent(silent:Boolean):void {
-            _silent = silent;
-        }
-
-        public static function get silent():Boolean {
-            return _silent;
-        }
     }
 }
