@@ -3,7 +3,7 @@
     <meta http-equiv="content-type"
           content="text/html; charset=UTF-8">
     <!--<script type="text/javascript" src="flowplayer-3.0.5.min.js"></script>-->
-    <script src="../example/flowplayer-3.2.6.min.js"></script>
+    <script src="../flowplayer-3.2.6.min.js"></script>
 
 
     <!-- page title -->
@@ -21,8 +21,8 @@
     <script>
         flowplayer("player", "../build/flowplayer.swf",
         {
-//            log: { level: 'info', filter: 'org.flowplayer.view.VideoDisplay, org.flowplayer.controller.StreamProviderController' },
-            log: { level: 'error', filter: 'org.flowplayer.slowmotion.*' },
+
+            log: { level: 'debug', filter: 'org.flowplayer.rtmp.*' },
             onStart: function() {
                 console.log("onStart");
             },
@@ -32,7 +32,11 @@
             },
 
             onFinish: function() {
-                $f().play('honda_accord');
+                console.log("onFinish");
+            },
+
+            onBeforeFinish: function() {
+                console.log("onBeforeFinish");
             },
 
             onPause: function() {
@@ -45,17 +49,17 @@
 
             plugins:  {
 
-                slowmotion: {
-                    url: 'flowplayer.slowmotion.swf'
-//                    ,
-//                    serverType: 'wowza'
-                },
+//                        slowmotion: {
+//                            url: 'flowplayer.slowmotion.swf'
+//                        },
 
                 rtmp: {
                     url: 'flowplayer.rtmp.swf',
 //                    netConnectionUrl: 'rtmp://dk2isqp3f.rtmphost.com/flowplayer'
-//                    netConnectionUrl: 'rtmp://rtmp01.hddn.com/play'
+//                            netConnectionUrl: 'rtmp://rtmp01.hddn.com/play'
                     netConnectionUrl: 'rtmp://s3b78u0kbtx79q.cloudfront.net/cfx/st'
+//                    netConnectionUrl: 'rtmp://s263p3lt1nuakd.cloudfront.net/cfx/st'
+
                 },
 
                 // add a content plugin to show speed information (this is optional)
@@ -94,15 +98,17 @@
             clip: {
                 // use the RTMP plugin
                 provider: 'rtmp',
-                bufferLength: 10,
-                url: 'Extremists'
-//                ,
-//                baseUrl: 'vod/demo.flowplayervod'
+                bufferLength: 0,
+                backBufferLength: 30,
+                url: 'mp4:bbb-400'
+//                url: escape('mp4:2?Expires=1308677394&Signature=Eh6GZ3ar37F6xfU0znJt63saDvkDPsJj73WQSPtuOpzJqYPxQoxGqgkgEllb0t3WX4ZOLibIZcicIjSJeIecQPGSHpHbaGi1ZCZW1nCj1oeuBDVPNgcg9q7rvc64Rd39J41QsL3mThu9alSllWAAHshjXe7FPZeLUhnnjHlXUEI_&Key-Pair-Id=APKAI54YZLZW4EVY263Q')
+//                        ,
+//                        baseUrl: 'vod/demo.flowplayervod'
             }
 //            playlist: [
 //                    'Extremists', 'honda_accord', 'metacafe'
 //            ]
-        });
+                });
 
 
 var actions = {

@@ -11,17 +11,14 @@
 
 	<div id="page">
         <a
-                     href="http://pseudo01.hddn.com/vod/demo.flowplayervod/flowplayer-700.flv"
+                     href="../build/flowplayer-700.flv"
                      style="display:block;width:440px;height:247px"
                      id="player">
                 </a>
 <script>
-    flowplayer("player", "../build/flowplayer.swf",
+    flowplayer("player", "../build/flowplayer.commercial.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.audio.*' },
-        onBegin: function() {
-            console.log("onBegin");
-        },
+        log: { level: 'debug', filter: 'org.flowplayer.bwcheck.*' },
         onStart: function() {
             console.log("onStart");
         },
@@ -37,19 +34,31 @@
         onResume: function() {
             console.log("onResume");
         },
-
         clip: {
-            url:'../build/fake_empire.mp3',
+
             autoPlay: false,
-            provider: 'audio'
-        },
-        plugins: {
-            audio: {
-                url: 'flowplayer.audio.swf'
-            },
-            controls: {
-                stop:true
+            autoBuffering: true,
+
+            // let screen fade in gradually so Acme logo can be seen below it
+            fadeInSpeed: 20000,
+
+            // on last second, fade out screen
+            onLastSecond: function() {
+                this.getScreen().animate({opacity: 0}, 3000);
             }
+
+//            if screen is hidden, show it upon startup
+//            onStart: function() {
+//                this.getScreen().css({opacity: 0.8});
+//            }
+
+        },
+        logo: {
+            url: '../build/play.png',
+            fullscreenOnly: false,
+            zIndex: 0,
+            top: '45%',
+            left: '50%'
         }
     });
 </script>

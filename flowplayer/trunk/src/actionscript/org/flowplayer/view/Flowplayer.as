@@ -163,6 +163,8 @@ package org.flowplayer.view {
                 addCallback("isKeyboardShortcutsEnabled", isKeyboardShortcutsEnabled);
                 addCallback("validateKey", validateKey);
 
+                addCallback("bufferAnimate", bufferAnimate);
+
             } catch (e:Error) {
                 handleError(PlayerError.INIT_FAILED, "Unable to add callback to ExternalInterface");
             }

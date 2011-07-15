@@ -18,10 +18,12 @@
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.audio.*' },
+        log: { level: 'debug', filter: 'org.flowplayer.controller.PlayTimeTracker' },
+
         onBegin: function() {
             console.log("onBegin");
         },
+
         onStart: function() {
             console.log("onStart");
         },
@@ -39,18 +41,18 @@
         },
 
         clip: {
-            url:'../build/fake_empire.mp3',
-            autoPlay: false,
-            provider: 'audio'
+//            duration: 5,
+            baseUrl: '../build',
+            endLimit: 5
         },
-        plugins: {
-            audio: {
-                url: 'flowplayer.audio.swf'
-            },
-            controls: {
-                stop:true
-            }
+        playlist: [
+                'play.png',
+                'flowplayer-700.flv'
+        ],
+        plugins:
+        {
         }
+
     });
 </script>
 	</div>

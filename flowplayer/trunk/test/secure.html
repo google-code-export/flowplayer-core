@@ -11,23 +11,38 @@
 
 	<div id="page">
         <a
-                     href="mp4:vod/demo.flowplayervod/bbb-800.mp4"
+                     href="http://pseudo01.hddn.com/vod/demo.flowplayervod/flowplayer-700.flv"
                      style="display:block;width:440px;height:247px"
                      id="player">
                 </a>
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.rtmp.*' },
+        log: { level: 'debug', filter: 'org.flowplayer.securestreaming.*' },
+        onStart: function() {
+            console.log("onStart");
+        },
+
+        onFinish: function() {
+            console.log("onFinish");
+        },
+
+        onPause: function() {
+            console.log("onPause");
+        },
+
+        onResume: function() {
+            console.log("onResume");
+        },
 
         clip: {
-            provider: 'rtmp'
         },
         plugins:
         {
-            rtmp: {
-                url: 'flowplayer.rtmp.swf',
-                netConnectionUrl: 'rtmp://rtmp01.hddn.com/play'
+            secure: {
+                url: 'flowplayer.securestreaming.swf'
+                ,
+                domains: ['foobar.com']
             }
         }
 

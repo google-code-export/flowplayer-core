@@ -11,19 +11,21 @@
 
 	<div id="page">
         <a
-                     href="http://pseudo01.hddn.com/vod/demo.flowplayervod/flowplayer-700.flv"
+                     href="01-beastie_boys-make_some_noise.mp3"
                      style="display:block;width:440px;height:247px"
                      id="player">
                 </a>
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.audio.*' },
-        onBegin: function() {
-            console.log("onBegin");
+        log: { level: 'error', filter: 'org.flowplayer.rtmp.*' },
+
+        onBegin: function(clip) {
+            console.log("onBegin, " + clip.duration);
         },
-        onStart: function() {
-            console.log("onStart");
+
+        onStart: function(clip) {
+            console.log("onStart, " + clip.duration);
         },
 
         onFinish: function() {
@@ -38,19 +40,24 @@
             console.log("onResume");
         },
 
-        clip: {
-            url:'../build/fake_empire.mp3',
-            autoPlay: false,
-            provider: 'audio'
+        onSeek: function() {
+            console.log("onSeek");
         },
+
+        clip: {
+            url: "mp3:todestango",
+            provider: "rtmp"
+        },
+
         plugins: {
-            audio: {
-                url: 'flowplayer.audio.swf'
-            },
-            controls: {
-                stop:true
+            rtmp: {
+                url: 'flowplayer.rtmp.swf',
+                netConnectionUrl: "rtmp://s2k10b45u2ab11.cloudfront.net/cfx/st"
+                ,
+                durationFunc: "getStreamLength"
             }
         }
+
     });
 </script>
 	</div>

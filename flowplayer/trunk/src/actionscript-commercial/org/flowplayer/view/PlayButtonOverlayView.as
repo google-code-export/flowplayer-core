@@ -21,6 +21,7 @@ package org.flowplayer.view {
     import flash.display.DisplayObject;
     import flash.events.MouseEvent;
     import flash.events.TimerEvent;
+    import flash.utils.Timer;
     import flash.utils.getDefinitionByName;
 
     import org.flowplayer.controller.ResourceLoader;
@@ -35,6 +36,7 @@ package org.flowplayer.view {
     import org.flowplayer.model.PluginEventType;
     import org.flowplayer.model.PluginModel;
     import org.flowplayer.model.State;
+    import org.flowplayer.model.Status;
     import org.flowplayer.util.Arrange;
     import org.flowplayer.view.BuiltInAssetHelper;
     import org.flowplayer.view.BuiltInAssetHelper;
@@ -53,6 +55,7 @@ package org.flowplayer.view {
 		private var _origAlpha:Number;
 		private var _play:PlayButtonOverlay;
         private var _rotation:RotatingAnimation;
+        private var _playDetectTimer:Timer;
 
 		public function PlayButtonOverlayView(resizeToTextWidth:Boolean, play:PlayButtonOverlay, pluginRegistry:PluginRegistry) {
 			_resizeToTextWidth = resizeToTextWidth;
@@ -178,13 +181,14 @@ package org.flowplayer.view {
 			eventSupport.onConnect(startBuffering);
 
             // onBegin is here because onBeforeBegin is not dispatched when playing after a timed out and invalid netConnection
-            eventSupport.onStart(hideButton);
-            eventSupport.onStart(stopBuffering);
+//            eventSupport.onStart(hideButton);
+//            eventSupport.onStart(createPlaybackStartedCallback);
 
             eventSupport.onBeforeBegin(hideButton);
-			eventSupport.onBeforeBegin(startBuffering);
-			
+			eventSupport.onBegin(bufferUntilStarted);
+
 			eventSupport.onResume(hide);
+            eventSupport.onResume(bufferUntilStarted);
 
 			// onPause: call stopBuffering first and then showButton (stopBuffering hides the button)
 			eventSupport.onPause(stopBuffering);
@@ -200,11 +204,10 @@ package org.flowplayer.view {
             // showing the buffer animation on buffer empty causes trouble with live streams and also on other cases
 //			eventSupport.onBufferEmpty(startBuffering);
 
-			eventSupport.onBufferFull(stopBuffering);
+//			eventSupport.onBufferFull(bufferUntilStarted);
 			
-			eventSupport.onBeforeSeek(startBuffering);
-			eventSupport.onSeek(stopBuffering);
-			
+			eventSupport.onBeforeSeek(bufferUntilStarted);
+
 			eventSupport.onBufferStop(stopBuffering);
 			eventSupport.onBufferStop(showButton);
 		}
@@ -441,5 +444,43 @@ package org.flowplayer.view {
 		private function get model():DisplayPluginModel {
 			return DisplayPluginModel(_pluginRegistry.getPlugin("play"));
 		}
-	}
+
+        private function bufferUntilStarted(event:ClipEvent = null):void {
+            if (event && event.isDefaultPrevented()) return;
+            startBuffering();
+            createPlaybackStartedCallback(stopBuffering);
+        }
+
+        private function createPlaybackStartedCallback(callback:Function):void {
+            log.debug("detectPlayback()");
+
+            if (! _player.isPlaying()) {
+                log.debug("detectPlayback(), not playing, returning");
+                return;
+            }
+            if (_playDetectTimer && _playDetectTimer.running) {
+                log.debug("detectPlayback(), not playing, returning");
+                return;
+            }
+
+            var time:Number = _player.status.time;
+
+            _playDetectTimer = new Timer(200);
+            _playDetectTimer.addEventListener(TimerEvent.TIMER,
+                    function(event:TimerEvent):void {
+                        var currentTime:Number = _player.status.time;
+                        log.debug("on detectPlayback() currentTime " + currentTime + ", time " + time);
+
+                        if (Math.abs(currentTime - time) > 0.2) {
+                            _playDetectTimer.stop();
+                            log.debug("playback started");
+                            callback();
+                        } else {
+                            log.debug("not started yet, currentTime " + currentTime + ", time " + time);
+                        }
+                    });
+            log.debug("doStart(), starting timer");
+            _playDetectTimer.start();
+        }
+    }
 }

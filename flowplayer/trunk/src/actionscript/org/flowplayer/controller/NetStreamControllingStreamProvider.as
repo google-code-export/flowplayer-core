@@ -499,9 +499,10 @@ package org.flowplayer.controller {
         protected function doSeek(event:ClipEvent, netStream:NetStream, seconds:Number):void {
             // the seek event is dispatched when we recevive the seek notification from netStream
             log.debug("doSeek(), event == " + event);
-            if (Math.abs(seconds - time) > 0.2) {
+            if (Math.abs(seconds - time) < 0.2) {
                 log.debug("current time within 0.2 range from the seek target --> will not seek");
-                dispatchEvent(event);
+                dispatchPlayEvent(ClipEventType.SEEK, seconds);
+                return;
             }
             log.debug("calling netStream.seek(" + seconds + ")");
             _seeking = true;
