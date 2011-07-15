@@ -18,10 +18,7 @@
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.audio.*' },
-        onBegin: function() {
-            console.log("onBegin");
-        },
+        log: { level: 'debug', filter: 'org.flowplayer.bwcheck.*' },
         onStart: function() {
             console.log("onStart");
         },
@@ -39,18 +36,15 @@
         },
 
         clip: {
-            url:'../build/fake_empire.mp3',
-            autoPlay: false,
-            provider: 'audio'
-        },
-        plugins: {
-            audio: {
-                url: 'flowplayer.audio.swf'
-            },
-            controls: {
-                stop:true
+            onCuepoint: function(clip, cue) {
+                console.log("cuepoint", cue);
             }
-        }
+        },
+        playlist: [
+            "http://www.helpexamples.com/flash/video/cuepoints.flv",
+            "http://download.yumenetworks.com/yume/content/arcade_yume.flv"
+        ]
+
     });
 </script>
 	</div>

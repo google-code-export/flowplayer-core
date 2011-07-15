@@ -2,6 +2,7 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <!--<script type="text/javascript" src="flowplayer-3.0.5.min.js"></script>-->
     <script src="../flowplayer-3.2.6.min.js"></script>
+    <script src="../../jsplugins/controls/trunk/flowplayer.controls.js"></script>
 
 
 	<!-- page title -->
@@ -15,13 +16,13 @@
                      style="display:block;width:440px;height:247px"
                      id="player">
                 </a>
+
+<div id="controls" class="hulu"></div>
+
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.audio.*' },
-        onBegin: function() {
-            console.log("onBegin");
-        },
+        log: { level: 'debug', filter: 'org.flowplayer.bwcheck.*' },
         onStart: function() {
             console.log("onStart");
         },
@@ -38,20 +39,26 @@
             console.log("onResume");
         },
 
-        clip: {
-            url:'../build/fake_empire.mp3',
-            autoPlay: false,
-            provider: 'audio'
+        onSeek: function() {
+            console.log("onSeek");
         },
+
+        clip: {
+            url: "mp3:todestango",
+            provider: "rtmp"
+        },
+
         plugins: {
-            audio: {
-                url: 'flowplayer.audio.swf'
+            rtmp: {
+                url: 'flowplayer.rtmp.swf',
+                netConnectionUrl: "rtmp://s2k10b45u2ab11.cloudfront.net/cfx/st"
+                ,
+                durationFunc: "getStreamLength"
             },
-            controls: {
-                stop:true
-            }
+            controls: null
         }
-    });
+
+    }).controls("controls");
 </script>
 	</div>
 	

@@ -59,6 +59,8 @@ package org.flowplayer.view {
     import org.flowplayer.util.VersionUtil;
     import org.flowplayer.util.URLUtil;
 	import org.flowplayer.view.KeyboardHandler;
+    import org.flowplayer.view.PlayButtonOverlayView;
+    import org.flowplayer.view.PlayButtonOverlayView;
 
     use namespace flow_internal;
 
@@ -328,6 +330,15 @@ package org.flowplayer.view {
 
         public function togglePlugin(pluginName:String, props:Object = null):Boolean {
             return pluginPanelOp(doTogglePlugin, pluginName, props) as Boolean;
+        }
+
+        public function bufferAnimate(enable:Boolean = true):void {
+            var playBtn:Object = playButtonOverlay.getDisplayObject();
+            if (enable) {
+                playBtn.startBuffering();
+            } else {
+                playBtn.stopBuffering();
+            }
         }
 
         private function pluginPanelOp(func:Function, pluginName:String, props:Object = null):Object {

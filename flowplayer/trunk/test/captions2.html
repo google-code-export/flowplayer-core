@@ -3,7 +3,7 @@
     <meta http-equiv="content-type"
           content="text/html; charset=UTF-8">
     <!--<script type="text/javascript" src="flowplayer-3.0.5.min.js"></script>-->
-    <script src="../example/flowplayer-3.2.6.min.js"></script>
+    <script src="../flowplayer-3.2.6.min.js"></script>
 
 
     <!-- page title -->
@@ -21,7 +21,12 @@
     <script>
         flowplayer("player", "../build/flowplayer.swf",
         {
-            log: { level: 'debug', filter: 'org.flowplayer.captions.*' },
+            log: { level: 'debug', filter: 'org.flowplayer.captions.Captione' },
+
+            onBegin: function() {
+                console.log("Begin");
+            },
+
             onStart: function() {
                 console.log("onStart");
             },
@@ -41,13 +46,10 @@
             clip: {
 
                 // here is our high quality movie
-                url: 'mp4:vod/demo.flowplayervod/buffalo_soldiers.mp4',
+                url: 'http://pseudo01.hddn.com/vod/demo.flowplayervod/flowplayer-700.flv',
 
                 // this is the SubRib file with captions info
-//                captionUrl: 'http://releases.flowplayer.org/data/buffalo.srt',
-
-                // we want to use RTMP since this is a 1,5 hour long movie.
-                provider: 'rtmp'
+                captionUrl: '../build/tt.xml'
             },
             plugins:  {
 
@@ -64,31 +66,26 @@
                  looks good for showing subtitles
                  */
                 content: {
-                    url:'flowplayer.content.swf',
-                    bottom: 5,
+                    url: "flowplayer.content.swf",
+                    bottom: 25,
+                    width: '80%',
                     height:40,
                     backgroundColor: 'transparent',
-                    backgroundGradient: 'none',
+                    backgroundGradient: 'low',
+                    borderRadius: 4,
                     border: 0,
-                    textDecoration: 'outline',
+
                     style: {
-                        body: {
-                            fontSize: 14,
+                        'body': {
+                            fontSize: '14',
                             fontFamily: 'Arial',
                             textAlign: 'center',
-                            color: '#ffffff'
+                            color: '#000000'
                         }
                     }
                 },
-
-                // streaming plugin configuration
-                rtmp: {
-                    url: 'flowplayer.rtmp.swf',
-                    netConnectionUrl: 'rtmp://rtmp01.hddn.com/play'
-                },
-
-                // change default skin to "tube"
-                controls: {
+                    // change default skin to "tube"
+                    controls: {
                     url: 'flowplayer.controls.swf'
                 }
 

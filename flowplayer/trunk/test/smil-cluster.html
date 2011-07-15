@@ -18,10 +18,7 @@
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.audio.*' },
-        onBegin: function() {
-            console.log("onBegin");
-        },
+        log: { level: 'debug', filter: 'org.flowplayer.smil.*' },
         onStart: function() {
             console.log("onStart");
         },
@@ -39,21 +36,22 @@
         },
 
         clip: {
-            url:'../build/fake_empire.mp3',
-            autoPlay: false,
-            provider: 'audio'
+            url: 'cluster.smil',
+            urlResolvers: ['smil', 'cluster']
         },
-        plugins: {
-            audio: {
-                url: 'flowplayer.audio.swf'
+        plugins:
+        {
+            smil: {
+                url: 'flowplayer.smil.swf'
             },
-            controls: {
-                stop:true
+            cluster: {
+                url: 'flowplayer.cluster.swf'
             }
         }
+
     });
 </script>
 	</div>
-	
-	
+
+
 </body></html>

@@ -261,13 +261,13 @@
 				if (arg1 && "onBeforeBegin,onMetaData,onStart,onUpdate,onResume".indexOf(evt) != -1) {					
 					// update clip properties
 					extend(target, arg1);					
-					
+
 					if (arg1.metaData) {
 						if (!target.duration) {
 							target.duration = arg1.metaData.duration; 	
 						} else {
-							target.fullDuration = arg1.metaData.duration;	
-						}  					
+							target.fullDuration = arg1.metaData.duration;
+						}
 					}
 				}  				
 				
@@ -744,6 +744,11 @@ function Player(wrapper, params, conf) {
 		getIndex: function() {
 			return playerIndex;	
 		},
+
+        bufferAnimate: function(enable) {
+            api.fp_bufferAnimate(enable == undefined || enable);
+            return self;
+        },
 		
 		_swfHeight: function() {
 			return api.clientHeight;
