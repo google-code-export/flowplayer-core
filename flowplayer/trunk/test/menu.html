@@ -11,15 +11,14 @@
 
 	<div id="page">
         <a
-                     href="honda_accord"
+                     href="http://pseudo01.hddn.com/vod/demo.flowplayervod/flowplayer-700.flv"
                      style="display:block;width:440px;height:247px"
                      id="player">
                 </a>
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-//        log: { level: 'debug', filter: 'org.flowplayer.controls.scrubber.ScrubberSlider' },
-//        log: { level: 'debug', filter: 'org.flowplayer.controller.PlayListController' },
+        log: { level: 'debug', filter: 'org.flowplayer.menu.Menu' },
         onStart: function() {
             console.log("onStart");
         },
@@ -36,30 +35,23 @@
             console.log("onResume");
         },
 
-                onBeforeSeek: function(clip, target) {
-                    console.log("onBeforeSeek, target pos " + target);
-                },
+        clip: {
+            autoPlay: false
+        },
+        plugins: {
+            menu: {
+                url: 'flowplayer.menu.swf',
+                items: [
+                    { label: "first item", index: 0 },
+                    "second item",
+                    "third item"
+                ],
 
-                onSeek: function(clip, target) {
-                    console.log("onSeek, target pos " + target);
-                },
-
-        // configure the required plugins
-plugins:  {
-
-    // the RTMP plugin
-    rtmp: {
-        url: 'flowplayer.rtmp.swf',
-
-        // netConnectionUrl has our CloudFront domain name + 'cfx/st'
-        netConnectionUrl: 'rtmp://s3b78u0kbtx79q.cloudfront.net/cfx/st'
-    }
-},
-
-clip: {
-    // use the RTMP plugin
-    provider: 'rtmp'
-}
+                onSelect: function(item) {
+                    console.log("onSelect()", item);
+                }
+            }
+        }
 
     });
 </script>

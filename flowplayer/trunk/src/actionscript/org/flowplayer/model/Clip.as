@@ -33,7 +33,7 @@ package org.flowplayer.model {
 	/**
 	 * @inheritDoc
 	 */
-	public class Clip extends ClipEventDispatcher {
+	public class Clip extends ClipEventDispatcher implements Extendable {
 
         // the main playlist where this clip belongs to
         private var _playlist:Playlist;
@@ -65,7 +65,7 @@ package org.flowplayer.model {
         private var _backBufferLength:int;
 		private var _played:Boolean;
 		private var _provider:String;
-		private var _customProperties:Object;
+		private var _extension:ExtendableHelper = new ExtendableHelper();
 		private var _fadeInSpeed:int;
 		private var _fadeOutSpeed:int;
 		private var _live:Boolean;		
@@ -726,19 +726,13 @@ package org.flowplayer.model {
 		}
 		
 		public function get customProperties():Object {
-			return _customProperties;
+			return _extension.props;
 		}
 		
 		public function set customProperties(props:Object):void {
-			_customProperties = props;
-			
-			// workaraound to not allow setting cuepoints to custom properties
-            if (_customProperties && _customProperties["cuepoints"]) {
-                delete _customProperties["cuepoints"];
-            }
-            if (_customProperties && _customProperties["playlist"]) {
-                delete _customProperties["playlist"];
-            }
+			_extension.props = props;
+            _extension.deleteProp("cuepoints");
+            _extension.deleteProp("playlist");
 		}
 		
 		public function get smoothing():Boolean {
@@ -749,17 +743,13 @@ package org.flowplayer.model {
 			_smoothing = smoothing;
 		}
 		
-		public function getCustomProperty(property:String):Object {
-			if (!_customProperties) return null;
-			return _customProperties[property];
+		public function getCustomProperty(name:String):Object {
+			return _extension.getProp(name);
 		}
 
-		public function setCustomProperty(property:String, value:Object):void {
-            if (property == "playlist") return;
-			if (!_customProperties) {
-				_customProperties = new Object();
-			}
-			_customProperties[property] = value;
+		public function setCustomProperty(name:String, value:Object):void {
+            if (name == "playlist") return;
+            _extension.setProp(name, value);
 		}
 		
 		[Value]				
@@ -1011,6 +1001,10 @@ package org.flowplayer.model {
         [Value]
         public function get urlEncoding():Boolean {
         	return _encoding;
+        }
+
+        public function deleteCustomProperty(name:String):void {
+            _extension.deleteProp(name);
         }
     }
 }
