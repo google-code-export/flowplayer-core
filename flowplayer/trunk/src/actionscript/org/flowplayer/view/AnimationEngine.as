@@ -143,7 +143,8 @@ package org.flowplayer.view {
 		 * Fades in a DisplayObject.
 		 */
 		public function fadeIn(view:DisplayObject, durationMillis:Number = 500, completeCallback:Function = null, updatePanel:Boolean = true):Animation {
-			return animateAlpha(view, 1, durationMillis, completeCallback, updatePanel);
+			view.visible = true;
+            return animateAlpha(view, 1, durationMillis, completeCallback, updatePanel);
 		}
 
 		/**

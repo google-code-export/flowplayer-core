@@ -1,11 +1,10 @@
 package org.flowplayer.util {
 
-	import flash.utils.describeType;
-	import flash.utils.getQualifiedClassName;
-    import org.flowplayer.model.Clip;
-	import org.flowplayer.util.Log;
-	
-	public class ObjectConverter {
+    import flash.utils.describeType;
+
+    import org.flowplayer.model.Extendable;
+
+    public class ObjectConverter {
 		private var _input:Object;
 		protected var log:Log = new Log(this);
 
@@ -67,11 +66,8 @@ package org.flowplayer.util {
 						obj[key2] = process(o[v.@name]);
 					}
 				}
-                if (o is Clip) {
-                    copyProps(Clip(o).customProperties, obj);
-//                    if (obj.hasOwnProperty("bitrates")) {
-//                        delete obj.bitrates;
-//                    }
+                if (o is Extendable) {
+                    copyProps(Extendable(o).customProperties, obj);
                 }
 			}
 			return obj;
