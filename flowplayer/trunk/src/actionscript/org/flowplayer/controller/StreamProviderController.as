@@ -94,10 +94,6 @@ package org.flowplayer.controller {
             getProvider().stop(event, closeStream);
         }
 
-        override protected function doStopBuffering():void {
-            getProvider().stopBuffering();
-        }
-
         override protected function doSeekTo(event:ClipEvent, seconds:Number):void {
             durationTracker.time = seconds;
             getProvider().seek(event, seconds);

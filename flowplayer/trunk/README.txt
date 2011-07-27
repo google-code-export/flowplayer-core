@@ -26,6 +26,7 @@ Fixes:
 - fixed XSS vulnerability with linkUrls. Thank you Szymon Gruszecki for discovering and reporting this to us. Issue #329.
 - fixed switch stream api support in paused state. #279.
 - added switching state properties. #339
+- fixed the stopBuffering() API method to close the NetConnection and to clear the screen
 
 3.2.7
 -----
