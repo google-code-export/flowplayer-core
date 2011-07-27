@@ -71,10 +71,6 @@ package org.flowplayer.controller {
             }
 		}
 
-		public final function stopBuffering():void {
-			doStopBuffering();
-		}
-		
 		protected final function dispatchPlayEvent(event:ClipEvent):void {
             if (! event) return;
             log.debug("dispatching " + event + " on clip " + clip);
@@ -205,9 +201,6 @@ package org.flowplayer.controller {
 		}
 		
 		protected function doSeekTo(event:ClipEvent, seconds:Number):void {
-		}
-		
-		protected function doStopBuffering():void {
 		}
 
         protected function doSwitchStream(param:ClipEvent, clip:Clip, netStreamPlayOptions:Object = null):void {

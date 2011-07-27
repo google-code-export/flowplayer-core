@@ -18,7 +18,7 @@
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.menu.Menu' },
+        log: { level: 'debug', filter: 'org.flowplayer.menu.*, org.flowplayer.bitrateselect.BitrateSelectProvider' },
         onStart: function() {
             console.log("onStart");
         },
@@ -36,20 +36,45 @@
         },
 
         clip: {
-            autoPlay: false
+            autoPlay: false,
+            baseUrl: '../build',
+
+            bitrates: [
+                { url: "flowplayer-700.flv",
+                    width: 320, bitrate: 400, isDefault: true, label: '400 kbps'
+                },
+                { url: "flowplayer-700.flv",
+                    width: 480, bitrate: 1600, label: '1600 kpbs' },
+                { url: "flowplayer-700.flv",
+                    width: 480, bitrate: 1926, label: '1926 kbps' }
+
+            ]
         },
         plugins: {
             menu: {
                 url: 'flowplayer.menu.swf',
                 items: [
-                    { label: "first item", index: 0 },
-                    "second item",
-                    "third item"
+                        "foo"
                 ],
+//                items: [
+//                    { label: "first item", index: 0 },
+//                    { label: "second item", overColor: "rgba(200,95,213,1)" },
+//                    "third item"
+//                ],
+
+                // default style for items
+                style: {
+//                    color: "rgba(10,10,10,1)",
+                    overColor: "rgba(200,0,0,1)"
+                },
 
                 onSelect: function(item) {
                     console.log("onSelect()", item);
                 }
+            },
+            brselect: {
+                url: 'flowplayer.bitrateselect.swf',
+                menu: true
             }
         }
 

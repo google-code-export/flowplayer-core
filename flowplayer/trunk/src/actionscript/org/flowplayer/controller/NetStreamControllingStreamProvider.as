@@ -175,17 +175,6 @@ package org.flowplayer.controller {
         /**
          * @inheritDoc
          */
-        public function stopBuffering():void {
-            if (! _netStream) return;
-            log.debug("stopBuffering, closing netStream");
-            _netStream.close();
-            _netStream = null;
-            dispatchPlayEvent(ClipEventType.BUFFER_STOP);
-        }
-
-        /**
-         * @inheritDoc
-         */
         public final function resume(event:ClipEvent):void {
             _paused = false;
             _stopping = false;
@@ -800,6 +789,10 @@ package org.flowplayer.controller {
                 _startedClip = null;
                 log.debug("doStop(), closing netStream and connection");
 
+                if (clip.getContent() is Video) {
+                    Video(clip.getContent()).clear();
+                }
+
                 try {
                     netStream.close();
                     _netStream = null;
@@ -810,6 +803,9 @@ package org.flowplayer.controller {
                     _connection.close();
                     _connection = null;
                 }
+
+                dispatchPlayEvent(ClipEventType.BUFFER_STOP);
+
 //                clip.setContent(null);
             } else {
                 silentSeek = true;

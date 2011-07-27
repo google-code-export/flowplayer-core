@@ -58,8 +58,7 @@ import org.flowplayer.model.ClipEventType;
 
 		internal override function stopBuffering():void {
 			log.debug("stopBuffering() called");
-			stop();
-			getMediaController().stopBuffering();
+			stop(true);
 		}
 
 		internal override function seekTo(seconds:Number, silent:Boolean = false):void {

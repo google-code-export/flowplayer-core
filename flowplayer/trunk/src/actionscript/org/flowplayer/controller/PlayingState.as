@@ -128,8 +128,7 @@ package org.flowplayer.controller {
 
         internal override function stopBuffering():void {
             log.debug("stopBuffering() called");
-            stop();
-            getMediaController().stopBuffering();
+            stop(true);
         }
 
         internal override function pause(silent:Boolean = false):void {
