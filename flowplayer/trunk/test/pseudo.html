@@ -53,11 +53,15 @@
             controls: {
                 tooltips: {
                     buttons: true
-                }
+                },
+//                ,
+//                bufferColor: 0,
+                sliderColor: "#ff0000"
             }
             ,
             pseudo: {
-                url: 'flowplayer.pseudostreaming.swf'
+                url: 'flowplayer.pseudostreaming.swf',
+                queryString: '/foobar/${start}'
             }
         }
 

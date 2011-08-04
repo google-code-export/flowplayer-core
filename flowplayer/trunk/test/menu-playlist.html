@@ -18,7 +18,7 @@
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-//        log: { level: 'debug', filter: 'org.flowplayer.menu.ui.*' },
+        log: { level: 'debug', filter: 'org.flowplayer.menu.ui.MenuItem' },
 //        log: { level: 'debug', filter: 'org.flowplayer.menu.Menu,org.flowplayer.bitrateselect.BitrateSelectProvider' },
         onStart: function() {
             console.log("onStart");
@@ -38,32 +38,19 @@
 
         clip: {
             autoPlay: false,
-            baseUrl: 'http://blip.tv/file/get',
-
-            bitrates: [
-                { url: "flowplayer-700.flv",
-                    width: 320, bitrate: 400, isDefault: true, label: '400 kbps'
-                },
-                { url: "flowplayer-700.flv",
-                    width: 480, bitrate: 1600, label: '1600 kpbs' },
-                { url: "flowplayer-700.flv",
-                    width: 480, bitrate: 1926, label: '1926 kbps' }
-
-            ]
+            baseUrl: 'http://blip.tv/file/get'
         },
+        playlist: [
+            'KimAronson-TwentySeconds59483.flv',
+            'KimAronson-TwentySeconds58192.flv'
+        ],
         plugins: {
             menu: {
                 url: 'flowplayer.menu.swf',
                 items: [
-//                    { label: 'first clip', imageUrl: 'http://static.flowplayer.org/img/demos/thumb1.jpg', index: 0 },
-                    // you can have an optional label as the first item
-                    { label: "select bitrate:", enabled: false }
+                    { label: '<b>first clip</b><br/><i>3:30</i>', imageUrl: 'http://static.flowplayer.org/img/demos/thumb1.jpg', index: 0 },
+                    { label: 'second clip', imageUrl: 'http://static.flowplayer.org/img/demos/thumb2.jpg', index: 1 }
                 ],
-//                items: [
-//                    { label: "first item", index: 0 },
-//                    { label: "second item", overColor: "rgba(200,95,213,1)" },
-//                    "third item"
-//                ],
 
                 // default style for items
                 style: {
@@ -71,15 +58,18 @@
 //                    overColor: "rgba(200,0,0,1)"
 
 //                    fontColor: "rgba(255,0,100, 0.1)"
+                    height: 70
                 },
+
+                right: 10,
 
                 onSelect: function(item) {
                     console.log("onSelect()", item);
+
+                    if (item.index >= 0) {
+                        $f().play(item.index);
+                    }
                 }
-            },
-            brselect: {
-                url: 'flowplayer.bitrateselect.swf',
-                menu: true
             }
         }
 
