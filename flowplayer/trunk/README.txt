@@ -27,6 +27,7 @@ Fixes:
 - fixed switch stream api support in paused state. #279.
 - added switching state properties. #339
 - fixed the stopBuffering() API method to close the NetConnection and to clear the screen
+- Issue #355 setup targeting for Flash 10.0 and 10.1 to provide support for Flash 10.0 without Stagevideo requirements.
 
 3.2.7
 -----

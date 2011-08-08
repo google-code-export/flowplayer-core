@@ -73,8 +73,11 @@
     <property name="commercial-player-binary-versioned" value="flowplayer.commercial-${version-info}.swf"/>
 
     <property name="dist-name" value="flowplayer-${version-info}.zip"/>
+    <property name="dist-target-name" value="flowplayer-${version-info}-${flash.target.player}.zip"/>
     <property name="commercial-dist-name" value="flowplayer.commercial-${version-info}.zip"/>
+    <property name="commercial-dist-target-name" value="flowplayer.commercial-${version-info}-${flash.target.player}.zip"/>
     <property name="multidomain-dist-name" value="flowplayer.multidomain-${version-info}.zip"/>
+    <property name="multidomain-dist-target-name" value="flowplayer.multidomain-${version-info}-${flash.target.player}.zip"/>
     <property name="devkit-dist-name" value="flowplayer.devkit-${version-info}.zip"/>
     <property name="apidoc-dist-name" value="flowplayer.asdoc-${version-info}.zip"/>
     <property name="source-dist-name" value="flowplayer-${version-info}-src.zip"/>
@@ -203,6 +206,7 @@
                 <arg line="-define+=CONFIG::hasSlowMotion,'${has-slowmotion-buttons}'"/>
                 <arg line="-define+=CONFIG::debug,'@{debug}'"/>
                 <arg line="-define+=CONFIG::enableByteRange,'false'"/>
+                <arg line="-define+=CONFIG::FLASH_10_1,'${flash.use.10.1}'"/>
                 <arg line="${compiler.defines}"/>
                 <arg line="-keep-as3-metadata=Value,External"/>
                 <arg line="-source-path ${src-as} ${src-as-commercial} ${classpath} ${plugin-libs}"/>
@@ -220,7 +224,7 @@
                 
                 <arg line="-file-specs '${src-as}/org/flowplayer/view/Preloader.as'"/>
                 <arg line="-output '${build-dir}/@{binary}'"/>
-                <arg line="-target-player '10.2.0'"/>
+                <arg line="-target-player '${flash.target.player}'"/>
             </exec>
         </sequential>
     </macrodef>
@@ -245,6 +249,9 @@
             <arg line="-strict=true"/>
             <arg line="-incremental=true"/>
 			<arg line="-define+=CONFIG::debug,'false'"/>
+            <arg line="-define+=CONFIG::FLASH_10_1,'${flash.use.10.1}'"/>
+            <arg line="-target-player '${flash.target.player}'"/>
+
         </exec>
     </target>
 
@@ -389,6 +396,7 @@
         <zip-player zip-name="${dist-name}" player-swf-dir="${build-dir}" player-swf="${player-binary-versioned}"
                     license="LICENSE.txt" example-dir="example-free"/>
         <copy file="${dist-dir}/${dist-name}" tofile="${dist-dir}/flowplayer.zip" />
+        <copy file="${dist-dir}/${dist-name}" tofile="${dist-dir}/${dist-target-name}" />
     </target>
 
     <target name="zip-biz" description="creates a Commercial distribution zip package" depends="build-biz">
@@ -396,11 +404,14 @@
                     player-swf="${commercial-player-binary-versioned}" license="LICENSE_COMMERCIAL.txt"
                     example-dir="example-biz"/>
         <copy file="${dist-dir}/${commercial-dist-name}" tofile="${dist-dir}/flowplayer.commercial.zip" />
+        <copy file="${dist-dir}/${commercial-dist-name}" tofile="${dist-dir}/${commercial-dist-target-name}" />
 
 
         <zip-player zip-name="${multidomain-dist-name}" player-swf-dir="${build-dir}"
                     player-swf="${commercial-player-binary-versioned}" license="LICENSE_MULTIDOMAIN.txt"
                     example-dir="example-biz"/>
+
+        <copy file="${dist-dir}/${multidomain-dist-name}" tofile="${dist-dir}/${multidomain-dist-target-name}" />
     </target>
 
     <macrodef name="zip-player">
