@@ -61,7 +61,7 @@ import org.flowplayer.model.DisplayPluginModel;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import flash.display.BlendMode;
-	import flash.media.StageVideo;
+
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
@@ -72,7 +72,12 @@ import org.flowplayer.model.DisplayPluginModel;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 
-	import flash.utils.*;		
+	import flash.utils.*;
+
+    CONFIG::FLASH_10_1 {
+    import flash.media.StageVideo;
+    }
+
 	
 	use namespace flow_internal; 
 
@@ -732,8 +737,10 @@ import org.flowplayer.model.DisplayPluginModel;
 			graphics.beginFill(0, 0);
 			graphics.drawRect(0, 0, Arrange.parentWidth, Arrange.parentHeight);
 			graphics.endFill();
-			
-			_flowplayer.playlist.onStageVideoStateChange(onStageVideoStateChange);
+
+            CONFIG::FLASH_10_1 {
+			    _flowplayer.playlist.onStageVideoStateChange(onStageVideoStateChange);
+            }
 		}
 		
 		private function onMouseOut(event:MouseEvent):void {
@@ -743,7 +750,9 @@ import org.flowplayer.model.DisplayPluginModel;
 		private function onMouseOver(event:MouseEvent):void {
 			_flowplayer.dispatchEvent(PlayerEvent.mouseOver());
 		}
-		
+
+
+		CONFIG::FLASH_10_1 {
 		private function onStageVideoStateChange(event:ClipEvent):void {
 			var stageVideo:StageVideo = event.info as StageVideo;
 			log.info("stage video state changed " + stageVideo);
@@ -769,6 +778,7 @@ import org.flowplayer.model.DisplayPluginModel;
 				}
 			}
 		}
+        }
 
 		private function createPanel():void {
 			_panel = new Panel();

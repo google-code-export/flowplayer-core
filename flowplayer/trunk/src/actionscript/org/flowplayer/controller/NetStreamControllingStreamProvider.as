@@ -17,8 +17,6 @@
  */
 
 package org.flowplayer.controller {
-    import flash.utils.Dictionary;
-
     import org.flowplayer.controller.StreamProvider;
     import org.flowplayer.controller.TimeProvider;
     import org.flowplayer.controller.VolumeController;
@@ -34,8 +32,8 @@ package org.flowplayer.controller {
     import org.flowplayer.util.Assert;
     import org.flowplayer.util.Log;
     import org.flowplayer.view.Flowplayer;
-    import org.flowplayer.view.StageVideoWrapper;
 
+    import flash.utils.Dictionary;
     import flash.display.DisplayObject;
     import flash.errors.IOError;
     import flash.events.NetStatusEvent;
@@ -45,6 +43,9 @@ package org.flowplayer.controller {
     import flash.net.NetStream;
     import flash.utils.Timer;
 
+    CONFIG::FLASH_10_1 {
+    import org.flowplayer.view.StageVideoWrapper;
+    }
 
     /**
      * A StreamProvider that does it's job using the Flash's NetStream class.
@@ -272,16 +273,29 @@ package org.flowplayer.controller {
         /**
          * @inheritDoc
          */
+
         public function getVideo(clip:Clip):DisplayObject {	
 			var video:Video;
-			if ( clip.useStageVideo )
+
+            //#355 provide support for 10.0 and 10.1
+            if (CONFIG::FLASH_10_1) {
+
+            if ( clip.useStageVideo )
 				video = new StageVideoWrapper(clip);
 			else {
 				video = new Video();
 				video.smoothing = clip.smoothing;
 			}
+
+            } else {
+                video = new Video();
+				video.smoothing = clip.smoothing;
+            }
 	        return video;	            
         }
+
+
+
 
         /**
          * @inheritDoc
