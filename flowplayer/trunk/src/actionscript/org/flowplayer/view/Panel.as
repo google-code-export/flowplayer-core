@@ -30,7 +30,8 @@ package org.flowplayer.view {
     import org.flowplayer.model.DisplayProperties;
     import org.flowplayer.model.DisplayProperties;
 	import org.flowplayer.model.DisplayPropertiesImpl;
-	import org.flowplayer.util.Log;
+    import org.flowplayer.util.Assert;
+    import org.flowplayer.util.Log;
 
 	/**
 	 * @author anssi
@@ -82,32 +83,31 @@ package org.flowplayer.view {
 			
 			layout.addView(view, listener, properties);
 		}
-		
-		override public function addChild(child:DisplayObject):DisplayObject {
-			log.debug("addChild " + child);
-			if (child is Preloader) {
-				log.warn("adding Preloader to panel??");
-			}
-			return super.addChild(child);
-		}
-		
+
 		override public function swapChildren(child1:DisplayObject, child2:DisplayObject):void {
 			log.warn("swapChildren on Panel called, overridden here and does nothing");
 		}
 		
 		private function addChildView(properties:DisplayProperties):void {
-			log.info("updating Z index of " + properties + ", target Z index is " + properties.zIndex + ", numChildren " + numChildren);
-
+			log.info("addChildView() updating Z index of " + properties + ", target Z index is " + properties.zIndex + ", numChildren " + numChildren);
+            Assert.notNull(properties.getDisplayObject(), "displayObject cannot be null");
 			for (var i:int = 0; i < numChildren; i++)
-				log.debug(getChildAt(i) + " at " + i);
+				log.debug("addChildView(), " + getChildAt(i) + " at " + i);
 
 			var index:Number;
-			if (numChildren > 0 && properties.zIndex <= childProps[childProps.length -1].zIndex) {
+			if (numChildren > 0 && childProps.length > 0 && properties.zIndex <= childProps[childProps.length -1].zIndex) {
 				index = getPositionToAddByZIndex(properties.zIndex);
-                log.debug("adding child at " + index);
-                addChildAt(properties.getDisplayObject(), index);
+                log.debug("addChildView() adding child at " + index);
+                try {
+                    addChildAt(properties.getDisplayObject(), index);
+                } catch (e:Error) {
+                    log.info("addChildView(), error " + e);
+                    // a workaraound to some strange bugs with invalid index
+                    addChild(properties.getDisplayObject());
+                }
 			} else {
 				index = numChildren;
+                log.debug("addChildView() adding to top " + properties.getDisplayObject());
 				addChild(properties.getDisplayObject());
 			}
 			
@@ -116,11 +116,10 @@ package org.flowplayer.view {
 			else
 				childProps.splice(index, 0, properties);
 
-			log.debug("childProps[" + index + "] : " + DisplayProperties(childProps[index]).zIndex);
-			log.debug("child indexes are now: ");
+			log.debug("addChildView() child indexes are now: ");
 
 			for (var j:int = 0; j < numChildren; j++)
-				log.debug(getChildAt(j) + " at " + j);
+				log.debug("addChildView(), " + getChildAt(j) + " at " + j);
 		}
 		
 		private function getPositionToAddByZIndex(zIndex:int):int {
