@@ -206,7 +206,8 @@ package org.flowplayer.view {
 
 //			eventSupport.onBufferFull(bufferUntilStarted);
 			
-			eventSupport.onBeforeSeek(bufferUntilStarted);
+            eventSupport.onBeforeSeek(bufferUntilStarted);
+            eventSupport.onSeek(stopBuffering);
 
 			eventSupport.onBufferStop(stopBuffering);
 			eventSupport.onBufferStop(showButton);
