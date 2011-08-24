@@ -45,8 +45,8 @@ package org.flowplayer.controller {
         protected var _successListener:Function;
         protected var _failureListener:Function;
         protected var _connectionClient:Object;
-        protected var _connector1:ParallelRTMPConnector;
-        protected var _connector2:ParallelRTMPConnector;
+        protected var _rtmpConnector:ParallelRTMPConnector;
+        protected var _rtmptConnector:ParallelRTMPConnector;
         protected var _connection:NetConnection;
 
         protected var _netConnectionUrl:String;
@@ -74,22 +74,22 @@ package org.flowplayer.controller {
             if (parts && (parts[0] == 'rtmp' || parts[0] == 'rtmpe')) {
 
                 log.debug("will connect using RTMP and RTMPT in parallel, connectionClient " + _connectionClient);
-                _connector1 = createConnector((parts[0] == 'rtmp' ? 'rtmp' : 'rtmpe') + '://' + parts[1]);
-                _connector2 = createConnector((parts[0] == 'rtmp' ? 'rtmpt' : 'rtmpte') + '://' + parts[1]);
+                _rtmpConnector = createConnector((parts[0] == 'rtmp' ? 'rtmp' : 'rtmpe') + '://' + parts[1]);
+                _rtmptConnector = createConnector((parts[0] == 'rtmp' ? 'rtmpt' : 'rtmpte') + '://' + parts[1]);
 
-                doConnect(_connector1, _proxyType, objectEncoding, connArgs);
+                doConnect(_rtmpConnector, _proxyType, objectEncoding, connArgs);
 
                 // RTMPT connect is started after 250 ms
                 var delay:Timer = new Timer(_failOverDelay, 1);
                 delay.addEventListener(TimerEvent.TIMER, function(event:TimerEvent):void {
-                    doConnect(_connector2, _proxyType, objectEncoding, connectionArgs);
+                    doConnect(_rtmptConnector, _proxyType, objectEncoding, connArgs);
                 });
                 delay.start();
 
             } else {
                 log.debug("connecting to URL " + configuredUrl);
-                _connector1 = createConnector(configuredUrl);
-                doConnect(_connector1, _proxyType, objectEncoding, connArgs);
+                _rtmpConnector = createConnector(configuredUrl);
+                doConnect(_rtmpConnector, _proxyType, objectEncoding, connArgs);
             }
         }
 
@@ -110,16 +110,16 @@ package org.flowplayer.controller {
             if (_connection) return;
             _connection = connection;
 
-            if (connector == _connector2 && _connector1) {
-                _connector1.stop();
-            } else if (_connector2) {
-                _connector2.stop();
+            if (connector == _rtmptConnector && _rtmpConnector) {
+                _rtmpConnector.stop();
+            } else if (_rtmptConnector) {
+                _rtmptConnector.stop();
             }
             _successListener(connection);
         }
 
         protected function onConnectorFailure():void {
-            if (isFailedOrNotUsed(_connector1) && isFailedOrNotUsed(_connector2) && _failureListener != null) {
+            if (isFailedOrNotUsed(_rtmpConnector) && isFailedOrNotUsed(_rtmptConnector) && _failureListener != null) {
                 _failureListener();
             }
         }
