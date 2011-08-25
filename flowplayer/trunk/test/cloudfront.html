@@ -19,7 +19,7 @@
     flowplayer("player", "../build/flowplayer.swf",
     {
 //        log: { level: 'debug', filter: 'org.flowplayer.controller.PlayListController' },
-        log: { level: 'debug', filter: 'org.flowplayer.rtmp.RTMPStreamProvider' },
+        log: { level: 'debug', filter: 'org.flowplayer.rtmp.RTMPConnectionProvider' },
         onStart: function() {
             console.log("onStart");
         },
@@ -53,8 +53,15 @@ plugins:  {
 
         // netConnectionUrl has our CloudFront domain name + 'cfx/st'
         netConnectionUrl: 'rtmp://s3b78u0kbtx79q.cloudfront.net/cfx/st'
+    },
+    controls: {
+        playlist: true
     }
 },
+
+                playlist: [
+                    { url: "honda_accord" }, { url: "Extremists" }
+                ],
 
 clip: {
     // use the RTMP plugin

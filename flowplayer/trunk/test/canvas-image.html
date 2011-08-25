@@ -11,14 +11,14 @@
 
 	<div id="page">
         <a
-                     href="../build/flowplayer.flv"
+                     href="../build/fake_empire.mp3"
                      style="display:block;width:440px;height:247px"
                      id="player">
                 </a>
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.viralvideos.icons.*' },
+        log: { level: 'debug', filter: 'org.flowplayer.bwcheck.*' },
         onStart: function() {
             console.log("onStart");
         },
@@ -35,27 +35,14 @@
             console.log("onResume");
         },
 
-//        clip: {
-//            pageUrl: 'foo.com/foo.html'
-//        },
-        plugins: {
-            viral: {
-                url: 'flowplayer.viralvideos.swf',
-                share: {
-                    shareWindow: '_self',
-                    description: 'jkejejej'
-                },
-                embed: {
-                    fallbackUrls: ['../build/flowplayer.flv']
-                },
-                icons: {
-                    overColor: 'rgba(255,10,10,0.5)'
-                }
-            },
-            dock: {
-                right: 10,
-                top: 10
-            }
+        canvas: {
+             background: 'url(../build/play.png) no-repeat 50pct 50pct'
+        },
+
+        clip: {
+        },
+        plugins:
+        {
         }
 
     });

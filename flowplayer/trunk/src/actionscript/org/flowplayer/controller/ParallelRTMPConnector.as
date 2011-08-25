@@ -134,5 +134,9 @@ package org.flowplayer.controller {
         public function get failed():Boolean {
             return _failed;
         }
+
+        public function get connectionArgs():Array {
+            return _connectionArgs;
+        }
     }
 }

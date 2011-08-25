@@ -18,8 +18,14 @@
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.pseudostreaming.*' },
+//        log: { level: 'debug', filter: 'org.flowplayer.pseudostreaming.*' },
 
+        onBeforeSeek: function() {
+            console.log("onBeforeSeek");
+        },
+        onSeek: function() {
+            console.log("onSeek");
+        },
         onBegin: function() {
             console.log("onBegin");
         },
@@ -40,30 +46,17 @@
             console.log("onResume");
         },
 
-        clip: {
-            provider: 'pseudo'
-        },
+clip: {
+    provider: 'pseudo',
+    url: "http://www.blacktrash.org/php/streamer.php/ccc_trailer1.flv"
+//    ,url: "http://pseudo01.hddn.com/vod/demo.flowplayervod/bbb-400.mp4"
+},
 
-        playlist: [
-//            '../build/play.png',
-            { url: "http://pseudo01.hddn.com/vod/demo.flowplayervod/bbb-400.mp4" }
-        ],
-
-        plugins: {
-            controls: {
-                tooltips: {
-                    buttons: true
-                },
-//                ,
-//                bufferColor: 0,
-                sliderColor: "#ff0000"
-            }
-            ,
-            pseudo: {
-                url: 'flowplayer.pseudostreaming.swf',
-                queryString: '/foobar/${start}'
-            }
-        }
+plugins: {
+    pseudo: {
+        url: 'flowplayer.pseudostreaming.swf'
+    }
+}
 
     });
 </script>

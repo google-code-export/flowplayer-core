@@ -371,10 +371,12 @@ package org.flowplayer.controller {
                 _netStream.close();
                 _netStream = null;
             }
-            if (_connection) {
-                _connection.close();
-                _connection = null;
-            }
+
+            // don't close the connection, the connectionProvider may reuse the existing connection, issue #364
+//            if (_connection) {
+//                _connection.close();
+//                _connection = null;
+//            }
             _connectionArgs = rest;
             resolveClipUrl(clip, onClipUrlResolved);
         }
