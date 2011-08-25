@@ -29,6 +29,7 @@ Fixes:
 - fixed the stopBuffering() API method to close the NetConnection and to clear the screen
 - Issue #355 setup targeting for Flash 10.0 and 10.1 to provide support for Flash 10.0 without Stagevideo requirements.
 - fixed #364, NetConnection unnecessary closed/reconnected when the netConnection does not change from clip to clip
+- xss fix for flashembed #357
 
 3.2.7
 -----

@@ -220,7 +220,8 @@
 		// express install
 		} else if (opts.expressInstall && f.isSupported([6, 65])) {
 			root.innerHTML = f.getHTML(extend(opts, {src: opts.expressInstall}), {
-				MMredirectURL: location.href,
+				//xss fix #357
+				MMredirectURL: encodeURIComponent(location.href),
 				MMplayerType: 'PlugIn',
 				MMdoctitle: document.title
 			});
