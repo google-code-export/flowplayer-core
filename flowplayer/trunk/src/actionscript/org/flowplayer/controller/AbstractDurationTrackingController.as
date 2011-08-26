@@ -46,28 +46,28 @@ package org.flowplayer.controller {
 			_playlist = playlist;
 		}
 
-		public final function onEvent(event:ClipEventType, params:Array = null):void {
+		public final function onEvent(eventType:ClipEventType, params:Array = null):void {
             var silent:Boolean = false;
-			if (event == ClipEventType.BEGIN) {
-				load(new ClipEvent(event), clip, params ? params[0] : false);
+			if (eventType == ClipEventType.BEGIN) {
+				load(new ClipEvent(eventType), clip, params ? params[0] : false);
 
-            } else if (event == ClipEventType.PAUSE) {
+            } else if (eventType == ClipEventType.PAUSE) {
                 silent = params[0] as Boolean;
-                pause(silent ? null : new ClipEvent(event));
+                pause(silent ? null : new ClipEvent(eventType));
 
-            } else if (event == ClipEventType.RESUME) {
+            } else if (eventType == ClipEventType.RESUME) {
                 silent = params[0] as Boolean;
-                resume(silent ? null : new ClipEvent(event));
+                resume(silent ? null : new ClipEvent(eventType));
 
-            } else if (event == ClipEventType.STOP) {
-                stop(new ClipEvent(event), params ? params[0] : null, params ? params[1] : null);
+            } else if (eventType == ClipEventType.STOP) {
+                stop(new ClipEvent(eventType), params ? params[0] : null, params ? params[1] : null);
 
-            } else if (event == ClipEventType.SEEK) {
+            } else if (eventType == ClipEventType.SEEK) {
                 silent = params[1] as Boolean;
-                seekTo(silent ? null : new ClipEvent(event), params[0]);
+                seekTo(silent ? null : new ClipEvent(eventType, params[0]), params[0]);
 
-            } else if (event == ClipEventType.SWITCH) {
-				doSwitchStream(new ClipEvent(event), clip, params ? params[0] : null);
+            } else if (eventType == ClipEventType.SWITCH) {
+				doSwitchStream(new ClipEvent(eventType), clip, params ? params[0] : null);
             }
 		}
 
