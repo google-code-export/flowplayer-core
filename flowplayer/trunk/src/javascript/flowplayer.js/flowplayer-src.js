@@ -735,6 +735,8 @@ function Player(wrapper, params, conf) {
 				if (typeof val == 'function') {
 					bind(listeners, key, val);	
 					delete clip[key];	
+				} else if (key == 'onCuepoint'){
+					$f(wrapper).getCommonClip().onCuepoint(clip[key][0], clip[key][1]);
 				}
 			});
 			self.setPlaylist([clip]);
