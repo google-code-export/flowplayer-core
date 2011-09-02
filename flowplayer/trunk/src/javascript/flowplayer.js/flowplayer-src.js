@@ -1040,14 +1040,14 @@ function Player(wrapper, params, conf) {
 		plugins.canvas = new Plugin("canvas", null, self);		
 		
 		html = wrapper.innerHTML;
-		
+
 		// click function
-		function doClick(e) { 
-			
+		function doClick(e) {
+
 			// ipad/iPhone --> follow the link if plugin not installed
 			var hasiPadSupport = self.hasiPadSupport && self.hasiPadSupport();
 			if (/iPad|iPhone|iPod/i.test(navigator.userAgent) && !/.flv$/i.test(playlist[0].url) && ! hasiPadSupport ) {
-				return true;	
+				return true;
 			}
 			
 			if (!self.isLoaded() && self._fireEvent("onBeforeClick") !== false) {
@@ -1055,24 +1055,25 @@ function Player(wrapper, params, conf) {
 			} 
 			return stopEvent(e);					
 		}
-		
+
 		function installPlayer() {
 			// defer loading upon click
 			if (html.replace(/\s/g, '') !== '') {	 
 
 				if (wrapper.addEventListener) {
-					wrapper.addEventListener("click", doClick, false);	
+					wrapper.addEventListener("click", doClick, false);
 
 				} else if (wrapper.attachEvent) {
-					wrapper.attachEvent("onclick", doClick);	
+					wrapper.attachEvent("onclick", doClick);
 				}
 
 			// player is loaded upon page load 
 			} else {
 
 				// prevent default action from wrapper. (fixes safari problems)
-				if (wrapper.addEventListener) {
-					wrapper.addEventListener("click", stopEvent, false);	
+                //#195 check if we have ipad support and not block click events
+				if (wrapper.addEventListener && !self.hasiPadSupport()) {
+					wrapper.addEventListener("click", stopEvent, false);
 				}
 				// load player
 				self.load();
