@@ -1045,8 +1045,7 @@ function Player(wrapper, params, conf) {
 		function doClick(e) {
 
 			// ipad/iPhone --> follow the link if plugin not installed
-			var hasiPadSupport = self.hasiPadSupport && self.hasiPadSupport();
-			if (/iPad|iPhone|iPod/i.test(navigator.userAgent) && !/.flv$/i.test(playlist[0].url) && ! hasiPadSupport ) {
+			if (/iPad|iPhone|iPod/i.test(navigator.userAgent) && !/.flv$/i.test(playlist[0].url) && ! checkForIpadSupport() ) {
 				return true;
 			}
 			
@@ -1055,6 +1054,10 @@ function Player(wrapper, params, conf) {
 			} 
 			return stopEvent(e);					
 		}
+
+        function checkForIpadSupport() {
+             return self.hasiPadSupport && self.hasiPadSupport();
+        }
 
 		function installPlayer() {
 			// defer loading upon click
@@ -1072,7 +1075,7 @@ function Player(wrapper, params, conf) {
 
 				// prevent default action from wrapper. (fixes safari problems)
                 //#195 check if we have ipad support and not block click events
-				if (wrapper.addEventListener && !self.hasiPadSupport()) {
+				if (wrapper.addEventListener && !checkForIpadSupport()) {
 					wrapper.addEventListener("click", stopEvent, false);
 				}
 				// load player
