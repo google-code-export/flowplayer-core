@@ -7,7 +7,7 @@
 		include flowplayer JavaScript file that does  
 		Flash embedding and provides the Flowplayer API.
 	-->
-	<script type="text/javascript" src="../flowplayer-@FLOWPLAYER_JS_VERSION_INFO@.min.js"></script>
+	<script type="text/javascript" src="../../flowplayer-@FLOWPLAYER_JS_VERSION_INFO@.min.js"></script>
 	
 	<!-- some minimal styling, can be removed -->
 	<link rel="stylesheet" type="text/css" href="style.css">
@@ -32,7 +32,14 @@
 	
 		<!-- this will install flowplayer inside previous A- tag. -->
 		<script>
-			flowplayer("player", "@PLAYER_SWF@");
+			flowplayer("player", "@PLAYER_SWF@", {
+			    onLoad: function() {
+			        this.loadPlugin("content","../flowplayer.content.swf", { html: "test" , css: { top: 30 }   }, function() {
+                       // this.getPlugin("content").css({ top: 30 });
+                    });
+			    }
+
+			});
 		</script>
 	
 		

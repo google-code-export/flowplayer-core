@@ -9,6 +9,7 @@ Version history:
 - Support for thumbnails in RSS files
 - Added onPlayStatus clip event handler on NetStreamClient.
 - Added new clip events for stream switching onSwitchFailed and onSwitchComplete
+
 Fixes:
 - fixed to dispatch onStart also when replaying the previous clip, now the JS controlbar again works when replaying
 - cuepoints were fired multiple times when there is a playlist with several clips. Issue #150.
@@ -30,6 +31,13 @@ Fixes:
 - Issue #355 setup targeting for Flash 10.0 and 10.1 to provide support for Flash 10.0 without Stagevideo requirements.
 - fixed #364, NetConnection unnecessary closed/reconnected when the netConnection does not change from clip to clip
 - xss fix for flashembed #357
+- Issue #384 added links support in context menus with configuration { url: "domain.com", target: "_blank"} which will work in embedded players.
+- #378, javascript method loadPluginWithConfig is unavailable and non existant. Documentation updated required to remove this and updates for loadPlugin like so
+this.loadPlugin("content","../flowplayer.content.swf", { html: "test", top: 30  }); or
+this.loadPlugin("content","../flowplayer.content.swf", { html: "test"  }, function() {
+                        this.css({ top: 30 });
+                    });
+
 
 3.2.7
 -----
