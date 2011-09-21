@@ -32,14 +32,7 @@
 	
 		<!-- this will install flowplayer inside previous A- tag. -->
 		<script>
-			flowplayer("player", "@PLAYER_SWF@", {
-			    onLoad: function() {
-			        this.loadPlugin("content","../flowplayer.content.swf", { html: "test" , css: { top: 30 }   }, function() {
-                       // this.getPlugin("content").css({ top: 30 });
-                    });
-			    }
-
-			});
+			flowplayer("player", "@PLAYER_SWF@");
 		</script>
 	
 		
