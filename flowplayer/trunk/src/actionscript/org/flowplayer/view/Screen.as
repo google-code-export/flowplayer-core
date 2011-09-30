@@ -72,7 +72,7 @@ package org.flowplayer.view {
 
         override public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void {
             addEventListenerToDisplays(_playList.clips.concat(_playList.childClips), type, listener);
- 
+
 			// Sauvegarde du Listener
 			_addDisplayListeners[type] = function(display:DisplayObject):void {
 				display.addEventListener(type, listener);
@@ -112,7 +112,8 @@ package org.flowplayer.view {
             _displays[clip] = display;
 			for(var key:Object in _addDisplayListeners)
 				_addDisplayListeners[key](display);
-			_addDisplayListeners = new Dictionary();
+            //#375 clearing the event listeners here prevents new events being added when the playlist is replaced
+			//_addDisplayListeners = new Dictionary();
         }
 
         public function setVideoApiOverlaySize(width:Number, height:Number):void {
@@ -263,7 +264,8 @@ package org.flowplayer.view {
 				for(var key:Object in _removeDisplayListeners)
 					_removeDisplayListeners[key](_displays[clips[i]]);
             }
-			_removeDisplayListeners = new Dictionary();
+            //#375 clearing the event listeners here prevents new events being added when the playlist is replaced
+			//_removeDisplayListeners = new Dictionary();
         }
 
         private function addListeners(eventSupport:ClipEventSupport):void {
