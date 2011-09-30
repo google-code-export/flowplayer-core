@@ -40,6 +40,7 @@ this.loadPlugin("content","../flowplayer.content.swf", { html: "test"  }, functi
 - #191 send the resume event, and no stop event first before reconnecting due to a connection timeout so the player comes out of a paused state correctly.
 - #363 pause stream after metadata not beforehand or else no metadata is sent for rtmp clips .
 - #363 silent seek and force to seek to a keyframe or else video frame will not display initially when paused.
+- #375 clearing the event listeners when adding new video displays prevents new events being added when the playlist is replaced.
 
 3.2.7
 -----
