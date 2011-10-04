@@ -41,6 +41,7 @@ this.loadPlugin("content","../flowplayer.content.swf", { html: "test"  }, functi
 - #363 pause stream after metadata not beforehand or else no metadata is sent for rtmp clips .
 - #363 silent seek and force to seek to a keyframe or else video frame will not display initially when paused.
 - #375 clearing the event listeners when adding new video displays prevents new events being added when the playlist is replaced.
+- #391 add message argument to connection failure callback required by some connection providers.
 
 3.2.7
 -----

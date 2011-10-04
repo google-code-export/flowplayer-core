@@ -161,9 +161,10 @@ package org.flowplayer.controller {
             _successListener(connection);
         }
 
-        protected function onConnectorFailure():void {
+        //#391 add message argument required by some connection providers
+        protected function onConnectorFailure(message:String = null):void {
             if (isFailedOrNotUsed(_rtmpConnector) && isFailedOrNotUsed(_rtmptConnector) && _failureListener != null) {
-                _failureListener();
+                _failureListener(message);
             }
         }
 
