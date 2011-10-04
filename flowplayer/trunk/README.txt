@@ -43,6 +43,7 @@ this.loadPlugin("content","../flowplayer.content.swf", { html: "test"  }, functi
 - #375 clearing the event listeners when adding new video displays prevents new events being added when the playlist is replaced.
 - #391 add message argument to connection failure callback required by some connection providers.
 - #363 add overridable pause to frame for different seek functionality between http and rtmp.
+- #392 possible fix for extensions with no filetypes like rtmp flv clips, require positive index check.
 
 3.2.7
 -----

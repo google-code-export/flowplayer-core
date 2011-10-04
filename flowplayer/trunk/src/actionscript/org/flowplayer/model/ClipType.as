@@ -98,8 +98,9 @@ package org.flowplayer.model {
             extensions.push("mp3");
             for (var i:int = 0; i < extensions.length; i++) {
                 var extension:String = extensions[i] as String;
-                if (name.lastIndexOf(extension) == name.length - extension.length) {
-                    return extension;
+                //#392 possible fix for extensions with no filetypes like rtmp flv clips, require positive index check.
+                if (name.lastIndexOf(extension) >= 0 && name.lastIndexOf(extension) == name.length - extension.length) {
+                    throw new Error(extension.length);
                 }
             }
             return null;
