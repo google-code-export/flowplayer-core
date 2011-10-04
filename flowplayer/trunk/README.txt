@@ -42,6 +42,7 @@ this.loadPlugin("content","../flowplayer.content.swf", { html: "test"  }, functi
 - #363 silent seek and force to seek to a keyframe or else video frame will not display initially when paused.
 - #375 clearing the event listeners when adding new video displays prevents new events being added when the playlist is replaced.
 - #391 add message argument to connection failure callback required by some connection providers.
+- #363 add overridable pause to frame for different seek functionality between http and rtmp.
 
 3.2.7
 -----

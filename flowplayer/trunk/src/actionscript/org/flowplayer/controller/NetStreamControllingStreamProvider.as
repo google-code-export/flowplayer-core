@@ -852,6 +852,20 @@ package org.flowplayer.controller {
             return null;
         }
 
+        //#363 overridable pause to frame for different seek functionality.
+        protected function pauseToFrame():void
+        {
+            log.debug("seeking to frame zero");
+            //#363 pause stream here after metadata or else no metadata is sent for rtmp clips
+            pause(new ClipEvent(ClipEventType.PAUSE));
+
+            //#363 silent seek and force to seek to a frame or else video will not display
+            silentSeek = true;
+
+            netStream.seek(0);
+            _pauseAfterStart = false;
+        }
+
         protected function onMetaData(event:ClipEvent):void {
             log.info("in NetStreamControllingStremProvider.onMetaData: " + event.target);
             if (! clip.startDispatched) {
@@ -861,14 +875,7 @@ package org.flowplayer.controller {
             // some files require that we seek to the first frame only after receiving metadata
             // otherwise we will never receive the metadata
             if (_pauseAfterStart) {
-                log.debug("seeking to frame zero");
-                //#363 pause stream here after metadata or else no metadata is sent for rtmp clips
-                pause(new ClipEvent(ClipEventType.PAUSE));
-
-                //#363 silent seek and force to seek to a frame or else video will not display
-                silentSeek = true;
-                netStream.seek(0.1);
-                _pauseAfterStart = false;
+                pauseToFrame();
             }
             _switching = false;
         }
