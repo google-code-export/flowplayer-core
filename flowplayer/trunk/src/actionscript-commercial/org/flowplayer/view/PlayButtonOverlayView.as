@@ -202,9 +202,10 @@ package org.flowplayer.view {
 			eventSupport.onBeforeFinish(showReplayButton, isParentClipOrPostroll);
 
             // showing the buffer animation on buffer empty causes trouble with live streams and also on other cases
-//			eventSupport.onBufferEmpty(startBuffering);
+            //#395 apply buffer animation status to VOD streams only.
+			eventSupport.onBufferEmpty(startBuffering, applyForClip);
 
-//			eventSupport.onBufferFull(bufferUntilStarted);
+			eventSupport.onBufferFull(bufferUntilStarted, applyForClip);
 			
             eventSupport.onBeforeSeek(bufferUntilStarted);
             eventSupport.onSeek(stopBuffering);
@@ -212,6 +213,10 @@ package org.flowplayer.view {
 			eventSupport.onBufferStop(stopBuffering);
 			eventSupport.onBufferStop(showButton);
 		}
+
+        private function applyForClip(clip:Clip):Boolean {
+            return !clip.live;
+        }
 
         private function isParentClip(clip:Clip):Boolean {
             return ! clip.isInStream;
