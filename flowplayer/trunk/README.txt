@@ -45,6 +45,7 @@ this.loadPlugin("content","../flowplayer.content.swf", { html: "test"  }, functi
 - #363 add overridable pause to frame for different seek functionality between http and rtmp.
 - #392 possible fix for extensions with no filetypes like rtmp flv clips, require positive index check.
 - #395 apply buffer animation status to VOD streams only.
+- #375 possible fix when replacing the playlist in onBeforeFinish, move replay button to onFinish.
 
 3.2.7
 -----

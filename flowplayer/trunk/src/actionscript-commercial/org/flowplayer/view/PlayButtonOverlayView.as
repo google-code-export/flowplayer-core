@@ -199,7 +199,9 @@ package org.flowplayer.view {
 			
 			// onBeforeFinish: call stopBuffering first and then showButton (stopBuffering hides the button)
 			eventSupport.onBeforeFinish(stopBuffering);
-			eventSupport.onBeforeFinish(showReplayButton, isParentClipOrPostroll);
+
+            //#375 possible fix when replacing the playlist in onBeforeFinish, move replay button to onFinish.
+			eventSupport.onFinish(showReplayButton, isParentClipOrPostroll);
 
             // showing the buffer animation on buffer empty causes trouble with live streams and also on other cases
             //#395 apply buffer animation status to VOD streams only.
@@ -347,7 +349,7 @@ package org.flowplayer.view {
 		}
 
 		public function showButton(event:ClipEvent = null, label:String = null):void {
-			log.debug("showButton(), label " + label);
+			log.error("showButton(), label " + label);
 
 			// we only support labels if a custom button is not defined
 			CONFIG::commercialVersion {
