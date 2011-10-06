@@ -748,7 +748,12 @@ package org.flowplayer.controller {
                 }
 
             } else if (event.info.code == "NetStream.Seek.InvalidTime") {
-
+                //#390 correct seek back to a valid time on invalid seeking while seeking in the buffer.
+                log.error("Buffer seek failed, setting seek time to " + event.info.details);
+                silentSeek = false;
+                _seeking = true;
+                _seekTarget = event.info.details;
+                netStream.seek(event.info.details);
             } else if (event.info.code == "NetStream.Play.StreamNotFound" ||
                     event.info.code == "NetConnection.Connect.Rejected" ||
                     event.info.code == "NetConnection.Connect.Failed") {
