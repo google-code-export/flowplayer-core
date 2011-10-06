@@ -46,6 +46,7 @@ this.loadPlugin("content","../flowplayer.content.swf", { html: "test"  }, functi
 - #392 possible fix for extensions with no filetypes like rtmp flv clips, require positive index check.
 - #395 apply buffer animation status to VOD streams only.
 - #375 possible fix when replacing the playlist in onBeforeFinish, move replay button to onFinish.
+- #390 correct seek back to a valid time on invalid seeking while seeking in the buffer.
 
 3.2.7
 -----
