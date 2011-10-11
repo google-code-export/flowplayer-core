@@ -138,10 +138,12 @@ package org.flowplayer.controller {
 				return clip;
 			}
 			if (clipIndex >= 0) {
+/*
 				if (clipIndex == _playList.currentIndex && getState() != State.WAITING) {
 					log.debug("play(): already playing this clip, returning");
 					return _playList.current;
 				}
+*/
 				_state.stop();
 				if (_playList.toIndex(clipIndex) == null) {
 					log.error("There is no clip at index " + clipIndex + ", cannot play");
