@@ -9,6 +9,7 @@ Version history:
 - Support for thumbnails in RSS files
 - Added onPlayStatus clip event handler on NetStreamClient.
 - Added new clip events for stream switching onSwitchFailed and onSwitchComplete
+- made it possible to replay a clip using play(<current_clip's_index>)
 
 Fixes:
 - fixed to dispatch onStart also when replaying the previous clip, now the JS controlbar again works when replaying

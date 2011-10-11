@@ -20,7 +20,6 @@ package org.flowplayer.model {
 
         public function setProp(name:String, value:Object):void {
             Assert.notNull(name,  "the name of the property cannot be null");
-            Assert.notNull(value,  "the value of the property cannot be null");
 
             if (!_customProperties) {
                 _customProperties = new Object();
