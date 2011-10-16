@@ -518,8 +518,18 @@ package org.flowplayer.controller {
 
         protected function doSwitchStream(event:ClipEvent, netStream:NetStream, clip:Clip, netStreamPlayOptions:Object = null):void {
             //fix for #279, switch and pause if the current clip is currently in a paused state
-            //TODO: netStreamPlayOptions may still be enabled so can still call play2 but acts like a reset
-            _load(clip, this._paused, 0);
+            //#404 implement netstreamplayoptions for http streams, resets the stream or start loading a new stream.
+            if (netStreamPlayOptions) {
+                pauseAfterStart = paused;
+                import flash.net.NetStreamPlayOptions;
+                if (netStreamPlayOptions is NetStreamPlayOptions) {
+					log.debug("doSwitchStream() calling play2()")
+					netStream.play2(netStreamPlayOptions as NetStreamPlayOptions);
+				}
+            } else {
+                load(event, clip, this._paused);
+            }
+
             dispatchEvent(event);
         }
 
