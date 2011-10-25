@@ -414,12 +414,6 @@ package org.flowplayer.controller {
          */
         protected function doPause(netStream:NetStream, event:ClipEvent = null):void {
             if (! netStream) return;
-//            if (clip.live) {
-//                log.debug("pausing a live stream, closing netStream");
-//                netStream.close();
-//            } else {
-//                netStream.pause();
-//            }
             netStream.pause();
             if (event) {
                 dispatchEvent(event);

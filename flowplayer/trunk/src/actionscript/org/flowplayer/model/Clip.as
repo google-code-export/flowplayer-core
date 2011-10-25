@@ -82,6 +82,7 @@ package org.flowplayer.model {
         private var _currentTime:Number = 0;
         private var _endLimit:Number = 0;
         private var _encoding:Boolean = false;
+        private var _stopLiveOnPause:Boolean = true;
 
         public function Clip() {
             _childPlaylist = new TimedPlaylist();
@@ -1005,6 +1006,14 @@ package org.flowplayer.model {
 
         public function deleteCustomProperty(name:String):void {
             _extension.deleteProp(name);
+        }
+
+        public function get stopLiveOnPause():Boolean {
+            return _stopLiveOnPause;
+        }
+
+        public function set stopLiveOnPause(value:Boolean):void {
+            _stopLiveOnPause = value;
         }
     }
 }
