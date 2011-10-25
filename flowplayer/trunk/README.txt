@@ -49,6 +49,7 @@ this.loadPlugin("content","../flowplayer.content.swf", { html: "test"  }, functi
 - #375 possible fix when replacing the playlist in onBeforeFinish, move replay button to onFinish.
 - #390 correct seek back to a valid time on invalid seeking while seeking in the buffer.
 - #404 implement netstreamplayoptions for http streams, resets the stream or start loading a new stream.
+- fixed an issue in parsing JSON config that contains several comments separated by whitespace
 
 3.2.7
 -----
