@@ -135,7 +135,7 @@ package org.flowplayer.controller {
             if (silent || dispatchBeforeEvent(ClipEventType.PAUSE, [silent])) {
 
                 // with a live stream we need to stop
-                if (playList.current.live) {
+                if (playList.current.live && playList.current.stopLiveOnPause) {
                     stop();
                     return;
                 }
