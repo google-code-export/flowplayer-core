@@ -101,7 +101,8 @@ package org.flowplayer.model {
 			_linkWindow = "_self";
 			_image = true;
 			_cuepointMultiplier = 1000;
-            _seekableOnBegin = null;
+            //#416 enable seekableOnBegin to enable the scrubbar correctly when autobuffering.
+            _seekableOnBegin = true;
 			_accelerated = false;
 		}
 
