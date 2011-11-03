@@ -51,6 +51,8 @@ this.loadPlugin("content","../flowplayer.content.swf", { html: "test"  }, functi
 - #404 implement netstreamplayoptions for http streams, resets the stream or start loading a new stream.
 - fixed an issue in parsing JSON config that contains several comments separated by whitespace
 - new clip property 'stopLiveOnPause'
+- #415 regression issue with #395, stop the buffering animation correctly.
+- #414 problem appears again for very short clips with invalid seek times, make it step back 1 second from the invalid seek time to seek the buffer correctly.
 
 3.2.7
 -----

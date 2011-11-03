@@ -753,11 +753,12 @@ package org.flowplayer.controller {
 
             } else if (event.info.code == "NetStream.Seek.InvalidTime") {
                 //#390 correct seek back to a valid time on invalid seeking while seeking in the buffer.
-                log.debug("Buffer seek failed, setting seek time to " + event.info.details);
+                //#414 problem appears again for very short clips, make it step back 1 second from the invalid seek time to seek the buffer correctly.
+                _seekTarget = int(event.info.details - 1);
+                log.debug("Buffer seek failed, setting seek time to " + _seekTarget);
                 silentSeek = false;
                 _seeking = true;
-                _seekTarget = event.info.details;
-                netStream.seek(event.info.details);
+                netStream.seek(_seekTarget);
             } else if (event.info.code == "NetStream.Play.StreamNotFound" ||
                     event.info.code == "NetConnection.Connect.Rejected" ||
                     event.info.code == "NetConnection.Connect.Failed") {
