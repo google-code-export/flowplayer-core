@@ -206,7 +206,8 @@ package org.flowplayer.view {
             //#395 apply buffer animation status to VOD streams only.
 			eventSupport.onBufferEmpty(startBuffering, applyForClip);
 
-			eventSupport.onBufferFull(bufferUntilStarted, applyForClip);
+            //#415 regression issue with #395, stop the buffering animation correctly.
+			eventSupport.onBufferFull(stopBuffering, applyForClip);
 			
             eventSupport.onBeforeSeek(bufferUntilStarted);
             eventSupport.onSeek(stopBuffering);
