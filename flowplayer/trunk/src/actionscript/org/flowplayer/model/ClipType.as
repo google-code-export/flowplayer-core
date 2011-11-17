@@ -97,10 +97,11 @@ package org.flowplayer.model {
             var extensions:Array = VIDEO_EXTENSIONS.concat(IMAGE_EXTENSIONS).concat(FLASH_VIDEO_EXTENSIONS);
             extensions.push("mp3");
             for (var i:int = 0; i < extensions.length; i++) {
-                var extension:String = extensions[i] as String;
+                //#423 this is an extension check only no prefix check, so add the . or else files with known extensions will be chosen instead. casting may not be neccessary.
+                var extension:String = "." + extensions[i];
                 //#392 possible fix for extensions with no filetypes like rtmp flv clips, require positive index check.
                 if (name.lastIndexOf(extension) >= 0 && name.lastIndexOf(extension) == name.length - extension.length) {
-                    return extension;
+                    return extensions[i];
                 }
             }
             return null;

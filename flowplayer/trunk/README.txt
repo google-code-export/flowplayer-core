@@ -54,6 +54,7 @@ this.loadPlugin("content","../flowplayer.content.swf", { html: "test"  }, functi
 - #415 regression issue with #395, stop the buffering animation correctly.
 - #414 problem appears again for very short clips with invalid seek times, make it step back 1 second from the invalid seek time to seek the buffer correctly.
 - #416 enable seekableOnBegin to enable the scrubbar correctly when autobuffering.
+- #423 add the . to clip type extension checks or else files with known extension postfixes within them will be chosen instead.
 
 3.2.7
 -----
