@@ -590,8 +590,8 @@ function Player(wrapper, params, conf) {
 					if ( fn ) { fn(true); }
 				};
 
-				if (/Safari/i.test(navigator.userAgent) && ! /Chrome/i.test(navigator.userAgent) && api && api.fp_isFullscreen()) {
-					setTimeout(clean, 0);
+				if (/WebKit/i.test(navigator.userAgent) && ! /Chrome/i.test(navigator.userAgent)) {
+						setTimeout(clean, 0);
 				} else {
 					clean();
 				}
