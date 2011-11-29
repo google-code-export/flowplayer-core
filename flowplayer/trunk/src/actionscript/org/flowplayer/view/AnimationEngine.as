@@ -277,7 +277,8 @@ package org.flowplayer.view {
 				_panel.addView(view);
 			}
 			var target:Rectangle = _panel.update(view, props);
-			startTweens(view, props.alpha, target.width, target.height, target.x, target.y, durationMillis, callback, easeFunc);
+            //#426 when a plugin width is set to a percentage, x/y is required to be floored or else it will affect the animation engine. specifically for the autohide function.
+			startTweens(view, props.alpha, target.width, target.height, int(target.x), int(target.y), durationMillis, callback, easeFunc);
 			if (durationMillis == 0) {
 				if (props.alpha >= 0) {
 					view.alpha = props.alpha;
