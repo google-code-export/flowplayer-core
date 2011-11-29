@@ -55,6 +55,7 @@ this.loadPlugin("content","../flowplayer.content.swf", { html: "test"  }, functi
 - #414 problem appears again for very short clips with invalid seek times, make it step back 1 second from the invalid seek time to seek the buffer correctly.
 - #416 enable seekableOnBegin to enable the scrubbar correctly when autobuffering.
 - #423 add the . to clip type extension checks or else files with known extension postfixes within them will be chosen instead.
+- #426 when a plugin width is set to a percentage, x/y is required to be floored or else it will affect the animation engine. specifically for the autohide function.
 
 3.2.7
 -----
