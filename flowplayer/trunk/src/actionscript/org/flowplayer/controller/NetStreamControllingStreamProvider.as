@@ -75,6 +75,8 @@ package org.flowplayer.controller {
         private var _paused:Boolean;
         private var _stopping:Boolean;
         private var _started:Boolean;
+        private var _reconnecting:Boolean;
+        private var _reconnectTime:Number = -1;
         private var _connectionClient:NetConnectionClient;
         private var _streamCallbacks:Dictionary = new Dictionary();
         private var _timeProvider:TimeProvider;
@@ -768,15 +770,25 @@ package org.flowplayer.controller {
                     log.info("retrying _load()");
                     _load(clip, _pauseAfterStart, _attempts);
                 } else if (canDispatchStreamNotFound()) {
+                    //#430 clear buffering status on stream failure
+                    dispatchPlayEvent(ClipEventType.BUFFER_STOP);
                     clip.dispatchError(ClipError.STREAM_NOT_FOUND, event.info.code);
                 }
+            //#430 on intermittent client connection failures, attempt a reconnect, or wait until connection is active again for rtmp connections.
+            } else if (event.info.code =="NetConnection.Connect.NetworkChange") {
+                if (_reconnectTime < 0) _reconnectTime = time;
+                _reconnecting = true;
+                connect(clip);
             }
+
 
             onNetStatus(event);
         }
 
         private function onConnectionSuccess(connection:NetConnection):void {
             _connection = connection;
+            //#430 adding event listeners for netconnection
+            connection.addEventListener(NetStatusEvent.NET_STATUS, _onNetStatus);
             _createNetStream();
             start(null, clip, _pauseAfterStart);
             dispatchPlayEvent(ClipEventType.CONNECT);
@@ -882,6 +894,12 @@ package org.flowplayer.controller {
                 clip.dispatch(ClipEventType.START, _pauseAfterStart);
                 clip.startDispatched = true;
             }
+            //#430 if there is a client connection failure reconnect to the specified time for rtmp streams.
+            if (_reconnecting) {
+                seek(null, _reconnectTime);
+                _reconnectTime = -1;
+                _reconnecting = false;
+            }
             // some files require that we seek to the first frame only after receiving metadata
             // otherwise we will never receive the metadata
             if (_pauseAfterStart) {
@@ -918,6 +936,8 @@ package org.flowplayer.controller {
                 provider = getConnectionProvider(clip);
             }
             provider.onFailure = function(message:String = null):void {
+                //#430 clear buffering status on connection failure
+                dispatchPlayEvent(ClipEventType.BUFFER_STOP);
                 clip.dispatchError(ClipError.STREAM_LOAD_FAILED, "connection failed" + (message ? ": " + message : ""));
             };
             return provider;
