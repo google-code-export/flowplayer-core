@@ -56,6 +56,11 @@ this.loadPlugin("content","../flowplayer.content.swf", { html: "test"  }, functi
 - #416 enable seekableOnBegin to enable the scrubbar correctly when autobuffering.
 - #423 add the . to clip type extension checks or else files with known extension postfixes within them will be chosen instead.
 - #426 when a plugin width is set to a percentage, x/y is required to be floored or else it will affect the animation engine. specifically for the autohide function.
+- #430 adding event listeners for netconnection to obtain certain events.
+- #430 on intermittent client connection failures, attempt a reconnect, or wait until connection is active again for rtmp connections.
+- #430 if there is a client connection failure reconnect to the specified time for rtmp streams after metadata.
+- #430 clear buffering status on connection failure.
+- #430 clear buffering status on stream failure.
 
 3.2.7
 -----
