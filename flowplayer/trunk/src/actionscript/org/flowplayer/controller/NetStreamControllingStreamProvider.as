@@ -75,8 +75,6 @@ package org.flowplayer.controller {
         private var _paused:Boolean;
         private var _stopping:Boolean;
         private var _started:Boolean;
-        private var _reconnecting:Boolean;
-        private var _reconnectTime:Number = -1;
         private var _connectionClient:NetConnectionClient;
         private var _streamCallbacks:Dictionary = new Dictionary();
         private var _timeProvider:TimeProvider;
@@ -774,14 +772,7 @@ package org.flowplayer.controller {
                     dispatchPlayEvent(ClipEventType.BUFFER_STOP);
                     clip.dispatchError(ClipError.STREAM_NOT_FOUND, event.info.code);
                 }
-            //#430 on intermittent client connection failures, attempt a reconnect, or wait until connection is active again for rtmp connections.
-            } else if (event.info.code =="NetConnection.Connect.NetworkChange") {
-                if (_reconnectTime < 0) _reconnectTime = time;
-                _reconnecting = true;
-                connect(clip);
             }
-
-
             onNetStatus(event);
         }
 
@@ -893,12 +884,6 @@ package org.flowplayer.controller {
             if (! clip.startDispatched) {
                 clip.dispatch(ClipEventType.START, _pauseAfterStart);
                 clip.startDispatched = true;
-            }
-            //#430 if there is a client connection failure reconnect to the specified time for rtmp streams.
-            if (_reconnecting) {
-                seek(null, _reconnectTime);
-                _reconnectTime = -1;
-                _reconnecting = false;
             }
             // some files require that we seek to the first frame only after receiving metadata
             // otherwise we will never receive the metadata
