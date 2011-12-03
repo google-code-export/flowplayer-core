@@ -385,13 +385,19 @@ package org.flowplayer.model {
             _urlsByResolver = [];
         }
 
-		/*
-		 * If the encoding is set property, uri encode for ut8 urls
-		 */
+
+        //#412 check for empty baseurl or else player url is appended and affects the url parsing.
 		[Value]
 		public function get completeUrl():String {
-			return urlEncoding ? encodeURI(URLUtil.completeURL(_baseUrl, url)) : URLUtil.completeURL(_baseUrl, url);
+            return encodeURI(_baseUrl ? URLUtil.completeURL(_baseUrl, url) : url);
 		}
+
+		//If the encoding is set property, uri encode for ut8 urls
+        private function encodeUrl(url:String):String {
+            if (!urlEncoding) return url;
+            return encodeURI(url);
+        }
+
 
 		public function get type():ClipType {
             if (_type) {
