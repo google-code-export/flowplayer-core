@@ -102,6 +102,7 @@ package org.flowplayer.view {
 				if (disp.visible) {
 					panelAnimate(currentProps.getDisplayObject(), newProps, durationMillis, endCallback, easeFunc);
 				} else {
+                    log.info("removing from panel " + disp);
 					_panel.removeChild(disp);
 				}
 				_pluginRegistry.updateDisplayProperties(newProps);
@@ -236,6 +237,11 @@ package org.flowplayer.view {
 				if (completeCallback != null) {
 					completeCallback();
 				}
+                if (target == 0) {
+                    _panel.removeChild(view);
+                } else if (view.parent != _panel) {
+                    _panel.addView(view, null, plugin);
+                }
 				return null;
 			}
 
@@ -250,7 +256,7 @@ package org.flowplayer.view {
 					playable.addEventListener(GoEvent.COMPLETE, 
 						function(event:GoEvent):void {
 							if (!_canceledByPlayable[playable]) { 
-								log.debug("removing " + view + " from panel");
+								log.info("removing " + view + " from panel");
 								view.parent.removeChild(view);
 							} else {
 								log.info("previous fadeout was canceled, will not remove " + view + " from panel");
@@ -260,7 +266,7 @@ package org.flowplayer.view {
 					_panel.addView(view, null, plugin);
 				}
 			} else {
-				log.debug("animateAlpha, view is not added/removed from panel");
+				log.info("animateAlpha, view is not added/removed from panel: " + view);
 			}
 			 
 			var tween:Animation = start(view, playable, completeCallback) as Animation;
