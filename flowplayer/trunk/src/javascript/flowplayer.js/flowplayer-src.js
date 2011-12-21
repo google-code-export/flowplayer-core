@@ -748,7 +748,7 @@ function Player(wrapper, params, conf) {
 		},
 
         bufferAnimate: function(enable) {
-            api.fp_bufferAnimate(enable == undefined || enable);
+            api.fp_bufferAnimate(enable === undefined || enable);
             return self;
         },
 
