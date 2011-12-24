@@ -117,7 +117,11 @@ package org.flowplayer.util {
         }
 
         public static function isRtmpUrl(url:String):Boolean {
-            return (url.indexOf("rtmp://") == 0);
+            //#439 check for all rtmp streaming protocols when checking for rtmp urls.
+            var protocols:Array = ["rtmp","rtmpt", "rtmpe", "rtmpte", "rtmfp"];
+            var protocol:String = url.substr(0,url.indexOf("://"));
+            return protocols.indexOf(protocol) >= 0;
+            //return (url.indexOf("rtmp://") == 0);
         }
 		
 		public static function get playerBaseUrl():String {
