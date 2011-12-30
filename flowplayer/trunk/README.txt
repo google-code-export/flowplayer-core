@@ -61,6 +61,7 @@ this.loadPlugin("content","../flowplayer.content.swf", { html: "test"  }, functi
 - #430 clear buffering status on stream failure.
 - #412 check for empty baseurl or else player url is appended and affects the url parsing.
 - #439 check for all rtmp streaming protocols when checking for rtmp urls.
+- #442 fix for code error in the javascript api.
 
 3.2.7
 -----
