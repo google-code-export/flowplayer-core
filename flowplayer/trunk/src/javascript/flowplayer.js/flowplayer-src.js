@@ -1222,7 +1222,7 @@ window.flowplayer = window.$f = function() {
 
 		// arg is a DOM element
 		} else if (arg) {
-			return new Player(clone(arg), clone(params), clone(conf));
+			return new Player(arg, clone(params), clone(conf));
 		}
 
 	}
