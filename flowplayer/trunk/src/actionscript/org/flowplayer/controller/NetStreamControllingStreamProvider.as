@@ -517,7 +517,9 @@ package org.flowplayer.controller {
                 pauseAfterStart = paused;
                 import flash.net.NetStreamPlayOptions;
                 if (netStreamPlayOptions is NetStreamPlayOptions) {
-					log.debug("doSwitchStream() calling play2()")
+					log.debug("doSwitchStream() calling play2()");
+                    //#461 when we have a clip base url set, we need the complete clip url sent to play2 for http streams.
+                    netStreamPlayOptions.streamName = clip.completeUrl;
 					netStream.play2(netStreamPlayOptions as NetStreamPlayOptions);
 				}
             } else {
