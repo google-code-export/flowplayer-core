@@ -131,6 +131,9 @@ package org.flowplayer.controller {
                 log.info("this clip will pause after start");
             }
             _pauseAfterStart = pauseAfterStart;
+            if (_pauseAfterStart) {
+                _volumeController.muted = true;
+            }
             clip.onMetaData(onMetaData, function(clip:Clip):Boolean {
                 return clip.provider == (_model ? _model.name : (clip.parent ? 'httpInstream' : 'http'));
             });
@@ -878,6 +881,7 @@ package org.flowplayer.controller {
             silentSeek = true;
 
             netStream.seek(0);
+            _volumeController.muted = false;
             _pauseAfterStart = false;
         }
 
