@@ -130,7 +130,7 @@ package org.flowplayer.controller {
 
 		private function load(event:ClipEvent, clip:Clip, pauseAfterStart:Boolean = false):void {
 			clip.onPause(onPause);
-            clip.onBegin(onBegin);
+            clip.onStart(onBegin);
             log.debug("calling doLoad");
 			doLoad(event, clip, pauseAfterStart);
 		}
