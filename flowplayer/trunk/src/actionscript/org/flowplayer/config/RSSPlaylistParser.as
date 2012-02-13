@@ -75,7 +75,9 @@ package org.flowplayer.config {
 
  	           	}
             }
-            playlist.toIndex(0);
+
+            //#470 this may not be needed, causing issues when replacing the playlist.
+            //playlist.toIndex(0);
             return result;
         }
         
