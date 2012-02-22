@@ -217,6 +217,9 @@ package org.flowplayer.view {
 		}
 
         private function applyForClip(clip:Clip):Boolean {
+            // #474
+            if (_player.status.time >= clip.duration - 2) return false;
+
             return !clip.live;
         }
 
@@ -371,7 +374,8 @@ package org.flowplayer.view {
 				props.display = "block";
 				_pluginRegistry.updateDisplayProperties(props);
 			}
-			
+            // #474
+            stopBuffering();
 			addButton();
 			show();
 			onResize();
