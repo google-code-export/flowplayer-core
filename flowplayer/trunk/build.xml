@@ -224,7 +224,7 @@
                 
                 <arg line="-file-specs '${src-as}/org/flowplayer/view/Preloader.as'"/>
                 <arg line="-output '${build-dir}/@{binary}'"/>
-                <arg line="-target-player '${flash.target.player}'"/>
+
             </exec>
         </sequential>
     </macrodef>
@@ -250,7 +250,6 @@
             <arg line="-incremental=true"/>
 			<arg line="-define+=CONFIG::debug,'false'"/>
             <arg line="-define+=CONFIG::FLASH_10_1,'${flash.use.10.1}'"/>
-            <arg line="-target-player '${flash.target.player}'"/>
 
         </exec>
     </target>
