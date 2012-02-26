@@ -63,7 +63,7 @@ this.loadPlugin("content","../flowplayer.content.swf", { html: "test"  }, functi
 - #439 check for all rtmp streaming protocols when checking for rtmp urls.
 - #442 fix for code error in the javascript api.
 - #461 when we have a clip base url set, we need the complete clip url sent to play2 for http streams.
-- #470 removed issue caused when replacing a playlist with an rss feed, seems to not be required for initial playback of an rss feed.
+- #470 check for a playlist when replacing the playlist with an rss feed.
 
 3.2.7
 -----
