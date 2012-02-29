@@ -77,8 +77,6 @@ import org.flowplayer.model.DisplayPluginModel;
     CONFIG::FLASH_10_1 {
     import flash.media.StageVideo;
     }
-
-	
 	use namespace flow_internal; 
 
 	public class Launcher extends StyleableSprite implements ErrorHandler {

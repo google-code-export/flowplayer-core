@@ -2,8 +2,8 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 
     <!--<script src="../flowplayer-3.2.6.min.js"></script>-->
-    <script src="../src/javascript/flashembed.js"></script>
-    <script src="../src/javascript/flowplayer.js/flowplayer-src.js"></script>
+    <!--<script src="../src/javascript/flashembed.js"></script>-->
+    <script src="../src/javascript/flowplayer.js/flowplayer-3.3-dev.min.js"></script>
 
 
 	<!-- page title -->
@@ -13,14 +13,14 @@
 
 	<div id="page">
         <a
-                     href="http://pseudo01.hddn.com/vod/demo.flowplayervod/Extremists.flv"
+                     href="fly.mov"
                      style="display:block;width:440px;height:247px"
                      id="player">
                 </a>
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-//        log: { level: 'debug', filter: 'org.flowplayer.controls.scrubber.ScrubberSlider' },
+        log: { level: 'debug', filter: 'org.flowplayer.controller.VolumeController' },
 
         key: '#$b6223bfbd646c621758',
 
@@ -35,6 +35,14 @@
         onStartBuffering: function() {
             console.log("onStartBuffering");
         },
+
+//        onBufferEmpty: function() {
+//            console.log("onBufferEmpty");
+//        },
+<!---->
+//        onBufferFull: function() {
+//            console.log("onBufferFull");
+//        },
 
         onFinish: function() {
             console.log("onFinish");
@@ -60,14 +68,24 @@
             console.log("onLastSecond");
         },
 
-        clip: {
-            autoPlay: false, autoBuffering: false,
-            linkUrl: "javascript: alert(123)",
-            bufferLength: 10
+                playlist: [
+                    "http://blip.tv/file/get/KimAronson-TwentySeconds58192.flv",
+                    "http://blip.tv/file/get/KimAronson-TwentySeconds71844.flv",
+                    "http://blip.tv/file/get/KimAronson-TwentySeconds73213.flv"
+                ],
 
+        clip: {
+            baseUrl: '../build',
+//            duration: 20,
+            bufferLength: 10,
+            autoPlay: false,
+            autoBuffering:true
         },
 
         plugins: {
+            controls: {
+                playlist: true
+            }
 //            content: {
 //                url: 'flowplayer.content.swf',
 //                html: '<img src="../build/play.png" width="100" height="100"/>',

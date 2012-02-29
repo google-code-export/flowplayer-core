@@ -49,15 +49,16 @@
 
             plugins:  {
 
-//                        slowmotion: {
-//                            url: 'flowplayer.slowmotion.swf'
-//                        },
+                        slowmotion: {
+                            url: 'flowplayer.slowmotion.swf',
+                            serverType: 'wowza'
+                        },
 
                 rtmp: {
                     url: 'flowplayer.rtmp.swf',
 //                    netConnectionUrl: 'rtmp://dk2isqp3f.rtmphost.com/flowplayer'
-//                            netConnectionUrl: 'rtmp://rtmp01.hddn.com/play'
-                    netConnectionUrl: 'rtmp://s3b78u0kbtx79q.cloudfront.net/cfx/st'
+                            netConnectionUrl: 'rtmp://rtmp01.hddn.com/play'
+//                    netConnectionUrl: 'rtmp://s3b78u0kbtx79q.cloudfront.net/cfx/st'
 //                    netConnectionUrl: 'rtmp://s263p3lt1nuakd.cloudfront.net/cfx/st'
 
                 },
@@ -100,15 +101,12 @@
                 provider: 'rtmp',
                 bufferLength: 0,
                 backBufferLength: 30,
-                url: 'mp4:bbb-400'
-//                url: escape('mp4:2?Expires=1308677394&Signature=Eh6GZ3ar37F6xfU0znJt63saDvkDPsJj73WQSPtuOpzJqYPxQoxGqgkgEllb0t3WX4ZOLibIZcicIjSJeIecQPGSHpHbaGi1ZCZW1nCj1oeuBDVPNgcg9q7rvc64Rd39J41QsL3mThu9alSllWAAHshjXe7FPZeLUhnnjHlXUEI_&Key-Pair-Id=APKAI54YZLZW4EVY263Q')
-//                        ,
-//                        baseUrl: 'vod/demo.flowplayervod'
-            }
-//            playlist: [
-//                    'Extremists', 'honda_accord', 'metacafe'
-//            ]
-                });
+                baseUrl: 'vod/demo.flowplayervod'
+            },
+            playlist: [
+                'Extremists', 'honda_accord', 'metacafe'
+            ]
+        });
 
 
 var actions = {

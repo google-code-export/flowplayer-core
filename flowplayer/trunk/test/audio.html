@@ -18,7 +18,7 @@
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.controller.PlayTimeTracker' },
+        log: { level: 'debug', filter: 'org.flowplayer.controls.scrubber.ScrubberSlider, org.flowplayer.audio.*' },
 
         onBegin: function() {
             console.log("onBegin");
@@ -38,6 +38,10 @@
 
         onResume: function() {
             console.log("onResume");
+        },
+
+        onBeforeSeek: function() {
+            console.log("onBeforeSeek");
         },
 
         onSeek: function() {

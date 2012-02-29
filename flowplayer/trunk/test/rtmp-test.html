@@ -37,14 +37,16 @@
 
 
         clip: {
-            url: 'cached_media/0001/0001911/0001911244/1911244.flv',
-            provider: 'rtmp'
+            url: 'mp4:Maria_210557.mp4',
+            provider: 'rtmp',
+            autoPlay: false,
+            autoBuffering:true
         },
 
         plugins: {
             rtmp: {
                 url: 'flowplayer.rtmp.swf',
-                netConnectionUrl: 'rtmp://media.ramp.com/video'
+                netConnectionUrl: 'rtmp://stream1.nelonen.fi/vod/'
             }
         }
     });

@@ -182,15 +182,15 @@ package org.flowplayer.controller {
         }
 
         protected function getNetConnectionUrl(clip:Clip):String {
+            if (clip.customProperties && clip.customProperties.netConnectionUrl) {
+                log.debug("clip has netConnectionUrl as a property " + clip.customProperties.netConnectionUrl);
+                return clip.customProperties.netConnectionUrl;
+            }
             if (isRtmpUrl(clip.completeUrl)) {
                 log.debug("clip has complete rtmp url");
                 var url:String = clip.completeUrl;
                 var lastSlashPos:Number = url.lastIndexOf("/");
                 return url.substring(0, lastSlashPos);
-            }
-            if (clip.customProperties && clip.customProperties.netConnectionUrl) {
-                log.debug("clip has netConnectionUrl as a property " + clip.customProperties.netConnectionUrl);
-                return clip.customProperties.netConnectionUrl;
             }
             log.debug("using netConnectionUrl from config" + _netConnectionUrl);
             return _netConnectionUrl;
