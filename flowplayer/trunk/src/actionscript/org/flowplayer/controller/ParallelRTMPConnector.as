@@ -79,6 +79,7 @@ package org.flowplayer.controller {
 
             if (event.info.code == "NetConnection.Connect.Success") {
                 if (_successListener != null) {
+                    log.debug("established connection to URL " + _connection.uri);
                     _successListener(this, _connection);
                 } else {
                     log.debug("this connector is stopped, will not call successListener");

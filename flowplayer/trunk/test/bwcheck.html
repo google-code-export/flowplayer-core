@@ -30,7 +30,7 @@
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.bwcheck.*, org.osmf.net.*' },
+        log: { level: 'debug', filter: 'org.flowplayer.controller.*, org.flowplayer.rtmp.*' },
 
 
         // The playlist is loaded from the RSS file
@@ -41,40 +41,53 @@
             // use smil and bwcheck when resolving the clip URL
             urlResolvers: 'bwcheck',
 
-            qos: ["bwUp", "bwDown", "buffer"],
+//            qos: ["bwUp", "bwDown", "buffer"],
 
             bitrates: [
                 {
-                    url: "mp4:bbb-400", width: 320, height: 180, bitrate: 400,
-                    // this is the default bitrate, the playback kicks off with this and after that
-                    // Quality Of Service monitoring adjusts to the most appropriate bitrate
-                    isDefault: true,
-                    normal: true
+                    url: "mp4:vod/demo.flowplayervod/bbb-800.mp4",
+                    width: 480, height: 270, bitrate: 800,
+                    // this is the default bitrate, the playback kicks off with this and
+                    // after that Quality Of Service monitoring adjusts to the most
+                    // appropriate bitrate
+                    isDefault: true
                 },
-                { url: "mp4:bbb-800", width: 480, bitrate: 800, hd: true },
-                { url: "mp4:bbb-1200", width: 720, bitrate: 1200 },
-                { url: "mp4:bbb-1600", width: 1080, bitrate: 1600 }
+                { url: "mp4:vod/demo.flowplayervod/bbb-1200.mp4", width: 720, bitrate: 1200 },
+                { url: "mp4:vod/demo.flowplayervod/bbb-1600.mp4", width: 1080, bitrate: 1600 }
             ]
+//            bitrates: [
+//                {
+//                    url: "mp4:bbb-400", width: 320, height: 180, bitrate: 400,
+//                    // this is the default bitrate, the playback kicks off with this and after that
+//                    // Quality Of Service monitoring adjusts to the most appropriate bitrate
+//                    isDefault: true,
+//                    normal: true
+//                },
+//                { url: "mp4:bbb-800", width: 480, bitrate: 800, hd: true },
+//                { url: "mp4:bbb-1200", width: 720, bitrate: 1200 },
+//                { url: "mp4:bbb-1600", width: 1080, bitrate: 1600 }
+//            ]
         },
 
         plugins: {
 
             rtmp: {
                 url: 'flowplayer.rtmp-3.2.3.swf',
-                netConnectionUrl: 'rtmp://s3b78u0kbtx79q.cloudfront.net/cfx/st'
+                netConnectionUrl: 'rtmp://rtmp01.hddn.com/play'
+//                netConnectionUrl: 'rtmp://s3b78u0kbtx79q.cloudfront.net/cfx/st'
             },
             // bandwidth check plugin
             bwcheck: {
                 url: 'flowplayer.bwcheck.swf',
 
-                serverType: 'fms',
+                serverType: 'wowza',
 
                 // we use dynamic switching, the appropriate bitrate is switched on the fly
                 dynamic: true,
 
                 hdButton: true,
 
-//                  netConnectionUrl: 'rtmp://vod01.netdna.com/play',
+                  netConnectionUrl: 'rtmp://vod01.netdna.com/play',
 
                 // show the selected file in the content box. This is not used in real installations.
                 onStreamSwitchBegin: function (newItem, currentItem) {

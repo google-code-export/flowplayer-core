@@ -30,14 +30,15 @@
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.ui.buttons.*,org.flowplayer.bwcheck.ui.buttons.*' },
+        log: { level: 'debug', filter: 'org.flowplayer.bitrateselect.*' },
 
 clip: {
     bitrates: [
         { url: "mp4:bbb-800", width: 480, bitrate: 800, normal: true },
         { url: "mp4:bbb-1200", width: 720, bitrate: 1200, hd: true, isDefault: true }
     ],
-    provider: 'rtmp'
+    provider: 'rtmp',
+    autoPlay: false
 },
 
 plugins: {
@@ -48,10 +49,7 @@ plugins: {
     },
 
     hdtoggle: {
-        url: 'flowplayer.hdtoggle.swf',
-
-        serverType: 'fms',
-        netConnectionUrl: 'rtmp://s3b78u0kbtx79q.cloudfront.net/cfx/st',
+        url: 'flowplayer.bitrateselect.swf',
 
         // button config is optional, it defaults to "controls"
         // possible values "dock", "controls", "both"
@@ -61,12 +59,6 @@ plugins: {
         splash: {
             onLabel: 'HD',
             offLabel: 'SD'
-        },
-
-        // these events are supported
-        onStreamSwitchBegin: function (newItem, currentItem) {
-        },
-        onStreamSwitch: function (newItem) {
         }
     }
 }

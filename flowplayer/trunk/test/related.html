@@ -18,7 +18,7 @@
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.view.PlayButtonOverlayView' },
+        log: { level: 'debug', filter: 'org.flowplayer.view.AnimationEngine' },
 //        log: { level: 'debug', filter: 'org.flowplayer.menu.Menu,org.flowplayer.bitrateselect.BitrateSelectProvider' },
 
 onFinish: function() {
@@ -44,7 +44,10 @@ clip: {
 
     onStart: function() {
         console.log("onStart");
-        $f().getPlugin("menu").fadeOut();
+        var menuProps = $f().getPlugin("menu").css();
+        if (menuProps.opacity == 1) {
+            $f().getPlugin("menu").fadeOut();
+        }
         $f().getPlugin("dock").fadeOut();
         $f().getPlugin("play").css({ height: '22%' });
         $f().reset();
@@ -123,6 +126,9 @@ plugins: {
         height: 59,
         autoHide: false,
         overColor: '#'
+    },
+    controls: {
+        autoHide: false
     }
 }
 
