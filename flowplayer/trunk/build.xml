@@ -238,6 +238,7 @@
     </target>
 
     <target name="compile-lib">
+        <echo message="running ${compc_bin} with classpath ${classpath}" />
         <exec executable="${compc_bin}" failonerror="true">
             <arg line="-source-path ${src-as} ${src-as-commercial} ${classpath}"/>
             <arg line="-compute-digest=false"/>
