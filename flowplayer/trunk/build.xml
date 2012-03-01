@@ -125,7 +125,7 @@
 
     <target name="build-all" description="builds all" depends="build, build-biz"/>
 
-    <target name="zip-bundled">
+    <target name="zip-bundled" depends="plugins">
         <antcall target="prepare"/>
 
         <compile-player binary="${bundled-basename}.swf" commercial="true" free="false"
@@ -363,6 +363,7 @@
                 <property name="yaml-file" value="${yaml-file}"/>
                 <property name="devkit-dir" value="${devkit-dir}"/>
                 <property name="js.deploy.dir" value="${js.deploy.dir}"/>
+                <property name="mxmlc-bin" value="${mxmlc-bin}" />
             </subant>
         </sequential>
     </macrodef>
