@@ -125,7 +125,7 @@
 
     <target name="build-all" description="builds all" depends="build, build-biz"/>
 
-    <target name="zip-bundled" depends="plugins">
+    <target name="zip-bundled">
         <antcall target="prepare"/>
 
         <compile-player binary="${bundled-basename}.swf" commercial="true" free="false"
