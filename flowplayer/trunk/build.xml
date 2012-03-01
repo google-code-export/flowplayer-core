@@ -426,6 +426,7 @@
             <zip destfile="${dist-dir}/@{zip-name}">
                 <zipfileset prefix="flowplayer" dir=".">
                     <include name="@{license}"/>
+                    <include name="flowplayer-${flowplayer-js-version-info}.min.js" />
                     <include name="README.txt"/>
                 </zipfileset>
                 <zipfileset prefix="flowplayer" dir="${src-js}/flowplayer.js">
