@@ -64,6 +64,7 @@ this.loadPlugin("content","../flowplayer.content.swf", { html: "test"  }, functi
 - #442 fix for code error in the javascript api.
 - #461 when we have a clip base url set, we need the complete clip url sent to play2 for http streams.
 - #470 check for a playlist when replacing the playlist with an rss feed.
+- #494 regression issued caused by #412, enable base url correctly.
 
 3.2.7
 -----

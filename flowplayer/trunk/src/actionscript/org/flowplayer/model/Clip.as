@@ -387,9 +387,10 @@ package org.flowplayer.model {
 
 
         //#412 check for empty baseurl or else player url is appended and affects the url parsing.
+        //#494 regression issued caused by #412, enable base url correctly.
 		[Value]
 		public function get completeUrl():String {
-            return encodeURI(_baseUrl ? URLUtil.completeURL(_baseUrl, url) : url);
+            return encodeUrl(URLUtil.completeURL(this._baseUrl, this.url));
 		}
 
 		//If the encoding is set property, uri encode for ut8 urls
