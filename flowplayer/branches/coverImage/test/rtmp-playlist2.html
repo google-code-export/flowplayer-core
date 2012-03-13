@@ -1,0 +1,128 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <!--<script type="text/javascript" src="flowplayer-3.0.5.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>-->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+
+    <script src="../flowplayer-3.2.6.min.js"></script>
+    <script type="text/javascript" src="../../jsplugins/playlist/flowplayer.playlist-3.0.8.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="http://flowplayer.github.com/media/css/playlist.css"/>
+    <link rel="stylesheet" type="text/css" href="http://flowplayer.github.com/media/css/player.css"/>
+	<!-- page title -->
+	<title>Minimal Flowplayer setup</title>
+
+</head><body>
+
+	<div id="page">
+
+        <a
+                     style="display:block;width:440px;height:247px"
+                     id="player">
+                </a>
+
+        <!-- configure entries inside playlist using standard HTML -->
+        <div class="clips petrol" style="float:left" id="myplaylist">
+
+            <!-- single playlist entry -->
+            <a href="rtmp://s3b78u0kbtx79q.cloudfront.net/cfx/st/mp4:bbb-400" class="first">
+                Susan
+                <span>HTTP Streaming</span>
+                <em>0:20 min</em>
+            </a>
+            <br>
+
+            <a href="rtmp://s3b78u0kbtx79q.cloudfront.net/cfx/st/mp4:bbb-800">
+                Luigi
+                <span>HTTP Streaming</span>
+                <em>0:20 min</em>
+            </a>
+<br>
+
+
+        </div>
+
+
+        <button type="button" onClick="addClipAtStart()">Add clip to the beginning</button>
+        <button type="button" onClick="addToPosition2()">Add to position 2</button>
+<script>
+    var added = false;
+    var manualTemplate = "<a href=\"${url}\"><span>${title}</span><em>${time}</em></a>";
+
+    flowplayer("player", {src: "../build/flowplayer.swf", wmode: 'transparent'},
+    {
+        log: { level: 'debug', filter: 'org.flowplayer.view.Flowplayer, org.flowplayer.view.FlowplayerBase, org.flowplayer.controller.PlayListController' },
+        onStart: function() {
+            console.log("onStart");
+        },
+        
+        canvas: {
+            backgroundColor: "#CCCCCC",
+            padding: 50,
+            
+        },
+        screen: {
+            padding: 50,
+            backgroundColor: "#999999"
+        },
+
+        onFinish: function() {
+            console.log("onFinish");
+        },
+
+        onPause: function() {
+            console.log("onPause");
+        },
+
+        onResume: function() {
+            console.log("onResume");
+        },
+
+        onStart: function() {
+           // if (added) return;
+           // added = true;
+            //$("#myplaylist").append("<a href=\"rtmp://s3b78u0kbtx79q.cloudfront.net/cfx/st/mp4:bbb-400\"> BBB</a><br>");
+            //$f().addClip({url: 'rtmp://s3b78u0kbtx79q.cloudfront.net/cfx/st/mp4:bbb-400'});
+            //$("#myplaylist").append("<a href=\"rtmp://stream.blacktrash.org/cfx/st/ccc\"> CCC</a>");
+
+            //$f().addClip({url: 'rtmp://stream.blacktrash.org/cfx/st/ccc'});
+
+        },
+
+        clip: {
+            provider: 'rtmp',
+            autoPlay: true,
+           netConnectionUrl: 'rtmp://herbalife.flash.internapcdn.net/herbalife_vitalstream_com/_definst_/AM/6000'
+        },
+
+        plugins: {
+            rtmp: {
+                url:'../build/flowplayer.rtmp.swf'
+                //netConnectionUrl: 'rtmp://s3b78u0kbtx79q.cloudfront.net/cfx/st'
+            },
+
+            controls: {
+                autoHide: false,
+                backgroundColor: "#CCCCCC",
+                //backgroundColor: "rgba(0,0,0,0)",
+                backgroundGradient: "none",
+                playlist: true
+            }
+        }
+
+    }).playlist("div.clips:first", {manual: true, loop:false, template: manualTemplate});
+    window.addClipAtStart = function() {
+// button 1: uses addClip method with position index 0
+        $f().addClip({url: 'KimAronson-TwentySeconds75235.flv', title: 'Two little girls'});
+    }
+
+    window.addToPosition2 = function() {
+
+// button 2: uses addClip method with position index 1
+        $f().addClip({url: 'KimAronson-TwentySeconds65459.flv', title: 'Golden gate bridge'}, 1);
+
+    }
+</script>
+	</div>
+
+</body></html>

@@ -1,0 +1,70 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <!--<script type="text/javascript" src="flowplayer-3.0.5.min.js"></script>-->
+    <script src="../flowplayer-3.2.8.min.js"></script>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+	<!-- page title -->
+	<title>Minimal Flowplayer setup</title>
+
+</head><body>
+
+	<div id="page">
+        <a
+                     href="mp4:vod/demo.flowplayervod/bbb-800.mp4"
+                     style="display:block;width:512px;height:410px"
+                     id="player2">
+                </a>
+<script>
+
+    var switched = false;
+
+    $f("player2", "../build/flowplayer.swf",
+    {
+        log: { level: 'debug', filter: 'org.flowplayer.pseudostreaming.*, org.flowplayer.bitrateselect.*, org.flowplayer.net.*, org.flowplayer.controller.*' },
+
+
+        clip: {
+           // url: "http://vod01.netdna.com/vod/demo.flowplayer/pseudo/bbb_480x270.flv",
+            bitrates: [
+                { url: "bbb-800.mp4", width: 480, bitrate: 800, sd: true },
+                { url: "bbb-1200.mp4", width: 720, bitrate: 1200, hd: true }
+                //{ url: "bbb-1600.mp4", width: 1080, bitrate: 1600 }
+            ],
+            //url : "bbb-800.mp4",
+            urlResolvers: 'bitrateselect',
+            baseUrl: 'http://pseudo01.hddn.com/vod/demo.flowplayervod/',
+            provider: 'pseudo'
+        },
+        plugins:
+        {
+
+            pseudo: {
+                url: '../build/flowplayer.pseudostreaming.swf'
+            },
+            bitrateselect: {
+                url: '../build/flowplayer.bitrateselect.swf',
+                hdButton: {
+                    place: 'both',
+                    splash: false
+                }
+            }
+            /*bwcheck: {
+                url: '../build/flowplayer.bwcheck.swf' ,
+                checkOnStart: true,
+                maxWidth: 480,
+                netConnectionUrl: "http://static.electroteque.org/swf/flowplayer.swf"
+            } */
+        }
+
+    });
+
+
+
+
+</script>
+
+	</div>
+	
+	
+</body></html>

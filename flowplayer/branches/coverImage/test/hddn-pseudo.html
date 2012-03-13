@@ -1,0 +1,143 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+    <!-- A minimal Flowplayer setup to get you started -->
+
+
+	<!--
+		include flowplayer JavaScript file that does
+		Flash embedding and provides the Flowplayer API.
+	-->
+
+    <script src="../flowplayer-3.2.6.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script>
+    <script type="text/javascript" src="../../jsplugins/playlist/flowplayer.playlist-3.0.8.js"></script>
+
+	<!-- some minimal styling, can be removed -->
+	<link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="http://flowplayer.github.com/media/css/playlist.css"/>
+    <link rel="stylesheet" type="text/css" href="http://flowplayer.github.com/media/css/player.css"/>
+	<!-- page title -->
+	<title>Minimal Flowplayer setup</title>
+
+</head><body>
+
+        <a
+			 href="vod/demo.flowplayervod/filename/Extremists.flv"
+			 style="display:block;width:420px;height:400px"
+			 id="player">
+		</a>
+
+        <p>
+            <button type="button" onClick="addClipAtStart()">Add clip to the beginning</button>
+            <button type="button" onClick="addToPosition2()">Add to position 2</button>
+            <button type="button" onClick="replacePlaylist()">Replace playlist</button>
+            <button type="button" onClick="addInstreamClip()">Add in-stream clip</button>
+        </p>
+
+        <div class="clips" style="float:left">
+
+            <!-- single playlist entry as an "template" -->
+            <a href="${url}">
+                ${title} <span>${subTitle}</span>
+                <em>${time}</em>
+            </a>
+
+        </div>
+
+		<!-- this will install flowplayer inside previous A- tag. -->
+<script>
+//    flowplayer("player", { src: "../build/flowplayer.commercial-3.2.5-16.swf", wmode: "transparent" },
+            flowplayer("player", { src: "../build/flowplayer.swf", wmode: "transparent" },
+{
+                log: {
+                    level: "debug",
+                    filter: "org.flowplayer.net.*, org.flowplayer.bwcheck.*"
+                },
+                playlist: [
+                    {
+                        url: 'KimAronson-TwentySeconds59483.flv',
+                        title: 'Palm trees and the sun'
+                    },
+                    {
+                        url: 'KimAronson-TwentySeconds58192.flv',
+                        title: 'Happy feet in a car'
+                    },
+                    {
+                        url: 'KimAronson-TwentySeconds63617.flv',
+                        title: 'People jogging'
+                    }
+                ],
+                clip: {
+                    baseUrl: 'http://blip.tv/file/get',
+                    subTitle: 'from blib.tv video sharing site',
+                    time: '20 sec'
+                }
+				//clip: {
+                    //url: 'http://pseudo01.hddn.com/vod/demo.flowplayervod/flowplayer-700.flv'
+                    //provider: 'pseudo',
+                    //autoPlay: false,
+                    //autoBuffering: true
+				//}
+
+                 /*clip: {
+                    //autoPlay: false,
+                    //autoBuffering: true,
+                     //seekableOnBegin: true,
+					//provider: 'pseudo',
+                    //scaling: 'scale',
+					//start: 10,
+                    //url: 'http://pseudo01.hddn.com/vod/demo.flowplayervod/flowplayer-700.flv',
+					//url: "http://pseudo01.hddn.com/vod/demo.flowplayervod/eye-pseudo.mp4"
+                    //type: "video",
+                    //url: 'http://metacdn-metastage.appspot.com/r/c/1WncRXDchE/107YLz'
+                     bitrates: [
+                         { url: "bbb-800.mp4", width: 480, bitrate: 800 },
+                         { url: "bbb-1200.mp4", width: 720, bitrate: 1200 },
+                         { url: "bbb-1600.mp4", width: 1080, bitrate: 1600 }
+                     ],
+                     url : "bbb-800.mp4",
+                     urlResolvers: 'bwcheck',
+                     baseUrl: 'http://pseudo01.hddn.com/vod/demo.flowplayervod/',
+                     provider: 'pseudo'
+                },
+				plugins: {
+                    pseudo: {
+                        url: '../build/flowplayer.pseudostreaming.swf'
+                    },
+                    bwcheck: {
+                        url: '../build/flowplayer.bwcheck.swf' ,
+                        checkOnStart: true,
+                        netConnectionUrl: "http://static.electroteque.org/swf/flowplayer.swf"
+                    }
+                }  */
+			}
+
+        ).playlist("div.clips", {loop:true});
+window.addClipAtStart = function() {
+// button 1: uses addClip method with position index 0
+    $f().addClip({url: 'KimAronson-TwentySeconds75235.flv', title: 'Two little girls'});
+}
+
+window.addToPosition2 = function() {
+// button 2: uses addClip method with position index 1
+    $f().addClip({url: 'KimAronson-TwentySeconds65459.flv', title: 'Golden gate bridge'}, 1);
+}
+
+window.replacePlaylist = function() {
+// button 3: replaces the whole playlist and starts the playback from beginning
+    $f().play([
+        {url: 'KimAronson-TwentySeconds70930.flv', title: 'Eating Sushi'},
+        {url: 'KimAronson-TwentySeconds72119.flv', title: 'Big spider web'}
+    ]);
+}
+
+window.addInstreamClip = function() {
+// button 4: adds an instream clip to the second clip
+    $f().addClip({url: 'KimAronson-TwentySeconds65459.flv', position: 3, duration: 3}, 1);
+}
+   // $f().getClip(0).update({url: "http://pseudo01.hddn.com/vod/demo.flowplayervod/flowplayer-700.flv"});
+</script>
+
+
+</body></html>

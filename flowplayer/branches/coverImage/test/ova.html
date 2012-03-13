@@ -1,0 +1,113 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <!--<script type="text/javascript" src="flowplayer-3.0.5.min.js"></script>-->
+    <script src="../flowplayer-3.2.6.min.js"></script>
+
+
+	<!-- page title -->
+	<title>Minimal Flowplayer setup</title>
+
+</head><body>
+
+	<div id="page">
+        <a
+                     href="http://e1h13.simplecdn.net/flowplayer/flowplayer.flv"
+                     style="display:block;width:440px;height:247px"
+                     id="player">
+                </a>
+<button type="button" onclick="disable();">Disable</button>
+<script>
+
+var disabled = false;
+
+	function disable() {
+//alert("FUCK");
+		$f().getPlugin("controls").setEnabled({ scrubber: disabled });
+
+		disabled = disabled ? false : true;
+		
+	}
+
+    flowplayer("player", "../build/flowplayer.swf",
+    {
+        log: { level: 'debug', filter: 'org.flowplayer.controls.Controlbar, org.flowplayer.controls.scrubber.*' },
+        onStart: function() {
+            console.log("onStart");
+        },
+
+        onFinish: function() {
+            console.log("onFinish");
+        },
+
+        onPause: function() {
+            console.log("onPause");
+        },
+
+        onResume: function() {
+            console.log("onResume");
+        },
+
+//        clip: {
+//            fadeInSpeed: 0,
+//            fadeOutSpeed: 0
+//        },
+
+        // Videos to be played:
+        playlist: [
+          {
+              url: "http://content.bitsontherun.com/videos/rO8PIVrl-393434.mp4",
+              duration: 20
+          }
+       ],
+	
+
+        // All FP Plug ins:
+    	plugins:
+        {
+    
+            // the SMIL plugin reads in and parses the SMIL, and provides
+            // the bitrates info to the bw detection plugin
+        
+
+            ova: {
+                "url": "../build/ova.swf",
+
+                "playOnce": true,
+                "autoPlay": true,
+                "autoBuffering": true,
+
+
+                "ads": {
+                    "servers": [
+                        {
+                           "type": "OpenX",
+                           "apiAddress": "http://openx.openvideoads.org/openx/www/delivery/fc.php"
+                        }
+                   ],
+                    "schedule": [
+                        {
+                           "zone": "5",
+                           "position": "pre-roll"
+                        }
+                   ]                }
+            }
+        }
+
+    });
+</script>
+        <button type="button" onclick="$f()._api().fp_toggleFullscreen();">toggle fullscreen</button>
+        <!--
+              after this line is purely informational stuff.
+              does not affect on Flowplayer functionality
+          <button type="button" onclick="info($f()._api().fp_getVersion());">get version</button>
+          <button type="button" onclick="info($f().getStatus().time);">show time3</button>
+          <button type="button" onclick="info($f().getState());">get state</button>
+          <button type="button" onclick="info($f().pause());">pause</button>
+          <button type="button" onclick="info($f().resume());">resume</button>
+          <button type="button" onclick="info($f().toggle());">toggle</button>
+          -->
+
+	</div>
+	
+	
+</body></html>
