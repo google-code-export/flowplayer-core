@@ -1,0 +1,91 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <!--<script type="text/javascript" src="flowplayer-3.0.5.min.js"></script>-->
+    <script src="../flowplayer-3.2.6.min.js"></script>
+
+
+	<!-- page title -->
+	<title>Minimal Flowplayer setup</title>
+
+</head><body>
+
+	<div id="page">
+        <a
+                     href="http://e1h13.simplecdn.net/flowplayer/flowplayer.flv"
+                     style="display:block;width:440px;height:247px"
+                     id="player">
+                </a>
+<script>
+    flowplayer("player", "../build/flowplayer-3.2.7.swf",
+    {
+        log: { level: 'debug', filter: 'org.flowplayer.controller.*, org.flowplayer.audio.*' },
+        onBegin: function(clip) {
+            console.log("onBegin: " + clip.url);
+        },
+
+        onStart: function(clip) {
+            console.log("onStart: " + clip.url);
+        },
+
+        onFinish: function() {
+            console.log("onFinish");
+        },
+
+        onPause: function() {
+            console.log("onPause");
+        },
+
+        onResume: function() {
+            console.log("onResume");
+        },
+		
+        // Videos to be played:
+        /*playlist: [
+            'honda_accord.flv',
+            { url: 'flowplayer.flv', autoPlay: false },
+            { url: 'metacafe.flv',
+                onBeforeFinish: function() {
+                    return false;
+                }
+            }
+        ],*/
+        playlist: [
+
+            // JPG image
+            // JPG image
+            //"http://flowplayer.github.com/media/img/tutorial/tap-splash.jpg",
+
+            // SWF file
+            //{url: "http://flowplayer.github.com/media/swf/clock.swf", scaling: "fit"},
+
+            // video
+            "http://blip.tv/file/get/KimAronson-TwentySeconds58192.flv",
+
+            // another image. works as splash for the audio clip
+            {url: "http://flowplayer.github.com/media/img/demos/national.jpg", duration: 0},
+
+            // audio, requires audio plugin. custom duration
+            {url: "http://flowplayer.github.com/media/data/fake_empire.mp3", duration: 25}
+
+        ],
+       /* plugins: {
+			audio: {
+				url: "../build/flowplayer.audio-3.2.8-dev.swf"
+			},
+            controls: {
+                autoHide: false,
+                playlist: true,
+				url: "../build/flowplayer.controls-tube-3.2.5.swf"
+            }
+        } ,*/
+        clip: {
+            // by default clip lasts 5 seconds
+            duration: 5
+        }
+
+    });
+</script>
+	</div>
+
+
+</body></html>

@@ -1,0 +1,90 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <!--<script type="text/javascript" src="flowplayer-3.0.5.min.js"></script>-->
+    <script src="../flowplayer-3.2.8.min.js"></script>
+
+
+	<!-- page title -->
+	<title>Minimal Flowplayer setup</title>
+
+</head><body>
+
+	<div id="page">
+        <a
+                     href="../build/flowplayer.flv"
+                     style="display:block;width:440px;height:247px"
+                     id="player">
+                </a>
+<script>
+
+ window.onload = function () {
+    $f("player", "../build/flowplayer.swf",
+    {
+        log: { level: 'debug', filter: 'org.flowplayer.ui.AutoHide, org.flowplayer.ui.dock.Dock,org.flowplayer.bitrateselect.*, org.flowplayer.view.Flowplayer' },
+
+		onLoad: function () {
+        	this.getPlugin("dock").hide();
+      	},
+      	onFullscreen: function () {
+        	this.getPlugin("dock").show();
+      	},
+      	onFullscreenExit: function () {
+        	//this.getPlugin("dock").hide();    
+		},
+		clip: {
+        provider: "rtmp",
+        scaling: "fit",
+		    pageUrl: 'http://flowplayer.blacktrash.org/dev/fbviral.html',
+		url: "mp4:manstalt-400",
+        bitrates: [
+          {url: "mp4:manstalt-400", bitrate: 400},
+          {url: "mp4:manstalt-750", bitrate: 750, isDefault: true}
+        ],
+        linkUrl: "http://www.blacktrash.org/underdogma/moraliskanstalt.php",
+        linkWindow: "_blank"
+      },
+        plugins: {
+			controls: {
+				//autoHide: false
+			},
+			 rtmp: {
+	          url: "../build/flowplayer.rtmp.swf",
+	          netConnectionUrl: "rtmp://stream.blacktrash.org/cfx/st"
+	        },
+            viral: {
+                url: '../build/flowplayer.viralvideos.swf',
+                share: {
+                    shareWindow: '_self',
+                    description: 'jkejejej'
+                },
+                embed: {
+                    fallbackUrls: ['../build/flowplayer.flv']
+                },
+                icons: {
+                    overColor: 'rgba(255,10,10,0.5)'
+                }
+            },
+			bitrateselect: {	
+				url: "../build/flowplayer.bitrateselect.swf",
+				hdButton: {place: "dock"}
+
+			},
+            dock: {
+				  autoHide: {
+					fullscreenOnly: true
+
+				  },
+			      onBeforeShowed: function() {
+						console.log(this.getPlayer().isFullscreen());
+						return this.getPlayer().isFullscreen();
+				  }
+            }
+        }
+
+    });
+};
+</script>
+	</div>
+	
+	
+</body></html>

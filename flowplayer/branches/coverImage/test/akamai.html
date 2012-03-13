@@ -1,0 +1,45 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <!--<script type="text/javascript" src="flowplayer-3.0.5.min.js"></script>-->
+    <script src="../flowplayer-3.2.6.min.js"></script>
+
+
+	<!-- page title -->
+	<title>Minimal Flowplayer setup</title>
+
+</head><body>
+
+	<div id="page">
+        <a
+                     href="rtmp://cp67754.edgefcs.net/ondemand/content/201012/video/mf131430.flv"
+                     style="display:block;width:440px;height:247px"
+                     id="player">
+                </a>
+<script>
+    flowplayer("player", "../build/flowplayer.swf",
+    {
+        log: { level: 'debug', filter: 'org.flowplayer.rtmp.*' },
+        clip: {
+            //url: 'rtmp://cp67754.edgefcs.net/ondemand/content/201012/video/mf131430.flv',
+			url: "http://zerihdndemo-f.akamaihd.net/z/h264/amours/amours.smil/manifest.f4m",
+            bufferLength: 10,
+            provider: 'akamai'
+        },
+
+        plugins: {
+            /*rtmp: {
+                url: 'flowplayer.rtmp.swf',
+                objectEncoding: 0
+            },*/
+            akamai: { 
+				url: '../build/AkamaiFlowPlugin-2.5.14.0.swf',
+				enableNetSessionDiscovery:true ,    			//playerVerificationChallenge:'<Some SALT value>' ,    			netsessionMode:'opportunistic' ,
+				akamaiMediaType:'akamai-hdn-adobe-http' 	
+			}
+        }
+    });
+</script>
+	</div>
+
+
+</body></html>
