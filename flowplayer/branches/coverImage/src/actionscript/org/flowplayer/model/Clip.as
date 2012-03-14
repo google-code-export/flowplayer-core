@@ -83,6 +83,8 @@ package org.flowplayer.model {
         private var _endLimit:Number = 0;
         private var _encoding:Boolean = false;
         private var _stopLiveOnPause:Boolean = true;
+        
+        private var _coverImage:Object;
 
         public function Clip() {
             _childPlaylist = new TimedPlaylist();
@@ -1022,6 +1024,14 @@ package org.flowplayer.model {
 
         public function set stopLiveOnPause(value:Boolean):void {
             _stopLiveOnPause = value;
+        }
+
+        public function get coverImage():Object {
+            return _coverImage;
+        }
+
+        public function set coverImage(value:Object):void {
+            _coverImage = value;
         }
     }
 }
