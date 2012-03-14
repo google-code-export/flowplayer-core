@@ -22,14 +22,15 @@ package org.flowplayer.view {
 	import org.flowplayer.view.MediaDisplay;
 	
 	import flash.display.Sprite;
-	import flash.media.Video;	
+	import flash.media.Video;
+    import flash.display.DisplayObject;
 
 	/**
 	 * @author api
 	 */
 	internal class VideoDisplay extends AbstractSprite implements MediaDisplay {
 
-		private var video:Video;
+		private var video:DisplayObject;
 		private var _overlay:Sprite;
 		private var _clip:Clip;
 
@@ -70,8 +71,8 @@ package org.flowplayer.view {
 			log.info("init " + _clip);
 			if (video)
 				removeChild(video);
-			video = clip.getContent() as Video;
-            log.debug("init() video == " + video);
+			video = clip.getContent() as DisplayObject;
+            log.error("init() video == " + video);
 			if (video == null) {
 				log.warn("no video content in clip " + clip);
 				return;

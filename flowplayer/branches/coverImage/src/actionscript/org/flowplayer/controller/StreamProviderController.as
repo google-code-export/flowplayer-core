@@ -25,11 +25,17 @@ package org.flowplayer.controller {
     import org.flowplayer.model.ClipEvent;
     import org.flowplayer.model.ClipEventType;
     import org.flowplayer.model.ClipType;
+    import org.flowplayer.model.ErrorCode;
     import org.flowplayer.model.Playlist;
     import org.flowplayer.util.Log;
+    import org.flowplayer.view.ErrorHandler;
 
     import flash.display.DisplayObject;
     import flash.media.Video;
+    import flash.display.Loader;
+    import flash.display.Bitmap;
+
+
 
     /**
      * Video controller is responsible for loading and showing video.
@@ -38,9 +44,11 @@ package org.flowplayer.controller {
      *
      * @author anssi
      */
-    internal class StreamProviderController extends AbstractDurationTrackingController implements MediaController {
+    internal class StreamProviderController extends AbstractDurationTrackingController implements MediaController, ErrorHandler {
         private var _config:Config;
         private var _controllerFactory:MediaControllerFactory;
+        private var _imageLoader:ResourceLoaderImpl;
+        private var _imageDisplay:Loader;
 //		private var _metadataDispatched:Boolean;
 
         public function StreamProviderController(controllerFactory:MediaControllerFactory, volumeController:VolumeController, config:Config, playlist:Playlist) {
@@ -61,11 +69,13 @@ package org.flowplayer.controller {
 
         private function onBegin(event:ClipEvent):void {
             var clip:Clip = event.target as Clip;
-            log.info("onBegin, initializing content for clip " + clip);
+            log.error("onBegin, initializing content for clip " + clip);
             var video:DisplayObject = clip.getContent();
+
             if (video && video is Video) {
                 getProvider(clip).attachStream(video);
             } else {
+
                 video = getProvider(clip).getVideo(clip);
                 if (video && video is Video) {
                     getProvider(clip).attachStream(video);
@@ -76,10 +86,38 @@ package org.flowplayer.controller {
                     clip.setContent(video);
                 }
             }
+
+            //reset content with the cover image display
+            if (_imageDisplay) {
+                clip.setContent(_imageDisplay);
+                return;
+            }
         }
 
         override protected function doLoad(event:ClipEvent, clip:Clip, pauseAfterStart:Boolean = false):void {
-            getProvider().load(event, clip, pauseAfterStart);
+
+            //gets the cover image if configured
+            if (clip.coverImage) {
+                var cover:Object = getCoverImage(clip);
+                log.debug("Loading Artwork For Audio " + cover.url);
+
+                if (!_imageLoader) {
+                    _imageLoader = new ResourceLoaderImpl(null, this);
+                }
+
+                //once the cover image is loaded, load the stream provider
+                _imageLoader.load(cover.url, function onImageComplete(loader:ResourceLoader):void {
+                    log.error("Cover image loaded playing now");
+                    _imageDisplay = loader.getContent() as Loader;
+                    Bitmap(_imageDisplay.content).smoothing = true;
+                    clip.originalWidth = _imageDisplay.width;
+                    clip.originalHeight = _imageDisplay.height;
+                    clip.setContent(_imageDisplay);
+                    getProvider().load(event, clip, pauseAfterStart);
+                });
+            } else {
+                getProvider().load(event, clip, pauseAfterStart);
+            }
         }
 
         override protected function doPause(event:ClipEvent):void {
@@ -136,6 +174,27 @@ package org.flowplayer.controller {
             var provider:StreamProvider = _controllerFactory.getProvider(clipParam || clip);
             provider.playlist = playlist;
             return provider;
+        }
+
+        //gets the configured cover image
+        private function getCoverImage(clip:Clip):Object {
+            var cover:Object = clip.coverImage;
+            if (cover is String) return { url: "" + cover };
+
+            if (cover.hasOwnProperty("scaling")) {
+                clip.setScaling(cover["scaling"]);
+            }
+            return cover;
+        }
+
+        public function showError(message:String):void
+        {
+
+        }
+
+        public function handleError(error:ErrorCode, info:Object = null, throwError:Boolean = true):void
+        {
+            log.error(error.code + " " + error.message + " " + info);
         }
     }
 }
