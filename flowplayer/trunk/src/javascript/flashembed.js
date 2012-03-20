@@ -124,10 +124,6 @@
 					// flash does not handle %- characters well. transforms "50%" to "50pct" (a dirty hack, I admit)
 					obj = obj.replace(/^\s?(\d+\.?\d*)%/, "$1pct")
 
-                    //#30 possible fix for %, ', " and & characters in json strings.
-                    obj = obj.replace(/(%)/g,"%25").replace(/'/g,'\\u0027').replace(/"/g,'\\u0022').replace(/&/g,'%26');
-
-
 					return '"' +obj+ '"';
 
 				case 'array':
