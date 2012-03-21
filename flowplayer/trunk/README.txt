@@ -1,5 +1,9 @@
 Version history:
 
+3.2.9
+-----
+- Fixed #490, controlbar background, buffer bar and progress bar colors were all reset to white
+
 3.2.8
 -----
 - Added new property clip.backBufferLength, to be used with FMS 3.5
