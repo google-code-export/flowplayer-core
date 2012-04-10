@@ -35,7 +35,6 @@ package org.flowplayer.view {
 	import flash.events.Event;
 	import flash.events.StageVideoAvailabilityEvent;
 	import flash.events.StageVideoEvent;
-    import flash.events.FullScreenEvent;
 
 	import org.flowplayer.model.Clip;
 	import org.flowplayer.model.ClipEventType;
@@ -68,8 +67,6 @@ package org.flowplayer.view {
 		private function onAddedToStage(event:Event):void {
 			_stage = stage;
 			_stage.addEventListener(StageVideoAvailabilityEvent.STAGE_VIDEO_AVAILABILITY, onAvailabilityChanged);
-            //#503 update viewport when in and out of fullscreen.
-            _stage.addEventListener(FullScreenEvent.FULL_SCREEN, onFullScreenChanged);
 		}
 		
 		private function onRemovedFromStage(event:Event):void {
@@ -91,11 +88,6 @@ package org.flowplayer.view {
 			var availableNow:Boolean = event.availability == StageVideoAvailability.AVAILABLE;
 			useStageVideo(availableNow)
 		}
-
-        private function onFullScreenChanged(event:FullScreenEvent):void {
-            if (!_hasStageVideo) return;
-            _updateStageVideo();
-        }
 
 		private function useStageVideo(availableNow:Boolean):void {
 			log.debug("useStageVideo : "+ availableNow);
@@ -173,6 +165,7 @@ package org.flowplayer.view {
 		private function _updateStageVideo():void {
 			if ( ! hasStageVideo )
 				return;
+
 			var p:Point = localToGlobal(new Point(0, 0));
             var r:Rectangle = _visible ? new Rectangle(p.x, p.y, width, height) : new Rectangle(0, 0, 0, 0);
             _stageVideo.viewPort = r;
