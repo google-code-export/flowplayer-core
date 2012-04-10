@@ -35,12 +35,11 @@ package org.flowplayer.view {
 	import flash.events.Event;
 	import flash.events.StageVideoAvailabilityEvent;
 	import flash.events.StageVideoEvent;
+    import flash.events.FullScreenEvent;
 
 	import org.flowplayer.model.Clip;
 	import org.flowplayer.model.ClipEventType;
 	import org.flowplayer.util.Log;
-
-	import flash.utils.*;
 
 	/**
 	 * @author api
@@ -69,6 +68,8 @@ package org.flowplayer.view {
 		private function onAddedToStage(event:Event):void {
 			_stage = stage;
 			_stage.addEventListener(StageVideoAvailabilityEvent.STAGE_VIDEO_AVAILABILITY, onAvailabilityChanged);
+            //#503 update viewport when in and out of fullscreen.
+            _stage.addEventListener(FullScreenEvent.FULL_SCREEN, onFullScreenChanged);
 		}
 		
 		private function onRemovedFromStage(event:Event):void {
@@ -91,6 +92,11 @@ package org.flowplayer.view {
 			useStageVideo(availableNow)
 		}
 
+        private function onFullScreenChanged(event:FullScreenEvent):void {
+            if (!_hasStageVideo) return;
+            _updateStageVideo();
+        }
+
 		private function useStageVideo(availableNow:Boolean):void {
 			log.debug("useStageVideo : "+ availableNow);
 				
@@ -99,6 +105,8 @@ package org.flowplayer.view {
 			if ( _hasStageVideo && _stage.stageVideos.length ) {
 				_stageVideo = _stage.stageVideos[0];
 				super.visible = false;
+                //#503 update viewport when stage is added to obtain the coordnates correctly.
+                _updateStageVideo();
 			} else {
 				super.visible = true;
 				_hasStageVideo = false;
@@ -165,12 +173,9 @@ package org.flowplayer.view {
 		private function _updateStageVideo():void {
 			if ( ! hasStageVideo )
 				return;
-			
-			var p:Point = localToGlobal(new Point(x, y));
-			var r:Rectangle = _visible ? new Rectangle(p.x, p.y, width, height) : new Rectangle(0, 0, 0, 0);
-			log.debug("Resizing view port to "+ r.width + "x"+ r.height + " - "+r.x+";"+r.y);
-			_stageVideo.viewPort = r;
-			
+			var p:Point = localToGlobal(new Point(0, 0));
+            var r:Rectangle = _visible ? new Rectangle(p.x, p.y, width, height) : new Rectangle(0, 0, 0, 0);
+            _stageVideo.viewPort = r;
 			_clip.dispatch(ClipEventType.STAGE_VIDEO_STATE_CHANGE, stageVideo);
 		}
 
@@ -181,16 +186,6 @@ package org.flowplayer.view {
 		
 		override public function set height(value:Number):void {
 			super.height = value;
-			_updateStageVideo();
-		}
-
-		override public function set x(value:Number):void {
-			super.x = value;
-			_updateStageVideo();
-		}
-		
-		override public function set y(value:Number):void {
-			super.y = value;
 			_updateStageVideo();
 		}
     }
