@@ -3,6 +3,7 @@ Version history:
 3.2.9
 -----
 - Fixed #490, controlbar background, buffer bar and progress bar colors were all reset to white
+- #503 Update viewport when stage is added to obtain the coordnates correctly. Update viewport when in and out of fullscreen.
 
 3.2.8
 -----
