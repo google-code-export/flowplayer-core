@@ -766,7 +766,9 @@ import org.flowplayer.model.DisplayPluginModel;
                 log.debug("mask pos " + _screenMask.x + ", " + _screenMask.y);
 
 				if ( ! contains(_screenMask) ) {
-					addChildAt(_screenMask, _canvasLogo ? getChildIndex(_canvasLogo) + 1 : 1);
+                    //#508 stage video mask was being added to the top layer and hiding all children.
+                    addChildAt(_screenMask, 1);
+					//addChildAt(_screenMask, _canvasLogo ? getChildIndex(_canvasLogo) + 1 : 1);
 					log.debug("adding mask");
 				}
 			} else {
