@@ -4,6 +4,7 @@ Version history:
 -----
 - Fixed #490, controlbar background, buffer bar and progress bar colors were all reset to white
 - #503 Update viewport when stage is added to obtain the coordnates correctly. Update viewport when in and out of fullscreen.
+- #508 stage video mask was being added to the top layer and hiding all children.
 
 3.2.8
 -----
