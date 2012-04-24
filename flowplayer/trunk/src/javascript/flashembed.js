@@ -240,7 +240,8 @@
 					(root.tagName == 'A' ? "<p>Click here to download latest version</p>" :
 						"<p>Download latest version from <a href='" + URL + "'>here</a></p>");
 
-				if (root.tagName == 'A') {
+                //#526. allow click through event for flash installation message when using div containers.
+				if (root.tagName == 'A' || root.tagName == "DIV") {
 					root.onclick = function() {
 						location.href = URL;
 					};
