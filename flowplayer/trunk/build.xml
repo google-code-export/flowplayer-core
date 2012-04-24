@@ -430,9 +430,9 @@
                     <include name="flowplayer-${flowplayer-js-version-info}.min.js" />
                     <include name="README.txt"/>
                 </zipfileset>
-                <zipfileset prefix="flowplayer" dir="${src-js}/flowplayer.js">
-                    <include name="flowplayer-${flowplayer-js-version-info}.min.js"/>
-                </zipfileset>
+                <!--<zipfileset prefix="flowplayer" dir="${src-js}/flowplayer.js">-->
+                    <!--<include name="flowplayer-${flowplayer-js-version-info}.min.js"/>-->
+                <!--</zipfileset>-->
                 <zipfileset prefix="flowplayer" dir="@{player-swf-dir}">
                     <include name="@{player-swf}"/>
                 </zipfileset>
