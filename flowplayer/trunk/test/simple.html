@@ -20,7 +20,7 @@
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.controller.VolumeController' },
+        log: { level: 'debug', filter: 'org.flowplayer.controls.scrubber.ScrubberSlider'},
 
         key: '#$b6223bfbd646c621758',
 
@@ -69,22 +69,27 @@
         },
 
                 playlist: [
-                    "http://blip.tv/file/get/KimAronson-TwentySeconds58192.flv",
-                    "http://blip.tv/file/get/KimAronson-TwentySeconds71844.flv",
-                    "http://blip.tv/file/get/KimAronson-TwentySeconds73213.flv"
+                    "http://stream.flowplayer.org/Extremists.flv"
                 ],
 
         clip: {
             baseUrl: '../build',
 //            duration: 20,
             bufferLength: 10,
-            autoPlay: false,
+            autoPlay: true,
             autoBuffering:true
+//            ,
+//            duration: 20
         },
 
         plugins: {
             controls: {
-                playlist: true
+                url: 'flowplayer.controls.swf',
+                playlist: true,
+                scrubber: {
+                    backgroundColor: 0
+                },
+                autoHide: false
             }
 //            content: {
 //                url: 'flowplayer.content.swf',

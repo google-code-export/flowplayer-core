@@ -1,7 +1,7 @@
 <html><head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <!--<script type="text/javascript" src="flowplayer-3.0.5.min.js"></script>-->
-    <script src="../flowplayer-3.3-dev.min.js"></script>
+    <script src="../flowplayer-3.2.9.min.js"></script>
 
 
 	<!-- page title -->
@@ -26,7 +26,7 @@
                     autoPlay: false,
                     provider: 'rtmp',
 
-                    urlResolvers: null,
+                    urlResolvers: 'brselect',
 
                     bitrates: [
                         { url: "mp4:bbb-400",
@@ -41,7 +41,7 @@
                             width: 480, bitrate: 1200, label: "1200 k" },
 
                         { url: "mp4:bbb-1600",
-                            width: 480, bitrate: 1600, label: "1600 k" }
+                            width: 480, bitrate: 1600, label: "1600 k, mycket bra quality you know" }
                     ],
 
                     onStart: function() {
@@ -58,7 +58,9 @@
                             // you can have an optional label as the first item
                             // the bitrate specific items are filled here based on the clip's bitrates
                             { label: "select bitrate:", enabled: false }
-                        ]
+                        ],
+                        width: 300,
+                        right: 0
                     },
                     brselect: {
                         url: 'flowplayer.bitrateselect.swf',

@@ -11,7 +11,7 @@
 
 	<div id="page">
         <a
-                     href="KimAronson-TwentySeconds59483.flv"
+                     href="flowplayer.flv"
                      style="display:block;width:440px;height:247px"
                      id="player">
                 </a>
@@ -45,7 +45,7 @@
         clip: {
 
             // baseUrl for both parent and instream clips
-            baseUrl: 'http://blip.tv/file/get',
+            baseUrl: 'http://stream.flowplayer.org',
 
             // duration for the parent clip
             duration: 10,
@@ -55,7 +55,10 @@
 
                 // in the middle of the parent clip (ie. "mid-roll") starting at
                 // 5 seconds
-                {url: 'KimAronson-TwentySeconds58192.flv', duration: 2, position: 2}
+                {
+                    url: 'honda_accord.flv', duration: 5, position: 2,
+                    controls: {all: false, volume: true, fullscreen: true}
+                }
             ]
     }
     });
