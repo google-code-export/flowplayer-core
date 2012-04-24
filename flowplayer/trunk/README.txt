@@ -1,5 +1,10 @@
 Version history:
 
+3.2.10
+------
+- Fixed #514, scrubbing was broken
+- new flowplayer.js version 3.2.9, fixes #510
+
 3.2.9
 -----
 - Fixed #490, controlbar background, buffer bar and progress bar colors were all reset to white
