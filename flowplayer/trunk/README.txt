@@ -5,6 +5,7 @@ Version history:
 - Fixed #514, scrubbing was broken
 - new flowplayer.js version 3.2.9, fixes #510
 - #526. allow click through event for flash installation message when using div containers.
+- #508 disabling the stagevideo screen mask, canvas is visible without it, this was causing issues with the display list.
 
 3.2.9
 -----
