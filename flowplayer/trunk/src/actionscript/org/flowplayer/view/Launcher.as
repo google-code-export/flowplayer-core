@@ -102,7 +102,7 @@ import org.flowplayer.model.DisplayPluginModel;
         private var _clickTimer:Timer = new Timer(200, 1);
         private var _clickEvent:MouseEvent;
 
-		private var _screenMask:Sprite;
+		//private var _screenMask:Sprite;
 
 		[Frame(factoryClass="org.flowplayer.view.Preloader")]
 		public function Launcher() {
@@ -229,8 +229,9 @@ import org.flowplayer.model.DisplayPluginModel;
 			
 			log.debug("starting configured streams");
             startStreams();
-			
-			createScreenMask();
+
+            //#508 disabling the stagevideo screen mask, canvas is visible without it.
+			//createScreenMask();
             arrangeScreen();		
 			
             addListeners();
@@ -250,7 +251,8 @@ import org.flowplayer.model.DisplayPluginModel;
 //            lookupSlowMotionPlugin(_flowplayer);
 		}
 
-		private function createScreenMask():void {
+        //#508 disabling the stagevideo screen mask, canvas is visible without it.
+		/*private function createScreenMask():void {
 			blendMode = BlendMode.LAYER;
 			
 			_screenMask = new Sprite();
@@ -262,7 +264,7 @@ import org.flowplayer.model.DisplayPluginModel;
 			_screenMask.y = 0;
 			_screenMask.width = 100;
 			_screenMask.height = 100;
-		}
+		} */
 
 		private function resizeCanvasLogo():void {
 			_canvasLogo.alpha = 1;
@@ -736,9 +738,10 @@ import org.flowplayer.model.DisplayPluginModel;
 			graphics.drawRect(0, 0, Arrange.parentWidth, Arrange.parentHeight);
 			graphics.endFill();
 
-            CONFIG::FLASH_10_1 {
+            //#508 disabling the stagevideo screen mask, canvas is visible without it.
+            /*CONFIG::FLASH_10_1 {
 			    _flowplayer.playlist.onStageVideoStateChange(onStageVideoStateChange);
-            }
+            } */
 		}
 		
 		private function onMouseOut(event:MouseEvent):void {
@@ -749,8 +752,8 @@ import org.flowplayer.model.DisplayPluginModel;
 			_flowplayer.dispatchEvent(PlayerEvent.mouseOver());
 		}
 
-
-		CONFIG::FLASH_10_1 {
+        //#508 disabling the stagevideo screen mask, canvas is visible without it.
+		/*CONFIG::FLASH_10_1 {
 		private function onStageVideoStateChange(event:ClipEvent):void {
 			var stageVideo:StageVideo = event.info as StageVideo;
 			log.info("stage video state changed " + stageVideo);
@@ -778,7 +781,7 @@ import org.flowplayer.model.DisplayPluginModel;
 				}
 			}
 		}
-        }
+        } */
 
 		private function createPanel():void {
 			_panel = new Panel();
