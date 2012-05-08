@@ -5,11 +5,11 @@
 
     <property name="version-1" value="3"/>
     <property name="version-2" value="2"/>
-    <property name="version-3" value="10"/>
-    <property name="version-status" value=""/>
-    <property name="controls-version-info" value="3.2.10"/>
+    <property name="version-3" value="11"/>
+    <property name="version-status" value="dev"/>
+    <property name="controls-version-info" value="3.2.10-dev"/>
     <property name="audio-version-info" value="3.2.8"/>
-    <property name="flowplayer-js-version-info" value="3.2.9"/>
+    <property name="flowplayer-js-version-info" value="3.2.10-dev"/>
     <property name="source-dist-root-folder" value="flowplayer"/>
 
     <property name="version-status-quoted" value="&quot;&#39;${version-status}&#39;&quot;"/>
@@ -202,7 +202,7 @@
                 <arg line="-define+=CONFIG::versionStatus,${version-status-quoted}"/>
                 <arg line="-define+=CONFIG::controlsVersion,${controls-version-info-quoted}"/>
                 <arg line="-define+=CONFIG::audioVersion,${audio-version-info-quoted}"/>
-                <arg line="-define+=CONFIG::skin,true"/>
+                <arg line="-define+=CONFIG::skin,'true'"/>
                 <arg line="-define+=CONFIG::hasSlowMotion,'${has-slowmotion-buttons}'"/>
                 <arg line="-define+=CONFIG::debug,'@{debug}'"/>
                 <arg line="-define+=CONFIG::enableByteRange,'false'"/>
