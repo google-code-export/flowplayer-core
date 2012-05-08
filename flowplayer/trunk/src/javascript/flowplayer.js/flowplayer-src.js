@@ -1195,8 +1195,8 @@ window.flowplayer = window.$f = function() {
 
 		params = extend({
 			bgcolor: "#000000",
-			version: [9, 0],
-			expressInstall: "http://static.flowplayer.org/swf/expressinstall.swf",
+			version: [10, 0],
+			expressInstall: "http://releases.flowplayer.org/swf/expressinstall.swf",
 			cachebusting: false
 
 		}, params);
