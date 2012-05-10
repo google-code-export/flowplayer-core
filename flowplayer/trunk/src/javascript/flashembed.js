@@ -107,8 +107,8 @@
 			}
 
 			ver = RE.exec(ver);
-			return ver ? [1 * ver[1], 1 * ver[3]] : [0, 0];
-		},
+            return ver ? [1 * ver[1], 1 * ver[(ver[1] * 1 > 9 ? 2 : 3)] * 1] : [0, 0];
+        },
 
 		asString: function(obj) {
 
