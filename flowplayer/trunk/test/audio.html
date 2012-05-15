@@ -49,25 +49,24 @@
         },
 
         clip: {
-            baseUrl: '../build',
-            coverImage: '../build/play.png'
-        },
-        playlist:[
-//                "http://www.blacktrash.org/media/atap.mp3",
-                "http://releases.flowplayer.org/data/fake_empire.mp3"
-        ],
+            url: "http://releases.flowplayer.org/data/fake_empire.mp3",
 
-        plugins: {
-            audio: {
-                url: 'flowplayer.audio.swf',
-                onDuration: function(info) {
-                    console.log("onDuration " + info);
-                }
-            },
-            controls: {
-                playlist: true
+            // this style of configuring the cover image was added in audio
+            // plugin version 3.2.3
+            coverImage: {
+                url: "http://releases.flowplayer.org/data/national.jpg",
+                scaling: 'orig'
             }
         }
+
+//        plugins: {
+//            audio: {
+//                url: 'http://releases.flowplayer.org/swf/flowplayer.audio-3.2.9.swf',
+//                onDuration: function(info) {
+//                    console.log("onDuration " + info);
+//                }
+//            }
+//        }
 
     });
 </script>

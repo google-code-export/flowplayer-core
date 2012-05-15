@@ -146,8 +146,9 @@ package org.flowplayer.controller {
 		}
 
 		private function pause(event:ClipEvent):void {
-            if (! durationTracker) return;
-			durationTracker.stop();
+            if (durationTracker) {
+                durationTracker.stop();
+            }
 			doPause(event);
 		}
 
