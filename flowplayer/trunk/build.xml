@@ -6,10 +6,10 @@
     <property name="version-1" value="3"/>
     <property name="version-2" value="2"/>
     <property name="version-3" value="11"/>
-    <property name="version-status" value="dev"/>
-    <property name="controls-version-info" value="3.2.10-dev"/>
+    <property name="version-status" value=""/>
+    <property name="controls-version-info" value="3.2.11"/>
     <property name="audio-version-info" value="3.2.8"/>
-    <property name="flowplayer-js-version-info" value="3.2.10-dev"/>
+    <property name="flowplayer-js-version-info" value="3.2.10"/>
     <property name="source-dist-root-folder" value="flowplayer"/>
 
     <property name="version-status-quoted" value="&quot;&#39;${version-status}&#39;&quot;"/>
@@ -427,12 +427,12 @@
             <zip destfile="${dist-dir}/@{zip-name}">
                 <zipfileset prefix="flowplayer" dir=".">
                     <include name="@{license}"/>
-                    <include name="flowplayer-${flowplayer-js-version-info}.min.js" />
+                    <!--<include name="flowplayer-${flowplayer-js-version-info}.min.js" />-->
                     <include name="README.txt"/>
                 </zipfileset>
-                <!--<zipfileset prefix="flowplayer" dir="${src-js}/flowplayer.js">-->
-                    <!--<include name="flowplayer-${flowplayer-js-version-info}.min.js"/>-->
-                <!--</zipfileset>-->
+                <zipfileset prefix="flowplayer" dir="${src-js}/flowplayer.js">
+                    <include name="flowplayer-${flowplayer-js-version-info}.min.js"/>
+                </zipfileset>
                 <zipfileset prefix="flowplayer" dir="@{player-swf-dir}">
                     <include name="@{player-swf}"/>
                 </zipfileset>
