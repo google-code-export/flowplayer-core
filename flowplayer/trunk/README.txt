@@ -5,6 +5,7 @@ Version history:
 - new flowplayer.js, now requires Flash 10.1 as the minimum flash version
 - #526 allow click through event for flash installation message when using div containers.
 - #508 disabling the stagevideo screen mask, canvas is visible without it, this was causing issues with the display list.
+- #443 adding accessibility option to the playbuttonoverlay.
 
 3.2.10
 ------
