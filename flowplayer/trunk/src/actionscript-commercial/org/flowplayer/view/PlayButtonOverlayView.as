@@ -19,6 +19,7 @@
 
 package org.flowplayer.view {
     import flash.display.DisplayObject;
+    import flash.display.DisplayObjectContainer;
     import flash.events.MouseEvent;
     import flash.events.TimerEvent;
     import flash.utils.Timer;
@@ -38,7 +39,7 @@ package org.flowplayer.view {
     import org.flowplayer.model.State;
     import org.flowplayer.model.Status;
     import org.flowplayer.util.Arrange;
-    import org.flowplayer.view.BuiltInAssetHelper;
+    import org.flowplayer.util.AccessibilityUtil;
     import org.flowplayer.view.BuiltInAssetHelper;
 
     public class PlayButtonOverlayView extends AbstractSprite implements Plugin {
@@ -64,6 +65,9 @@ package org.flowplayer.view {
 			_play = play;
 			createChildren();
 			buttonMode = true;
+
+            //#443 set accessibility for play button
+            AccessibilityUtil.setAccessible(this,  "play");
 			
             startBuffering();
 			
