@@ -33,7 +33,7 @@ package org.flowplayer.config {
             }
             
             default xml namespace = ns;
-			
+
 			var rss:XML = new XML(rawRSS);
             
             if (rss.name() == "rss" && Number(rss.@version) <= 2)
@@ -277,8 +277,11 @@ package org.flowplayer.config {
         private function addBitrateItems(elem:XML, clip:Clip):void {
 			if (elem.@bitrate && elem.@width)
 			{
+                var bitrateItem:Object = {url: new String(elem.@url), bitrate: new Number(elem.@bitrate), width: new Number(elem.@width), height: new Number(elem.@height)};
+                //#586 add a bitrate label with a new namespace attribute fp:bitratelabel
+                 if (elem.@fp::["bitratelabel"] !=="") bitrateItem.label = new String(elem.@fp::["bitratelabel"]);
 				// need to explicitely cast attributes for external events, #47
-				clip.customProperties["bitrates"].push({url: new String(elem.@url), bitrate: new Number(elem.@bitrate), width: new Number(elem.@width), height: new Number(elem.@height)});
+				clip.customProperties["bitrates"].push(bitrateItem);
 			}
         }
     }
