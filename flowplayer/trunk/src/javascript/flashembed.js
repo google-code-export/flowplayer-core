@@ -12,7 +12,7 @@
 (function() {
 
 	var IE = document.all,
-		 URL = 'http://www.adobe.com/go/getflashplayer',
+		 URL = 'http://get.adobe.com/flashplayer',
 		 JQUERY = typeof jQuery == 'function',
 		 RE = /(\d+)[^\d]+(\d+)[^\d]*(\d*)/,
 		 GLOBAL_OPTS = {
