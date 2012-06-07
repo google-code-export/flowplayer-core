@@ -6,6 +6,7 @@ Version history:
 - #526 allow click through event for flash installation message when using div containers.
 - #508 disabling the stagevideo screen mask, canvas is visible without it, this was causing issues with the display list.
 - #443 adding accessibility option to the playbuttonoverlay.
+- #586 add a bitrate label with a new namespace attribute fp:bitratelabel.
 
 3.2.10
 ------
