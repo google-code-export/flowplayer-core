@@ -47,7 +47,7 @@
         <available file="${controls-dir}/build.xml"/>
     </condition>
 
-    <property name="libs-path" value="${flex3libsdir} ${lib-dir}/thunderbolt ${plugin-libs} ${plugin-swc}"/>
+    <property name="libs-path" value="${flexlibsdir} ${lib-dir}/thunderbolt ${plugin-libs} ${plugin-swc}"/>
     <property name="classes-for-lib"
               value="org.flowplayer.view.Flowplayer org.flowplayer.util.PropertyBinder org.flowplayer.util.Arrange org.flowplayer.util.Assert org.flowplayer.model.PluginEvent org.flowplayer.util.TextUtil org.flowplayer.view.AbstractSprite org.flowplayer.view.AnimationEngine org.flowplayer.controller.NetStreamControllingStreamProvider org.flowplayer.controller.NetStreamClient org.flowplayer.controller.NetConnectionClient org.flowplayer.util.TimeUtil"/>
     <property name="doc-classes"
