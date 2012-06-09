@@ -32,18 +32,19 @@ package org.flowplayer.config {
 		private static var log:Log = new Log(ConfigParser);
 
         flow_internal static function parse(config:String):Object {
-            return JSON.decode(config);
+            //#590 add full package reference to work with Flex 4.6
+            return com.adobe.serialization.json.JSON.decode(config);
         }
 
         flow_internal static function parseConfig(config:Object, builtInConfig:Object, playerSwfUrl:String, controlsVersion:String, audioVersion:String):Config {
             if (!config) return new Config({}, builtInConfig, playerSwfUrl, controlsVersion, audioVersion);
-            var configObj:Object = config is String ? JSON.decode(config as String) : config;
+            var configObj:Object = config is String ? com.adobe.serialization.json.JSON.decode(config as String) : config;
             return new Config(configObj, builtInConfig, playerSwfUrl, controlsVersion, audioVersion);
         }
 
         flow_internal static function loadConfig(fileName:String, builtInConfig:Object, listener:Function, loader:ResourceLoader, playerSwfName:String, controlsVersion:String, audioVersion:String):void {
             loader.load(fileName, function(loader:ResourceLoader):void {
-                trace(loader.getContent());
+                //trace(loader.getContent());
                 listener(parseConfig(loader.getContent(), builtInConfig, playerSwfName, controlsVersion, audioVersion))
             }, true);
         }
