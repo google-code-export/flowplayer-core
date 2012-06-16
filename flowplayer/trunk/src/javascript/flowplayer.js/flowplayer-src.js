@@ -575,6 +575,11 @@ function Player(wrapper, params, conf) {
 				// try closing
 				try {
 					if (api) {
+						// issue511
+						if (api.fp_isFullscreen()) {
+							api.fp_toggleFullscreen();
+						}
+
 						api.fp_close();
 
 						// fire unload only when API is present
