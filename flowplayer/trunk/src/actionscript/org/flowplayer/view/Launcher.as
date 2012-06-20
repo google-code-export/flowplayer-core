@@ -520,7 +520,7 @@ import org.flowplayer.model.DisplayPluginModel;
 
 			if (_controlsModel && _controlsModel.visible) {
 				if (isControlsAlwaysAutoHide() || (_controlsModel.position.bottom.px > 0)) {
-					log.error("controls is autoHide or it's in a non-default vertical position, configuring screen to take all available space");
+					log.debug("controls is autoHide or it's in a non-default vertical position, configuring screen to take all available space");
 					setScreenBottomAndHeight(screen, 100, 0);
 				} else {
 					var controlsHeight:Number = _controlsModel.getDisplayObject().height;
