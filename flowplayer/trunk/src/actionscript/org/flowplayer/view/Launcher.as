@@ -519,9 +519,8 @@ import org.flowplayer.model.DisplayPluginModel;
             if (! screen) return;
 
 			if (_controlsModel && _controlsModel.visible) {
-				
 				if (isControlsAlwaysAutoHide() || (_controlsModel.position.bottom.px > 0)) {
-					log.debug("controls is autoHide or it's in a non-default vertical position, configuring screen to take all available space");
+					log.error("controls is autoHide or it's in a non-default vertical position, configuring screen to take all available space");
 					setScreenBottomAndHeight(screen, 100, 0);
 				} else {
 					var controlsHeight:Number = _controlsModel.getDisplayObject().height;
@@ -582,9 +581,10 @@ import org.flowplayer.model.DisplayPluginModel;
 
 		private function isControlsAlwaysAutoHide():Boolean {
 			if (!_controlsModel) return false;
-            var controls:DisplayObject = _controlsModel.getDisplayObject();
-			log.debug("controls.auotoHide " + controls["getAutoHide"]());
-			return  ! controls["getAutoHide"]()["fullscreenOnly"];
+            var controls:Object = _controlsModel.getDisplayObject();
+			log.debug("controls.auotoHide " + controls.getAutoHide());
+            //#583 this seems to handle the fullscreenOnly property better
+            return  !controls.getAutoHide().fullscreenOnly;
 		}
 
 		private function createFlowplayer():void {
