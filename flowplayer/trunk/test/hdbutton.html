@@ -53,13 +53,24 @@ plugins: {
 
         // button config is optional, it defaults to "controls"
         // possible values "dock", "controls", "both"
-        button: 'both',
+        hdButton: {
+            place: 'both'
+        },
 
         // this is also optional, defaults are "HD is on" and "HD is off"
         splash: {
             onLabel: 'HD',
             offLabel: 'SD'
         }
+    },
+
+    dock: {
+        autoHide: 'fullscreen'
+    },
+
+    controls: {
+        autoHide: {enabled: false},
+        alpha: 0.3
     }
 }
     });

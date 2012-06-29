@@ -1,5 +1,10 @@
 Version history:
 
+3.2.12
+------
+- new flowplayer.js version 3.2.11,
+   fixes removing the player in fullscreen mode leaves Android locked in landscape orientation (#511)
+
 3.2.11
 ------
 - new flowplayer.js, now requires Flash 10.1 as the minimum flash version
