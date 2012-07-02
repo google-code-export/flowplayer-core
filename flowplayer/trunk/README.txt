@@ -4,6 +4,9 @@ Version history:
 ------
 - new flowplayer.js version 3.2.11,
    fixes removing the player in fullscreen mode leaves Android locked in landscape orientation (#511)
+- #586 add a bitrate label with a new namespace attribute fp:bitratelabel.
+- #583 fixes for handling the fullscreenOnly property better
+- #494 with relative filenames with a root path strip the baseurl of paths first.
 
 3.2.11
 ------
@@ -11,7 +14,7 @@ Version history:
 - #526 allow click through event for flash installation message when using div containers.
 - #508 disabling the stagevideo screen mask, canvas is visible without it, this was causing issues with the display list.
 - #443 adding accessibility option to the playbuttonoverlay.
-- #586 add a bitrate label with a new namespace attribute fp:bitratelabel.
+
 
 3.2.10
 ------
