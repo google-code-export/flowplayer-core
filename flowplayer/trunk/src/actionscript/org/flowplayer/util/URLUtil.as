@@ -44,12 +44,17 @@ package org.flowplayer.util {
 			if (fileName == null) return null;
 			
 			if (isCompleteURLWithProtocol(fileName)) return fileName;
-			if (fileName.indexOf("/") == 0) return fileName;
-			
+
 			if (baseURL == '' || baseURL == null || baseURL == 'null') {
 				return fileName;
 			}
 			if (baseURL != null) {
+                //#494 with relative filenames with a root path strip the baseurl of paths first.
+                if (fileName.indexOf("/") == 0) {
+                    var pathIndex:Number = baseURL.indexOf("/", 8);
+                    return (pathIndex >= 0 ? baseURL.substr(0, pathIndex) : baseURL) + fileName;
+                }
+
 				if (baseURL.lastIndexOf("/") == baseURL.length - 1)
 					return baseURL + fileName;
 				return baseURL + "/" + fileName;
