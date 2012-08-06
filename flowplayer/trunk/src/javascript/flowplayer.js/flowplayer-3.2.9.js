@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with Flowplayer.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Date: ${date}
- * Revision: ${revision}
+ * Date: 2012-04-10 11:28:58 -0400 (Tue, 10 Apr 2012)
+ * Revision: 782
  */
 (function() {
 
