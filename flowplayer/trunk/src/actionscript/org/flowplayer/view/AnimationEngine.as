@@ -152,14 +152,16 @@ package org.flowplayer.view {
 		 * Fades a DisplayObject to a specified alpha value.
 		 */
 		public function fadeTo(view:DisplayObject, alpha:Number, durationMillis:Number = 500, completeCallback:Function = null, updatePanel:Boolean = true):Animation {
-			return animateAlpha(view, alpha, durationMillis, completeCallback, updatePanel);
+            view.visible = true;
+            return animateAlpha(view, alpha, durationMillis, completeCallback, updatePanel);
 		}
 
 		/**
 		 * Fades out a DisplayObject.
 		 */
 		public function fadeOut(view:DisplayObject, durationMillis:Number = 500, completeCallback:Function = null, updatePanel:Boolean = true):Animation {
-			return animateAlpha(view, 0, durationMillis, completeCallback, updatePanel);
+            view.visible = true;
+            return animateAlpha(view, 0, durationMillis, completeCallback, updatePanel);
 		}
 
 		/**
@@ -233,7 +235,8 @@ package org.flowplayer.view {
 		private function animateAlpha(view:DisplayObject, target:Number, durationMillis:Number = 500, completeCallback:Function = null, updatePanel:Boolean = true):Animation {
 			Assert.notNull(view, "animateAlpha: view cannot be null");
 			var playable:Animation = createTween("alpha", view, target, durationMillis);
-			if (! playable) {
+            var plugin:DisplayProperties = _pluginRegistry.getPluginByDisplay(view);
+            if (! playable) {
 				if (completeCallback != null) {
 					completeCallback();
 				}
@@ -248,7 +251,6 @@ package org.flowplayer.view {
 			// cancel previous alpha animations
 			cancel(view, playable);
 
-			var plugin:DisplayProperties = _pluginRegistry.getPluginByDisplay(view);
 			if (updatePanel && plugin) {
 				log.debug("animateAlpha(): will add/remove from panel");
 				// this is a plugin, add/remove it from a panel

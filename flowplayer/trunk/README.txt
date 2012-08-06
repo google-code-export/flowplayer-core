@@ -1,5 +1,9 @@
 Version history:
 
+3.2.13
+------
+- Updated to automatically load the latest controls and audio plugins
+
 3.2.12
 ------
 - new flowplayer.js version 3.2.11,

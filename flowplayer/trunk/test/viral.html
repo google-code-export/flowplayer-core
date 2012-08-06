@@ -18,7 +18,7 @@
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.viralvideos.icons.*' },
+        log: { level: 'debug', filter: 'org.flowplayer.ui.AutoHide' },
         onStart: function() {
             console.log("onStart");
         },
@@ -39,8 +39,10 @@
 //            pageUrl: 'foo.com/foo.html'
 //        },
         plugins: {
+            controls: null,
             viral: {
                 url: 'flowplayer.viralvideos.swf',
+                alpha: 0.2,
                 share: {
                     shareWindow: '_self',
                     description: 'jkejejej',
