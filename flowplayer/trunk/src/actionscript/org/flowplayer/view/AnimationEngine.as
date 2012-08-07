@@ -257,7 +257,7 @@ package org.flowplayer.view {
 				if (target == 0) {
 					playable.addEventListener(GoEvent.COMPLETE, 
 						function(event:GoEvent):void {
-							if (!_canceledByPlayable[playable]) { 
+							if (!_canceledByPlayable[playable] && view.parent) {
 								log.info("removing " + view + " from panel");
 								view.parent.removeChild(view);
 							} else {
@@ -273,8 +273,9 @@ package org.flowplayer.view {
 			 
 			var tween:Animation = start(view, playable, completeCallback) as Animation;
 			if (tween) {
-				_pluginRegistry.updateDisplayPropertiesForDisplay(view, { alpha: target, display: (target == 0 ? "none" : "block") });
-			}
+                // do not change the display: 'none'/'block' property here!! Changing alpha should not affect 'display'.
+                _pluginRegistry.updateDisplayPropertiesForDisplay(view, { alpha: target });
+            }
 			return tween;
 		}
 
