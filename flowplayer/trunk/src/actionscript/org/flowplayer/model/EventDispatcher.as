@@ -69,14 +69,14 @@ package org.flowplayer.model {
 		
 		private function removeAllEventsListener(listener:Function, beforePhase:Boolean):void {
 			for each (var type:Object in (beforePhase ? cancellableEvents : allEvents)) {
-				removeListener(type as ClipEventType, listener, beforePhase);
+				removeListener(type as EventType, listener, beforePhase);
 			}
 		}
 
 		private function addAllEventsListener(events:Dictionary, listener:EventListener, beforePhase:Boolean, addToFront:Boolean = false):void {
 			log.debug("addAllEventsListener, beforePhase " + beforePhase);
 			for each (var type:Object in events) {
-				addListener(type as ClipEventType, listener, beforePhase, addToFront);
+				addListener(type as EventType, listener, beforePhase, addToFront);
 			}
 		}
 
@@ -178,7 +178,7 @@ package org.flowplayer.model {
 				listeners = new Array();
 				listenerDict[event] = listeners;
 			}
-			if (! hasListener(event, listener)) {
+			if (! hasListener(event, listener, listenerDict)) {
 				if (addToFront) {
 					listeners.splice(0, 0, listener);
 				} else {
@@ -202,8 +202,8 @@ package org.flowplayer.model {
 			}
 		}
 		
-		private function hasListener(event:EventType, listener:EventListener):Boolean {
-			var listeners:Array = _listeners[event]; 
+		private function hasListener(event:EventType, listener:EventListener, listenerDict:Dictionary):Boolean {
+			var listeners:Array = listenerDict[event];
 			if (! listeners) return false;
 			for (var i : Number = 0; i < listeners.length; i++) {
 				var eventListener:EventListener = listeners[i];
