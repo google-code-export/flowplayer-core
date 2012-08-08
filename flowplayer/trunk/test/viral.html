@@ -12,13 +12,13 @@
 	<div id="page">
         <a
                      href="../build/flowplayer.flv"
-                     style="display:block;width:440px;height:247px"
+                     style="display:block;width:600px;height:350px"
                      id="player">
                 </a>
 <script>
     flowplayer("player", "../build/flowplayer.swf",
     {
-        log: { level: 'debug', filter: 'org.flowplayer.ui.AutoHide' },
+        log: { level: 'debug', filter: 'org.flowplayer.viralvideos.EmailView, org.flowplayer.viralvideos.ViralVideos' },
         onStart: function() {
             console.log("onStart");
         },
@@ -39,7 +39,6 @@
 //            pageUrl: 'foo.com/foo.html'
 //        },
         plugins: {
-            controls: null,
             viral: {
                 url: 'flowplayer.viralvideos.swf',
                 alpha: 0.2,
