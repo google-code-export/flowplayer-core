@@ -3,6 +3,7 @@ Version history:
 3.2.13
 ------
 - Updated to automatically load the latest controls and audio plugins
+- #612 add some logging for the stagevideo render state to determine what mode the hardware acceleration is in for various systems.
 
 3.2.12
 ------
