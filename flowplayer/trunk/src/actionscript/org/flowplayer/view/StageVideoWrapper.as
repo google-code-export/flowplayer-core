@@ -129,9 +129,12 @@ package org.flowplayer.view {
 		}
 		
 		private function _displayStageVideo(event:StageVideoEvent):void {
+            //#612 add some logging for the render state
+            log.debug("Stagevideo Render State: " + event.status);
+
 			if(event.status != 'software')
 				return;
-				
+
 			stageVideo.removeEventListener(StageVideoEvent.RENDER_STATE, _displayStageVideo);
 			super.attachNetStream(null);
 			
