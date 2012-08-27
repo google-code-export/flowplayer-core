@@ -4,6 +4,7 @@ Version history:
 ------
 - Updated to automatically load the latest controls and audio plugins
 - #612 add some logging for the stagevideo render state to determine what mode the hardware acceleration is in for various systems.
+- #628 opera browsers do not return filesize correctly for latest flash players so require to use load completion instead which may help with gzipped files also.
 
 3.2.12
 ------
